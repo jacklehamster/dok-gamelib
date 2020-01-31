@@ -1,0 +1,5 @@
+node_modules
+public/generated
+public/generated/**
+*ignore*
+**.log**

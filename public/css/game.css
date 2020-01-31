@@ -1,0 +1,21 @@
+canvas {  
+    cursor: none;
+}
+
+.crisp {
+    image-rendering: optimizeSpeed;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-crisp-edges;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;				
+}
+
+html, body {
+    height: 100%;
+    background-color: black;
+    color: silver;
+    touch-action: none;
+    overflow: hidden;
+}
