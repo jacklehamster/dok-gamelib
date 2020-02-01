@@ -25,7 +25,7 @@ app.get('/spritesheet', function(req, res) {
 	assets.produceSpritesheets(assetDirectory, 1000, 1000).then(({spritesheets, data}) => {
 		res.writeHeader(200, {"Content-Type": "text/html"});  
 		data.spritesheets.forEach(src => {
-	        res.write(`<img style='border: 1px solid black' src="${src}" width=200 height=200>`);  
+	        res.write(`<img style='background-color: #ddddee; border: 1px solid black' src="${src}" width=200 height=200>`);  
 		});
 		res.write(`<pre>${JSON.stringify(data, null, '\t')}</pre>`);
 		res.end();
