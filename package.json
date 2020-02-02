@@ -13,7 +13,8 @@
     "crypto": "^1.0.1",
     "express": "^4.17.1",
     "image-size": "^0.8.3",
-    "mustache": "^4.0.0"
+    "mustache": "^4.0.0",
+    "rimraf": "^3.0.1"
   },
   "devDependencies": {
     "forever": "^2.0.0"
