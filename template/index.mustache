@@ -31,9 +31,19 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-title" content="{{title}}">
 
+		<script src="core/gl-matrix.js"></script>
+		<script src="core/utils.js"></script>
+		<script src="core/opengl.js"></script>
+		<script src="generated/js/data.js"></script>
+
 	</head>
 
-	<body style="margin: 0; background-color: black">
-
+	<body class="container">
+		<canvas id="canvas" width=720 height=480></canvas>
+		<script>
+			document.addEventListener("DOMContentLoaded", e => {
+				engine.initialize(document.getElementById("canvas"), getData());
+			});
+		</script>
 	</body>
 </html>

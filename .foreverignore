@@ -1,5 +1,11 @@
 node_modules
+public/index.html
 public/generated
 public/generated/**
+public/generated/data/**
+data/generated
+data/generated/**
+data/generated/config/**
 *ignore*
 **.log**
+spritesheet.png

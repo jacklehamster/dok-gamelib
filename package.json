@@ -4,17 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "forever -w index.js"
+    "start": "forever --minUptime 1000 --spinSleepTime 1000 -w index.js"
   },
   "author": "jacklehamster",
   "license": "ISC",
   "dependencies": {
+    "archiver": "^3.1.1",
     "canvas": "^2.6.1",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
+    "fs-readdir-recursive": "^1.1.0",
     "image-size": "^0.8.3",
+    "json-stringify-pretty-compact": "^2.0.0",
     "mustache": "^4.0.0",
-    "rimraf": "^3.0.1"
+    "rimraf": "^3.0.1",
+    "spritesheet-js": "^1.2.6"
   },
   "devDependencies": {
     "forever": "^2.0.0"
