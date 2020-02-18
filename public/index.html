@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: black">
 	<head>
         <title>Hello World</title>
 		<meta charset="utf-8"/>
@@ -14,17 +14,30 @@
 		<meta name="apple-mobile-web-app-title" content="Hello World">
 
 		<script src="core/gl-matrix.js"></script>
+		<script src="core/texture.js"></script>
 		<script src="core/utils.js"></script>
+		<script src="core/shader.js"></script>
 		<script src="core/opengl.js"></script>
+		<script src="core/game.js"></script>
+		<script src="core/scene-manager.js"></script>
 		<script src="generated/js/data.js"></script>
+
+		<script src="generated/js/scenes/intro.js"></script>
+
 
 	</head>
 
 	<body class="container">
-		<canvas id="canvas" width=720 height=480></canvas>
+		<canvas id="canvas" width=800 height=500></canvas>
 		<script>
+			const config = ({"title":"Hello World","description":"Description","start":"intro","scenes":["intro"]});
+			const data = getData();
+			let game;
+		
 			document.addEventListener("DOMContentLoaded", e => {
-				engine.initialize(document.getElementById("canvas"), getData());
+				const engine = new Engine(document.getElementById("canvas"), data.webgl);
+				game = new Game(engine, sceneManager, config, data);
+				game.start();
 			});
 		</script>
 	</body>

@@ -7,9 +7,20 @@
 		"generated/spritesheets/sheet0.png"
 	],
 	"sprites": {
-		"yupa-dance.png": {
+		"dobuki": {
 			"offset": [
 				0,
+				0
+			],
+			"size": [
+				280,
+				280
+			],
+			"index": 0
+		},
+		"yupa-dance": {
+			"offset": [
+				280,
 				0
 			],
 			"size": [
@@ -18,9 +29,9 @@
 			],
 			"index": 0
 		},
-		"cage.png": {
+		"cage": {
 			"offset": [
-				256,
+				536,
 				0
 			],
 			"size": [
@@ -29,9 +40,9 @@
 			],
 			"index": 0
 		},
-		"penguin-bot-left.png": {
+		"penguin-bot-left": {
 			"offset": [
-				384,
+				664,
 				0
 			],
 			"size": [
@@ -40,9 +51,9 @@
 			],
 			"index": 0
 		},
-		"penguin-down.png": {
+		"penguin-down": {
 			"offset": [
-				512,
+				792,
 				0
 			],
 			"size": [
@@ -51,9 +62,9 @@
 			],
 			"index": 0
 		},
-		"penguin-right.png": {
+		"penguin-right": {
 			"offset": [
-				640,
+				920,
 				0
 			],
 			"size": [
@@ -62,9 +73,9 @@
 			],
 			"index": 0
 		},
-		"penguin-top-left.png": {
+		"penguin-top-left": {
 			"offset": [
-				768,
+				1048,
 				0
 			],
 			"size": [
@@ -73,9 +84,9 @@
 			],
 			"index": 0
 		},
-		"penguin-up.png": {
+		"penguin-up": {
 			"offset": [
-				896,
+				1176,
 				0
 			],
 			"size": [
@@ -84,9 +95,9 @@
 			],
 			"index": 0
 		},
-		"32x64.png": {
+		"32x64": {
 			"offset": [
-				1024,
+				1304,
 				0
 			],
 			"size": [
@@ -95,9 +106,9 @@
 			],
 			"index": 0
 		},
-		"access-card.png": {
+		"access-card": {
 			"offset": [
-				1056,
+				1336,
 				0
 			],
 			"size": [
@@ -106,9 +117,9 @@
 			],
 			"index": 0
 		},
-		"water.png": {
+		"water": {
 			"offset": [
-				1120,
+				1400,
 				0
 			],
 			"size": [

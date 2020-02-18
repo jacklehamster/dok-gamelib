@@ -16,10 +16,10 @@ html, body {
 
 .crisp {
     image-rendering: optimizeSpeed;
-	image-rendering: -moz-crisp-edges;
-	image-rendering: -webkit-crisp-edges;
-	image-rendering: pixelated;
-	image-rendering: crisp-edges;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
     image-rendering: optimize-contrast;
     -ms-interpolation-mode: nearest-neighbor;				
 }

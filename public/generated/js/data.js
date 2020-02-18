@@ -8,40 +8,25 @@ function getData() {
           "size": [4096, 4096],
           "spritesheets": ["generated/spritesheets/sheet0.png"],
           "sprites": {
-            "yupa-dance.png": {"offset": [0, 0], "size": [256, 256], "index": 0},
-            "cage.png": {"offset": [256, 0], "size": [128, 192], "index": 0},
-            "penguin-bot-left.png": {
-              "offset": [384, 0],
+            "dobuki": {"offset": [0, 0], "size": [280, 280], "index": 0},
+            "yupa-dance": {"offset": [280, 0], "size": [256, 256], "index": 0},
+            "cage": {"offset": [536, 0], "size": [128, 192], "index": 0},
+            "penguin-bot-left": {
+              "offset": [664, 0],
               "size": [128, 128],
               "index": 0
             },
-            "penguin-down.png": {
-              "offset": [512, 0],
+            "penguin-down": {"offset": [792, 0], "size": [128, 128], "index": 0},
+            "penguin-right": {"offset": [920, 0], "size": [128, 128], "index": 0},
+            "penguin-top-left": {
+              "offset": [1048, 0],
               "size": [128, 128],
               "index": 0
             },
-            "penguin-right.png": {
-              "offset": [640, 0],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-top-left.png": {
-              "offset": [768, 0],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-up.png": {
-              "offset": [896, 0],
-              "size": [128, 128],
-              "index": 0
-            },
-            "32x64.png": {"offset": [1024, 0], "size": [32, 64], "index": 0},
-            "access-card.png": {
-              "offset": [1056, 0],
-              "size": [64, 64],
-              "index": 0
-            },
-            "water.png": {"offset": [1120, 0], "size": [64, 64], "index": 0}
+            "penguin-up": {"offset": [1176, 0], "size": [128, 128], "index": 0},
+            "32x64": {"offset": [1304, 0], "size": [32, 64], "index": 0},
+            "access-card": {"offset": [1336, 0], "size": [64, 64], "index": 0},
+            "water": {"offset": [1400, 0], "size": [64, 64], "index": 0}
           }
         }
       }

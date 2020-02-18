@@ -51,20 +51,67 @@ function generateDataCode(outputPath) {
 	});
 }
 
-app.get('/', function (req, res) {
-	template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'config.json'))
-		.then(html => assets.produceSpritesheets(`${__dirname}/game/assets/`, TEXTURE_SIZE, TEXTURE_SIZE)
-			.then(() => generateDataCode(path.join('public', 'generated', 'js', 'data.js'))
-				.then(() => {
-					res.send(html);
-					fs.writeFile('public/index.html', html, err => {
-						if (err) throw err;
-					});
-				})
-			)
-		);
+function clearGenerated() {
+    const publicDir = 'public/generated';
+    const generatedDir = 'data/generated';
+    return assets.deleteFolders(publicDir, generatedDir);
+}
+
+function copyScenes() {
+	return new Promise((resolve, reject) =>
+		fs.promises.mkdir(path.join(__dirname, 'public/generated/js/scenes'), { recursive: true })
+			.then(() => {
+				template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
+					Promise.all(scenes.map(scene => {
+						fs.promises.copyFile(
+							path.join(__dirname, 'game', 'scenes', scene),
+							path.join(__dirname, 'public', 'generated', 'js', 'scenes', scene)
+						);
+					})).then(resolve);
+				});
+			}
+		)
+	);
+}
+
+function assignData(root, path, value) {
+	if (typeof path === "string") {
+		path = path.split("/");
 	}
-);
+	if (path.length === 1) {
+		const idSplit = path[0].split(".");
+		const camelId = idSplit[0]
+			.split("-")
+			.map((a,idx) => idx===0 ? a.toLowerCase() : a.charAt(0).toUpperCase() + a.substr(1).toLowerCase())
+			.join("");
+		root[camelId] = value;
+	} else {
+		if (!root[path[0]]) {
+			root[path[0]] = {};
+		}
+		assignData(root[path[0]], path.slice(1), value);
+	}
+}
+
+app.get('/', function (req, res) {
+	clearGenerated().then(() => {
+		copyScenes().then(() => {
+			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
+				template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'config.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) })
+					.then(html => assets.produceSpritesheets(`${__dirname}/game/assets/`, TEXTURE_SIZE, TEXTURE_SIZE)
+						.then(() => generateDataCode(path.join('public', 'generated', 'js', 'data.js'))
+							.then(() => {
+								res.send(html);
+								fs.writeFile('public/index.html', html, err => {
+									if (err) throw err;
+								});
+							})
+						)
+					);
+			});
+		});
+	});
+});
 
 app.get('/spritesheet', function(req, res) {
 	assets.produceSpritesheets(`${__dirname}/game/assets/`, TEXTURE_SIZE, TEXTURE_SIZE).then(({spritesheets, data}) => {
@@ -95,25 +142,6 @@ app.get('/get-from-files', function(req, res) {
 		res.end();
 	});
 });
-
-function assignData(root, path, value) {
-	if (typeof path === "string") {
-		path = path.split("/");
-	}
-	if (path.length === 1) {
-		const idSplit = path[0].split(".");
-		const camelId = idSplit[0]
-			.split("-")
-			.map((a,idx) => idx===0 ? a.toLowerCase() : a.charAt(0).toUpperCase() + a.substr(1).toLowerCase())
-			.join("");
-		root[camelId] = value;
-	} else {
-		if (!root[path[0]]) {
-			root[path[0]] = {};
-		}
-		assignData(root[path[0]], path.slice(1), value);
-	}
-}
 
 app.get('/data', (req, res) => {
 	generateDataCode(path.join('public', 'generated', 'data', 'data.js'))
