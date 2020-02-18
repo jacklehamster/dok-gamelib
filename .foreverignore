@@ -1,8 +1,8 @@
 node_modules
-public/index.html
-public/generated
-public/generated/**
-public/generated/data/**
+doc/index.html
+doc/generated
+doc/generated/**
+doc/generated/data/**
 data/generated
 data/generated/**
 data/generated/config/**

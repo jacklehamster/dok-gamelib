@@ -10,6 +10,8 @@ const app = express();
 const port = 8000;
 const TEXTURE_SIZE = 4096;
 
+const webDir = "doc";
+
 function indented(string, indentation) {
 	return string.split("\n").map(a => `${indentation}${a}`).join("\n");
 }
@@ -52,20 +54,20 @@ function generateDataCode(outputPath) {
 }
 
 function clearGenerated() {
-    const publicDir = 'public/generated';
+    const publicDir = `${webDir}/generated`;
     const generatedDir = 'data/generated';
     return assets.deleteFolders(publicDir, generatedDir);
 }
 
 function copyScenes() {
 	return new Promise((resolve, reject) =>
-		fs.promises.mkdir(path.join(__dirname, 'public/generated/js/scenes'), { recursive: true })
+		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/scenes`), { recursive: true })
 			.then(() => {
 				template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
 					Promise.all(scenes.map(scene => {
 						fs.promises.copyFile(
 							path.join(__dirname, 'game', 'scenes', scene),
-							path.join(__dirname, 'public', 'generated', 'js', 'scenes', scene)
+							path.join(__dirname, webDir, 'generated', 'js', 'scenes', scene)
 						);
 					})).then(resolve);
 				});
@@ -99,10 +101,10 @@ app.get('/', function (req, res) {
 			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
 				template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'config.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) })
 					.then(html => assets.produceSpritesheets(`${__dirname}/game/assets/`, TEXTURE_SIZE, TEXTURE_SIZE)
-						.then(() => generateDataCode(path.join('public', 'generated', 'js', 'data.js'))
+						.then(() => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js'))
 							.then(() => {
 								res.send(html);
-								fs.writeFile('public/index.html', html, err => {
+								fs.writeFile(`${webDir}/index.html`, html, err => {
 									if (err) throw err;
 								});
 							})
@@ -115,7 +117,7 @@ app.get('/', function (req, res) {
 
 app.get('/spritesheet', function(req, res) {
 	assets.produceSpritesheets(`${__dirname}/game/assets/`, TEXTURE_SIZE, TEXTURE_SIZE).then(({spritesheets, data}) => {
-		generateDataCode(path.join('public', 'generated', 'js', 'data.js')).then(code => {
+		generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(code => {
 			res.writeHeader(200, {"Content-Type": "text/html"}); 
 			data.spritesheets.forEach(src => {
 		        res.write(`<img style='background-color: #ddddee; border: 1px solid black' src="${src}" width=200 height=200>`);  
@@ -127,7 +129,7 @@ app.get('/spritesheet', function(req, res) {
 });
 
 app.get('/zip', function(req, res) {
-	const publicDirectory = `${__dirname}/public/`;
+	const publicDirectory = `${__dirname}/${webDir}/`;
 	zip.zipDirectory(publicDirectory, `${__dirname}/build/archive.zip`);
 	res.writeHeader(200, {"Content-Type": "text/html"}); 
 	res.write('ok');
@@ -144,7 +146,7 @@ app.get('/get-from-files', function(req, res) {
 });
 
 app.get('/data', (req, res) => {
-	generateDataCode(path.join('public', 'generated', 'data', 'data.js'))
+	generateDataCode(path.join(webDir, 'generated', 'data', 'data.js'))
 		.then(code => {
 			res.writeHeader(200, {"Content-Type": "javascript:application"}); 
 			res.write(code);
@@ -152,6 +154,6 @@ app.get('/data', (req, res) => {
 		});
 });
 
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(`${__dirname}/${webDir}`));
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));
