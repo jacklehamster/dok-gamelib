@@ -10,7 +10,7 @@ const app = express();
 const port = 8000;
 const TEXTURE_SIZE = 4096;
 
-const webDir = "doc";
+const webDir = "docs";
 
 function indented(string, indentation) {
 	return string.split("\n").map(a => `${indentation}${a}`).join("\n");
