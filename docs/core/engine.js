@@ -1,5 +1,29 @@
+/*
+Dok Engine
+
+opengl engine:
+Step 1: Request engine for chunk
+Step 2: Update chunk
+Step 3: If a chunk is not updated, it’s being recycled next turn.
+
+*/
+
 class Engine {
-	constructor(canvas, webgl) {
+	constructor(canvas, webgl, spritesheets) {
+		const FLOAT_PER_VERTEX 			= 3;	//	x,y,z
+		const MOVE_FLOAT_PER_VERTEX 	= 4;	//	x,y,z,time
+		const GRAVITY_FLOAT_PER_VERTEX 	= 3;	//	x,y,z
+		const TEXTURE_FLOAT_PER_VERTEX 	= 4;	//	x,y,w,h
+		const ANIMATION_FLOAT_DATA 		= 4;	//	cols,index,count,frameRate
+		const VERTICES_PER_SPRITE 		= 4;	//	4 corners
+		const INDEX_ARRAY_PER_SPRITE = new Uint16Array([
+			0,  1,  2,
+			0,  2,  3,
+		]);
+
+		const MAX_TEXTURES = 16;
+		const MAX_SPRITE = 1000;
+
 		this.TEXTURE_SIZE = 4096;
 		
 		canvas.width = canvas.offsetWidth * 2;
@@ -10,15 +34,24 @@ class Engine {
 		const { vertexShader, fragmentShader } = webgl;
 		this.gl = canvas.getContext("webgl", {antialias:false});
 		this.shader = new Shader(this.gl, vertexShader, fragmentShader);
+		this.textureManager = new TextureManager(this.gl, this.shader);
 		this.projectionMatrix = mat4.create();
 		this.viewMatrix = mat4.create();
 		this.cache = {};
 
-		const { gl, shader, projectionMatrix, viewMatrix, cache, TEXTURE_SIZE } = this;
+		const { gl, shader, textureManager, projectionMatrix, viewMatrix, cache, TEXTURE_SIZE } = this;
 
 		//	initialize view and projection
 		this.setViewAngle(45);
 		this.setPosition(0, 0, 0);
+
+		this.floatBuffer = {
+			vertex: new Float32Array(FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
+			move: new Float32Array(MOVE_FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
+			gravity: new Float32Array(GRAVITY_FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
+			texCoord: new Float32Array(TEXTURE_FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
+			animation: new Float32Array(ANIMATION_FLOAT_DATA * VERTICES_PER_SPRITE * MAX_SPRITE),
+		};
 
 		//	set sprite data
 		gl.bindBuffer(gl.ARRAY_BUFFER, shader.buffer.vertex);
@@ -36,6 +69,14 @@ class Engine {
 			0, 0, 0, nowSec,
 			0, 0, 0, nowSec,
 			0, 0, 0, nowSec,
+		]));
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, shader.buffer.gravity);
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, Float32Array.from([
+			0, 0, 0,
+			0, 0, 0,
+			0, 0, 0,
+			0, 0, 0,
 		]));
 
 		//	[ x, y, spritewidth, spriteheight ]
@@ -56,29 +97,23 @@ class Engine {
 			4, 0, 8, 4,
 		]));
 
-		gl.uniform4fv(shader.programInfo.gravity, [0, 0, 0, 0]);
 
 		//	load texture
-		this.glTextures = Texture.getGLtextures(gl, shader);
-		this.loadTexture(0, "generated/spritesheets/sheet0.png");
-		this.setBackground(0x000000);
-		this.display(nowSec);
-	}
+		spritesheets.forEach((spritesheet, index) => textureManager.setImage(index, spritesheet));
 
-	loadTexture(index, src) {
-		const { gl, glTextures, TEXTURE_SIZE } = this;
-		Utils.load(src).then(image => {
-			const x = 0, y = 0;
-			const glTexture = glTextures[index];
-			gl.activeTexture(gl[`TEXTURE${index}`]);
-			gl.bindTexture(gl.TEXTURE_2D, glTexture);
-			if (glTexture.width < TEXTURE_SIZE || glTexture.height < TEXTURE_SIZE) {
-				glTexture.width = glTexture.height = TEXTURE_SIZE;
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, glTexture.width, glTexture.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-			}
-			gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, gl.RGBA, gl.UNSIGNED_BYTE, image);
-			gl.generateMipmap(gl.TEXTURE_2D);
+		const chunkCount = 1000;
+		this.chunks = new Array(chunkCount).fill(null).map((a, index) => {
+			//	constructor(index, vertices, move, gravity, textureCoord, animation, spriteSheetIndex)
+			const { vertex, move, gravity, texCoord, animation } = this.floatBuffer;
+			return new Chunk(index,
+				vertex.subarray(index * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX),
+				move.subarray(index * VERTICES_PER_SPRITE * MOVE_FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * MOVE_FLOAT_PER_VERTEX),
+				gravity.subarray(index * VERTICES_PER_SPRITE * GRAVITY_FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * GRAVITY_FLOAT_PER_VERTEX),
+				texCoord.subarray(index * VERTICES_PER_SPRITE * TEXTURE_FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * TEXTURE_FLOAT_PER_VERTEX),
+				animation.subarray(index * VERTICES_PER_SPRITE * ANIMATION_FLOAT_DATA, (index+1) * VERTICES_PER_SPRITE * ANIMATION_FLOAT_DATA),
+			);
 		});
+		this.usedChunks = 0;
 	}
 
 	setBackground(color) {
@@ -105,17 +140,17 @@ class Engine {
 		const { gl, shader } = this;
 		const nowSec = timeMillis / 1000;
 		gl.uniform1f(shader.programInfo.nowLocation, nowSec);
+		return nowSec;
 	}
 
-	clear() {
+	clearScreen() {
 		const { gl } = this;
 		gl.clear(gl.COLOR_BUFFER_BIT);
 	}
 
-	display() {
+	display(sprites) {
 		const { gl } = this;
 		const INDEX_ARRAY_PER_SPRITE_COUNT = 6;
-
 		gl.drawElements(gl.TRIANGLES, 1 * INDEX_ARRAY_PER_SPRITE_COUNT, gl.UNSIGNED_SHORT, 0);
 	}
 }

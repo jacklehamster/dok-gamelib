@@ -40,7 +40,7 @@
 			],
 			"index": 0
 		},
-		"penguin-down": {
+		"penguin-bot-left": {
 			"offset": [
 				664,
 				0
@@ -51,7 +51,7 @@
 			],
 			"index": 0
 		},
-		"penguin-bot-left": {
+		"penguin-down": {
 			"offset": [
 				792,
 				0
@@ -62,7 +62,7 @@
 			],
 			"index": 0
 		},
-		"penguin-up": {
+		"penguin-right": {
 			"offset": [
 				920,
 				0
@@ -73,7 +73,7 @@
 			],
 			"index": 0
 		},
-		"penguin-right": {
+		"penguin-top-left": {
 			"offset": [
 				1048,
 				0
@@ -84,7 +84,7 @@
 			],
 			"index": 0
 		},
-		"penguin-top-left": {
+		"penguin-up": {
 			"offset": [
 				1176,
 				0
@@ -95,9 +95,20 @@
 			],
 			"index": 0
 		},
-		"access-card": {
+		"32x64": {
 			"offset": [
 				1304,
+				0
+			],
+			"size": [
+				32,
+				64
+			],
+			"index": 0
+		},
+		"access-card": {
+			"offset": [
+				1336,
 				0
 			],
 			"size": [
@@ -108,22 +119,11 @@
 		},
 		"water": {
 			"offset": [
-				1368,
+				1400,
 				0
 			],
 			"size": [
 				64,
-				64
-			],
-			"index": 0
-		},
-		"32x64": {
-			"offset": [
-				1432,
-				0
-			],
-			"size": [
-				32,
 				64
 			],
 			"index": 0

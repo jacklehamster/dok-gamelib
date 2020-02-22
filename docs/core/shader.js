@@ -1,5 +1,6 @@
 const FLOAT_PER_VERTEX 			= 3;	//	x,y,z
 const MOVE_FLOAT_PER_VERTEX 	= 4;	//	x,y,z,time
+const GRAVITY_FLOAT_PER_VERTEX 	= 3;	//	x,y,z
 const TEXTURE_FLOAT_PER_VERTEX 	= 4;	//	x,y,w,h
 const ANIMATION_FLOAT_DATA 		= 4;	//	cols,index,count,frameRate
 const VERTICES_PER_SPRITE 		= 4;	//	4 corners
@@ -16,7 +17,6 @@ class Shader {
 
 	constructor(gl, vertexShader, fragmentShader) {
 		const shaderProgram = Shader.initShaderProgram(gl, vertexShader, fragmentShader);
-		gl.useProgram(shaderProgram);
 		const programInfo = Shader.getProgramInfo(gl, shaderProgram);
 		
 		this.programInfo = programInfo;
@@ -24,10 +24,20 @@ class Shader {
 		this.buffer = {
 			vertex: Shader.initializeVertexBuffer(gl, programInfo.vertexLocation, FLOAT_PER_VERTEX),
 			move: Shader.initializeVertexBuffer(gl, programInfo.vertexMove, MOVE_FLOAT_PER_VERTEX),
+			gravity: Shader.initializeVertexBuffer(gl, programInfo.vertexGravity, GRAVITY_FLOAT_PER_VERTEX),
 			texCoord: Shader.initializeVertexBuffer(gl, programInfo.vertexTextureCoord, TEXTURE_FLOAT_PER_VERTEX),
 			animation: Shader.initializeVertexBuffer(gl, programInfo.animationData, ANIMATION_FLOAT_DATA),
 			index: Shader.initializeIndexBuffer(gl),
 		};
+		this.gl = gl;
+		this.shaderProgram = shaderProgram;
+
+		this.use();
+	}
+
+	use() {
+		const { shaderProgram, gl } = this;
+		gl.useProgram(shaderProgram);		
 	}
 
 	static initShaderProgram(gl, vsSource, fsSource) {
@@ -64,6 +74,7 @@ class Shader {
 		const programInfo = {
 			vertexLocation: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
 			vertexMove: gl.getAttribLocation(shaderProgram, 'aVertexMove'),
+			vertexGravity: gl.getAttribLocation(shaderProgram, 'aVertexGravity'),
 			vertexTextureCoord: gl.getAttribLocation(shaderProgram, 'aVertexTextureCoord'),
 			animationData: gl.getAttribLocation(shaderProgram, 'aAnimationData'),
 
@@ -71,7 +82,6 @@ class Shader {
 			viewLocation: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
 			nowLocation: gl.getUniformLocation(shaderProgram, 'uNowSec'),
 			textures: gl.getUniformLocation(shaderProgram, 'uTextures'),
-			gravity: gl.getUniformLocation(shaderProgram, 'uGravity'),
 		};
 		return programInfo;
 	}	

@@ -1,9 +1,11 @@
 class Game {
-	constructor(engine, sceneManager, config, data) {
-		this.engine = engine;
+	constructor(canvas, sceneManager, config, data) {
+		this.engine = new Engine(canvas, data.webgl, data.generated.config.imagedata.spritesheets);
 		this.sceneManager = sceneManager;
 		this.config = config;
 		this.data = data;
+		this.spriteProcessor = new SpriteProcessor(this, engine);
+		this.spriteProvider = new SpriteProvider();
 		this.currentScene = {};
 
 		const self = this;
@@ -30,11 +32,11 @@ class Game {
 	}
 
 	refresh(timeMillis) {
-		const { engine, currentScene } = this;
-		engine.clear();
-		engine.setTime(timeMillis);
+		const { currentScene, engine } = this;
+		engine.clearScreen();
+		const nowSec = engine.setTime(timeMillis);
 		if (currentScene) {
-			engine.display(currentScene.sprites);
+			engine.display(this.spriteProcessor.process(currentScene.sprites, this.spriteProvider, nowSec));
 		}
 	}
 }

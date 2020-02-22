@@ -1,14 +1,14 @@
 precision mediump float;
 
 attribute vec4 aVertexPosition;
-attribute vec4 aVertexMove;
+attribute vec4 aVertexMove;				//	[ x, y, z, time ]
+attribute vec3 aVertexGravity;			//	[ x, y, z ]
 
 attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
 attribute vec4 aAnimationData; 			//	[ cols, index, total, frameRate ]
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
-uniform vec4 uGravity;
 uniform float uNowSec;
 
 varying highp vec2 vTexturePoint;
@@ -20,9 +20,9 @@ void main(void) {
 	pos.x += aVertexMove.x * time;
 	pos.y += aVertexMove.y * time;
 	pos.z += aVertexMove.z * time;
-	pos.x += uGravity.x * time * time / 2.0;
-	pos.y += uGravity.y * time * time / 2.0;
-	pos.z += uGravity.z * time * time / 2.0;
+	pos.x += aVertexGravity.x * time * time / 2.0;
+	pos.y += aVertexGravity.y * time * time / 2.0;
+	pos.z += aVertexGravity.z * time * time / 2.0;
 	gl_Position = uProjectionMatrix * uViewMatrix * pos;
 
 	float total = floor(aAnimationData[2]);
