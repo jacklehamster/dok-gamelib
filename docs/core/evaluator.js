@@ -1,6 +1,6 @@
 class Evaluator {
 	constructor() {
-		this.nowSec = 0;
+		this.timeMillis = 0;
 		this.scene = {};
 	}
 

@@ -40,10 +40,10 @@
 
 		//	[ x, y, spritewidth, spriteheight ]
 		move: Float32Array([
-			0, 0, 0, nowSec,
-			0, 0, 0, nowSec,
-			0, 0, 0, nowSec,
-			0, 0, 0, nowSec,			
+			0, 0, 0, timeMillis,
+			0, 0, 0, timeMillis,
+			0, 0, 0, timeMillis,
+			0, 0, 0, timeMillis,			
 		])
 
 		gravity: Float32Array([
@@ -78,48 +78,63 @@ class SpriteDefinitionProcessor {
 		this.spriteCollector = [];
 	}
 
-	process(spriteDefinitions, nowSec) {
+	process(spriteDefinitions) {
 		const { spriteCollector } = this;
 		spriteCollector.length = 0;
-		spriteDefinitions.forEach((definition, definitionIndex) => this.processSpriteDefinition(definition, definitionIndex, spriteCollector, nowSec));
+		spriteDefinitions.forEach((definition, definitionIndex) => this.processSpriteDefinition(definition, definitionIndex, spriteCollector));
 		return spriteCollector;
 	}
 
-	processSpriteDefinition(definition, definitionIndex, spriteCollector, nowSec) {
+	processSpriteDefinition(definition, definitionIndex, spriteCollector) {
 		const { evaluator, spriteProvider } = this;
 		const { src, type, animation, pos, mov, gravity, count } = definition;
+		const { timeMillis } = evaluator;
 		const totalCount = evaluator.evaluate(count) || 1;
 
+		const instanceGroup = { sprite: null, index: 0 };
 		for (let instanceIndex = 0; instanceIndex < totalCount; instanceIndex ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, instanceIndex);
+			instanceGroup.sprite = sprite;
+			instanceGroup.index = instanceIndex;
 
-			const spriteSrc = evaluator.evaluate(src, sprite);
-			const spriteType = evaluator.evaluate(type, sprite);
+			const spriteSrc = evaluator.evaluate(src, instanceGroup);
+			const spriteType = evaluator.evaluate(type, instanceGroup);
 			if (spriteSrc !== sprite.src || spriteType !== sprite.type) {
 				sprite.src = spriteSrc;
 				sprite.type = spriteType;
-				sprite.updated = nowSec;
+				sprite.updateTime = timeMillis;
 			}
 
-			if (pos && !vec3.equals(pos, sprite.pos)) {
-				sprite.pos.set(pos);
-				sprite.updated = nowSec;
-			}
-			if (mov && !vec3.equals(mov, sprite.mov)) {
-				sprite.mov.set(mov);
-				sprite.updated = nowSec;
-			}
-			if (gravity && !vec3.equals(gravity, sprite.gravity)) {
-				sprite.gravity.set(gravity);
-				sprite.updated = nowSec;
+			for (let i = 0; i < 3; i++) {
+				if (pos) {
+					const value = evaluator.evaluate(pos[i], instanceGroup);
+					if (value !== sprite.pos[i]) {
+						sprite.pos[i] = value;
+						sprite.updateTime = timeMillis;
+					}
+				}
+				if (mov) {
+					const value = evaluator.evaluate(mov[i], instanceGroup);
+					if (value !== sprite.mov[i]) {
+						sprite.pos[i] = value;
+						sprite.updateTime = timeMillis;
+					}
+				}
+				if (gravity) {
+					const value = evaluator.evaluate(gravity[i], instanceGroup);
+					if (value !== sprite.gravity[i]) {
+						sprite.gravity[i] = value;
+						sprite.updateTime = timeMillis;
+					}
+				}
 			}
 			if (animation) {
 				const { frame, range, frameRate, grid } = animation;
-				const animFrame = 		evaluator.evaluate(frame, sprite) || 0;
-				const animRange = 		evaluator.evaluate(range, sprite) || 1;
-				const animFrameRate = 	evaluator.evaluate(frameRate, sprite) || 15;
-				const animCols = 		evaluator.evaluate(grid[0], sprite) || 1;
-				const animRows = 		evaluator.evaluate(grid[1], sprite) || 1;
+				const animFrame = 		evaluator.evaluate(frame, instanceGroup) || 0;
+				const animRange = 		evaluator.evaluate(range, instanceGroup) || 1;
+				const animFrameRate = 	evaluator.evaluate(frameRate, instanceGroup) || 15;
+				const animCols = 		evaluator.evaluate(grid[0], instanceGroup) || 1;
+				const animRows = 		evaluator.evaluate(grid[1], instanceGroup) || 1;
 
 				const spriteAnim = sprite.animation;
 				if (spriteAnim.frame !== animFrame || spriteAnim.range !== animRange
@@ -130,7 +145,7 @@ class SpriteDefinitionProcessor {
 					spriteAnim.frameRate = animFrameRate;
 					spriteAnim.grid[0] = animCols;
 					spriteAnim.grid[1] = animRows;
-					sprite.updated = nowSec;
+					sprite.updateTime = timeMillis;
 				}
 			}
 			spriteCollector.push(sprite);

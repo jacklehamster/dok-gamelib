@@ -10,10 +10,10 @@
 
 		//	[ x, y, spritewidth, spriteheight ]
 		move: Float32Array([
-			0, 0, 0, nowSec,
-			0, 0, 0, nowSec,
-			0, 0, 0, nowSec,
-			0, 0, 0, nowSec,			
+			0, 0, 0, timeMillis,
+			0, 0, 0, timeMillis,
+			0, 0, 0, timeMillis,
+			0, 0, 0, timeMillis,			
 		])
 
 		gravity: Float32Array([
@@ -52,21 +52,30 @@ class Chunk {
 		this.animation = animation;
 	}
 
-	setRect(x, y, width, height) {
+	setRect(x, y, zOrder, width, height) {
 		this.vertices.set([
-			x - width/2,	y + height/2,	0,
-			x - width/2,	y - height/2,	0,
-			x + width/2,	y - height/2,	0,
-			x + width/2,	y + height/2,	0,
+			x - width/2,	y + height/2,	zOrder,
+			x - width/2,	y - height/2,	zOrder,
+			x + width/2,	y - height/2,	zOrder,
+			x + width/2,	y + height/2,	zOrder,
 		]);
 	}
 
-	setMove(dx, dy, nowSec) {
+	setMove(dx, dy, dz, timeMillis) {
 		this.move.set([
-			dx, dy, 0, nowSec,
-			dx, dy, 0, nowSec,
-			dx, dy, 0, nowSec,
-			dx, dy, 0, nowSec,
+			dx, dy, dz, timeMillis,
+			dx, dy, dz, timeMillis,
+			dx, dy, dz, timeMillis,
+			dx, dy, dz, timeMillis,
+		]);
+	}
+
+	setGravity(gx, gy, gz) {
+		this.gravity.set([
+			gx, gy, gz,
+			gx, gy, gz,
+			gx, gy, gz,
+			gx, gy, gz,
 		]);
 	}
 

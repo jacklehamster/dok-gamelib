@@ -5,7 +5,6 @@ class Game {
 		this.sceneRenderer = new SceneRenderer(this.engine, this.evaluator);
 		this.spriteRenderer = new SpriteRenderer(this.engine, this.evaluator);
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor(this.evaluator);
-		this.evaluator = new Evaluator(this);
 		this.sceneManager = sceneManager;
 		this.config = config;
 		this.data = data;
@@ -15,11 +14,11 @@ class Game {
 		const self = this;
 		function animationFrame(timeMillis) {
 			const { currentScene } = self;
-			const nowSec = engine.setTime(timeMillis);
-			evaluator.nowSec = nowSec;
-			sceneRenderer.render(currentScene, nowSec);
-			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, nowSec);
-			spriteRenderer.render(sprites, nowSec);
+			engine.setTime(timeMillis);
+			evaluator.timeMillis = timeMillis;
+			sceneRenderer.render(currentScene);
+			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, timeMillis);
+			spriteRenderer.render(sprites, timeMillis);
 			requestAnimationFrame(animationFrame);
 		}
 		requestAnimationFrame(animationFrame);

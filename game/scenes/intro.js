@@ -8,11 +8,17 @@ sceneManager.add({
 	sprites: [
 		{
 			src: "yupa-dance",
+			pos: [
+				({timeMillis}, {index}) => Math.sin(timeMillis/200 + index),
+				(a, {index}) => Math.cos(index/10),
+				0,
+			],
 			animation: {
 				range: 8,
 				grid: [4, 4],
 				frameRate: 4,
 			},
+			count: 10,
 		},
 		{
 			src: "yupa-dance",

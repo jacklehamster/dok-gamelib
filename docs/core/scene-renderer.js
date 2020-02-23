@@ -15,7 +15,7 @@ class SceneRenderer {
 		};
 	}
 
-	render(scene, nowSec) {
+	render(scene) {
 		const { engine, evaluator, background } = this;
 		engine.clearScreen();
 		const newBackground = evaluator.evaluate(scene.background);
