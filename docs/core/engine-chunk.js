@@ -40,15 +40,54 @@
 		])
 	*/
 
+const TEXTURE_SIZE = 4096;
 
 class Chunk {
-	init(index, vertices, move, gravity, textureCoord, animation) {
+	constructor(index, vertices, move, gravity, textureCoord, animation) {
 		this.index = index;
 		this.vertices = vertices;
 		this.move = move;
 		this.gravity = gravity;
 		this.textureCoord = textureCoord;
 		this.animation = animation;
-		return this;
+	}
+
+	setRect(x, y, width, height) {
+		this.vertices.set([
+			x - width/2,	y + height/2,	0,
+			x - width/2,	y - height/2,	0,
+			x + width/2,	y - height/2,	0,
+			x + width/2,	y + height/2,	0,
+		]);
+	}
+
+	setMove(dx, dy, nowSec) {
+		this.move.set([
+			dx, dy, 0, nowSec,
+			dx, dy, 0, nowSec,
+			dx, dy, 0, nowSec,
+			dx, dy, 0, nowSec,
+		]);
+	}
+
+	setTexture(index, offset, spriteWidth, spriteHeight) {
+		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
+		const [ spriteX, spriteY ] = offset;
+		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
+		this.textureCoord.set([
+			index + texX,				texY,				texWidth,	texHeight,
+			index + texX,				texY + texHeight,	texWidth,	texHeight,
+			index + texX + texWidth,	texY + texHeight,	texWidth,	texHeight,
+			index + texX + texWidth,	texY,				texWidth,	texHeight,
+		]);
+	}
+
+	setAnimation(cols, frame, range, frameRate) {
+		this.animation.set([
+			cols, frame, range, frameRate,
+			cols, frame, range, frameRate,
+			cols, frame, range, frameRate,
+			cols, frame, range, frameRate,
+		]);
 	}
 }

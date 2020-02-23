@@ -17,11 +17,14 @@
 		<script src="core/utils.js"></script>
 		<script src="core/texture-manager.js"></script>
 		<script src="core/shader.js"></script>
+		<script src="core/scene-renderer.js"></script>
+		<script src="core/sprite-renderer.js"></script>
+		<script src="core/evaluator.js"></script>
 		<script src="core/engine-chunk.js"></script>
 		<script src="core/engine.js"></script>
 		<script src="core/sprite.js"></script>
 		<script src="core/sprite-provider.js"></script>
-		<script src="core/sprite-processor.js"></script>
+		<script src="core/sprite-definition-processor.js"></script>
 		<script src="core/game.js"></script>
 		<script src="core/scene-manager.js"></script>
 		<script src="generated/js/data.js"></script>
@@ -39,8 +42,7 @@
 			let game;
 		
 			document.addEventListener("DOMContentLoaded", e => {
-				const engine = new Engine(document.getElementById("canvas"), data.webgl);
-				game = new Game(engine, sceneManager, config, data);
+				game = new Game(document.getElementById("canvas"), sceneManager, config, data);
 				game.start();
 			});
 		</script>

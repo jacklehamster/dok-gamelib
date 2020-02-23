@@ -1,16 +1,25 @@
 class Game {
 	constructor(canvas, sceneManager, config, data) {
-		this.engine = new Engine(canvas, data.webgl, data.generated.config.imagedata.spritesheets);
+		this.engine = new Engine(canvas, data.webgl, data.generated.config.imagedata);
+		this.evaluator = new Evaluator();
+		this.sceneRenderer = new SceneRenderer(this.engine, this.evaluator);
+		this.spriteRenderer = new SpriteRenderer(this.engine, this.evaluator);
+		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor(this.evaluator);
+		this.evaluator = new Evaluator(this);
 		this.sceneManager = sceneManager;
 		this.config = config;
 		this.data = data;
-		this.spriteProcessor = new SpriteProcessor(this, engine);
-		this.spriteProvider = new SpriteProvider();
 		this.currentScene = {};
 
+		const { engine, sceneRenderer, spriteRenderer, spriteDefinitionProcessor, evaluator } = this;
 		const self = this;
 		function animationFrame(timeMillis) {
-			self.refresh(timeMillis);
+			const { currentScene } = self;
+			const nowSec = engine.setTime(timeMillis);
+			evaluator.nowSec = nowSec;
+			sceneRenderer.render(currentScene, nowSec);
+			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, nowSec);
+			spriteRenderer.render(sprites, nowSec);
 			requestAnimationFrame(animationFrame);
 		}
 		requestAnimationFrame(animationFrame);
@@ -19,24 +28,10 @@ class Game {
 	start() {
 		const { start } = this.config;
 		this.setScene(this.sceneManager.scenes[start]);
-		console.log("Starting scene:", start);
+		console.log("Start scene:", start);
 	}
 
 	setScene(scene) {
 		this.currentScene = scene;
-		this.engine.setBackground(this.evaluate(this.currentScene.background));
-	}
-
-	evaluate(value, ...params) {
-		return typeof value === "function" ? value.apply(this, params) : value;
-	}
-
-	refresh(timeMillis) {
-		const { currentScene, engine } = this;
-		engine.clearScreen();
-		const nowSec = engine.setTime(timeMillis);
-		if (currentScene) {
-			engine.display(this.spriteProcessor.process(currentScene.sprites, this.spriteProvider, nowSec));
-		}
 	}
 }

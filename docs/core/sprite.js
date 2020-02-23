@@ -16,8 +16,7 @@ class Sprite {
 			frame: 0,
 			range: 1,
 			frameRate: 15,
-			cols: 1,
-			rows: 1,
+			grid: [1, 1],
 		};
 		this.updateTime = 0;
 		this.chunkIndex = -1;

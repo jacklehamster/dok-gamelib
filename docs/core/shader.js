@@ -1,9 +1,9 @@
-const FLOAT_PER_VERTEX 			= 3;	//	x,y,z
-const MOVE_FLOAT_PER_VERTEX 	= 4;	//	x,y,z,time
-const GRAVITY_FLOAT_PER_VERTEX 	= 3;	//	x,y,z
-const TEXTURE_FLOAT_PER_VERTEX 	= 4;	//	x,y,w,h
-const ANIMATION_FLOAT_DATA 		= 4;	//	cols,index,count,frameRate
-const VERTICES_PER_SPRITE 		= 4;	//	4 corners
+const FLOAT_PER_VERTEX 				= 3;	//	x,y,z
+const MOVE_FLOAT_PER_VERTEX 		= 4;	//	x,y,z,time
+const GRAVITY_FLOAT_PER_VERTEX 		= 3;	//	x,y,z
+const TEXTURE_FLOAT_PER_VERTEX 		= 4;	//	x,y,w,h
+const ANIMATION_FLOAT_PER_VERTEX 	= 4;	//	cols,index,count,frameRate
+const VERTICES_PER_SPRITE 			= 4;	//	4 corners
 const INDEX_ARRAY_PER_SPRITE = new Uint16Array([
 	0,  1,  2,
 	0,  2,  3,
@@ -26,7 +26,7 @@ class Shader {
 			move: Shader.initializeVertexBuffer(gl, programInfo.vertexMove, MOVE_FLOAT_PER_VERTEX),
 			gravity: Shader.initializeVertexBuffer(gl, programInfo.vertexGravity, GRAVITY_FLOAT_PER_VERTEX),
 			texCoord: Shader.initializeVertexBuffer(gl, programInfo.vertexTextureCoord, TEXTURE_FLOAT_PER_VERTEX),
-			animation: Shader.initializeVertexBuffer(gl, programInfo.animationData, ANIMATION_FLOAT_DATA),
+			animation: Shader.initializeVertexBuffer(gl, programInfo.animationData, ANIMATION_FLOAT_PER_VERTEX),
 			index: Shader.initializeIndexBuffer(gl),
 		};
 		this.gl = gl;

@@ -71,31 +71,30 @@
 	}
  */
 
-class SpriteProcessor {
-	constructor(game, engine) {
-		this.game = game;
-		this.engine = engine;
-		this.imagedata = game.data.generated.config.imagedata;
+class SpriteDefinitionProcessor {
+	constructor(evaluator) {
+		this.evaluator = evaluator;
+		this.spriteProvider = new SpriteProvider();
 		this.spriteCollector = [];
 	}
 
-	process(spriteDefinitions, spriteProvider, nowSec) {
+	process(spriteDefinitions, nowSec) {
 		const { spriteCollector } = this;
 		spriteCollector.length = 0;
-		spriteDefinitions.forEach((definition, definitionIndex) => this.processSpriteDefinition(definition, definitionIndex, spriteProvider, spriteCollector, nowSec));
+		spriteDefinitions.forEach((definition, definitionIndex) => this.processSpriteDefinition(definition, definitionIndex, spriteCollector, nowSec));
 		return spriteCollector;
 	}
 
-	processSpriteDefinition(definition, definitionIndex, spriteProvider, spriteCollector, nowSec) {
-		const { game, engine, imagedata } = this;
+	processSpriteDefinition(definition, definitionIndex, spriteCollector, nowSec) {
+		const { evaluator, spriteProvider } = this;
 		const { src, type, animation, pos, mov, gravity, count } = definition;
-		const totalCount = game.evaluate(count) || 1;
+		const totalCount = evaluator.evaluate(count) || 1;
 
 		for (let instanceIndex = 0; instanceIndex < totalCount; instanceIndex ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, instanceIndex);
 
-			const spriteSrc = game.evaluate(src, instanceIndex);
-			const spriteType = game.evaluate(type, instanceIndex);
+			const spriteSrc = evaluator.evaluate(src, sprite);
+			const spriteType = evaluator.evaluate(type, sprite);
 			if (spriteSrc !== sprite.src || spriteType !== sprite.type) {
 				sprite.src = spriteSrc;
 				sprite.type = spriteType;
@@ -115,25 +114,26 @@ class SpriteProcessor {
 				sprite.updated = nowSec;
 			}
 			if (animation) {
-				const { frame, range, frameRate, cols, rows } = animation;
-				const animFrame = 		game.evaluate(frame, instanceIndex) || 0;
-				const animRange = 		game.evaluate(range, instanceIndex) || 1;
-				const animFrameRate = 	game.evaluate(frameRate, instanceIndex) || 15;
-				const animCols = 		game.evaluate(cols, instanceIndex) || 1;
-				const animRows = 		game.evaluate(rows, instanceIndex) || 1;
+				const { frame, range, frameRate, grid } = animation;
+				const animFrame = 		evaluator.evaluate(frame, sprite) || 0;
+				const animRange = 		evaluator.evaluate(range, sprite) || 1;
+				const animFrameRate = 	evaluator.evaluate(frameRate, sprite) || 15;
+				const animCols = 		evaluator.evaluate(grid[0], sprite) || 1;
+				const animRows = 		evaluator.evaluate(grid[1], sprite) || 1;
 
 				const spriteAnim = sprite.animation;
 				if (spriteAnim.frame !== animFrame || spriteAnim.range !== animRange
 					|| spriteAnim.frameRate !== animFrameRate
-					|| spriteAnim.cols !== animCols || spriteAnim.rows !== animRows) {
+					|| spriteAnim.grid[0] !== animCols || spriteAnim.grid[1] !== animRows) {
 					spriteAnim.frame = animFrame;
 					spriteAnim.range = animRange;
 					spriteAnim.frameRate = animFrameRate;
-					spriteAnim.cols = animCols;
-					spriteAnim.rows = animRows;
+					spriteAnim.grid[0] = animCols;
+					spriteAnim.grid[1] = animRows;
 					sprite.updated = nowSec;
 				}
 			}
+			spriteCollector.push(sprite);
 		}
 	}
 }
