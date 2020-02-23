@@ -120,7 +120,7 @@ app.get('/spritesheet', function(req, res) {
 		generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(code => {
 			res.writeHeader(200, {"Content-Type": "text/html"}); 
 			data.spritesheets.forEach(src => {
-		        res.write(`<img style='background-color: #ddddee; border: 1px solid black' src="${src}" width=200 height=200>`);  
+		        res.write(`<a href="${src}"><img style='background-color: #ddddee; border: 1px solid black' src="${src}" width=200></a>`);  
 			});
 			res.write(`<pre>${code}</pre>`);
 			res.end();
