@@ -206,8 +206,8 @@ class Engine {
 			const [ mx, my, mz ] = mov;
 			const [ gx, gy, gz ] = gravity;
 			const [ cols, rows ] = grid;
-			const [ sheetWidth, sheetHeight ] = size;
 			const { offset, size, index } = imagedata.sprites[src];
+			const [ sheetWidth, sheetHeight ] = size;
 			chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows);
 			chunk.setRect(x, y, z, 1, 1);
 			chunk.setMove(mx, my, mz, timeMillis);
