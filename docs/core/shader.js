@@ -1,17 +1,6 @@
-const FLOAT_PER_VERTEX 				= 3;	//	x,y,z
-const MOVE_FLOAT_PER_VERTEX 		= 4;	//	x,y,z,time
-const GRAVITY_FLOAT_PER_VERTEX 		= 3;	//	x,y,z
-const TEXTURE_FLOAT_PER_VERTEX 		= 4;	//	x,y,w,h
-const ANIMATION_FLOAT_PER_VERTEX 	= 4;	//	cols,index,count,frameRate
-const VERTICES_PER_SPRITE 			= 4;	//	4 corners
-const INDEX_ARRAY_PER_SPRITE = new Uint16Array([
-	0,  1,  2,
-	0,  2,  3,
-]);
-
-const MAX_TEXTURES = 16;
-const MAX_SPRITE = 1000;
-
+/**
+ *	Shader
+ */
 
 class Shader {
 
@@ -47,6 +36,13 @@ class Shader {
 		const shaderProgram = gl.createProgram();
 		gl.attachShader(shaderProgram, vertexShader);
 		gl.attachShader(shaderProgram, fragmentShader);
+
+		gl.bindAttribLocation(shaderProgram, 0, 'aVertexPosition');
+		gl.bindAttribLocation(shaderProgram, 1, 'aVertexMove');
+		gl.bindAttribLocation(shaderProgram, 2, 'aVertexGravity');
+		gl.bindAttribLocation(shaderProgram, 3, 'aVertexTextureCoord');
+		gl.bindAttribLocation(shaderProgram, 4, 'aAnimationData');
+
 		gl.linkProgram(shaderProgram);
   
 		if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
@@ -83,6 +79,7 @@ class Shader {
 			timeLocation: gl.getUniformLocation(shaderProgram, 'uTimeMillis'),
 			textures: gl.getUniformLocation(shaderProgram, 'uTextures'),
 		};
+
 		return programInfo;
 	}	
 

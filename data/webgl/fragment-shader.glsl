@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 const int NUM_TEXTURES = 16;
 

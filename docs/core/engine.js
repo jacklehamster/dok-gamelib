@@ -10,36 +10,25 @@ Step 3: If a chunk is not updated, it’s being recycled next turn.
 
 class Engine {
 	constructor(canvas, webgl, imagedata) {
-		const FLOAT_PER_VERTEX 				= 3;	//	x,y,z
-		const MOVE_FLOAT_PER_VERTEX 		= 4;	//	x,y,z,time
-		const GRAVITY_FLOAT_PER_VERTEX 		= 3;	//	x,y,z
-		const TEXTURE_FLOAT_PER_VERTEX 		= 4;	//	x,y,w,h
-		const ANIMATION_FLOAT_PER_VERTEX 	= 4;	//	cols,index,count,frameRate
-		const VERTICES_PER_SPRITE 			= 4;	//	4 corners
-		const INDEX_ARRAY_PER_SPRITE = new Uint16Array([
-			0,  1,  2,
-			0,  2,  3,
-		]);
-
-		const MAX_TEXTURES = 16;
-		const MAX_SPRITE = 1000;
-
-		this.TEXTURE_SIZE = 4096;
-		
-		canvas.width = canvas.offsetWidth * 2;
-		canvas.height = canvas.offsetHeight * 2;
-		canvas.style.width = `${canvas.width / 2}px`;
-		canvas.style.height = `${canvas.height / 2}px`;
+		const resolution = devicePixelRatio;
+		canvas.width = canvas.offsetWidth * resolution;
+		canvas.height = canvas.offsetHeight * resolution;
+		canvas.style.width = `${canvas.width / resolution}px`;
+		canvas.style.height = `${canvas.height / resolution}px`;
 
 		const { vertexShader, fragmentShader } = webgl;
-		this.gl = canvas.getContext("webgl", {antialias:false});
+		this.webGLOptions = {
+			antialias: false, preserveDrawingBuffer: false,
+			alpha: false, depth: false, stencil: false,
+		};
+		this.gl = canvas.getContext("webgl", this.webGLOptions);
 		this.shader = new Shader(this.gl, vertexShader, fragmentShader);
 		this.textureManager = new TextureManager(this.gl, this.shader);
 		this.projectionMatrix = mat4.create();
 		this.viewMatrix = mat4.create();
 		this.imagedata = imagedata;
 
-		const { gl, shader, textureManager, projectionMatrix, viewMatrix, TEXTURE_SIZE } = this;
+		const { gl, shader, textureManager, projectionMatrix, viewMatrix } = this;
 
 		//	initialize view and projection
 		this.setViewAngle(45);
@@ -53,9 +42,8 @@ class Engine {
 			animation: new Float32Array(ANIMATION_FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
 		};
 
-		const chunkCount = 1000;
-		this.chunkUpdateTimes = new Array(chunkCount).fill(0);
-		this.chunks = new Array(chunkCount).fill(null).map((a, index) => {
+		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
+		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => {
 			//	constructor(index, vertices, move, gravity, textureCoord, animation, spriteSheetIndex)
 			const { vertex, move, gravity, texCoord, animation } = this.floatBuffer;
 			return new Chunk(index,
@@ -107,7 +95,7 @@ class Engine {
 		gl.clear(gl.COLOR_BUFFER_BIT);
 	}
 
-	applyChunk(chunk) {
+	applySingleChunk(chunk) {
 		const { gl, shader } = this;
 		const verticesByteOffset = chunk.index * VERTICES_PER_SPRITE * Float32Array.BYTES_PER_ELEMENT;
 		//	set sprite data
@@ -190,36 +178,46 @@ class Engine {
 
 	display(sprites, timeMillis) {
 		const { gl, imagedata } = this;
-		const INDEX_ARRAY_PER_SPRITE_COUNT = 6;
-		sprites.forEach(sprite => {
-			if (sprite.chunkIndex >= 0 && sprite.updateTime < timeMillis) {
-				return;
-			}
+		for (let i = 0; i < sprites.length; i++) {
+			const sprite = sprites[i];			
 			const chunk = this.getChunk(sprite)
 			if (!chunk) {
 				return;
 			}
 
-			const { src, animation, pos, mov, gravity, chunkIndex } = sprite;
-			const { frame, range, frameRate, grid } = animation;
-			const [ x, y, z ] = pos;
-			const [ mx, my, mz ] = mov;
-			const [ gx, gy, gz ] = gravity;
-			const [ cols, rows ] = grid;
-			const { offset, size, index } = imagedata.sprites[src];
-			const [ sheetWidth, sheetHeight ] = size;
-			chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows);
-			chunk.setRect(x, y, z, 1, 1);
-			chunk.setMove(mx, my, mz, timeMillis);
-			chunk.setGravity(gx, gy, gz);
-			chunk.setAnimation(cols, frame, range, frameRate);
-
-			this.chunkUpdateTimes[chunkIndex] = timeMillis;
-			//this.applyChunk(chunk);
-		});
+			const { src, animation, grid, size, pos, mov, gravity, chunkIndex, updateTimes } = sprite;
+			if (updateTimes.grid === timeMillis || updateTimes.src === timeMillis) {
+				const { offset, size, index } = imagedata.sprites[src];
+				const [ sheetWidth, sheetHeight ] = size;
+				const [ cols, rows ] = grid;
+				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows);
+				this.chunkUpdateTimes[chunkIndex] = timeMillis;
+			}
+			if (updateTimes.pos === timeMillis || updateTimes.size !== timeMillis) {
+				const [ x, y, z ] = pos;
+				const [ width, height ] = size;
+				chunk.setRect(x, y, z, width, height);
+				this.chunkUpdateTimes[chunkIndex] = timeMillis;
+			}
+			if (updateTimes.mov === timeMillis) {
+				const [ mx, my, mz ] = mov;
+				chunk.setMove(mx, my, mz, timeMillis);
+				this.chunkUpdateTimes[chunkIndex] = timeMillis;
+			}
+			if (updateTimes.gravity === timeMillis) {
+				const [ gx, gy, gz ] = gravity;
+				chunk.setGravity(gx, gy, gz);
+				this.chunkUpdateTimes[chunkIndex] = timeMillis;
+			}
+			if (updateTimes.grid === timeMillis || updateTimes.animation === timeMillis) {
+				const { frame, range, frameRate } = animation;
+				const [ cols, rows ] = grid;
+				chunk.setAnimation(cols, frame, range, frameRate);
+				this.chunkUpdateTimes[chunkIndex] = timeMillis;
+			}
+		}
 
 		this.applyChunks(timeMillis);
-
-		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE_COUNT, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
 	}
 }

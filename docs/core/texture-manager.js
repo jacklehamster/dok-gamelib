@@ -2,10 +2,8 @@ class TextureManager {
 	constructor(gl, shader) {
 		this.gl = gl;
 		this.glTextures = [];
-		this.TEXTURE_SIZE = 4096;
-		const NUM_TEXTURES = 16;
-		gl.uniform1iv(shader.programInfo.textures, new Array(NUM_TEXTURES).fill(null).map((a, index) => index));
-		this.glTextures = new Array(NUM_TEXTURES).fill(null).map((a, index) => {
+		gl.uniform1iv(shader.programInfo.textures, new Array(MAX_TEXTURES).fill(null).map((a, index) => index));
+		this.glTextures = new Array(MAX_TEXTURES).fill(null).map((a, index) => {
 			const glTexture = gl.createTexture();
 			glTexture.width = glTexture.height = 1;
 			gl.activeTexture(gl[`TEXTURE${index}`]);
@@ -18,7 +16,7 @@ class TextureManager {
 	}
 
 	setImage(index, src, x, y) {
-		const { gl, glTextures, TEXTURE_SIZE } = this;
+		const { gl, glTextures } = this;
 		Utils.load(src).then(image => {
 			const glTexture = glTextures[index];
 			gl.activeTexture(gl[`TEXTURE${index}`]);

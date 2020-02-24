@@ -11,7 +11,7 @@ uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
 uniform float uTimeMillis;
 
-varying highp vec2 vTexturePoint;
+varying mediump vec2 vTexturePoint;
 
 void main(void) {
 	float timeStart = aVertexMove.w;

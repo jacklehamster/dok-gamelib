@@ -40,8 +40,6 @@
 		])
 	*/
 
-const TEXTURE_SIZE = 4096;
-
 class Chunk {
 	constructor(index, vertices, move, gravity, textureCoord, animation) {
 		this.index = index;
@@ -52,51 +50,58 @@ class Chunk {
 		this.animation = animation;
 	}
 
+	static assignValues(float32Array, ... values) {
+		for (let i = 0; i < values.length; i++) {
+			float32Array[i] = values[i];
+		}
+//		float32Array.set(values);
+	}
+
 	setRect(x, y, zOrder, width, height) {
-		this.vertices.set([
+		Chunk.assignValues(this.vertices,
 			x - width/2,	y + height/2,	zOrder,
 			x - width/2,	y - height/2,	zOrder,
 			x + width/2,	y - height/2,	zOrder,
 			x + width/2,	y + height/2,	zOrder,
-		]);
+		);
 	}
 
 	setMove(dx, dy, dz, timeMillis) {
-		this.move.set([
+		Chunk.assignValues(this.move,
 			dx, dy, dz, timeMillis,
 			dx, dy, dz, timeMillis,
 			dx, dy, dz, timeMillis,
 			dx, dy, dz, timeMillis,
-		]);
+		);
 	}
 
 	setGravity(gx, gy, gz) {
-		this.gravity.set([
+		Chunk.assignValues(this.gravity,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
-		]);
+		);
 	}
 
 	setTexture(index, offset, spriteWidth, spriteHeight) {
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const [ spriteX, spriteY ] = offset;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
-		this.textureCoord.set([
+		Chunk.assignValues(this.textureCoord,
 			index + texX,				texY,				texWidth,	texHeight,
 			index + texX,				texY + texHeight,	texWidth,	texHeight,
 			index + texX + texWidth,	texY + texHeight,	texWidth,	texHeight,
 			index + texX + texWidth,	texY,				texWidth,	texHeight,
-		]);
+		);
 	}
 
 	setAnimation(cols, frame, range, frameRate) {
-		this.animation.set([
+		Chunk.assignValues(this.animation,
 			cols, frame, range, frameRate,
 			cols, frame, range, frameRate,
 			cols, frame, range, frameRate,
 			cols, frame, range, frameRate,
-		]);
+		);
 	}
 }

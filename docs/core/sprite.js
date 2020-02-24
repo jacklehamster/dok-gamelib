@@ -9,6 +9,7 @@ class Sprite {
 		this.instanceIndex = -1;
 		this.src = null;
 		this.type = null;
+		this.size = [0, 0];
 		this.pos = [0, 0, 0];
 		this.mov = [0, 0, 0];
 		this.gravity = [0, 0, 0];
@@ -16,9 +17,9 @@ class Sprite {
 			frame: 0,
 			range: 1,
 			frameRate: 15,
-			grid: [1, 1],
 		};
-		this.updateTime = 0;
+		this.grid = [1, 1];
+		this.updateTimes = {};
 		this.chunkIndex = -1;
 	}
 }
