@@ -70,6 +70,8 @@ class Engine {
 
 		//	load texture
 		imagedata.spritesheets.forEach((spritesheet, index) => textureManager.setImage(index, spritesheet));
+
+		this.setBackground(0);
 	}
 
 	newChunk() {
