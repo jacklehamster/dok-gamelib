@@ -11,7 +11,7 @@ sceneManager.add({
 			pos: [
 				({timeMillis}, sprite, index) => Math.sin(timeMillis/10000 + index),
 				({timeMillis}, sprite, index) => Math.cos(timeMillis/10000 + index/100),
-				({timeMillis}, sprite, index) => -1 + Math.cos(timeMillis/10000 + index),
+				({timeMillis}, sprite, index) => Math.cos(timeMillis/10000 + index),
 			],
 			animation: {
 				range: 8,
@@ -23,7 +23,7 @@ sceneManager.add({
 		},
 		{
 			src: "yupa-dance",
-			pos: [0, 0, -1 + 0],
+			pos: [0, 0, 0],
 			animation: {
 				range: 8,
 				frameRate: 4,

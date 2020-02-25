@@ -12,6 +12,7 @@ uniform mat4 uViewMatrix;
 uniform float uTimeMillis;
 
 varying mediump vec2 vTexturePoint;
+varying mediump float zDist;
 
 void main(void) {
 	float timeStart = aVertexMove.w;
@@ -23,7 +24,7 @@ void main(void) {
 	pos.x += aVertexGravity.x * time * time / 2.0;
 	pos.y += aVertexGravity.y * time * time / 2.0;
 	pos.z += aVertexGravity.z * time * time / 2.0;
-	gl_Position = uProjectionMatrix * uViewMatrix * pos;
+	vec4 position = uProjectionMatrix * uViewMatrix * pos;
 
 	float total = floor(aAnimationData[2]);
 	float fps = aAnimationData[3];
@@ -34,4 +35,7 @@ void main(void) {
 	vTexturePoint = aVertexTextureCoord.xy;
 	vTexturePoint.x += texCol * aVertexTextureCoord[2];
 	vTexturePoint.y += texRow * aVertexTextureCoord[3];
+
+	zDist = abs(position.z / 12.0) + abs(position.y / 10.0);
+	gl_Position = position;
 }

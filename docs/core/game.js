@@ -16,6 +16,7 @@ class Game {
 			const { currentScene } = self;
 			engine.setTime(timeMillis);
 			evaluator.timeMillis = timeMillis;
+			engine.clearScreen();
 			sceneRenderer.render(currentScene);
 			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, timeMillis);
 			spriteRenderer.render(sprites, timeMillis);

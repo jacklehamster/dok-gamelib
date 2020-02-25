@@ -77,9 +77,13 @@ class Engine {
 	}
 
 	setBackground(color) {
-		const { gl } = this;
+		const { gl, shader } = this;
 		color = color || 0;
-		gl.clearColor(((color >> 16) % 256) / 256, ((color >> 8) % 256) / 256, (color % 256) / 256, 1.0);
+		const r = ((color >> 16) % 256) / 256;
+		const g = ((color >> 8) % 256) / 256;
+		const b = ((color) % 256) / 256;
+		gl.uniform4f(shader.programInfo.backgroundLocation, r, g, b, 1.0);
+		gl.clearColor(r, g, b, 1.0);
 	}
 
 	setViewAngle(viewAngle) {
