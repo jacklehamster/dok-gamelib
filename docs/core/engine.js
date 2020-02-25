@@ -19,16 +19,28 @@ class Engine {
 		const { vertexShader, fragmentShader } = webgl;
 		this.webGLOptions = {
 			antialias: false, preserveDrawingBuffer: false,
-			alpha: false, depth: false, stencil: false,
+			alpha: false, depth: true, stencil: false,
 		};
 		this.gl = canvas.getContext("webgl", this.webGLOptions);
-		this.shader = new Shader(this.gl, vertexShader, fragmentShader);
-		this.textureManager = new TextureManager(this.gl, this.shader);
+
+		const { gl } = this;
+		//	initialize gl
+		gl.enable(gl.BLEND);
+		gl.enable(gl.DEPTH_TEST);
+		gl.enable(gl.CULL_FACE);
+
+		gl.cullFace(gl.BACK);
+		gl.depthFunc(gl.LEQUAL);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);	
+
+
+		this.shader = new Shader(gl, vertexShader, fragmentShader);
+		this.textureManager = new TextureManager(gl, this.shader);
 		this.projectionMatrix = mat4.create();
 		this.viewMatrix = mat4.create();
 		this.imagedata = imagedata;
 
-		const { gl, shader, textureManager, projectionMatrix, viewMatrix } = this;
+		const { shader, textureManager, projectionMatrix, viewMatrix } = this;
 
 		//	initialize view and projection
 		this.setViewAngle(45);

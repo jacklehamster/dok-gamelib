@@ -54,7 +54,6 @@ class Chunk {
 		for (let i = 0; i < values.length; i++) {
 			float32Array[i] = values[i];
 		}
-//		float32Array.set(values);
 	}
 
 	setRect(x, y, zOrder, width, height) {
