@@ -3,10 +3,12 @@
  */
 
 class SpriteProvider {
-	constructor() {
+	constructor(type, SpriteConstructor) {
+		this.type = type;
 		this.sprites = [];
 		this.count = 0;
 		this.definitionMapper = [];
+		this.SpriteConstructor = SpriteConstructor;
 	}
 
 	clear() {
@@ -28,7 +30,9 @@ class SpriteProvider {
 	newSprite(definitionIndex, instanceIndex) {
 		while (this.count >= this.sprites.length) {
 			const providerIndex = this.sprites.length;
-			this.sprites.push(new Sprite(providerIndex));
+			const sprite = new this.SpriteConstructor();
+			sprite.providerIndex = providerIndex;
+			this.sprites.push(sprite);
 		}
 		const sprite = this.sprites[this.count++];
 		sprite.definitionIndex = definitionIndex;

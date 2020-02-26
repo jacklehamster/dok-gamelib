@@ -135,7 +135,7 @@ class Engine {
 		gl.bufferSubData(gl.ARRAY_BUFFER, verticesByteOffset * ANIMATION_FLOAT_PER_VERTEX, chunk.animation);
 	}
 
-	getChunk(sprite) {
+	getChunkFor(sprite) {
 		let chunk;
 		if (sprite.chunkIndex < 0) {
 			chunk = this.newChunk();
@@ -198,40 +198,13 @@ class Engine {
 		const { gl, imagedata } = this;
 		for (let i = 0; i < sprites.length; i++) {
 			const sprite = sprites[i];			
-			const chunk = this.getChunk(sprite)
+			const chunk = this.getChunkFor(sprite)
 			if (!chunk) {
 				return;
 			}
 
-			const { src, animation, grid, size, pos, mov, gravity, chunkIndex, updateTimes } = sprite;
-			if (updateTimes.grid === timeMillis || updateTimes.src === timeMillis) {
-				const { offset, size, index } = imagedata.sprites[src];
-				const [ sheetWidth, sheetHeight ] = size;
-				const [ cols, rows ] = grid;
-				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows);
-				this.chunkUpdateTimes[chunkIndex] = timeMillis;
-			}
-			if (updateTimes.pos === timeMillis || updateTimes.size !== timeMillis) {
-				const [ x, y, z ] = pos;
-				const [ width, height ] = size;
-				chunk.setRect(x, y, z, width, height);
-				this.chunkUpdateTimes[chunkIndex] = timeMillis;
-			}
-			if (updateTimes.mov === timeMillis) {
-				const [ mx, my, mz ] = mov;
-				chunk.setMove(mx, my, mz, timeMillis);
-				this.chunkUpdateTimes[chunkIndex] = timeMillis;
-			}
-			if (updateTimes.gravity === timeMillis) {
-				const [ gx, gy, gz ] = gravity;
-				chunk.setGravity(gx, gy, gz);
-				this.chunkUpdateTimes[chunkIndex] = timeMillis;
-			}
-			if (updateTimes.grid === timeMillis || updateTimes.animation === timeMillis) {
-				const { frame, range, frameRate } = animation;
-				const [ cols, rows ] = grid;
-				chunk.setAnimation(cols, frame, range, frameRate);
-				this.chunkUpdateTimes[chunkIndex] = timeMillis;
+			if (sprite.updateChunk(this, chunk, timeMillis)) {
+				this.chunkUpdateTimes[sprite.chunkIndex] = timeMillis;				
 			}
 		}
 
