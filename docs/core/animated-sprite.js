@@ -45,7 +45,6 @@ class AnimatedSprite extends ImageSprite {
 	}
 
 	updateChunk(engine, chunk, timeMillis) {
-		let updated = false;
 		const { src, animation, grid, size, updateTimes } = this;
 		if (updateTimes.grid === timeMillis || updateTimes.src === timeMillis) {
 			if (!src) {
@@ -56,14 +55,11 @@ class AnimatedSprite extends ImageSprite {
 				const [ cols, rows ] = grid;
 				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows, timeMillis);
 			}
-			updated = true;
 		}
 		if (updateTimes.grid === timeMillis || updateTimes.animation === timeMillis) {
 			const { frame, range, frameRate } = animation;
 			const [ cols, rows ] = grid;
 			chunk.setAnimation(cols, frame, range, frameRate, timeMillis);
-			updated = true;
 		}
-		return updated;		
 	}	
 }

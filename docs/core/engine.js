@@ -158,9 +158,20 @@ class Engine {
 		return chunk;		
 	}
 
-	applyChunks(timeMillis) {
-		const { chunkUpdateTimes, usedChunks } = this;
+	sendUpdatedBuffers(timeMillis) {
+		const { shader, bufferInfo } = this;
+		const { vertex, offset, move, gravity, texCoord, animation } = this.bufferInfo;
+		this.sendUpdatedBuffer(shader.buffer.vertex, vertex, timeMillis);
+		this.sendUpdatedBuffer(shader.buffer.offset, offset, timeMillis);
+		this.sendUpdatedBuffer(shader.buffer.move, move, timeMillis);
+		this.sendUpdatedBuffer(shader.buffer.gravity, gravity, timeMillis);
+		this.sendUpdatedBuffer(shader.buffer.texCoord, texCoord, timeMillis);
+		this.sendUpdatedBuffer(shader.buffer.animation, animation, timeMillis);
+	}
 
+	sendUpdatedBuffer(bufferLocation, engineBuffer, timeMillis) {
+		const { usedChunks } = this;
+		const { chunkUpdateTimes } = engineBuffer;
 		const HOLE_LIMIT = 2;
 		let rangeStart = -1, holeSize = 0;
 		for (let i = 0; i < usedChunks; i++) {
@@ -171,26 +182,15 @@ class Engine {
 			} else if (chunkUpdateTimes[i] !== timeMillis) {
 				holeSize++;
 				if (holeSize > HOLE_LIMIT) {
-					this.sendAllBuffers(rangeStart, i - holeSize + 1);
+					this.sendBuffer(bufferLocation, engineBuffer, rangeStart, i - holeSize + 1);
 					rangeStart = -1;
 					holeSize = 0;
 				}
 			}
 		}
 		if (rangeStart >= 0) {
-			this.sendAllBuffers(rangeStart, usedChunks);
-		}
-	}
-
-	sendAllBuffers(rangeStart, rangeEnd) {
-		const { shader, bufferInfo } = this;
-		const { vertex, offset, move, gravity, texCoord, animation } = this.bufferInfo;
-		this.sendBuffer(shader.buffer.vertex, vertex, rangeStart, rangeEnd);
-		this.sendBuffer(shader.buffer.offset, offset, rangeStart, rangeEnd);
-		this.sendBuffer(shader.buffer.move, move, rangeStart, rangeEnd);
-		this.sendBuffer(shader.buffer.gravity, gravity, rangeStart, rangeEnd);
-		this.sendBuffer(shader.buffer.texCoord, texCoord, rangeStart, rangeEnd);
-		this.sendBuffer(shader.buffer.animation, animation, rangeStart, rangeEnd);		
+			this.sendBuffer(bufferLocation, engineBuffer, rangeStart, usedChunks);
+		}		
 	}
 
 	sendBuffer(bufferLocation, engineBuffer, rangeStart, rangeEnd) {
@@ -214,12 +214,10 @@ class Engine {
 				return;
 			}
 
-			if (sprite.updateChunk(this, chunk, timeMillis)) {
-				this.chunkUpdateTimes[sprite.chunkIndex] = timeMillis;				
-			}
+			sprite.updateChunk(this, chunk, timeMillis);
 		}
 
-		this.applyChunks(timeMillis);
+		this.sendUpdatedBuffers(timeMillis);
 		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
 	}
 }

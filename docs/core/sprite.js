@@ -52,25 +52,20 @@ class Sprite extends AnimatedSprite {
 
 	updateChunk(engine, chunk, timeMillis) {
 		super.updateChunk(engine, chunk, timeMillis);
-		let updated = false;
 		const { size, pos, mov, gravity, updateTimes } = this;
 		if (updateTimes.pos === timeMillis || updateTimes.size !== timeMillis) {
 			const [ x, y, z ] = pos;
 			const [ width, height ] = size;
 			chunk.setRect(x, y, z, width, height, timeMillis);
-			updated = true;
 		}
 		if (updateTimes.mov === timeMillis) {
 			const [ mx, my, mz ] = mov;
 			chunk.setMove(mx, my, mz, timeMillis);
-			updated = true;
 		}
 		if (updateTimes.gravity === timeMillis) {
 			const [ gx, gy, gz ] = gravity;
 			chunk.setGravity(gx, gy, gz, timeMillis);
-			updated = true;
 		}
-		return updated;		
 	}
 }
 
