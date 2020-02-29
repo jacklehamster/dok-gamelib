@@ -1,6 +1,7 @@
 precision mediump float;
 
 attribute vec4 aVertexPosition;			//	[ x, y, z ]
+attribute vec3 aOffset;					//	[ x, y, z ]
 attribute vec4 aVertexMove;				//	[ x, y, z, time ]
 attribute vec3 aVertexGravity;			//	[ x, y, z ]
 
@@ -9,6 +10,7 @@ attribute vec4 aAnimationData; 			//	[ cols, index, total, frameRate ]
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
+uniform mat4 uCameraRotation;
 uniform float uTimeMillis;
 
 varying mediump vec2 vTexturePoint;
@@ -18,12 +20,11 @@ void main(void) {
 	float timeStart = aVertexMove.w;
 	float time = uTimeMillis - timeStart;
 	vec4 pos = aVertexPosition;
-	pos.x += aVertexMove.x * time;
-	pos.y += aVertexMove.y * time;
-	pos.z += aVertexMove.z * time;
-	pos.x += aVertexGravity.x * time * time / 2.0;
-	pos.y += aVertexGravity.y * time * time / 2.0;
-	pos.z += aVertexGravity.z * time * time / 2.0;
+	pos = uCameraRotation * pos;
+	pos.xyz += aOffset;
+	pos.xyz += aVertexMove.xyz * time;
+	pos.xyz += aVertexGravity.xyz * time * time / 2.0;
+
 	vec4 position = uProjectionMatrix * uViewMatrix * pos;
 
 	float total = floor(aAnimationData[2]);

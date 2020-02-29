@@ -2,6 +2,13 @@
 const cache = {};
 
 class Utils {
+	static set3(vector, x, y, z) {
+		vector[0] = x;
+		vector[1] = y;
+		vector[2] = z;
+		return vector;
+	}
+	
 	static load(... urls) {
 		return urls.length > 1 ? Promise.all(urls.map(Utils.load)) : new Promise((resolve, reject) => {
 			const url = urls[0];

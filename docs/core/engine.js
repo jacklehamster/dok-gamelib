@@ -46,25 +46,19 @@ class Engine {
 		this.setViewAngle(45);
 		this.setViewPosition(0, 0, 0);
 
-		this.floatBuffer = {
-			vertex: new Float32Array(FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
-			move: new Float32Array(MOVE_FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
-			gravity: new Float32Array(GRAVITY_FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
-			texCoord: new Float32Array(TEXTURE_FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
-			animation: new Float32Array(ANIMATION_FLOAT_PER_VERTEX * VERTICES_PER_SPRITE * MAX_SPRITE),
+		this.bufferInfo = {
+			vertex: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			offset: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			move: 		new EngineBuffer(MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			gravity: 	new EngineBuffer(GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			texCoord: 	new EngineBuffer(TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			animation: 	new EngineBuffer(ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
 		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => {
-			//	constructor(index, vertices, move, gravity, textureCoord, animation, spriteSheetIndex)
-			const { vertex, move, gravity, texCoord, animation } = this.floatBuffer;
-			return new Chunk(index,
-				vertex.subarray(index * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX),
-				move.subarray(index * VERTICES_PER_SPRITE * MOVE_FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * MOVE_FLOAT_PER_VERTEX),
-				gravity.subarray(index * VERTICES_PER_SPRITE * GRAVITY_FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * GRAVITY_FLOAT_PER_VERTEX),
-				texCoord.subarray(index * VERTICES_PER_SPRITE * TEXTURE_FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * TEXTURE_FLOAT_PER_VERTEX),
-				animation.subarray(index * VERTICES_PER_SPRITE * ANIMATION_FLOAT_PER_VERTEX, (index+1) * VERTICES_PER_SPRITE * ANIMATION_FLOAT_PER_VERTEX),
-			);
+			const { vertex, offset, move, gravity, texCoord, animation } = this.bufferInfo;
+			return new Chunk(index, vertex, offset, move, gravity, texCoord, animation);
 		});
 		this.usedChunks = 0;
 
@@ -99,8 +93,25 @@ class Engine {
 
 	setViewPosition(x, y, z) {
 		const { gl, shader, viewMatrix } = this;
-		mat4.translate(viewMatrix, mat4.identity(viewMatrix), vec3.fromValues(-x, -y, -z - 2));
+		const scale = 1;
+		const h = 0;
+		const turn = 0;
+		const tilt = h/2;
+		const zOffset = -2;	//	camera distance
+		const cameraQuat = quat.create();
+		const cameraRotationMatrix = mat4.create();
+		quat.rotateY(cameraQuat, quat.rotateX(cameraQuat, IDENTITY_QUAT, tilt), turn);
+		mat4.fromRotationTranslationScaleOrigin(viewMatrix, cameraQuat, ZERO_VEC3,
+			Utils.set3(vec3.create(), scale, scale, scale), Utils.set3(vec3.create(), 0, h, zOffset));
+		quat.conjugate(cameraQuat, cameraQuat);	//	conjugate for sprites			
+		mat4.translate(viewMatrix, viewMatrix, [x, y, z + zOffset]);
+
+		if (cameraRotationMatrix) {
+			mat4.fromQuat(cameraRotationMatrix, cameraQuat);
+		}
 		gl.uniformMatrix4fv(shader.programInfo.viewLocation, false, viewMatrix);
+		gl.uniformMatrix4fv(shader.programInfo.cameraRotationLocation, false, cameraRotationMatrix);
+
 	}
 
 	setTime(timeMillis) {
@@ -172,25 +183,25 @@ class Engine {
 	}
 
 	sendAllBuffers(rangeStart, rangeEnd) {
-		const { shader, floatBuffer } = this;
-		this.sendBuffer(shader.buffer.vertex, floatBuffer.vertex, rangeStart, rangeEnd, FLOAT_PER_VERTEX);
-		this.sendBuffer(shader.buffer.move, floatBuffer.move, rangeStart, rangeEnd, MOVE_FLOAT_PER_VERTEX);
-		this.sendBuffer(shader.buffer.gravity, floatBuffer.gravity, rangeStart, rangeEnd, GRAVITY_FLOAT_PER_VERTEX);
-		this.sendBuffer(shader.buffer.texCoord, floatBuffer.texCoord, rangeStart, rangeEnd, TEXTURE_FLOAT_PER_VERTEX);
-		this.sendBuffer(shader.buffer.animation, floatBuffer.animation, rangeStart, rangeEnd, ANIMATION_FLOAT_PER_VERTEX);		
+		const { shader, bufferInfo } = this;
+		const { vertex, offset, move, gravity, texCoord, animation } = this.bufferInfo;
+		this.sendBuffer(shader.buffer.vertex, vertex, rangeStart, rangeEnd);
+		this.sendBuffer(shader.buffer.offset, offset, rangeStart, rangeEnd);
+		this.sendBuffer(shader.buffer.move, move, rangeStart, rangeEnd);
+		this.sendBuffer(shader.buffer.gravity, gravity, rangeStart, rangeEnd);
+		this.sendBuffer(shader.buffer.texCoord, texCoord, rangeStart, rangeEnd);
+		this.sendBuffer(shader.buffer.animation, animation, rangeStart, rangeEnd);		
 	}
 
-	sendBuffer(bufferLocation, floatBuffer, rangeStart, rangeEnd, floatPerVertex) {
+	sendBuffer(bufferLocation, engineBuffer, rangeStart, rangeEnd) {
 		const { gl, shader } = this;
+		const { floatPerVertex, verticesPerSprite } = engineBuffer;
 
 		//	set sprite data
 		gl.bindBuffer(gl.ARRAY_BUFFER, bufferLocation);
 		gl.bufferSubData(gl.ARRAY_BUFFER,
-			rangeStart * VERTICES_PER_SPRITE * floatPerVertex * Float32Array.BYTES_PER_ELEMENT,
-			floatBuffer.subarray(
-				rangeStart * VERTICES_PER_SPRITE * floatPerVertex,
-				rangeEnd * VERTICES_PER_SPRITE * floatPerVertex,
-			),
+			rangeStart * verticesPerSprite * floatPerVertex * Float32Array.BYTES_PER_ELEMENT,
+			engineBuffer.subarray(rangeStart, rangeEnd),
 		);
 	}	
 

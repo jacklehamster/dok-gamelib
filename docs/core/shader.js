@@ -12,6 +12,7 @@ class Shader {
 		//	initialize buffers
 		this.buffer = {
 			vertex: Shader.initializeVertexBuffer(gl, programInfo.vertexLocation, FLOAT_PER_VERTEX),
+			offset: Shader.initializeVertexBuffer(gl, programInfo.offsetLocation, FLOAT_PER_VERTEX),
 			move: Shader.initializeVertexBuffer(gl, programInfo.vertexMove, MOVE_FLOAT_PER_VERTEX),
 			gravity: Shader.initializeVertexBuffer(gl, programInfo.vertexGravity, GRAVITY_FLOAT_PER_VERTEX),
 			texCoord: Shader.initializeVertexBuffer(gl, programInfo.vertexTextureCoord, TEXTURE_FLOAT_PER_VERTEX),
@@ -38,10 +39,11 @@ class Shader {
 		gl.attachShader(shaderProgram, fragmentShader);
 
 		gl.bindAttribLocation(shaderProgram, 0, 'aVertexPosition');
-		gl.bindAttribLocation(shaderProgram, 1, 'aVertexMove');
-		gl.bindAttribLocation(shaderProgram, 2, 'aVertexGravity');
-		gl.bindAttribLocation(shaderProgram, 3, 'aVertexTextureCoord');
-		gl.bindAttribLocation(shaderProgram, 4, 'aAnimationData');
+		gl.bindAttribLocation(shaderProgram, 1, 'aOffset');
+		gl.bindAttribLocation(shaderProgram, 2, 'aVertexMove');
+		gl.bindAttribLocation(shaderProgram, 3, 'aVertexGravity');
+		gl.bindAttribLocation(shaderProgram, 4, 'aVertexTextureCoord');
+		gl.bindAttribLocation(shaderProgram, 5, 'aAnimationData');
 
 		gl.linkProgram(shaderProgram);
   
@@ -69,6 +71,7 @@ class Shader {
 	static getProgramInfo(gl, shaderProgram) {
 		const programInfo = {
 			vertexLocation: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+			offsetLocation: gl.getAttribLocation(shaderProgram, 'aOffset'),
 			vertexMove: gl.getAttribLocation(shaderProgram, 'aVertexMove'),
 			vertexGravity: gl.getAttribLocation(shaderProgram, 'aVertexGravity'),
 			vertexTextureCoord: gl.getAttribLocation(shaderProgram, 'aVertexTextureCoord'),
@@ -77,6 +80,7 @@ class Shader {
 			projectionLocation: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
 			viewLocation: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
 			timeLocation: gl.getUniformLocation(shaderProgram, 'uTimeMillis'),
+			cameraRotationLocation: gl.getUniformLocation(shaderProgram, 'uCameraRotation'),
 			backgroundLocation: gl.getUniformLocation(shaderProgram, 'uBackground'),
 			textures: gl.getUniformLocation(shaderProgram, 'uTextures'),
 		};

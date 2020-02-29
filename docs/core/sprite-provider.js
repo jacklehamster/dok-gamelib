@@ -3,12 +3,11 @@
  */
 
 class SpriteProvider {
-	constructor(type, SpriteConstructor) {
+	constructor(type) {
 		this.type = type;
 		this.sprites = [];
 		this.count = 0;
 		this.definitionMapper = [];
-		this.SpriteConstructor = SpriteConstructor;
 	}
 
 	clear() {
@@ -28,9 +27,13 @@ class SpriteProvider {
 	}
 
 	newSprite(definitionIndex, instanceIndex) {
+		const SpriteConstructor = SpriteProvider.registry[this.type];
+		if (!SpriteConstructor) {
+			return null;
+		}
 		while (this.count >= this.sprites.length) {
 			const providerIndex = this.sprites.length;
-			const sprite = new this.SpriteConstructor();
+			const sprite = new SpriteConstructor();
 			sprite.providerIndex = providerIndex;
 			this.sprites.push(sprite);
 		}
@@ -52,5 +55,12 @@ class SpriteProvider {
 		sprite.definitionIndex = -1;
 		sprite.instanceIndex = -1;
 		this.count --;
+	}
+
+	static register(type, SpriteConstructor) {
+		if (!SpriteProvider.registry) {
+			SpriteProvider.registry = {};
+		}
+		SpriteProvider.registry[type] = SpriteConstructor;
 	}
 }

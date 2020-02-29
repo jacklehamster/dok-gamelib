@@ -4,12 +4,6 @@
 	Iterate the sprite definitions of a scene config, and produce sprite instances
  */
 
-const SpriteConstructors = {
-	null: Sprite,
-	undefined: Sprite,
-	'sprite': Sprite,
-};
-
 class SpriteDefinitionProcessor {
 	constructor(evaluator) {
 		this.evaluator = evaluator;
@@ -25,11 +19,11 @@ class SpriteDefinitionProcessor {
 	}
 
 	getSpriteProvider(type) {
+		if (!type) {
+			type = 'sprite';
+		}
 		if (!this.spriteProviders[type]) {
-			const SpriteConstructor = SpriteConstructors[type];
-			if (SpriteConstructor) {
-				this.spriteProviders[type] = new SpriteProvider(type, SpriteConstructor);
-			}
+			this.spriteProviders[type] = new SpriteProvider(type);
 		}
 		return this.spriteProviders[type];
 	}

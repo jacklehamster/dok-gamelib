@@ -1,3 +1,7 @@
+/**
+	Game
+  */
+
 class Game {
 	constructor(canvas, sceneManager, config, data) {
 		this.engine = new Engine(canvas, data.webgl, data.generated.config.imagedata);
@@ -20,6 +24,7 @@ class Game {
 			sceneRenderer.render(currentScene);
 			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, timeMillis);
 			spriteRenderer.render(sprites, timeMillis);
+			Pool.resetAll();
 			requestAnimationFrame(animationFrame);
 		}
 		requestAnimationFrame(animationFrame);
@@ -28,7 +33,7 @@ class Game {
 	start() {
 		const { start } = this.config;
 		this.setScene(this.sceneManager.scenes[start]);
-		console.log("Start scene:", start);
+		console.log("start scene:", start);
 	}
 
 	setScene(scene) {

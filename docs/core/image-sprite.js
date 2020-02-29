@@ -9,10 +9,10 @@ class ImageSprite extends BaseSprite {
  	}
 
 	getEvaluated(evaluator, definition) {
-		const { src } = definition;
+		const { src, hidden } = definition;
 		const { instanceIndex } = this;
 		const { timeMillis } = evaluator;
-		const spriteSrc = evaluator.evaluate(src, this, instanceIndex);
+		const spriteSrc = evaluator.evaluate(hidden, this, instanceIndex) ? null : evaluator.evaluate(src, this, instanceIndex);
 		if (spriteSrc !== this.src) {
 			this.src = spriteSrc;
 			this.updateTimes.src = timeMillis;

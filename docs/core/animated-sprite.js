@@ -26,8 +26,7 @@ class AnimatedSprite extends ImageSprite {
 			const animFrameRate = evaluator.evaluate(frameRate, this, instanceIndex) || 15;
 
 			const spriteAnim = this.animation;
-			if (spriteAnim.frame !== animFrame || spriteAnim.range !== animRange
-				|| spriteAnim.frameRate !== animFrameRate) {
+			if (spriteAnim.frame !== animFrame || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
 				spriteAnim.frame = animFrame;
 				spriteAnim.range = animRange;
 				spriteAnim.frameRate = animFrameRate;
@@ -49,16 +48,20 @@ class AnimatedSprite extends ImageSprite {
 		let updated = false;
 		const { src, animation, grid, size, updateTimes } = this;
 		if (updateTimes.grid === timeMillis || updateTimes.src === timeMillis) {
-			const { offset, size, index } = engine.imagedata.sprites[src];
-			const [ sheetWidth, sheetHeight ] = size;
-			const [ cols, rows ] = grid;
-			chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows);
+			if (!src) {
+				chunk.setTexture(0, 0, 0, 0);
+			} else {
+				const { offset, size, index } = engine.imagedata.sprites[src];
+				const [ sheetWidth, sheetHeight ] = size;
+				const [ cols, rows ] = grid;
+				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows, timeMillis);
+			}
 			updated = true;
 		}
 		if (updateTimes.grid === timeMillis || updateTimes.animation === timeMillis) {
 			const { frame, range, frameRate } = animation;
 			const [ cols, rows ] = grid;
-			chunk.setAnimation(cols, frame, range, frameRate);
+			chunk.setAnimation(cols, frame, range, frameRate, timeMillis);
 			updated = true;
 		}
 		return updated;		
