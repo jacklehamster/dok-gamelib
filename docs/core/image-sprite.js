@@ -9,6 +9,8 @@ class ImageSprite extends BaseSprite {
  	}
 
 	getEvaluated(evaluator, definition) {
+		super.getEvaluated(evaluator, definition);
+		
 		const { src, hidden } = definition;
 		const { instanceIndex } = this;
 		const { timeMillis } = evaluator;

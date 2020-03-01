@@ -10,8 +10,10 @@ class SceneRenderer {
 		this.evaluator = evaluator;
 		this.background = 0x000000;
 		this.view = {
-			pos: Float32Array.of(0, 0, 0),
+			pos: [0, 0, 0],
 			angle: 45,
+			height: 0,
+			turn: 0,
 		};
 	}
 
@@ -23,11 +25,16 @@ class SceneRenderer {
 			engine.setBackground(newBackground);
 			this.background = newBackground;
 		}
-		const newViewPos = evaluator.evaluate(scene.view.pos);
-		if (!vec3.equals(newViewPos, this.view.pos)) {
-			const [ x, y, z ] = newViewPos;
-			engine.setViewPosition(x, y, z);
-			this.view.pos.set(newViewPos);
+		const newViewPosX = scene.view.pos ? evaluator.evaluate(scene.view.pos[0]) : 0;
+		const newViewPosY = scene.view.pos ? evaluator.evaluate(scene.view.pos[1]) : 0;
+		const newViewPosZ = scene.view.pos ? evaluator.evaluate(scene.view.pos[2]) : 0;
+		const newHeight = evaluator.evaluate(scene.view.height) || 0;
+		const newTurn = evaluator.evaluate(scene.view.turn) || 0;
+		if (!Utils.equal3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ) || newHeight !== this.view.height || newTurn !== this.view.turn) {
+			engine.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newHeight, newTurn);
+			Utils.set3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ);
+			this.view.height = newHeight;
+			this.view.turn = newTurn;
 		}
 		const newViewAngle = evaluator.evaluate(scene.view.angle);
 		if (this.view.angle !== newViewAngle) {

@@ -19,6 +19,7 @@ class Sprite extends AnimatedSprite {
 
 		const spriteWidth = !src ? 0 : size ? evaluator.evaluate(size[0], this, instanceIndex) : 1;
 		const spriteHeight = !src ? 0 : size ? evaluator.evaluate(size[1], this, instanceIndex) : 1;
+
 		if (this.size[0] !== spriteWidth || this.size[1] !== spriteHeight) {
 			this.size[0] = spriteWidth;
 			this.size[1] = spriteHeight;
@@ -56,7 +57,7 @@ class Sprite extends AnimatedSprite {
 		if (updateTimes.pos === timeMillis || updateTimes.size !== timeMillis) {
 			const [ x, y, z ] = pos;
 			const [ width, height ] = size;
-			chunk.setRect(x, y, z, width, height, timeMillis);
+			chunk.setWall(x, y, z, width, height, timeMillis);
 		}
 		if (updateTimes.mov === timeMillis) {
 			const [ mx, my, mz ] = mov;
@@ -68,5 +69,3 @@ class Sprite extends AnimatedSprite {
 		}
 	}
 }
-
-SpriteProvider.register("sprite", Sprite);

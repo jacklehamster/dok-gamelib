@@ -4,6 +4,8 @@ sceneManager.add({
 	view: {
 		pos: [0, 0, 0],
 		angle: 45,
+		height: 0,
+		turn: 0,
 	},
 	sprites: [
 		{

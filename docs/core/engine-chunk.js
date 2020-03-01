@@ -1,62 +1,24 @@
 /*
 	//	opengl chunk
-	{
-		vertices: Float32Array([
-			-.5,  .5, 0,		//	top-left
-			-.5, -.5, 0,		//	bottom-left
-			 .5, -.5, 0,		//	bottom-right
-			 .5,  .5, 0,		//	top-left
-		])
-
-		//	[ x, y, spritewidth, spriteheight ]
-		move: Float32Array([
-			0, 0, 0, timeMillis,
-			0, 0, 0, timeMillis,
-			0, 0, 0, timeMillis,
-			0, 0, 0, timeMillis,			
-		])
-
-		gravity: Float32Array([
-			0, 0, 0,
-			0, 0, 0,
-			0, 0, 0,
-			0, 0, 0,
-		])
-
-		//	[ x, y, spritewidth, spriteheight ]
-		textureCoord: Float32Array([
-			0, 					0,					64/TEXTURE_SIZE, 64/TEXTURE_SIZE,
-			0, 					64/TEXTURE_SIZE,	64/TEXTURE_SIZE, 64/TEXTURE_SIZE,
-			64/TEXTURE_SIZE, 	64/TEXTURE_SIZE,	64/TEXTURE_SIZE, 64/TEXTURE_SIZE,
-			64/TEXTURE_SIZE, 	0,					64/TEXTURE_SIZE, 64/TEXTURE_SIZE,
-		])
-
-		//	[ cols, index, total, frameRate ]
-		animation: Float32Array([
-			4, 0, 8, 4,
-			4, 0, 8, 4,
-			4, 0, 8, 4,
-			4, 0, 8, 4,
-		])
-
-				vertex.subarray(index, index+1),
-				offset.subarray(index, index+1),
-				move.subarray(index, index+1),
-				gravity.subarray(index, index+1),
-				texCoord.subarray(index, index+1),
-				animation.subarray(index, index+1),
-
 	*/
 
 class Chunk {
-	constructor(index, vertices, offset, move, gravity, texCoord, animation) {
+	constructor(index, vertex, offset, move, gravity, spriteType, texCoord, animation) {
 		this.index = index;
-		this.vertices = vertices;
+		this.vertex = vertex;
 		this.offset = offset;
 		this.move = move;
 		this.gravity = gravity;
+		this.spriteType = spriteType;
 		this.texCoord = texCoord;
 		this.animation = animation;
+		this.vertexSubarray = vertex.subarray(this.index, this.index+1);
+		this.offsetSubarray = offset.subarray(this.index, this.index+1);
+		this.moveSubarray = move.subarray(this.index, this.index+1);
+		this.gravitySubarray = gravity.subarray(this.index, this.index+1);
+		this.spriteTypeSubarray = spriteType.subarray(this.index, this.index+1);
+		this.texCoordSubarray = texCoord.subarray(this.index, this.index+1);
+		this.animationSubarray = animation.subarray(this.index, this.index+1);
 	}
 
 	static assignValues(float32Array, ... values) {
@@ -65,16 +27,23 @@ class Chunk {
 		}
 	}
 
-	setRect(x, y, z, width, height, timeMillis) {
-		const { vertices, offset, index } = this;
-		Chunk.assignValues(vertices.subarray(index, index+1),
-			- width/2,	+ height/2,	0,
-			- width/2,	- height/2,	0,
-			+ width/2,	- height/2,	0,
-			+ width/2,	+ height/2,	0,
+	setType(type, timeMillis) {
+		const { spriteType, spriteTypeSubarray, index } = this;
+		Chunk.assignValues(spriteTypeSubarray, type, type, type, type);
+		spriteType.chunkUpdateTimes[index] = timeMillis;
+	}
+
+	setWall(x, y, z, width, height, timeMillis) {
+		const { vertex, vertexSubarray, offset, offsetSubarray, index } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		Chunk.assignValues(vertexSubarray,
+			- halfWidth, + halfHeight,	0,
+			- halfWidth, - halfHeight,	0,
+			+ halfWidth, - halfHeight,	0,
+			+ halfWidth, + halfHeight,	0,
 		);
-		vertices.chunkUpdateTimes[index] = timeMillis;
-		Chunk.assignValues(offset.subarray(index, index+1),
+		vertex.chunkUpdateTimes[index] = timeMillis;
+		Chunk.assignValues(offsetSubarray,
 			x, y, z,
 			x, y, z,
 			x, y, z,
@@ -84,8 +53,8 @@ class Chunk {
 	}
 
 	setMove(dx, dy, dz, timeMillis) {
-		const { move, index } = this;
-		Chunk.assignValues(move.subarray(index, index+1),
+		const { move, moveSubarray, index } = this;
+		Chunk.assignValues(moveSubarray,
 			dx, dy, dz, timeMillis,
 			dx, dy, dz, timeMillis,
 			dx, dy, dz, timeMillis,
@@ -95,8 +64,8 @@ class Chunk {
 	}
 
 	setGravity(gx, gy, gz, timeMillis) {
-		const { gravity, index } = this;
-		Chunk.assignValues(gravity.subarray(index, index+1),
+		const { gravity, gravitySubarray, index } = this;
+		Chunk.assignValues(gravitySubarray,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
@@ -106,11 +75,11 @@ class Chunk {
 	}
 
 	setTexture(texIndex, offset, spriteWidth, spriteHeight, timeMillis) {
-		const { texCoord, index } = this;
+		const { texCoord, texCoordSubarray, index } = this;
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const [ spriteX, spriteY ] = offset;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
-		Chunk.assignValues(texCoord.subarray(index, index+1),
+		Chunk.assignValues(texCoordSubarray,
 			texIndex + texX,			texY,				texWidth,	texHeight,
 			texIndex + texX,			texY + texHeight,	texWidth,	texHeight,
 			texIndex + texX + texWidth,	texY + texHeight,	texWidth,	texHeight,
@@ -120,8 +89,8 @@ class Chunk {
 	}
 
 	setAnimation(cols, frame, range, frameRate, timeMillis) {
-		const { animation, index } = this;
-		Chunk.assignValues(animation.subarray(index, index+1),
+		const { animation, animationSubarray, index } = this;
+		Chunk.assignValues(animationSubarray,
 			cols, frame, range, frameRate,
 			cols, frame, range, frameRate,
 			cols, frame, range, frameRate,

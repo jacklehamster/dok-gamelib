@@ -2,11 +2,20 @@
 const cache = {};
 
 class Utils {
+	static clear3(vector) {
+		vector[0] = vector[1] = vector[2] = 0;
+		return vector;
+	}
+
 	static set3(vector, x, y, z) {
 		vector[0] = x;
 		vector[1] = y;
 		vector[2] = z;
 		return vector;
+	}
+
+	static equal3(vector, x, y, z) {
+		return vector[0] === x && vector[1] === y && vector[2] === z;
 	}
 	
 	static load(... urls) {

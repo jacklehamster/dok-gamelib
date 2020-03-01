@@ -3,8 +3,8 @@
  */
 
 class SpriteProvider {
-	constructor(type) {
-		this.type = type;
+	constructor(spriteCreator) {
+		this.spriteCreator = spriteCreator;
 		this.sprites = [];
 		this.count = 0;
 		this.definitionMapper = [];
@@ -27,13 +27,13 @@ class SpriteProvider {
 	}
 
 	newSprite(definitionIndex, instanceIndex) {
-		const SpriteConstructor = SpriteProvider.registry[this.type];
-		if (!SpriteConstructor) {
+		const { spriteCreator } = this;
+		if (!spriteCreator) {
 			return null;
 		}
 		while (this.count >= this.sprites.length) {
 			const providerIndex = this.sprites.length;
-			const sprite = new SpriteConstructor();
+			const sprite = spriteCreator();
 			sprite.providerIndex = providerIndex;
 			this.sprites.push(sprite);
 		}
@@ -41,26 +41,5 @@ class SpriteProvider {
 		sprite.definitionIndex = definitionIndex;
 		sprite.instanceIndex = instanceIndex;
 		return sprite;
-	}
-
-	recycle(sprite) {
-		const { providerIndex } = sprite;
-		const lastIndex = this.count-1;
-		if (lastIndex !== providerIndex) {
-			this.sprites[providerIndex] = this.sprites[lastIndex];
-			this.sprites[providerIndex].providerIndex = providerIndex;
-			this.sprites[lastIndex] = sprite;
-			this.sprites[lastIndex].providerIndex = lastIndex;
-		}
-		sprite.definitionIndex = -1;
-		sprite.instanceIndex = -1;
-		this.count --;
-	}
-
-	static register(type, SpriteConstructor) {
-		if (!SpriteProvider.registry) {
-			SpriteProvider.registry = {};
-		}
-		SpriteProvider.registry[type] = SpriteConstructor;
 	}
 }

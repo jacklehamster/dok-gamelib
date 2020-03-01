@@ -5,6 +5,8 @@ attribute vec3 aOffset;					//	[ x, y, z ]
 attribute vec4 aVertexMove;				//	[ x, y, z, time ]
 attribute vec3 aVertexGravity;			//	[ x, y, z ]
 
+attribute float aType;					//	wall/floor=0, sprite=1, water=2, ...
+
 attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
 attribute vec4 aAnimationData; 			//	[ cols, index, total, frameRate ]
 
@@ -20,7 +22,9 @@ void main(void) {
 	float timeStart = aVertexMove.w;
 	float time = uTimeMillis - timeStart;
 	vec4 pos = aVertexPosition;
-	pos = uCameraRotation * pos;
+	if (aType == 1.0) {
+		pos = uCameraRotation * pos;
+	}
 	pos.xyz += aOffset;
 	pos.xyz += aVertexMove.xyz * time;
 	pos.xyz += aVertexGravity.xyz * time * time / 2.0;

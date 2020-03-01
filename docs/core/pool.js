@@ -3,8 +3,9 @@
   */
 
 class Pool {
-	constructor(createCall) {
+	constructor(createCall, initCall) {
 		this.createCall = createCall;
+		this.initCall = initCall;
 		this.pool = [];
 		this.index = 0;
 		Pool.pools.push(this);
@@ -14,7 +15,12 @@ class Pool {
 		if (this.index >= this.pool.length) {
 			this.pool.push(this.createCall());
 		}
-		return this.pool[this.index++]; 
+		const value = this.pool[this.index];
+		if (this.initCall) {
+			this.initCall(value);
+		}
+		this.index++;
+		return value;
 	}
 
 	reset() {

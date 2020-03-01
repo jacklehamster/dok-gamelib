@@ -15,6 +15,8 @@ class Shader {
 			offset: Shader.initializeVertexBuffer(gl, programInfo.offsetLocation, FLOAT_PER_VERTEX),
 			move: Shader.initializeVertexBuffer(gl, programInfo.vertexMove, MOVE_FLOAT_PER_VERTEX),
 			gravity: Shader.initializeVertexBuffer(gl, programInfo.vertexGravity, GRAVITY_FLOAT_PER_VERTEX),
+			spriteType: Shader.initializeVertexBuffer(gl, programInfo.spriteType, SPRITE_TYPE_FLOAT_PER_VERTEX),
+			type: Shader.initializeIndexBuffer(gl, programInfo.spriteType, SPRITE_TYPE_FLOAT_PER_VERTEX),
 			texCoord: Shader.initializeVertexBuffer(gl, programInfo.vertexTextureCoord, TEXTURE_FLOAT_PER_VERTEX),
 			animation: Shader.initializeVertexBuffer(gl, programInfo.animationData, ANIMATION_FLOAT_PER_VERTEX),
 			index: Shader.initializeIndexBuffer(gl),
@@ -42,8 +44,9 @@ class Shader {
 		gl.bindAttribLocation(shaderProgram, 1, 'aOffset');
 		gl.bindAttribLocation(shaderProgram, 2, 'aVertexMove');
 		gl.bindAttribLocation(shaderProgram, 3, 'aVertexGravity');
-		gl.bindAttribLocation(shaderProgram, 4, 'aVertexTextureCoord');
-		gl.bindAttribLocation(shaderProgram, 5, 'aAnimationData');
+		gl.bindAttribLocation(shaderProgram, 4, 'aType');
+		gl.bindAttribLocation(shaderProgram, 5, 'aVertexTextureCoord');
+		gl.bindAttribLocation(shaderProgram, 6, 'aAnimationData');
 
 		gl.linkProgram(shaderProgram);
   
@@ -74,6 +77,7 @@ class Shader {
 			offsetLocation: gl.getAttribLocation(shaderProgram, 'aOffset'),
 			vertexMove: gl.getAttribLocation(shaderProgram, 'aVertexMove'),
 			vertexGravity: gl.getAttribLocation(shaderProgram, 'aVertexGravity'),
+			spriteType: gl.getAttribLocation(shaderProgram, 'aType'),
 			vertexTextureCoord: gl.getAttribLocation(shaderProgram, 'aVertexTextureCoord'),
 			animationData: gl.getAttribLocation(shaderProgram, 'aAnimationData'),
 

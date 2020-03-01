@@ -45,6 +45,7 @@ class AnimatedSprite extends ImageSprite {
 	}
 
 	updateChunk(engine, chunk, timeMillis) {
+		super.updateChunk(engine, chunk, timeMillis);
 		const { src, animation, grid, size, updateTimes } = this;
 		if (updateTimes.grid === timeMillis || updateTimes.src === timeMillis) {
 			if (!src) {
