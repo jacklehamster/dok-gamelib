@@ -25,8 +25,8 @@ class SpriteDefinitionProcessor {
 		const { type, count } = definition;
 		const totalCount = evaluator.evaluate(count) || 1;
 
-		for (let instanceIndex = 0; instanceIndex < totalCount; instanceIndex ++) {
-			const sprite = spriteProvider.getSprite(definitionIndex, instanceIndex);
+		for (let i = 0; i < totalCount; i ++) {
+			const sprite = spriteProvider.getSprite(definitionIndex, i);
 			sprite.getEvaluated(evaluator, definition);
 			spriteCollector.push(sprite);
 		}

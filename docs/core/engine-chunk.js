@@ -33,16 +33,8 @@ class Chunk {
 		spriteType.chunkUpdateTimes[index] = timeMillis;
 	}
 
-	setWall(x, y, z, width, height, timeMillis) {
-		const { vertex, vertexSubarray, offset, offsetSubarray, index } = this;
-		const halfWidth = width/2, halfHeight = height/2;
-		Chunk.assignValues(vertexSubarray,
-			- halfWidth, + halfHeight,	0,
-			- halfWidth, - halfHeight,	0,
-			+ halfWidth, - halfHeight,	0,
-			+ halfWidth, + halfHeight,	0,
-		);
-		vertex.chunkUpdateTimes[index] = timeMillis;
+	setOffset(x, y, z, timeMillis) {
+		const { offset, offsetSubarray, index } = this;
 		Chunk.assignValues(offsetSubarray,
 			x, y, z,
 			x, y, z,
@@ -50,6 +42,18 @@ class Chunk {
 			x, y, z,
 		);
 		offset.chunkUpdateTimes[index] = timeMillis;
+	}
+
+	setWall(width, height, timeMillis) {
+		const { vertex, vertexSubarray, index } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		Chunk.assignValues(vertexSubarray,
+			- halfWidth, + halfHeight, 0,
+			- halfWidth, - halfHeight, 0,
+			+ halfWidth, - halfHeight, 0,
+			+ halfWidth, + halfHeight, 0,
+		);
+		vertex.chunkUpdateTimes[index] = timeMillis;
 	}
 
 	setMove(dx, dy, dz, timeMillis) {

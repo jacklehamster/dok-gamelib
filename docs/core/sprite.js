@@ -26,38 +26,50 @@ class Sprite extends AnimatedSprite {
 			updateTimes.size = timeMillis;
 		}
 
-		for (let i = 0; i < 3; i++) {
-			if (pos) {
-				const value = evaluator.evaluate(pos[i], this, instanceIndex);
-				if (value !== this.pos[i]) {
-					this.pos[i] = value;
-					updateTimes.pos = timeMillis;
-				}
+		if (pos) {
+			const newPosX = evaluator.evaluate(pos[0], this, instanceIndex);
+			const newPosY = evaluator.evaluate(pos[1], this, instanceIndex);
+			const newPosZ = evaluator.evaluate(pos[2], this, instanceIndex);
+
+			if (!Utils.equal3(this.pos, newPosX, newPosY, newPosZ)) {
+				Utils.set3(this.pos, newPosX, newPosY, newPosZ);
+				updateTimes.pos = timeMillis;
 			}
-			if (mov) {
-				const value = evaluator.evaluate(mov[i], this, instanceIndex);
-				if (value !== this.mov[i]) {
-					this.mov[i] = value;
-					updateTimes.mov = timeMillis;
-				}
+		}
+
+		if (mov) {
+			const newMovX = evaluator.evaluate(mov[0], this, instanceIndex);
+			const newMovY = evaluator.evaluate(mov[1], this, instanceIndex);
+			const newMovZ = evaluator.evaluate(mov[2], this, instanceIndex);
+
+			if (!Utils.equal3(this.mov, newMovX, newMovY, newMovZ)) {
+				Utils.set3(this.mov, newMovX, newMovY, newMovZ);
+				updateTimes.mov = timeMillis;
 			}
-			if (gravity) {
-				const value = evaluator.evaluate(gravity[i], this, instanceIndex);
-				if (value !== this.gravity[i]) {
-					this.gravity[i] = value;
-					updateTimes.gravity = timeMillis;
-				}
+		}
+
+		if (gravity) {
+			const newGravityX = evaluator.evaluate(gravity[0], this, instanceIndex);
+			const newGravityY = evaluator.evaluate(gravity[1], this, instanceIndex);
+			const newGravityZ = evaluator.evaluate(gravity[2], this, instanceIndex);
+
+			if (!Utils.equal3(this.gravity, newGravityX, newGravityY, newGravityZ)) {
+				Utils.set3(this.gravity, newGravityX, newGravityY, newGravityZ);
+				updateTimes.gravity = timeMillis;
 			}
-		}	
+		}
 	}
 
 	updateChunk(engine, chunk, timeMillis) {
 		super.updateChunk(engine, chunk, timeMillis);
 		const { size, pos, mov, gravity, updateTimes } = this;
-		if (updateTimes.pos === timeMillis || updateTimes.size !== timeMillis) {
+		if (updateTimes.pos === timeMillis) {
 			const [ x, y, z ] = pos;
+			chunk.setOffset(x, y, z, timeMillis);
+		}
+		if (updateTimes.size !== timeMillis) {
 			const [ width, height ] = size;
-			chunk.setWall(x, y, z, width, height, timeMillis);
+			chunk.setWall(width, height, timeMillis);			
 		}
 		if (updateTimes.mov === timeMillis) {
 			const [ mx, my, mz ] = mov;
