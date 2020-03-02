@@ -33,7 +33,7 @@ void main(void) {
 
 	float total = floor(aAnimationData[2]);
 	float fps = aAnimationData[3];
-	float index = mod(floor(aAnimationData[1] + uTimeMillis / 1000.0 * fps), total);
+	float index = mod(floor(aAnimationData[1] + uTimeMillis * fps / 1000.0), total);
 	float cols = floor(aAnimationData[0]);
 	float texCol = mod(index, cols);
 	float texRow = floor(index / cols);

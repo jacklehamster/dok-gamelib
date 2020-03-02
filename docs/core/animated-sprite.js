@@ -7,8 +7,8 @@ class AnimatedSprite extends ImageSprite {
 		super();
 		this.animation = {
 			frame: 0,
-			range: 1,
-			frameRate: 15,
+			range: 0,
+			frameRate: 0,
 		};
 		this.grid = [1, 1];
 	}
@@ -19,19 +19,16 @@ class AnimatedSprite extends ImageSprite {
 		const { instanceIndex, updateTimes } = this;
 		const { timeMillis } = evaluator;
 
-		if (animation) {
-			const { frame, range, frameRate } = animation;
-			const animFrame = evaluator.evaluate(frame, this, instanceIndex) || 0;
-			const animRange = evaluator.evaluate(range, this, instanceIndex) || 1;
-			const animFrameRate = evaluator.evaluate(frameRate, this, instanceIndex) || 15;
+		const animFrame = (animation ? evaluator.evaluate(animation.frame, this, instanceIndex) : 0) || 0;
+		const animRange = (animation ? evaluator.evaluate(animation.range, this, instanceIndex) : 0) || 1;
+		const animFrameRate = (animation ? evaluator.evaluate(animation.frameRate, this, instanceIndex) : 0) || 15;
 
-			const spriteAnim = this.animation;
-			if (spriteAnim.frame !== animFrame || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
-				spriteAnim.frame = animFrame;
-				spriteAnim.range = animRange;
-				spriteAnim.frameRate = animFrameRate;
-				updateTimes.animation = timeMillis;
-			}
+		const spriteAnim = this.animation;
+		if (spriteAnim.frame !== animFrame || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
+			spriteAnim.frame = animFrame;
+			spriteAnim.range = animRange;
+			spriteAnim.frameRate = animFrameRate;
+			updateTimes.animation = timeMillis;
 		}
 		if (grid) {
 			const animCols = evaluator.evaluate(grid[0], this, instanceIndex) || 1;

@@ -11,12 +11,17 @@ const INDEX_ARRAY_PER_SPRITE = new Uint16Array([
 ]);
 
 const SpriteType = {
-	Default: 0,
-	Sprite: 1,
+	Sprite: 0,
+	Front: 1,
+	Back: 2,
+	Floor: 3,
+	Ceiling: 4,
+	LeftWall: 5,
+	RightWall: 6,
 };
 
 const MAX_TEXTURES = 16;
-const MAX_SPRITE = 10000;
+const MAX_SPRITE = 16000;
 const TEXTURE_SIZE = 4096;
 
 const ZERO_VEC3 = vec3.create();

@@ -71,7 +71,7 @@ class Engine {
 		//	load texture
 		imagedata.spritesheets.forEach((spritesheet, index) => textureManager.setImage(index, spritesheet));
 
-		this.setBackground(0);
+		this.setBackground(0x000000);
 	}
 
 	newChunk() {
@@ -81,10 +81,11 @@ class Engine {
 	setBackground(color) {
 		const { gl, shader } = this;
 		color = color || 0;
+		const a = 1 - ((color >> 24) % 256) / 256;
 		const r = ((color >> 16) % 256) / 256;
 		const g = ((color >> 8) % 256) / 256;
 		const b = ((color) % 256) / 256;
-		gl.uniform4f(shader.programInfo.backgroundLocation, r, g, b, 1.0);
+		gl.uniform4f(shader.programInfo.backgroundLocation, r, g, b, a);
 		gl.clearColor(r, g, b, 1.0);
 	}
 
@@ -132,8 +133,11 @@ class Engine {
 		let chunk;
 		if (sprite.chunkIndex < 0) {
 			chunk = this.newChunk();
-			if (chunk)
+			if (chunk) {
 				sprite.chunkIndex = chunk.index;
+			} else {
+				console.error("Too many sprites.");
+			}
 		} else {
 			chunk = this.chunks[sprite.chunkIndex];
 		}
@@ -193,11 +197,9 @@ class Engine {
 		for (let i = 0; i < sprites.length; i++) {
 			const sprite = sprites[i];			
 			const chunk = this.getChunkFor(sprite)
-			if (!chunk) {
-				return;
+			if (chunk) {
+				sprite.updateChunk(this, chunk, timeMillis);
 			}
-
-			sprite.updateChunk(this, chunk, timeMillis);
 		}
 
 		this.sendUpdatedBuffers(timeMillis);

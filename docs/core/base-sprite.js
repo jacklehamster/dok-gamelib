@@ -17,7 +17,7 @@ class BaseSprite {
 		const { timeMillis } = evaluator;
 		const { type } = definition;
 
-		const newType = evaluator.evaluate(type, this, instanceIndex) || SpriteType.Default;
+		const newType = evaluator.evaluate(type, this, instanceIndex) || 0;
 		if (this.type !== newType) {
 			this.type = newType;
 			updateTimes.type = timeMillis;

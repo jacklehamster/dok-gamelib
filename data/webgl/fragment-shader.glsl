@@ -46,7 +46,7 @@ void main(void) {
 	float textureSlot = floor(vTexturePoint.x);
 	vec2 textureCoord = vec2(mod(vTexturePoint.x, 1.0), vTexturePoint.y);
 	vec4 color = getTextureColor(uTextures, textureSlot, vTexturePoint);
-	if (color.w <= 0.0) {
+	if (color.w <= 0.1) {
 		discard;
 	}
 	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2,max(0.0, .8 + zDist * .3))));

@@ -56,6 +56,54 @@ class Chunk {
 		vertex.chunkUpdateTimes[index] = timeMillis;
 	}
 
+	setFloor(width, height, timeMillis) {
+		const { vertex, vertexSubarray, index } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		Chunk.assignValues(vertexSubarray,
+			- halfWidth, 0, - halfHeight,
+			- halfWidth, 0, + halfHeight,
+			+ halfWidth, 0, + halfHeight,
+			+ halfWidth, 0, - halfHeight,
+		);
+		vertex.chunkUpdateTimes[index] = timeMillis;		
+	}
+
+	setCeiling(width, height, timeMillis) {
+		const { vertex, vertexSubarray, index } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		Chunk.assignValues(vertexSubarray,
+			- halfWidth, 0, + halfHeight,
+			- halfWidth, 0, - halfHeight,
+			+ halfWidth, 0, - halfHeight,
+			+ halfWidth, 0, + halfHeight,
+		);
+		vertex.chunkUpdateTimes[index] = timeMillis;		
+	}
+
+	setLeftWall(width, height, timeMillis) {
+		const { vertex, vertexSubarray, index } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		Chunk.assignValues(vertexSubarray,
+			0, + halfWidth, + halfHeight,
+			0, - halfWidth, + halfHeight,
+			0, - halfWidth, - halfHeight,
+			0, + halfWidth, - halfHeight,
+		);
+		vertex.chunkUpdateTimes[index] = timeMillis;		
+	}
+
+	setRightWall(width, height, timeMillis) {
+		const { vertex, vertexSubarray, index } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		Chunk.assignValues(vertexSubarray,
+			0, + halfWidth, - halfHeight,
+			0, - halfWidth, - halfHeight,
+			0, - halfWidth, + halfHeight,
+			0, + halfWidth, + halfHeight,
+		);
+		vertex.chunkUpdateTimes[index] = timeMillis;		
+	}
+
 	setMove(dx, dy, dz, timeMillis) {
 		const { move, moveSubarray, index } = this;
 		Chunk.assignValues(moveSubarray,

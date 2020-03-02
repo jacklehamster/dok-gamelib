@@ -67,9 +67,28 @@ class Sprite extends AnimatedSprite {
 			const [ x, y, z ] = pos;
 			chunk.setOffset(x, y, z, timeMillis);
 		}
-		if (updateTimes.size !== timeMillis) {
+		if (updateTimes.size === timeMillis || updateTimes.type === timeMillis) {
 			const [ width, height ] = size;
-			chunk.setWall(width, height, timeMillis);			
+			switch (this.type) {
+				case SpriteType.Ceiling:
+					chunk.setCeiling(width, height, timeMillis);
+					break;					
+				case SpriteType.Floor:
+					chunk.setFloor(width, height, timeMillis);
+					break;
+				case SpriteType.LeftWall:
+					chunk.setLeftWall(width, height, timeMillis);
+					break;
+				case SpriteType.RightWall:
+					chunk.setRightWall(width, height, timeMillis);
+					break;
+				case SpriteType.Default:
+				case SpriteType.Sprite:
+					chunk.setWall(width, height, timeMillis);			
+					break;
+				default:
+					console.error("invalid type");
+			}
 		}
 		if (updateTimes.mov === timeMillis) {
 			const [ mx, my, mz ] = mov;
