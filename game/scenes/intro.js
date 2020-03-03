@@ -1,13 +1,15 @@
 sceneManager.add({
 	name: "intro",
-	docBackground: 0xFFFFFF,
-	background: 0xE0F0FF,
+	settings: {
+		docBackground: 0xFFFFFF,
+		background: 0xE0F0FF,
+		curvature: 5,
+	},
 	view: {
 		pos: [0, 0, 0],
 		angle: 45,
 		height: 1,
 		turn: 0,
-		curvature: 5,
 	},
 	sprites: [
 		{

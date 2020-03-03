@@ -8,14 +8,16 @@ class SceneRenderer {
 	constructor(engine, evaluator) {
 		this.engine = engine;
 		this.evaluator = evaluator;
-		this.docBackground = 0x000000;
-		this.background = 0x000000;
 		this.view = {
 			pos: [0, 0, 0],
 			angle: 0,
 			height: 0,
 			turn: 0,
 			cameraDistance: 0,
+		};
+		this.settings = {
+			docBackground : 0x000000,
+			background : 0x000000,
 			curvature: 0,
 		};
 	}
@@ -23,12 +25,12 @@ class SceneRenderer {
 	render(scene) {
 		const { engine, evaluator, background } = this;
 //		engine.clearScreen();
-		const newBackground = evaluator.evaluate(scene.background);
+		const newBackground = evaluator.evaluate(scene.settings.background);
 		if (newBackground !== background) {
 			engine.setBackground(newBackground);
 			this.background = newBackground;
 		}
-		const docBackground = evaluator.evaluate(scene.docBackground) || newBackground;
+		const docBackground = evaluator.evaluate(scene.settings.docBackground) || newBackground;
 		if (docBackground !== this.docBackground) {
 			document.body.style.backgroundColor = `#${docBackground.toString(16)}`;
 			this.docBackground = docBackground;
@@ -53,7 +55,7 @@ class SceneRenderer {
 			engine.setViewAngle(newViewAngle);
 			this.view.angle = newViewAngle;
 		}
-		const newCurvature = evaluator.evaluate(scene.view.curvature) || 0;
+		const newCurvature = evaluator.evaluate(scene.settings.curvature) || 0;
 		if (this.view.curvature !== newCurvature) {
 			engine.setCurvature(newCurvature);
 			this.view.curvature = newCurvature;
