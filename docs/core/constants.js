@@ -6,7 +6,7 @@ const TEXTURE_FLOAT_PER_VERTEX 		= 4;	//	x,y,w,h
 const ANIMATION_FLOAT_PER_VERTEX 	= 4;	//	cols,index,count,frameRate
 const VERTICES_PER_SPRITE 			= 4;	//	4 corners
 const INDEX_ARRAY_PER_SPRITE = new Uint16Array([
-	0,  1,  2,
+	1,  2,  0,
 	0,  2,  3,
 ]);
 
@@ -18,6 +18,7 @@ const SpriteType = {
 	Ceiling: 4,
 	LeftWall: 5,
 	RightWall: 6,
+	Water: 7,
 };
 
 const MAX_TEXTURES = 16;

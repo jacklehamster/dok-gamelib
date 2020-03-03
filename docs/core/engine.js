@@ -49,7 +49,7 @@ class Engine {
 
 		//	initialize view and projection
 		this.setViewAngle(45);
-		this.setViewPosition(0, 0, 0, 0, 0);
+		this.setViewPosition(0, 0, 0, 0, 0, 0);
 
 		this.bufferInfo = {
 			vertex: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
@@ -72,6 +72,7 @@ class Engine {
 		imagedata.spritesheets.forEach((spritesheet, index) => textureManager.setImage(index, spritesheet));
 
 		this.setBackground(0x000000);
+		this.setCurvature(0);
 	}
 
 	newChunk() {
@@ -98,30 +99,34 @@ class Engine {
 		gl.uniformMatrix4fv(shader.programInfo.projectionLocation, false, projectionMatrix);
 	}
 
-	setViewPosition(x, y, z, height, turn) {
+	setViewPosition(x, y, z, height, turn, cameraDistance) {
 		const { gl, shader, viewMatrix, pool } = this;
 		const scale = 1;
 		const tilt = height/2;
-		const zOffset = -2;	//	camera distance
+		const zOffset = cameraDistance;	//	camera distance
 		const cameraQuat = pool.quat.get();
 		const cameraRotationMatrix = pool.mat4.get();
 		quat.rotateY(cameraQuat, quat.rotateX(cameraQuat, IDENTITY_QUAT, tilt), turn);
-		mat4.fromRotationTranslationScaleOrigin(viewMatrix, cameraQuat, ZERO_VEC3,
+		mat4.fromRotationTranslationScaleOrigin(viewMatrix, cameraQuat, 
+			ZERO_VEC3,
 			Utils.set3(pool.vec3.get(), scale, scale, scale),
 			Utils.set3(pool.vec3.get(), 0, -height, zOffset));
 		quat.conjugate(cameraQuat, cameraQuat);	//	conjugate for sprites			
 		mat4.translate(viewMatrix, viewMatrix, [x, y, z + zOffset]);
 
-		if (cameraRotationMatrix) {
-			mat4.fromQuat(cameraRotationMatrix, cameraQuat);
-		}
+		mat4.fromQuat(cameraRotationMatrix, cameraQuat);
 		gl.uniformMatrix4fv(shader.programInfo.viewLocation, false, viewMatrix);
 		gl.uniformMatrix4fv(shader.programInfo.cameraRotationLocation, false, cameraRotationMatrix);
 	}
 
-	setTime(timeMillis) {
+	setCurvature(curvature) {
 		const { gl, shader } = this;
-		gl.uniform1f(shader.programInfo.timeLocation, timeMillis);
+		gl.uniform1f(shader.programInfo.curvatureLocation, curvature);
+	}
+
+	setTime(now) {
+		const { gl, shader } = this;
+		gl.uniform1f(shader.programInfo.timeLocation, now);
 	}
 
 	clearScreen() {
@@ -144,29 +149,29 @@ class Engine {
 		return chunk;		
 	}
 
-	sendUpdatedBuffers(timeMillis) {
+	sendUpdatedBuffers(now) {
 		const { shader, bufferInfo } = this;
 		const { vertex, offset, move, gravity, spriteType, texCoord, animation } = this.bufferInfo;
-		this.sendUpdatedBuffer(shader.buffer.vertex, vertex, timeMillis);
-		this.sendUpdatedBuffer(shader.buffer.offset, offset, timeMillis);
-		this.sendUpdatedBuffer(shader.buffer.move, move, timeMillis);
-		this.sendUpdatedBuffer(shader.buffer.gravity, gravity, timeMillis);
-		this.sendUpdatedBuffer(shader.buffer.spriteType, spriteType, timeMillis);
-		this.sendUpdatedBuffer(shader.buffer.texCoord, texCoord, timeMillis);
-		this.sendUpdatedBuffer(shader.buffer.animation, animation, timeMillis);
+		this.sendUpdatedBuffer(shader.buffer.vertex, vertex, now);
+		this.sendUpdatedBuffer(shader.buffer.offset, offset, now);
+		this.sendUpdatedBuffer(shader.buffer.move, move, now);
+		this.sendUpdatedBuffer(shader.buffer.gravity, gravity, now);
+		this.sendUpdatedBuffer(shader.buffer.spriteType, spriteType, now);
+		this.sendUpdatedBuffer(shader.buffer.texCoord, texCoord, now);
+		this.sendUpdatedBuffer(shader.buffer.animation, animation, now);
 	}
 
-	sendUpdatedBuffer(bufferLocation, engineBuffer, timeMillis) {
+	sendUpdatedBuffer(bufferLocation, engineBuffer, now) {
 		const { usedChunks } = this;
 		const { chunkUpdateTimes } = engineBuffer;
 		const HOLE_LIMIT = 2;
 		let rangeStart = -1, holeSize = 0;
 		for (let i = 0; i < usedChunks; i++) {
 			if (rangeStart < 0) {
-				if (chunkUpdateTimes[i] === timeMillis) {
+				if (chunkUpdateTimes[i] === now) {
 					rangeStart = i;
 				}
-			} else if (chunkUpdateTimes[i] !== timeMillis) {
+			} else if (chunkUpdateTimes[i] !== now) {
 				holeSize++;
 				if (holeSize > HOLE_LIMIT) {
 					this.sendBuffer(bufferLocation, engineBuffer, rangeStart, i - holeSize + 1);
@@ -192,24 +197,18 @@ class Engine {
 		);
 	}	
 
-	display(sprites, timeMillis) {
+	display(sprites, now) {
 		const { gl, imagedata } = this;
 		for (let i = 0; i < sprites.length; i++) {
 			const sprite = sprites[i];			
 			const chunk = this.getChunkFor(sprite)
 			if (chunk) {
-				sprite.updateChunk(this, chunk, timeMillis);
+				sprite.updateChunk(this, chunk, now);
 			}
 		}
 
-		this.sendUpdatedBuffers(timeMillis);
+		this.sendUpdatedBuffers(now);
 		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
-		this.postRefresh();
-	}
-
-	postRefresh() {
-		for (let i in this.pool) {
-			this.pool[i].reset();
-		}
+//		gl.drawElements(gl.LINES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
 	}
 }

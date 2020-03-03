@@ -14,21 +14,21 @@ class BaseSprite {
 
 	getEvaluated(evaluator, definition) {
 		const { instanceIndex, updateTimes } = this;
-		const { timeMillis } = evaluator;
+		const { now } = evaluator;
 		const { type } = definition;
 
 		const newType = evaluator.evaluate(type, this, instanceIndex) || 0;
 		if (this.type !== newType) {
 			this.type = newType;
-			updateTimes.type = timeMillis;
+			updateTimes.type = now;
 		}
 	}
 
 
-	updateChunk(engine, chunk, timeMillis) {
+	updateChunk(engine, chunk, now) {
 		const { type, updateTimes } = this;
-		if (updateTimes.type === timeMillis) {
-			chunk.setType(type, timeMillis);
+		if (updateTimes.type === now) {
+			chunk.setType(type, now);
 		}
 	}
 }

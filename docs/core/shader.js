@@ -83,8 +83,9 @@ class Shader {
 
 			projectionLocation: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
 			viewLocation: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
-			timeLocation: gl.getUniformLocation(shaderProgram, 'uTimeMillis'),
+			timeLocation: gl.getUniformLocation(shaderProgram, 'uNow'),
 			cameraRotationLocation: gl.getUniformLocation(shaderProgram, 'uCameraRotation'),
+			curvatureLocation: gl.getUniformLocation(shaderProgram, 'uCurvature'),
 			backgroundLocation: gl.getUniformLocation(shaderProgram, 'uBackground'),
 			textures: gl.getUniformLocation(shaderProgram, 'uTextures'),
 		};

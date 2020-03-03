@@ -16,14 +16,14 @@ class Game {
 
 		const { engine, sceneRenderer, spriteRenderer, spriteDefinitionProcessor, evaluator } = this;
 		const self = this;
-		function animationFrame(timeMillis) {
+		function animationFrame(now) {
 			const { currentScene } = self;
-			engine.setTime(timeMillis);
-			evaluator.timeMillis = timeMillis;
+			engine.setTime(now);
+			evaluator.now = now;
 			engine.clearScreen();
 			sceneRenderer.render(currentScene);
-			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, timeMillis);
-			spriteRenderer.render(sprites, timeMillis);
+			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, now);
+			spriteRenderer.render(sprites, now);
 			Pool.resetAll();
 			requestAnimationFrame(animationFrame);
 		}
@@ -38,5 +38,6 @@ class Game {
 
 	setScene(scene) {
 		this.currentScene = scene;
+		this.evaluator.setScene(scene);
 	}
 }

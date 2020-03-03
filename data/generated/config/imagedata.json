@@ -7,31 +7,42 @@
 		"generated/spritesheets/sheet0.png"
 	],
 	"sprites": {
-		"dobuki": {
+		"landscape.jpg": {
 			"offset": [
 				0,
 				0
 			],
 			"size": [
-				280,
-				280
+				2560,
+				978
 			],
 			"index": 0
 		},
-		"yupa-dance": {
+		"icefloor.jpg": {
 			"offset": [
-				280,
+				2560,
 				0
 			],
 			"size": [
-				256,
-				256
+				800,
+				800
+			],
+			"index": 0
+		},
+		"crystal-wall.jpg": {
+			"offset": [
+				3360,
+				0
+			],
+			"size": [
+				512,
+				512
 			],
 			"index": 0
 		},
 		"cage": {
 			"offset": [
-				536,
+				3872,
 				0
 			],
 			"size": [
@@ -40,64 +51,9 @@
 			],
 			"index": 0
 		},
-		"penguin-bot-left": {
-			"offset": [
-				664,
-				0
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
-		"penguin-down": {
-			"offset": [
-				792,
-				0
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
-		"penguin-right": {
-			"offset": [
-				920,
-				0
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
-		"penguin-top-left": {
-			"offset": [
-				1048,
-				0
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
-		"penguin-up": {
-			"offset": [
-				1176,
-				0
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
 		"32x64": {
 			"offset": [
-				1304,
+				4000,
 				0
 			],
 			"size": [
@@ -108,7 +64,7 @@
 		},
 		"access-card": {
 			"offset": [
-				1336,
+				4032,
 				0
 			],
 			"size": [
@@ -119,12 +75,111 @@
 		},
 		"water": {
 			"offset": [
-				1400,
-				0
+				4000,
+				64
 			],
 			"size": [
 				64,
 				64
+			],
+			"index": 0
+		},
+		"penguin-bot-left": {
+			"offset": [
+				3872,
+				192
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"penguin-down": {
+			"offset": [
+				3872,
+				320
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"dobuki": {
+			"offset": [
+				3360,
+				512
+			],
+			"size": [
+				280,
+				280
+			],
+			"index": 0
+		},
+		"yupa-dance": {
+			"offset": [
+				3640,
+				512
+			],
+			"size": [
+				256,
+				256
+			],
+			"index": 0
+		},
+		"penguin-right": {
+			"offset": [
+				3896,
+				512
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"penguin-top-left": {
+			"offset": [
+				3896,
+				640
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"icewall.jpg": {
+			"offset": [
+				2560,
+				800
+			],
+			"size": [
+				800,
+				800
+			],
+			"index": 0
+		},
+		"water.jpg": {
+			"offset": [
+				3360,
+				800
+			],
+			"size": [
+				512,
+				512
+			],
+			"index": 0
+		},
+		"penguin-up": {
+			"offset": [
+				3872,
+				800
+			],
+			"size": [
+				128,
+				128
 			],
 			"index": 0
 		}

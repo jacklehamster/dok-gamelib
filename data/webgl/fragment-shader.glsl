@@ -43,6 +43,7 @@ vec4 alterHueSatLum(vec4 color, vec3 vHSV) {
 }
 
 void main(void) {
+//	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 	float textureSlot = floor(vTexturePoint.x);
 	vec2 textureCoord = vec2(mod(vTexturePoint.x, 1.0), vTexturePoint.y);
 	vec4 color = getTextureColor(uTextures, textureSlot, vTexturePoint);
@@ -50,7 +51,7 @@ void main(void) {
 		discard;
 	}
 	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2,max(0.0, .8 + zDist * .3))));
-	color = mix(color, uBackground, min(1.0, zDist * 0.3));
+	color = mix(color, uBackground, min(1.0, zDist * 0.5));
 
 	gl_FragColor = color;
 }

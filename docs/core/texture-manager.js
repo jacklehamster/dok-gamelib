@@ -1,3 +1,7 @@
+/**
+ *	TextureManager
+ */
+
 class TextureManager {
 	constructor(gl, shader) {
 		this.gl = gl;

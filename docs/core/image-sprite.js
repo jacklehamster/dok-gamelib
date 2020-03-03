@@ -13,11 +13,11 @@ class ImageSprite extends BaseSprite {
 		
 		const { src, hidden } = definition;
 		const { instanceIndex } = this;
-		const { timeMillis } = evaluator;
+		const { now } = evaluator;
 		const spriteSrc = evaluator.evaluate(hidden, this, instanceIndex) ? null : evaluator.evaluate(src, this, instanceIndex);
 		if (spriteSrc !== this.src) {
 			this.src = spriteSrc;
-			this.updateTimes.src = timeMillis;
+			this.updateTimes.src = now;
 		}
 	}
 }

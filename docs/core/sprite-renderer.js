@@ -7,8 +7,8 @@ class SpriteRenderer {
 		this.evaluator = evaluator;
 	}
 
-	render(sprites, timeMillis) {
+	render(sprites, now) {
 		const { engine } = this;
-		engine.display(sprites, timeMillis);
+		engine.display(sprites, now);
 	}
 }

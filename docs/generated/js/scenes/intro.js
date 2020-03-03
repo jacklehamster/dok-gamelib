@@ -1,30 +1,50 @@
 sceneManager.add({
 	name: "intro",
-	background: 0x220000,
+	docBackground: 0xFFFFFF,
+	background: 0xE0F0FF,
 	view: {
 		pos: [0, 0, 0],
 		angle: 45,
-		height: 0,
+		height: 1,
 		turn: 0,
+		curvature: 5,
 	},
 	sprites: [
 		{
 			src: "dobuki",
 			pos: [
-				({timeMillis}, sprite, index) => Math.sin(timeMillis/10000 + index),
-				({timeMillis}, sprite, index) => .5 * Math.cos(timeMillis/10000 + index/100),
-				({timeMillis}, sprite, index) => -1 + Math.cos(timeMillis/10000 + index),
+				({now}, sprite, index) => Math.sin(now/10000 + index),
+				({now}, sprite, index) => .5 * Math.cos(now/10000 + index/100),
+				({now}, sprite, index) => Math.cos(now/10000 + index),
 			],
 			size: [.1, .1],
-			count: 1500,
+			count: 100,
+		},
+		{
+			src: "icefloor.jpg",
+			type: SpriteType.Floor,
+			pos: [
+				(evaluator, sprite, index) => (Math.floor(index % 20) - 10) * 1,
+				-.5,
+				(evaluator, sprite, index) => (Math.floor(index / 20) - 10) * 1
+			],
+			grid: [20, 20],
+			animation: {
+				frame: (evaluator, sprite, index) => index % 400,
+				range: 400,
+				frameRate: 0,
+			},
+			size: [1.01, 1.01],
+			count: 400,
 		},
 		{
 			src: "yupa-dance",
-			pos: [0, 0, -1],
+			pos: [0, -.5, 0],
 			animation: {
 				range: 8,
 				frameRate: 4,
 			},
+			hotspot: [ 0, -.4 ],
 			grid: [4, 4],
 		},
 	],

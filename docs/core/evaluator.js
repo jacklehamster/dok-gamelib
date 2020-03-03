@@ -1,6 +1,10 @@
+/**
+   	Evaluator
+ */
+
 class Evaluator {
 	constructor() {
-		this.timeMillis = 0;
+		this.now = 0;
 		this.scene = {};
 	}
 
@@ -14,10 +18,10 @@ class Evaluator {
 
 
 	interpolate(value, finalValue, duration) {
-		const now = this.timeMillis;
+		const now = this.now;
 		duration = duration || 500;
-		return ({timeMillis}, sprite, index) => {
-			const progress = Math.min(1, (timeMillis - now) / duration);
+		return ({now}, sprite, index) => {
+			const progress = Math.min(1, (now - now) / duration);
 			return progress * finalValue + (1 - progress) * value;
 		};
 	}	
