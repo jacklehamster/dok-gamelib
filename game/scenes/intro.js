@@ -19,7 +19,7 @@ sceneManager.add({
 				({now}, sprite, index) => .5 * Math.cos(now/10000 + index/100),
 				({now}, sprite, index) => Math.cos(now/10000 + index),
 			],
-			size: [.1, .1],
+			size: [.2, .2],
 			count: 100,
 		},
 		{

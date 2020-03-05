@@ -7,10 +7,11 @@ class AnimatedSprite extends ImageSprite {
 		super();
 		this.animation = {
 			frame: 0,
+			start: 0,
 			range: 0,
 			frameRate: 0,
 		};
-		this.grid = [1, 1];
+		this.grid = [0, 0];
 	}
 
 	getEvaluated(evaluator, definition) {
@@ -20,31 +21,35 @@ class AnimatedSprite extends ImageSprite {
 		const { now } = evaluator;
 
 		const animFrame = (animation ? evaluator.evaluate(animation.frame, this, instanceIndex) : 0) || 0;
+		const animStart = (animation ? evaluator.evaluate(animation.start, this, instanceIndex) : 0) || 0;
 		const animRange = (animation ? evaluator.evaluate(animation.range, this, instanceIndex) : 0) || 1;
 		const animFrameRate = (animation ? evaluator.evaluate(animation.frameRate, this, instanceIndex) : 0) || 0;
 
 		const spriteAnim = this.animation;
-		if (spriteAnim.frame !== animFrame || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
+		if (spriteAnim.frame !== animFrame || spriteAnim.start !== animStart || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
 			spriteAnim.frame = animFrame;
+			spriteAnim.start = animStart;
 			spriteAnim.range = animRange;
 			spriteAnim.frameRate = animFrameRate;
 			updateTimes.animation = now;
 		}
-		if (grid) {
-			const animCols = evaluator.evaluate(grid[0], this, instanceIndex) || 1;
-			const animRows = evaluator.evaluate(grid[1], this, instanceIndex) || 1;
-			if (this.grid[0] !== animCols || this.grid[1] !== animRows) {
-				this.grid[0] = animCols;
-				this.grid[1] = animRows;
-				updateTimes.grid = now;
-			}
-		}	
+		const animCols = !grid ? 1 : evaluator.evaluate(grid[0], this, instanceIndex) || 1;
+		const animRows = !grid ? 1 :evaluator.evaluate(grid[1], this, instanceIndex) || 1;
+		if (this.grid[0] !== animCols || this.grid[1] !== animRows) {
+			this.grid[0] = animCols;
+			this.grid[1] = animRows;
+			updateTimes.grid = now;
+		}
 	}
 
 	updateChunk(engine, chunk, now) {
 		super.updateChunk(engine, chunk, now);
 		const { src, animation, grid, size, updateTimes } = this;
-		if (updateTimes.grid === now || updateTimes.src === now) {
+		if (updateTimes.grid === now) {
+			const [ cols, rows ] = grid;
+			chunk.setGrid(cols, rows, now);
+		}
+		if (updateTimes.src === now) {
 			if (!src) {
 				chunk.setTexture(0, 0, 0, 0);
 			} else {
@@ -55,9 +60,9 @@ class AnimatedSprite extends ImageSprite {
 			}
 		}
 		if (updateTimes.grid === now || updateTimes.animation === now) {
-			const { frame, range, frameRate } = animation;
+			const { frame, start, range, frameRate } = animation;
 			const [ cols, rows ] = grid;
-			chunk.setAnimation(cols, frame, range, frameRate, now);
+			chunk.setAnimation(frame, start, range, frameRate, now);
 		}
 	}	
 }

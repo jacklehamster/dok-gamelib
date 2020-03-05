@@ -18,8 +18,11 @@ class Engine {
 
 		const { vertexShader, fragmentShader } = webgl;
 		this.webGLOptions = {
-			antialias: false, preserveDrawingBuffer: false,
-			alpha: false, depth: true, stencil: false,
+			antialias: false,
+			preserveDrawingBuffer: false,
+			alpha: false,
+			depth: true,
+			stencil: false,
 		};
 		this.gl = canvas.getContext("webgl", this.webGLOptions);
 
@@ -34,8 +37,6 @@ class Engine {
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);	
 
 
-		this.shader = new Shader(gl, vertexShader, fragmentShader);
-		this.textureManager = new TextureManager(gl, this.shader);
 		this.projectionMatrix = mat4.create();
 		this.viewMatrix = mat4.create();
 		this.imagedata = imagedata;
@@ -45,12 +46,6 @@ class Engine {
 			mat4: new Pool(mat4.create, mat4.identity),
 		};
 
-		const { shader, textureManager, projectionMatrix, viewMatrix } = this;
-
-		//	initialize view and projection
-		this.setViewAngle(45);
-		this.setViewPosition(0, 0, 0, 0, 0, 0);
-
 		this.bufferInfo = {
 			vertex: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			offset: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
@@ -59,12 +54,22 @@ class Engine {
 			spriteType: new EngineBuffer(SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			texCoord: 	new EngineBuffer(TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			animation: 	new EngineBuffer(ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			grid: 		new EngineBuffer(GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
+
+		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
+		this.textureManager = new TextureManager(gl, this.shader);
+
+		const { shader, textureManager, projectionMatrix, viewMatrix } = this;
+
+		//	initialize view and projection
+		this.setViewAngle(45);
+		this.setViewPosition(0, 0, 0, 0, 0, 0);
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
 		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => {
-			const { vertex, offset, move, gravity, spriteType, texCoord, animation } = this.bufferInfo;
-			return new Chunk(index, vertex, offset, move, gravity, spriteType, texCoord, animation);
+			const { vertex, offset, move, gravity, spriteType, texCoord, animation, grid } = this.bufferInfo;
+			return new Chunk(index, vertex, offset, move, gravity, spriteType, texCoord, animation, grid);
 		});
 		this.usedChunks = 0;
 
@@ -86,7 +91,7 @@ class Engine {
 		const r = ((color >> 16) % 256) / 256;
 		const g = ((color >> 8) % 256) / 256;
 		const b = ((color) % 256) / 256;
-		gl.uniform4f(shader.programInfo.backgroundLocation, r, g, b, a);
+		gl.uniform4f(shader.programInfo.background, r, g, b, a);
 		gl.clearColor(r, g, b, 1.0);
 	}
 
@@ -96,7 +101,7 @@ class Engine {
 		const aspect = gl.canvas.width / gl.canvas.height;
 		const zNear = 0.1, zFar = 1000.0;
 		mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-		gl.uniformMatrix4fv(shader.programInfo.projectionLocation, false, projectionMatrix);
+		gl.uniformMatrix4fv(shader.programInfo.projection, false, projectionMatrix);
 	}
 
 	setViewPosition(x, y, z, height, turn, cameraDistance) {
@@ -115,23 +120,23 @@ class Engine {
 		mat4.translate(viewMatrix, viewMatrix, [x, y, z + zOffset]);
 
 		mat4.fromQuat(cameraRotationMatrix, cameraQuat);
-		gl.uniformMatrix4fv(shader.programInfo.viewLocation, false, viewMatrix);
-		gl.uniformMatrix4fv(shader.programInfo.cameraRotationLocation, false, cameraRotationMatrix);
+		gl.uniformMatrix4fv(shader.programInfo.view, false, viewMatrix);
+		gl.uniformMatrix4fv(shader.programInfo.camRotation, false, cameraRotationMatrix);
 	}
 
 	setCurvature(curvature) {
 		const { gl, shader } = this;
-		gl.uniform1f(shader.programInfo.curvatureLocation, curvature);
+		gl.uniform1f(shader.programInfo.curvature, curvature);
 	}
 
 	setTime(now) {
 		const { gl, shader } = this;
-		gl.uniform1f(shader.programInfo.timeLocation, now);
+		gl.uniform1f(shader.programInfo.now, now);
 	}
 
 	clearScreen() {
 		const { gl } = this;
-		gl.clear(gl.COLOR_BUFFER_BIT);
+		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 	}
 
 	getChunkFor(sprite) {
@@ -151,19 +156,15 @@ class Engine {
 
 	sendUpdatedBuffers(now) {
 		const { shader, bufferInfo } = this;
-		const { vertex, offset, move, gravity, spriteType, texCoord, animation } = this.bufferInfo;
-		this.sendUpdatedBuffer(shader.buffer.vertex, vertex, now);
-		this.sendUpdatedBuffer(shader.buffer.offset, offset, now);
-		this.sendUpdatedBuffer(shader.buffer.move, move, now);
-		this.sendUpdatedBuffer(shader.buffer.gravity, gravity, now);
-		this.sendUpdatedBuffer(shader.buffer.spriteType, spriteType, now);
-		this.sendUpdatedBuffer(shader.buffer.texCoord, texCoord, now);
-		this.sendUpdatedBuffer(shader.buffer.animation, animation, now);
+		const { vertex, offset, move, gravity, spriteType, texCoord, animation, grid } = this.bufferInfo;
+		for (let b in bufferInfo) {
+			this.sendUpdatedBuffer(bufferInfo[b], now);
+		}
 	}
 
-	sendUpdatedBuffer(bufferLocation, engineBuffer, now) {
+	sendUpdatedBuffer(engineBuffer, now) {
 		const { usedChunks } = this;
-		const { chunkUpdateTimes } = engineBuffer;
+		const { chunkUpdateTimes, shaderBuffer } = engineBuffer;
 		const HOLE_LIMIT = 2;
 		let rangeStart = -1, holeSize = 0;
 		for (let i = 0; i < usedChunks; i++) {
@@ -174,23 +175,23 @@ class Engine {
 			} else if (chunkUpdateTimes[i] !== now) {
 				holeSize++;
 				if (holeSize > HOLE_LIMIT) {
-					this.sendBuffer(bufferLocation, engineBuffer, rangeStart, i - holeSize + 1);
+					this.sendBuffer(shaderBuffer, engineBuffer, rangeStart, i - holeSize + 1);
 					rangeStart = -1;
 					holeSize = 0;
 				}
 			}
 		}
 		if (rangeStart >= 0) {
-			this.sendBuffer(bufferLocation, engineBuffer, rangeStart, usedChunks);
+			this.sendBuffer(shaderBuffer, engineBuffer, rangeStart, usedChunks);
 		}		
 	}
 
-	sendBuffer(bufferLocation, engineBuffer, rangeStart, rangeEnd) {
+	sendBuffer(shaderBuffer, engineBuffer, rangeStart, rangeEnd) {
 		const { gl, shader } = this;
 		const { floatPerVertex, verticesPerSprite } = engineBuffer;
 
 		//	set sprite data
-		gl.bindBuffer(gl.ARRAY_BUFFER, bufferLocation);
+		gl.bindBuffer(gl.ARRAY_BUFFER, shaderBuffer);
 		gl.bufferSubData(gl.ARRAY_BUFFER,
 			rangeStart * verticesPerSprite * floatPerVertex * Float32Array.BYTES_PER_ELEMENT,
 			engineBuffer.subarray(rangeStart, rangeEnd),

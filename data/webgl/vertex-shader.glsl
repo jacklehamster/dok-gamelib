@@ -8,7 +8,8 @@ attribute vec3 aVertexGravity;			//	[ x, y, z ]
 attribute float aType;					//	wall/floor=0, sprite=1, water=2, ...
 
 attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
-attribute vec4 aAnimationData; 			//	[ cols, index, total, frameRate ]
+attribute vec4 aAnimationData; 			//	[ cols, start, total, frameRate ]
+attribute vec2 aGrid;					//	[ cols, rows ]
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
@@ -39,10 +40,13 @@ void main(void) {
 
 	vec4 position = uProjectionMatrix * uViewMatrix * pos;
 
-	float total = floor(aAnimationData[2]);
+	float cols = aGrid[0];
+	float rows = aGrid[1];
+	float frame = aAnimationData[0];
+	float start = aAnimationData[1];
+	float total = aAnimationData[2];
 	float fps = aAnimationData[3];
-	float index = mod(floor(aAnimationData[1] + uNow * fps / 1000.0), total);
-	float cols = floor(aAnimationData[0]);
+	float index = start + mod(floor(frame + uNow * fps / 1000.0), total);
 	float texCol = mod(index, cols);
 	float texRow = floor(index / cols);
 	vTexturePoint = aVertexTextureCoord.xy;

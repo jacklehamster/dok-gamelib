@@ -1,9 +1,9 @@
 /*
-	//	opengl chunk
+		opengl chunk
 	*/
 
 class Chunk {
-	constructor(index, vertex, offset, move, gravity, spriteType, texCoord, animation) {
+	constructor(index, vertex, offset, move, gravity, spriteType, texCoord, animation, grid) {
 		this.index = index;
 		this.vertex = vertex;
 		this.offset = offset;
@@ -12,6 +12,7 @@ class Chunk {
 		this.spriteType = spriteType;
 		this.texCoord = texCoord;
 		this.animation = animation;
+		this.grid = grid;
 		this.vertexSubarray = vertex.subarray(this.index, this.index+1);
 		this.offsetSubarray = offset.subarray(this.index, this.index+1);
 		this.moveSubarray = move.subarray(this.index, this.index+1);
@@ -19,6 +20,7 @@ class Chunk {
 		this.spriteTypeSubarray = spriteType.subarray(this.index, this.index+1);
 		this.texCoordSubarray = texCoord.subarray(this.index, this.index+1);
 		this.animationSubarray = animation.subarray(this.index, this.index+1);
+		this.gridSubarray = grid.subarray(this.index, this.index+1);
 	}
 
 	static assignValues(float32Array, ... values) {
@@ -140,13 +142,24 @@ class Chunk {
 		texCoord.chunkUpdateTimes[index] = now;
 	}
 
-	setAnimation(cols, frame, range, frameRate, now) {
+	setGrid(cols, rows, now) {
+		const { grid, gridSubarray, index } = this;
+		Chunk.assignValues(gridSubarray,
+			cols, rows,
+			cols, rows,
+			cols, rows,
+			cols, rows,
+		);
+		grid.chunkUpdateTimes[index] = now;
+	}
+
+	setAnimation(frame, start, range, frameRate, now) {
 		const { animation, animationSubarray, index } = this;
 		Chunk.assignValues(animationSubarray,
-			cols, frame, range, frameRate,
-			cols, frame, range, frameRate,
-			cols, frame, range, frameRate,
-			cols, frame, range, frameRate,
+			frame, start, range, frameRate,
+			frame, start, range, frameRate,
+			frame, start, range, frameRate,
+			frame, start, range, frameRate,
 		);
 		animation.chunkUpdateTimes[index] = now;
 	}

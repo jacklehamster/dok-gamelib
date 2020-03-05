@@ -4,23 +4,41 @@
 
 class Shader {
 
-	constructor(gl, vertexShader, fragmentShader) {
-		const shaderProgram = Shader.initShaderProgram(gl, vertexShader, fragmentShader);
-		const programInfo = Shader.getProgramInfo(gl, shaderProgram);
+	constructor(gl, vertexShader, fragmentShader, bufferInfo) {
+		const shaderConfig = {
+			attributes: {
+				vertex: "aVertexPosition",
+				offset: "aOffset",
+				move: "aVertexMove",
+				gravity: "aVertexGravity",
+				spriteType: "aType",
+				texCoord: "aVertexTextureCoord",
+				animation: "aAnimationData",
+				grid: "aGrid",
+			},
+			uniforms: {
+				projection: "uProjectionMatrix",
+				view: "uViewMatrix",
+				now: "uNow",
+				camRotation: "uCameraRotation",
+				curvature: "uCurvature",
+				background: "uBackground",
+				textures: "uTextures",
+			},
+		};
+
+		const shaderProgram = Shader.initShaderProgram(gl, vertexShader, fragmentShader, shaderConfig.attributes);
+		const programInfo = Shader.getProgramInfo(gl, shaderProgram, shaderConfig);
 		
 		this.programInfo = programInfo;
+
 		//	initialize buffers
-		this.buffer = {
-			vertex: Shader.initializeVertexBuffer(gl, programInfo.vertexLocation, FLOAT_PER_VERTEX),
-			offset: Shader.initializeVertexBuffer(gl, programInfo.offsetLocation, FLOAT_PER_VERTEX),
-			move: Shader.initializeVertexBuffer(gl, programInfo.vertexMove, MOVE_FLOAT_PER_VERTEX),
-			gravity: Shader.initializeVertexBuffer(gl, programInfo.vertexGravity, GRAVITY_FLOAT_PER_VERTEX),
-			spriteType: Shader.initializeVertexBuffer(gl, programInfo.spriteType, SPRITE_TYPE_FLOAT_PER_VERTEX),
-			type: Shader.initializeIndexBuffer(gl, programInfo.spriteType, SPRITE_TYPE_FLOAT_PER_VERTEX),
-			texCoord: Shader.initializeVertexBuffer(gl, programInfo.vertexTextureCoord, TEXTURE_FLOAT_PER_VERTEX),
-			animation: Shader.initializeVertexBuffer(gl, programInfo.animationData, ANIMATION_FLOAT_PER_VERTEX),
-			index: Shader.initializeIndexBuffer(gl),
-		};
+		this.indexBuffer = Shader.initializeIndexBuffer(gl);
+		for (let b in bufferInfo) {
+			const engineBuffer = bufferInfo[b];
+			engineBuffer.setShaderBuffer(Shader.initializeVertexBuffer(gl, programInfo[b], engineBuffer.floatPerVertex));
+		}
+
 		this.gl = gl;
 		this.shaderProgram = shaderProgram;
 
@@ -32,21 +50,21 @@ class Shader {
 		gl.useProgram(shaderProgram);		
 	}
 
-	static initShaderProgram(gl, vsSource, fsSource) {
+	static initShaderProgram(gl, vsSource, fsSource, attributes) {
 		const vertexShader = Shader.loadShader(gl, gl.VERTEX_SHADER, vsSource);
 		const fragmentShader = Shader.loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+		if (!vertexShader || !fragmentShader) {
+			return null;
+		}
   
 		const shaderProgram = gl.createProgram();
 		gl.attachShader(shaderProgram, vertexShader);
 		gl.attachShader(shaderProgram, fragmentShader);
 
-		gl.bindAttribLocation(shaderProgram, 0, 'aVertexPosition');
-		gl.bindAttribLocation(shaderProgram, 1, 'aOffset');
-		gl.bindAttribLocation(shaderProgram, 2, 'aVertexMove');
-		gl.bindAttribLocation(shaderProgram, 3, 'aVertexGravity');
-		gl.bindAttribLocation(shaderProgram, 4, 'aType');
-		gl.bindAttribLocation(shaderProgram, 5, 'aVertexTextureCoord');
-		gl.bindAttribLocation(shaderProgram, 6, 'aAnimationData');
+		let count = 0;
+		for (let a in attributes) {
+			gl.bindAttribLocation(shaderProgram, count ++, attributes[a]);
+		}
 
 		gl.linkProgram(shaderProgram);
   
@@ -71,60 +89,34 @@ class Shader {
 		return shader;
 	}
 
-	static getProgramInfo(gl, shaderProgram) {
-		const programInfo = {
-			vertexLocation: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-			offsetLocation: gl.getAttribLocation(shaderProgram, 'aOffset'),
-			vertexMove: gl.getAttribLocation(shaderProgram, 'aVertexMove'),
-			vertexGravity: gl.getAttribLocation(shaderProgram, 'aVertexGravity'),
-			spriteType: gl.getAttribLocation(shaderProgram, 'aType'),
-			vertexTextureCoord: gl.getAttribLocation(shaderProgram, 'aVertexTextureCoord'),
-			animationData: gl.getAttribLocation(shaderProgram, 'aAnimationData'),
-
-			projectionLocation: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-			viewLocation: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
-			timeLocation: gl.getUniformLocation(shaderProgram, 'uNow'),
-			cameraRotationLocation: gl.getUniformLocation(shaderProgram, 'uCameraRotation'),
-			curvatureLocation: gl.getUniformLocation(shaderProgram, 'uCurvature'),
-			backgroundLocation: gl.getUniformLocation(shaderProgram, 'uBackground'),
-			textures: gl.getUniformLocation(shaderProgram, 'uTextures'),
-		};
-
+	static getProgramInfo(gl, shaderProgram, { attributes, uniforms }) {
+		const programInfo = {};
+		for (let a in attributes) {
+			programInfo[a] = gl.getAttribLocation(shaderProgram, attributes[a]);
+		}
+		for (let u in uniforms) {
+			programInfo[u] = gl.getUniformLocation(shaderProgram, uniforms[u]);
+		}
 		return programInfo;
 	}	
 
 	static initializeVertexBuffer(gl, location, floatsPerVertex) {
-		const vertexBuffer = Shader.createVertexAttributeBuffer(gl, location, floatsPerVertex);
-		Shader.resizeBuffer(gl, gl.ARRAY_BUFFER, vertexBuffer, floatsPerVertex * MAX_SPRITE * VERTICES_PER_SPRITE * Float32Array.BYTES_PER_ELEMENT);
-		return vertexBuffer;
-	}
-
-	static createVertexAttributeBuffer(gl, location, numComponents) {
-		const buffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-		const type = gl.FLOAT;
-		const normalize = false;
-		const stride = 0;
-		const offset = 0;
-		gl.vertexAttribPointer(location, numComponents, type, normalize, stride, offset);
+		const vertexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+		gl.vertexAttribPointer(location, floatsPerVertex, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(location);
-		return buffer;
+		gl.bufferData(gl.ARRAY_BUFFER, floatsPerVertex * MAX_SPRITE * VERTICES_PER_SPRITE * Float32Array.BYTES_PER_ELEMENT, gl.STATIC_DRAW);
+		return vertexBuffer;
 	}
 
 	static initializeIndexBuffer(gl) {
 		const indexBuffer = gl.createBuffer();
-		Shader.resizeBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, indexBuffer, MAX_SPRITE * INDEX_ARRAY_PER_SPRITE.length * Uint16Array.BYTES_PER_ELEMENT);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, MAX_SPRITE * INDEX_ARRAY_PER_SPRITE.length * Uint16Array.BYTES_PER_ELEMENT, gl.STATIC_DRAW);
 		for (let i = 0; i < MAX_SPRITE; i++) {
 			const slotIndices = INDEX_ARRAY_PER_SPRITE.map(value => value + i * VERTICES_PER_SPRITE);
 			gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, i * slotIndices.length * Uint16Array.BYTES_PER_ELEMENT, slotIndices);
 		}
 		return indexBuffer;	
-	}
-
-	static resizeBuffer(gl, bufferType, buffer, newBufferSize) {
-		gl.bindBuffer(bufferType, buffer);
-		const bufferSize = gl.getBufferParameter(bufferType, gl.BUFFER_SIZE);
-		gl.bufferData(bufferType, newBufferSize, gl.STATIC_DRAW);
-		return buffer;
 	}
 }

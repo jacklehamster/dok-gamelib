@@ -20,7 +20,7 @@
 		},
 		"icefloor.jpg": {
 			"offset": [
-				2560,
+				2568,
 				0
 			],
 			"size": [
@@ -31,7 +31,7 @@
 		},
 		"crystal-wall.jpg": {
 			"offset": [
-				3360,
+				3376,
 				0
 			],
 			"size": [
@@ -42,7 +42,7 @@
 		},
 		"cage": {
 			"offset": [
-				3872,
+				3896,
 				0
 			],
 			"size": [
@@ -53,7 +53,7 @@
 		},
 		"32x64": {
 			"offset": [
-				4000,
+				4032,
 				0
 			],
 			"size": [
@@ -62,10 +62,65 @@
 			],
 			"index": 0
 		},
+		"penguin-bot-left": {
+			"offset": [
+				3896,
+				200
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"penguin-down": {
+			"offset": [
+				3896,
+				336
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"dobuki": {
+			"offset": [
+				3376,
+				520
+			],
+			"size": [
+				280,
+				280
+			],
+			"index": 0
+		},
+		"yupa-dance": {
+			"offset": [
+				3664,
+				520
+			],
+			"size": [
+				256,
+				256
+			],
+			"index": 0
+		},
+		"penguin-right": {
+			"offset": [
+				3928,
+				520
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
 		"access-card": {
 			"offset": [
-				4032,
-				0
+				3928,
+				656
 			],
 			"size": [
 				64,
@@ -76,7 +131,7 @@
 		"water": {
 			"offset": [
 				4000,
-				64
+				656
 			],
 			"size": [
 				64,
@@ -84,76 +139,10 @@
 			],
 			"index": 0
 		},
-		"penguin-bot-left": {
-			"offset": [
-				3872,
-				192
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
-		"penguin-down": {
-			"offset": [
-				3872,
-				320
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
-		"dobuki": {
-			"offset": [
-				3360,
-				512
-			],
-			"size": [
-				280,
-				280
-			],
-			"index": 0
-		},
-		"yupa-dance": {
-			"offset": [
-				3640,
-				512
-			],
-			"size": [
-				256,
-				256
-			],
-			"index": 0
-		},
-		"penguin-right": {
-			"offset": [
-				3896,
-				512
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
-		"penguin-top-left": {
-			"offset": [
-				3896,
-				640
-			],
-			"size": [
-				128,
-				128
-			],
-			"index": 0
-		},
 		"icewall.jpg": {
 			"offset": [
-				2560,
-				800
+				2568,
+				808
 			],
 			"size": [
 				800,
@@ -163,8 +152,8 @@
 		},
 		"water.jpg": {
 			"offset": [
-				3360,
-				800
+				3376,
+				808
 			],
 			"size": [
 				512,
@@ -172,10 +161,21 @@
 			],
 			"index": 0
 		},
+		"penguin-top-left": {
+			"offset": [
+				3896,
+				808
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
 		"penguin-up": {
 			"offset": [
-				3872,
-				800
+				3896,
+				944
 			],
 			"size": [
 				128,
