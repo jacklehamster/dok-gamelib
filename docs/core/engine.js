@@ -45,9 +45,9 @@ class Engine {
 				game.keyboard = keyboard.getKeyboard(now);
 			}
 			sceneRenderer.render(currentScene);
-			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, now);
 			glRenderer.setTime(now);
 			glRenderer.clearScreen();
+			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, now);
 			glRenderer.sendSprites(sprites, now);
 			glRenderer.draw();
 			Pool.resetAll();

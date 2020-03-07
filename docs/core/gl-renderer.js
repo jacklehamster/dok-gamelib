@@ -13,12 +13,15 @@ class GLRenderer {
 		canvas.style.height = `${canvas.height / resolution}px`;
 
 		const { vertexShader, fragmentShader } = webgl;
+		this.canvas = canvas;
 		this.webGLOptions = {
 			antialias: false,
 			preserveDrawingBuffer: false,
 			alpha: false,
 			depth: true,
 			stencil: false,
+			desynchronized: true,
+			premultipliedAlpha: true,
 		};
 		this.gl = canvas.getContext("webgl", this.webGLOptions);
 
@@ -80,7 +83,7 @@ class GLRenderer {
 	}
 
 	setBackground(color) {
-		const { gl, shader } = this;
+		const { gl, shader, canvas } = this;
 		color = color || 0;
 		const a = 1 - ((color >> 24) % 256) / 256;
 		const r = ((color >> 16) % 256) / 256;
@@ -88,6 +91,7 @@ class GLRenderer {
 		const b = ((color) % 256) / 256;
 		gl.uniform4f(shader.programInfo.background, r, g, b, a);
 		gl.clearColor(r, g, b, 1.0);
+		canvas.style.backgroundColor = Utils.getDOMColor(color);
 	}
 
 	setViewAngle(viewAngle) {

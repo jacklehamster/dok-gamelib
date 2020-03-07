@@ -17,6 +17,10 @@ class Utils {
 	static equal3(vector, x, y, z) {
 		return vector[0] === x && vector[1] === y && vector[2] === z;
 	}
+
+	static getDOMColor(color) {
+		return `#${(0x1000000 | color).toString(16).substr(1)}`;		
+	}
 	
 	static load(... urls) {
 		return urls.length > 1 ? Promise.all(urls.map(Utils.load)) : new Promise((resolve, reject) => {

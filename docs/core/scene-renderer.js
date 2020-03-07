@@ -38,7 +38,7 @@ class SceneRenderer {
 		}
 		const docBackground = game.evaluate(settings.docBackground);
 		if (docBackground !== this.docBackground) {
-			document.body.style.backgroundColor = `#${(0x1000000 | docBackground).toString(16).substr(1)}`;
+			document.body.style.backgroundColor = Utils.getDOMColor(docBackground);
 			this.docBackground = docBackground;
 		}
 
