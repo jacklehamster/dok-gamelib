@@ -5,10 +5,19 @@
  */
 
 class SpriteDefinitionProcessor {
-	constructor(evaluator) {
-		this.evaluator = evaluator;
+	constructor(game) {
+		this.game = game;
 		this.spriteProvider = new SpriteProvider(() => new Sprite());
 		this.spriteCollector = [];
+	}
+
+	init(spriteDefinitions) {
+		const { game } = this;
+		if (spriteDefinitions) {
+			for (let i = 0; i < spriteDefinitions.length; i++) {
+				game.evaluate(spriteDefinitions[i].init, spriteDefinitions[i], i);
+			}
+		}
 	}
 
 	process(spriteDefinitions) {
@@ -21,13 +30,13 @@ class SpriteDefinitionProcessor {
 	}
 
 	processSpriteDefinition(definition, definitionIndex, spriteCollector) {
-		const { evaluator, spriteProvider } = this;
-		const { type, count } = definition;
-		const totalCount = evaluator.evaluate(count) || 1;
+		const { game, spriteProvider } = this;
+		const { count } = definition;
+		const totalCount = game.evaluate(count, definition, definitionIndex) || 1;
 
 		for (let i = 0; i < totalCount; i ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);
-			sprite.getEvaluated(evaluator, definition);
+			sprite.getEvaluated(game, definition);
 			spriteCollector.push(sprite);
 		}
 	}

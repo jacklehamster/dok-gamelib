@@ -33,12 +33,13 @@ void main(void) {
 	if (aType == 7.0) {	//	water wave
 		pos.y += sin((uNow * 0.05 + pos.x * 20.0 + pos.z * 50.0) * .2) * .05;
 	}
-	pos.y -= uCurvature * (pos.z * pos.z + pos.x * pos.x) / 500.0;
 
 	pos.xyz += aVertexMove.xyz * time;
 	pos.xyz += aVertexGravity.xyz * time * time / 2.0;
 
 	vec4 position = uProjectionMatrix * uViewMatrix * pos;
+
+	position.y -= uCurvature * (position.z * position.z + position.x * position.x) / 500.0;
 
 	float cols = aGrid[0];
 	float rows = aGrid[1];

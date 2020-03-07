@@ -8,13 +8,13 @@ class ImageSprite extends BaseSprite {
 		this.src = null;
  	}
 
-	getEvaluated(evaluator, definition) {
-		super.getEvaluated(evaluator, definition);
+	getEvaluated(game, definition) {
+		super.getEvaluated(game, definition);
 		
 		const { src, hidden } = definition;
 		const { instanceIndex } = this;
-		const { now } = evaluator;
-		const spriteSrc = evaluator.evaluate(hidden, this, instanceIndex) ? null : evaluator.evaluate(src, this, instanceIndex);
+		const { now } = game;
+		const spriteSrc = game.evaluate(hidden, this, instanceIndex) ? null : game.evaluate(src, this, instanceIndex);
 		if (spriteSrc !== this.src) {
 			this.src = spriteSrc;
 			this.updateTimes.src = now;

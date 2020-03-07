@@ -51,7 +51,7 @@ void main(void) {
 		discard;
 	}
 	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2,max(0.0, .8 + zDist * .3))));
-	color = mix(color, uBackground, min(1.0, zDist * 0.5));
+	color = mix(color, uBackground, min(1.0, zDist * 0.3));
 
 	gl_FragColor = color;
 }

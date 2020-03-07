@@ -105,7 +105,7 @@ class Shader {
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 		gl.vertexAttribPointer(location, floatsPerVertex, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(location);
-		gl.bufferData(gl.ARRAY_BUFFER, floatsPerVertex * MAX_SPRITE * VERTICES_PER_SPRITE * Float32Array.BYTES_PER_ELEMENT, gl.STATIC_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, floatsPerVertex * MAX_SPRITE * VERTICES_PER_SPRITE * Float32Array.BYTES_PER_ELEMENT, gl.STREAM_DRAW);
 		return vertexBuffer;
 	}
 

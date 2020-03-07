@@ -1,43 +1,33 @@
 /**
-	Game
-  */
+   	Game
+ */
 
 class Game {
-	constructor(canvas, sceneManager, config, data) {
-		this.engine = new Engine(canvas, data.webgl, data.generated.config.imagedata);
-		this.evaluator = new Evaluator();
-		this.sceneRenderer = new SceneRenderer(this.engine, this.evaluator);
-		this.spriteRenderer = new SpriteRenderer(this.engine, this.evaluator);
-		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor(this.evaluator);
-		this.sceneManager = sceneManager;
-		this.config = config;
-		this.data = data;
-		this.currentScene = {};
-
-		const { engine, sceneRenderer, spriteRenderer, spriteDefinitionProcessor, evaluator } = this;
-		const self = this;
-		function animationFrame(now) {
-			const { currentScene } = self;
-			engine.setTime(now);
-			evaluator.now = now;
-			engine.clearScreen();
-			sceneRenderer.render(currentScene);
-			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, now);
-			spriteRenderer.render(sprites, now);
-			Pool.resetAll();
-			requestAnimationFrame(animationFrame);
-		}
-		requestAnimationFrame(animationFrame);
-	}
-
-	start() {
-		const { start } = this.config;
-		this.setScene(this.sceneManager.scenes[start]);
-		console.log("start scene:", start);
+	constructor() {
+		this.dataStore = new DataStore();
+		this.now = 0;
+		this.keys = null;
+		this.scene = {};
+		this.sceneData = {};
+		this.situation = {};
 	}
 
 	setScene(scene) {
-		this.currentScene = scene;
-		this.evaluator.setScene(scene);
+		this.scene = scene;
+		this.sceneData = {};
+		this.situation = this.dataStore.getSituation(scene.name);
+	}
+
+	evaluate(value, ...params) {
+		return value(this, ...params);
+	}
+
+	interpolate(value, finalValue, duration) {
+		const time = this.now;
+		duration = duration || 500;
+		return ({now}, sprite, index) => {
+			const progress = Math.min(1, (now - time) / duration);
+			return progress * finalValue + (1 - progress) * value;
+		};
 	}
 }

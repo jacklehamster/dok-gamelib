@@ -12,14 +12,16 @@ class Sprite extends AnimatedSprite {
 		this.gravity = [0, 0, 0];
 	}
 
-	getEvaluated(evaluator, definition) {
-		super.getEvaluated(evaluator, definition);
-		const { src, animation, size, pos, mov, gravity, grid, hotspot } = definition;
+	getEvaluated(game, definition) {
+		super.getEvaluated(game, definition);
+		const { src, animation, size, pos, mov, gravity, grid, hotspot, refresh } = definition;
 		const { instanceIndex, updateTimes } = this;
-		const { now } = evaluator;
+		const { now } = game;
 
-		const spriteWidth = !src ? 0 : size ? evaluator.evaluate(size[0], this, instanceIndex) : 1;
-		const spriteHeight = !src ? 0 : size ? evaluator.evaluate(size[1], this, instanceIndex) : 1;
+		game.evaluate(refresh, this, instanceIndex);
+
+		const spriteWidth = !src ? 0 : size ? game.evaluate(size[0], this, instanceIndex) : 1;
+		const spriteHeight = !src ? 0 : size ? game.evaluate(size[1], this, instanceIndex) : 1;
 
 		if (this.size[0] !== spriteWidth || this.size[1] !== spriteHeight) {
 			this.size[0] = spriteWidth;
@@ -27,17 +29,17 @@ class Sprite extends AnimatedSprite {
 			updateTimes.size = now;
 		}
 
-		const hotspotX = !hotspot ? 0 : evaluator.evaluate(hotspot[0], this, instanceIndex);
-		const hotspotY = !hotspot ? 0 : evaluator.evaluate(hotspot[1], this, instanceIndex);
+		const hotspotX = !hotspot ? 0 : game.evaluate(hotspot[0], this, instanceIndex);
+		const hotspotY = !hotspot ? 0 : game.evaluate(hotspot[1], this, instanceIndex);
 		if (hotspotX !== this.hotspot[0] || hotspotY !== this.hotspot[1]) {
 			this.hotspot[0] = hotspotX;
 			this.hotspot[1] = hotspotY;
 			updateTimes.hotspot = now;
 		}
 
-		const newPosX = !pos ? 0 : evaluator.evaluate(pos[0], this, instanceIndex);
-		const newPosY = !pos ? 0 : evaluator.evaluate(pos[1], this, instanceIndex);
-		const newPosZ = !pos ? 0 : evaluator.evaluate(pos[2], this, instanceIndex);
+		const newPosX = !pos ? 0 : game.evaluate(pos[0], this, instanceIndex);
+		const newPosY = !pos ? 0 : game.evaluate(pos[1], this, instanceIndex);
+		const newPosZ = !pos ? 0 : game.evaluate(pos[2], this, instanceIndex);
 
 		if (!Utils.equal3(this.pos, newPosX, newPosY, newPosZ)) {
 			Utils.set3(this.pos, newPosX, newPosY, newPosZ);
@@ -45,9 +47,9 @@ class Sprite extends AnimatedSprite {
 		}
 
 		if (mov) {
-			const newMovX = evaluator.evaluate(mov[0], this, instanceIndex);
-			const newMovY = evaluator.evaluate(mov[1], this, instanceIndex);
-			const newMovZ = evaluator.evaluate(mov[2], this, instanceIndex);
+			const newMovX = game.evaluate(mov[0], this, instanceIndex);
+			const newMovY = game.evaluate(mov[1], this, instanceIndex);
+			const newMovZ = game.evaluate(mov[2], this, instanceIndex);
 
 			if (!Utils.equal3(this.mov, newMovX, newMovY, newMovZ)) {
 				Utils.set3(this.mov, newMovX, newMovY, newMovZ);
@@ -56,9 +58,9 @@ class Sprite extends AnimatedSprite {
 		}
 
 		if (gravity) {
-			const newGravityX = evaluator.evaluate(gravity[0], this, instanceIndex);
-			const newGravityY = evaluator.evaluate(gravity[1], this, instanceIndex);
-			const newGravityZ = evaluator.evaluate(gravity[2], this, instanceIndex);
+			const newGravityX = game.evaluate(gravity[0], this, instanceIndex);
+			const newGravityY = game.evaluate(gravity[1], this, instanceIndex);
+			const newGravityZ = game.evaluate(gravity[2], this, instanceIndex);
 
 			if (!Utils.equal3(this.gravity, newGravityX, newGravityY, newGravityZ)) {
 				Utils.set3(this.gravity, newGravityX, newGravityY, newGravityZ);

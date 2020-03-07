@@ -38,18 +38,20 @@
 		<script src="core/texture-manager.js"></script>
 		<script src="core/shader.js"></script>
 		<script src="core/scene-renderer.js"></script>
-		<script src="core/sprite-renderer.js"></script>
-		<script src="core/evaluator.js"></script>
+		<script src="core/data-store.js"></script>
+		<script src="core/keyboard.js"></script>
+		<script src="core/game.js"></script>
 		<script src="core/engine-buffer.js"></script>
 		<script src="core/engine-chunk.js"></script>
-		<script src="core/engine.js"></script>
+		<script src="core/gl-renderer.js"></script>
 		<script src="core/sprite-provider.js"></script>
 		<script src="core/base-sprite.js"></script>
 		<script src="core/image-sprite.js"></script>
 		<script src="core/animated-sprite.js"></script>
 		<script src="core/sprite.js"></script>
 		<script src="core/sprite-definition-processor.js"></script>
-		<script src="core/game.js"></script>
+		<script src="core/engine.js"></script>
+		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
 		<script src="generated/js/data.js"></script>
 
@@ -63,14 +65,15 @@
 	<body class="container">
 		<canvas id="canvas" width=800 height=500></canvas>
 		<script>
-			const config = ({{{json}}});
-			const data = getData();
-			let game;
+			const game = new Game();
+			function startGame() {
+				const config = ({{{json}}});
+				const data = getData();
+				const engine = new Engine(game, document.getElementById("canvas"), SceneManager.instance, config, data);
+				engine.start();
+			}
 		
-			document.addEventListener("DOMContentLoaded", e => {
-				game = new Game(document.getElementById("canvas"), sceneManager, config, data);
-				game.start();
-			});
+			document.addEventListener("DOMContentLoaded", startGame);
 		</script>
 	</body>
 </html>
