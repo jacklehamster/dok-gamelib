@@ -14,16 +14,16 @@ class AnimatedSprite extends ImageSprite {
 		this.grid = [0, 0];
 	}
 
-	getEvaluated(evaluator, definition) {
-		super.getEvaluated(evaluator, definition);
+	getEvaluated(game, definition) {
+		super.getEvaluated(game, definition);
 		const { animation, grid } = definition;
 		const { instanceIndex, updateTimes } = this;
-		const { now } = evaluator;
+		const { now } = game;
 
-		const animFrame = (animation ? evaluator.evaluate(animation.frame, this, instanceIndex) : 0) || 0;
-		const animStart = (animation ? evaluator.evaluate(animation.start, this, instanceIndex) : 0) || 0;
-		const animRange = (animation ? evaluator.evaluate(animation.range, this, instanceIndex) : 0) || 1;
-		const animFrameRate = (animation ? evaluator.evaluate(animation.frameRate, this, instanceIndex) : 0) || 0;
+		const animFrame = game.evaluate(animation.frame, this, instanceIndex);
+		const animStart = game.evaluate(animation.start, this, instanceIndex);
+		const animRange = game.evaluate(animation.range, this, instanceIndex);
+		const animFrameRate = game.evaluate(animation.frameRate, this, instanceIndex);
 
 		const spriteAnim = this.animation;
 		if (spriteAnim.frame !== animFrame || spriteAnim.start !== animStart || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
@@ -33,8 +33,8 @@ class AnimatedSprite extends ImageSprite {
 			spriteAnim.frameRate = animFrameRate;
 			updateTimes.animation = now;
 		}
-		const animCols = !grid ? 1 : evaluator.evaluate(grid[0], this, instanceIndex) || 1;
-		const animRows = !grid ? 1 :evaluator.evaluate(grid[1], this, instanceIndex) || 1;
+		const animCols = game.evaluate(grid[0], this, instanceIndex);
+		const animRows = game.evaluate(grid[1], this, instanceIndex);
 		if (this.grid[0] !== animCols || this.grid[1] !== animRows) {
 			this.grid[0] = animCols;
 			this.grid[1] = animRows;

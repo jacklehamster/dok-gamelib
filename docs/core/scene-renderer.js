@@ -42,12 +42,12 @@ class SceneRenderer {
 			this.docBackground = docBackground;
 		}
 
-		const newViewPosX = view.pos ? game.evaluate(view.pos[0]) : 0;
-		const newViewPosY = view.pos ? game.evaluate(view.pos[1]) : 0;
-		const newViewPosZ = view.pos ? game.evaluate(view.pos[2]) : 0;
-		const newHeight = game.evaluate(view.height) || 0;
-		const newTurn = game.evaluate(view.turn) || 0;
-		const newCameraDistance = game.evaluate(view.cameraDistance) || 7;
+		const newViewPosX = game.evaluate(view.pos[0]);
+		const newViewPosY = game.evaluate(view.pos[1]);
+		const newViewPosZ = game.evaluate(view.pos[2]);
+		const newHeight = game.evaluate(view.height);
+		const newTurn = game.evaluate(view.turn);
+		const newCameraDistance = game.evaluate(view.cameraDistance);
 		if (!Utils.equal3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ)
 			|| newHeight !== this.view.height || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
 			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newHeight, newTurn, -newCameraDistance);
@@ -60,7 +60,7 @@ class SceneRenderer {
 			glRenderer.setViewAngle(newViewAngle);
 			this.view.angle = newViewAngle;
 		}
-		const newCurvature = game.evaluate(settings.curvature) || 0;
+		const newCurvature = game.evaluate(settings.curvature);
 		if (this.view.curvature !== newCurvature) {
 			glRenderer.setCurvature(newCurvature);
 			this.view.curvature = newCurvature;
