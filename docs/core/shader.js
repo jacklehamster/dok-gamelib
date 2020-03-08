@@ -15,6 +15,7 @@ class Shader {
 				texCoord: "aVertexTextureCoord",
 				animation: "aAnimationData",
 				grid: "aGrid",
+				light: "aLight",
 			},
 			uniforms: {
 				projection: "uProjectionMatrix",

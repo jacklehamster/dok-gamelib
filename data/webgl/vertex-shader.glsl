@@ -10,6 +10,7 @@ attribute float aType;					//	wall/floor=0, sprite=1, water=2, ...
 attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
 attribute vec4 aAnimationData; 			//	[ cols, start, total, frameRate ]
 attribute vec2 aGrid;					//	[ cols, rows ]
+attribute float aLight;					//	light
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
@@ -19,6 +20,7 @@ uniform float uNow;
 
 varying mediump vec2 vTexturePoint;
 varying mediump float zDist;
+varying mediump float light;
 
 void main(void) {
 	float timeStart = aVertexMove.w;
@@ -55,5 +57,6 @@ void main(void) {
 	vTexturePoint.y += texRow * aVertexTextureCoord[3];
 
 	zDist = abs(position.z / 12.0) + abs(position.y / 10.0);
+	light = aLight;
 	gl_Position = position;
 }

@@ -12,12 +12,12 @@ class BaseSprite {
 		this.updateTimes = {};
 	}
 
-	getEvaluated(evaluator, definition) {
+	getEvaluated(game, definition) {
 		const { instanceIndex, updateTimes } = this;
-		const { now } = evaluator;
+		const { now } = game;
 		const { type } = definition;
 
-		const newType = evaluator.evaluate(type, this, instanceIndex) || 0;
+		const newType = game.evaluate(type, definition, instanceIndex) || 0;
 		if (this.type !== newType) {
 			this.type = newType;
 			updateTimes.type = now;

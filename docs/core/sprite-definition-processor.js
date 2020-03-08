@@ -15,16 +15,18 @@ class SpriteDefinitionProcessor {
 		const { game } = this;
 		if (spriteDefinitions) {
 			for (let i = 0; i < spriteDefinitions.length; i++) {
-				game.evaluate(spriteDefinitions[i].init, spriteDefinitions[i], i);
+				game.evaluate(spriteDefinitions[i].init, spriteDefinitions[i]);
 			}
 		}
 	}
 
 	process(spriteDefinitions) {
-		const { spriteCollector } = this;
+		const { spriteCollector, game } = this;
 		spriteCollector.length = 0;
 		for (let i = 0; i < spriteDefinitions.length; i++) {
-			this.processSpriteDefinition(spriteDefinitions[i], i, spriteCollector);
+			const definition = spriteDefinitions[i];
+			game.evaluate(definition.refresh, definition);
+			this.processSpriteDefinition(definition, i, spriteCollector);
 		}
 		return spriteCollector;
 	}

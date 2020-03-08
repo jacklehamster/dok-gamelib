@@ -5,6 +5,7 @@ const SPRITE_TYPE_FLOAT_PER_VERTEX	= 1;	//	type
 const TEXTURE_FLOAT_PER_VERTEX 		= 4;	//	x,y,w,h
 const ANIMATION_FLOAT_PER_VERTEX 	= 4;	//	cols,index,count,frameRate
 const GRID_FLOAT_PER_VERTEX 		= 2;	//	cols,rows
+const LIGHT_FLOAT_PER_VERTEX 		= 1;	//	1 light
 const VERTICES_PER_SPRITE 			= 4;	//	4 corners
 const INDEX_ARRAY_PER_SPRITE = new Uint16Array([
 	1,  2,  0,

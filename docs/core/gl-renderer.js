@@ -53,6 +53,7 @@ class GLRenderer {
 			texCoord: 	new EngineBuffer(TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			animation: 	new EngineBuffer(ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			grid: 		new EngineBuffer(GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			light: 		new EngineBuffer(LIGHT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
 
 		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
@@ -66,8 +67,7 @@ class GLRenderer {
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
 		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => {
-			const { vertex, offset, move, gravity, spriteType, texCoord, animation, grid } = this.bufferInfo;
-			return new Chunk(index, vertex, offset, move, gravity, spriteType, texCoord, animation, grid);
+			return new Chunk(index, this.bufferInfo);
 		});
 		this.usedChunks = 0;
 

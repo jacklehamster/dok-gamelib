@@ -13,6 +13,7 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-title" content="Hello World">
 
+		<script src="generated/js/data.js"></script>
 		<script src="core/gl-matrix.js"></script>
 		<script src="core/constants.js"></script>
 		<script src="core/utils.js"></script>
@@ -35,9 +36,10 @@
 		<script src="core/engine.js"></script>
 		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
-		<script src="generated/js/data.js"></script>
 
-		<script src="generated/js/scenes/demo.js"></script>
+ 		<!-- maze -->
+ 		<script>SceneManager.loadingSceneName = "maze";</script>
+		<script src="generated/js/scenes/maze.js"></script>
 
 
 	</head>
@@ -47,9 +49,8 @@
 		<script>
 			const game = new Game();
 			function startGame() {
-				const config = ({"title":"Hello World","description":"Description","scenes":["demo"]});
-				const data = getData();
-				const engine = new Engine(game, document.getElementById("canvas"), SceneManager.instance, config, data);
+				const config = ({"title":"Hello World","description":"Description","scenes":["maze"]});
+				const engine = new Engine(game, document.getElementById("canvas"), SceneManager.instance);
 				engine.start();
 			}
 		

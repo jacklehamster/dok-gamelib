@@ -5,6 +5,7 @@ const int NUM_TEXTURES = 16;
 uniform sampler2D uTextures[NUM_TEXTURES];
 varying mediump vec2 vTexturePoint;
 varying mediump float zDist;
+varying mediump float light;
 uniform vec4 uBackground;
 
 vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {
@@ -50,7 +51,7 @@ void main(void) {
 		discard;
 	}
 	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2,max(0.0, .8 + zDist * .3))));
-	color = mix(color, uBackground, min(1.0, zDist * 0.3));
+	color = mix(color, uBackground, min(1.0, (zDist + light) * 0.3));
 
 	gl_FragColor = color;
 }

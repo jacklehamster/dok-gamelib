@@ -31,6 +31,7 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-title" content="{{obj.title}}">
 
+		<script src="generated/js/data.js"></script>
 		<script src="core/gl-matrix.js"></script>
 		<script src="core/constants.js"></script>
 		<script src="core/utils.js"></script>
@@ -53,9 +54,10 @@
 		<script src="core/engine.js"></script>
 		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
-		<script src="generated/js/data.js"></script>
 
  		{{#obj.scenes}}
+ 		<!-- {{.}} -->
+ 		<script>SceneManager.loadingSceneName = "{{.}}";</script>
 		<script src="generated/js/scenes/{{.}}.js"></script>
 		{{/obj.scenes}}		
 
@@ -68,8 +70,7 @@
 			const game = new Game();
 			function startGame() {
 				const config = ({{{json}}});
-				const data = getData();
-				const engine = new Engine(game, document.getElementById("canvas"), SceneManager.instance, config, data);
+				const engine = new Engine(game, document.getElementById("canvas"), SceneManager.instance);
 				engine.start();
 			}
 		

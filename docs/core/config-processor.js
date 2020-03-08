@@ -4,9 +4,13 @@
 
 
 class ConfigProcessor {
+	constructor() {
+		this.schema = getData().schema.schema;
+	}
+
  	process(obj, schema, path) {
  		if (!schema) {
- 			schema = ConfigProcessor.getRootSchema();
+ 			schema = this.schema;
  		}
  		if (!path) {
  			path = "scene";
@@ -36,6 +40,23 @@ class ConfigProcessor {
 	 		}
  		}
  		return result;
+ 	}
+
+ 	validateScene(game, scene, data) {
+ 		const { sprites } = scene;
+ 		const { imagedata } = data.generated.config;
+ 		sprites.forEach(definition => {
+ 			const {src, count} = definition;
+ 			const countProcessed = game.evaluate(count, definition);
+ 			for (let i = 0; i < countProcessed; i++) {
+	 			const srcProcessed = game.evaluate(src, definition, i);
+	 			if (!imagedata.sprites[srcProcessed]) {
+	 				console.error(`Invalid image src: ${srcProcessed}.`);
+	 			}
+ 			}
+ 		});
+
+ 		console.log(scene, data);
  	}
 
  	static defaultEval(value) {
@@ -109,6 +130,7 @@ class ConfigProcessor {
 					src: null,
 					type: 0,
 					hidden: false,
+					light: 0,
 					pos: [
 						0,
 						0,

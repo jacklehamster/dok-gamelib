@@ -20,10 +20,10 @@ class AnimatedSprite extends ImageSprite {
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
-		const animFrame = game.evaluate(animation.frame, this, instanceIndex);
-		const animStart = game.evaluate(animation.start, this, instanceIndex);
-		const animRange = game.evaluate(animation.range, this, instanceIndex);
-		const animFrameRate = game.evaluate(animation.frameRate, this, instanceIndex);
+		const animFrame = game.evaluate(animation.frame, definition, instanceIndex);
+		const animStart = game.evaluate(animation.start, definition, instanceIndex);
+		const animRange = game.evaluate(animation.range, definition, instanceIndex);
+		const animFrameRate = game.evaluate(animation.frameRate, definition, instanceIndex);
 
 		const spriteAnim = this.animation;
 		if (spriteAnim.frame !== animFrame || spriteAnim.start !== animStart || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
@@ -33,8 +33,8 @@ class AnimatedSprite extends ImageSprite {
 			spriteAnim.frameRate = animFrameRate;
 			updateTimes.animation = now;
 		}
-		const animCols = game.evaluate(grid[0], this, instanceIndex);
-		const animRows = game.evaluate(grid[1], this, instanceIndex);
+		const animCols = game.evaluate(grid[0], definition, instanceIndex);
+		const animRows = game.evaluate(grid[1], definition, instanceIndex);
 		if (this.grid[0] !== animCols || this.grid[1] !== animRows) {
 			this.grid[0] = animCols;
 			this.grid[1] = animRows;
@@ -64,5 +64,5 @@ class AnimatedSprite extends ImageSprite {
 			const [ cols, rows ] = grid;
 			chunk.setAnimation(frame, start, range, frameRate, now);
 		}
-	}	
+	}
 }

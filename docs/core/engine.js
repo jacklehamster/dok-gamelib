@@ -3,9 +3,10 @@
   */
 
 class Engine {
-	constructor(game, canvas, sceneManager, config, data) {
+	constructor(game, canvas, sceneManager) {
 		this.game = game;
-		this.glRenderer = new GLRenderer(canvas, data.webgl, data.generated.config.imagedata);
+		this.data = getData();
+		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.data.generated.config.imagedata);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer, game);
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor(game);
 		this.sceneManager = sceneManager;
@@ -23,11 +24,15 @@ class Engine {
 			onActionPress: () => game.evaluate(game.scene.keyboard.onActionPress),
 			onActionRelease: () => game.evaluate(game.scene.keyboard.onActionRelease),
 		});
-		this.config = config;
-		this.data = data;
 		this.currentScene = EMPTY_OBJECT;
 
+		this.validate();
+
 		Engine.beginLooping(this);
+	}
+
+	validate() {
+		this.sceneManager.validateScenes(this.game, this.data);
 	}
 
 	start() {

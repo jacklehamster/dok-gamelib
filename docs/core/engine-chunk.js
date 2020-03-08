@@ -3,7 +3,7 @@
 	*/
 
 class Chunk {
-	constructor(index, vertex, offset, move, gravity, spriteType, texCoord, animation, grid) {
+	constructor(index, {vertex, offset, move, gravity, spriteType, texCoord, animation, grid, light}) {
 		this.index = index;
 		this.vertex = vertex;
 		this.offset = offset;
@@ -13,6 +13,7 @@ class Chunk {
 		this.texCoord = texCoord;
 		this.animation = animation;
 		this.grid = grid;
+		this.light = light;
 		this.vertexSubarray = vertex.subarray(this.index, this.index+1);
 		this.offsetSubarray = offset.subarray(this.index, this.index+1);
 		this.moveSubarray = move.subarray(this.index, this.index+1);
@@ -21,6 +22,7 @@ class Chunk {
 		this.texCoordSubarray = texCoord.subarray(this.index, this.index+1);
 		this.animationSubarray = animation.subarray(this.index, this.index+1);
 		this.gridSubarray = grid.subarray(this.index, this.index+1);
+		this.lightSubarray = light.subarray(this.index, this.index+1);
 	}
 
 	static assignValues(float32Array, ... values) {
@@ -46,6 +48,17 @@ class Chunk {
 		offset.chunkUpdateTimes[index] = now;
 	}
 
+	setHidden(now) {
+		const { vertex, vertexSubarray, index } = this;
+		Chunk.assignValues(vertexSubarray,
+			0, 0, 0,
+			0, 0, 0,
+			0, 0, 0,
+			0, 0, 0,
+		);
+		vertex.chunkUpdateTimes[index] = now;		
+	}
+
 	setWall([width, height], [hotspotX, hotspotY], now) {
 		const { vertex, vertexSubarray, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
@@ -54,6 +67,18 @@ class Chunk {
 			- halfWidth - hotspotX, - halfHeight - hotspotY, 0,
 			+ halfWidth - hotspotX, - halfHeight - hotspotY, 0,
 			+ halfWidth - hotspotX, + halfHeight - hotspotY, 0,
+		);
+		vertex.chunkUpdateTimes[index] = now;
+	}
+
+	setBackWall([width, height], [hotspotX, hotspotY], now) {
+		const { vertex, vertexSubarray, index } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		Chunk.assignValues(vertexSubarray,
+			- halfWidth - hotspotX, - halfHeight - hotspotY, 0,
+			- halfWidth - hotspotX, + halfHeight - hotspotY, 0,
+			+ halfWidth - hotspotX, + halfHeight - hotspotY, 0,
+			+ halfWidth - hotspotX, - halfHeight - hotspotY, 0,
 		);
 		vertex.chunkUpdateTimes[index] = now;
 	}
@@ -151,6 +176,12 @@ class Chunk {
 			cols, rows,
 		);
 		grid.chunkUpdateTimes[index] = now;
+	}
+
+	setLight(value, now) {
+		const { light, lightSubarray, index } = this;
+		Chunk.assignValues(lightSubarray, value, value, value, value);
+		light.chunkUpdateTimes[index] = now;		
 	}
 
 	setAnimation(frame, start, range, frameRate, now) {

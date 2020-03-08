@@ -106,21 +106,21 @@
 			],
 			"index": 0
 		},
-		"penguin-right": {
+		"blue-wall": {
 			"offset": [
 				3928,
 				520
 			],
 			"size": [
-				128,
+				64,
 				128
 			],
 			"index": 0
 		},
 		"access-card": {
 			"offset": [
-				3928,
-				656
+				4000,
+				520
 			],
 			"size": [
 				64,
@@ -130,7 +130,7 @@
 		},
 		"water": {
 			"offset": [
-				4000,
+				3928,
 				656
 			],
 			"size": [
@@ -161,7 +161,7 @@
 			],
 			"index": 0
 		},
-		"penguin-top-left": {
+		"penguin-right": {
 			"offset": [
 				3896,
 				808
@@ -172,10 +172,21 @@
 			],
 			"index": 0
 		},
-		"penguin-up": {
+		"penguin-top-left": {
 			"offset": [
 				3896,
 				944
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"penguin-up": {
+			"offset": [
+				3896,
+				1080
 			],
 			"size": [
 				128,
