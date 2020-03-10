@@ -27,13 +27,7 @@ class Engine {
 		});
 		this.currentScene = EMPTY_OBJECT;
 
-		this.validate();
-
 		Engine.beginLooping(this);
-	}
-
-	validate() {
-		this.sceneManager.validateScenes(this.game, this.data);
 	}
 
 	start() {

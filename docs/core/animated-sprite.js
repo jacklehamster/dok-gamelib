@@ -53,7 +53,11 @@ class AnimatedSprite extends ImageSprite {
 			if (!src) {
 				chunk.setTexture(0, 0, 0, 0);
 			} else {
-				const { offset, size, index } = engine.imagedata.sprites[src];
+				const spriteData = engine.imagedata.sprites[src];
+				if (!spriteData) {
+					console.error(`Invalid image ${src}.`);
+				}
+				const { offset, size, index } = spriteData;
 				const [ sheetWidth, sheetHeight ] = size;
 				const [ cols, rows ] = grid;
 				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows, now);

@@ -3,26 +3,17 @@
 	*/
 
 class Chunk {
-	constructor(index, {vertex, offset, move, gravity, spriteType, texCoord, animation, grid, light}) {
+	constructor(index, bufferInfo) {
+		this.subarrays = {};
 		this.index = index;
-		this.vertex = vertex;
-		this.offset = offset;
-		this.move = move;
-		this.gravity = gravity;
-		this.spriteType = spriteType;
-		this.texCoord = texCoord;
-		this.animation = animation;
-		this.grid = grid;
-		this.light = light;
-		this.vertexSubarray = vertex.subarray(this.index, this.index+1);
-		this.offsetSubarray = offset.subarray(this.index, this.index+1);
-		this.moveSubarray = move.subarray(this.index, this.index+1);
-		this.gravitySubarray = gravity.subarray(this.index, this.index+1);
-		this.spriteTypeSubarray = spriteType.subarray(this.index, this.index+1);
-		this.texCoordSubarray = texCoord.subarray(this.index, this.index+1);
-		this.animationSubarray = animation.subarray(this.index, this.index+1);
-		this.gridSubarray = grid.subarray(this.index, this.index+1);
-		this.lightSubarray = light.subarray(this.index, this.index+1);
+
+		for (let b in bufferInfo) {
+			if (bufferInfo.hasOwnProperty(b)) {
+				const buffer = bufferInfo[b];
+				this[b] = buffer;
+				this.subarrays[b] = buffer.subarray(this.index, this.index+1);
+			}
+		}
 	}
 
 	static assignValues(float32Array, ... values) {
@@ -32,14 +23,14 @@ class Chunk {
 	}
 
 	setType(type, now) {
-		const { spriteType, spriteTypeSubarray, index } = this;
-		Chunk.assignValues(spriteTypeSubarray, type, type, type, type);
+		const { spriteType, subarrays, index } = this;
+		Chunk.assignValues(subarrays.spriteType, type, type, type, type);
 		spriteType.chunkUpdateTimes[index] = now;
 	}
 
 	setOffset(x, y, z, now) {
-		const { offset, offsetSubarray, index } = this;
-		Chunk.assignValues(offsetSubarray,
+		const { offset, subarrays, index } = this;
+		Chunk.assignValues(subarrays.offset,
 			x, y, z,
 			x, y, z,
 			x, y, z,
@@ -49,8 +40,8 @@ class Chunk {
 	}
 
 	setHidden(now) {
-		const { vertex, vertexSubarray, index } = this;
-		Chunk.assignValues(vertexSubarray,
+		const { vertex, subarrays, index } = this;
+		Chunk.assignValues(subarrays.vertex,
 			0, 0, 0,
 			0, 0, 0,
 			0, 0, 0,
@@ -60,9 +51,9 @@ class Chunk {
 	}
 
 	setWall([width, height], [hotspotX, hotspotY], now) {
-		const { vertex, vertexSubarray, index } = this;
+		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		Chunk.assignValues(vertexSubarray,
+		Chunk.assignValues(subarrays.vertex,
 			- halfWidth - hotspotX, + halfHeight - hotspotY, 0,
 			- halfWidth - hotspotX, - halfHeight - hotspotY, 0,
 			+ halfWidth - hotspotX, - halfHeight - hotspotY, 0,
@@ -72,9 +63,9 @@ class Chunk {
 	}
 
 	setBackWall([width, height], [hotspotX, hotspotY], now) {
-		const { vertex, vertexSubarray, index } = this;
+		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		Chunk.assignValues(vertexSubarray,
+		Chunk.assignValues(subarrays.vertex,
 			+ halfWidth - hotspotX, + halfHeight - hotspotY, 0,
 			+ halfWidth - hotspotX, - halfHeight - hotspotY, 0,
 			- halfWidth - hotspotX, - halfHeight - hotspotY, 0,
@@ -84,9 +75,9 @@ class Chunk {
 	}
 
 	setFloor([width, height], [hotspotX, hotspotY], now) {
-		const { vertex, vertexSubarray, index } = this;
+		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		Chunk.assignValues(vertexSubarray,
+		Chunk.assignValues(subarrays.vertex,
 			- halfWidth - hotspotX, 0, - halfHeight - hotspotY,
 			- halfWidth - hotspotX, 0, + halfHeight - hotspotY,
 			+ halfWidth - hotspotX, 0, + halfHeight - hotspotY,
@@ -96,9 +87,9 @@ class Chunk {
 	}
 
 	setCeiling([width, height], [hotspotX, hotspotY], now) {
-		const { vertex, vertexSubarray, index } = this;
+		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		Chunk.assignValues(vertexSubarray,
+		Chunk.assignValues(subarrays.vertex,
 			- halfWidth - hotspotX, 0, + halfHeight - hotspotY,
 			- halfWidth - hotspotX, 0, - halfHeight - hotspotY,
 			+ halfWidth - hotspotX, 0, - halfHeight - hotspotY,
@@ -108,9 +99,9 @@ class Chunk {
 	}
 
 	setLeftWall([width, height], [hotspotX, hotspotY], now) {
-		const { vertex, vertexSubarray, index } = this;
+		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		Chunk.assignValues(vertexSubarray,
+		Chunk.assignValues(subarrays.vertex,
 			0, + halfWidth - hotspotX, + halfHeight - hotspotY,
 			0, - halfWidth - hotspotX, + halfHeight - hotspotY,
 			0, - halfWidth - hotspotX, - halfHeight - hotspotY,
@@ -120,9 +111,9 @@ class Chunk {
 	}
 
 	setRightWall([width, height], [hotspotX, hotspotY], now) {
-		const { vertex, vertexSubarray, index } = this;
+		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		Chunk.assignValues(vertexSubarray,
+		Chunk.assignValues(subarrays.vertex,
 			0, + halfWidth - hotspotX, - halfHeight - hotspotY,
 			0, - halfWidth - hotspotX, - halfHeight - hotspotY,
 			0, - halfWidth - hotspotX, + halfHeight - hotspotY,
@@ -132,8 +123,8 @@ class Chunk {
 	}
 
 	setMove(dx, dy, dz, now) {
-		const { move, moveSubarray, index } = this;
-		Chunk.assignValues(moveSubarray,
+		const { move, subarrays, index } = this;
+		Chunk.assignValues(subarrays.move,
 			dx, dy, dz, now,
 			dx, dy, dz, now,
 			dx, dy, dz, now,
@@ -143,8 +134,8 @@ class Chunk {
 	}
 
 	setGravity(gx, gy, gz, now) {
-		const { gravity, gravitySubarray, index } = this;
-		Chunk.assignValues(gravitySubarray,
+		const { gravity, subarrays, index } = this;
+		Chunk.assignValues(subarrays.gravity,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
@@ -154,11 +145,11 @@ class Chunk {
 	}
 
 	setTexture(texIndex, offset, spriteWidth, spriteHeight, now) {
-		const { texCoord, texCoordSubarray, index } = this;
+		const { texCoord, subarrays, index } = this;
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const [ spriteX, spriteY ] = offset;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
-		Chunk.assignValues(texCoordSubarray,
+		Chunk.assignValues(subarrays.texCoord,
 			texIndex + texX,			texY,				texWidth,	texHeight,
 			texIndex + texX,			texY + texHeight,	texWidth,	texHeight,
 			texIndex + texX + texWidth,	texY + texHeight,	texWidth,	texHeight,
@@ -168,8 +159,8 @@ class Chunk {
 	}
 
 	setGrid(cols, rows, now) {
-		const { grid, gridSubarray, index } = this;
-		Chunk.assignValues(gridSubarray,
+		const { grid, subarrays, index } = this;
+		Chunk.assignValues(subarrays.grid,
 			cols, rows,
 			cols, rows,
 			cols, rows,
@@ -179,14 +170,14 @@ class Chunk {
 	}
 
 	setLight(value, now) {
-		const { light, lightSubarray, index } = this;
-		Chunk.assignValues(lightSubarray, value, value, value, value);
+		const { light, subarrays, index } = this;
+		Chunk.assignValues(subarrays.light, value, value, value, value);
 		light.chunkUpdateTimes[index] = now;		
 	}
 
 	setAnimation(frame, start, range, frameRate, now) {
-		const { animation, animationSubarray, index } = this;
-		Chunk.assignValues(animationSubarray,
+		const { animation, subarrays, index } = this;
+		Chunk.assignValues(subarrays.animation,
 			frame, start, range, frameRate,
 			frame, start, range, frameRate,
 			frame, start, range, frameRate,
