@@ -1,30 +1,190 @@
+const GROUND = 1;
+const WALL = 2;
+
+const seed = Math.random();
+
 SceneManager.add({
 	firstScene: true,
 	init: (game, scene) => {
 		const { sceneData } = game;
 		sceneData.cam = [0, 0, 0];
 		sceneData.turn = 0;
+		sceneData.cells = [];
+		sceneData.cellMap = {};
+		scene.resetMap(game, 0, 0);
+		sceneData.zombies = [
+			{
+				fromX: 0,
+				fromZ: -1,
+				moveTime: 0,
+				x: 0,
+				z: -1,
+			},
+		];
+		sceneData.life = 20;
+		sceneData.hit = 0;
+		sceneData.score = 0;
+	},
+	resetMap: (game, x, z) => {
+		const { sceneData } = game;
+		const { cellMap, cells } = sceneData;
+		const mm = {};
+		for (let zz = 0; zz < 40; zz++) {
+			for (let xx = 0; xx < 40; xx++) {
+				const xxx = xx-20 - x;
+				const zzz = zz-20 - z;
+				const tag = `${xxx}_${zzz}`;
+				if (!cellMap[tag]) {
+					const cell = {
+						x: xxx,
+						z: zzz,
+						index: cells.length,
+					};
+					cellMap[tag] = cell;
+					cells.push(cell);
+				}
+				mm[tag] = true;
+			}
+		}
+
+		for (let tag in cellMap) {
+			if (!mm[tag]) {
+				const cell = cellMap[tag];
+				const lastCell = cells[cells.length-1];
+				cells.pop();
+				lastCell.index = cell.index;
+				cells[cell.index] = lastCell;
+				delete cellMap[tag];
+			}
+		}
+	},
+	onProcessMove: (game) => {
+		const { scene, sceneData } = game;
+		const { zombies } = sceneData;
+		sceneData.life = Math.min(sceneData.life + .2, 20);
+
+		const posX = Math.floor(sceneData.cam[0] / 3);
+		const posZ = Math.floor(sceneData.cam[2] / 3);
+		zombies.forEach(zombie => {
+			const { x, z, dead } = zombie;
+			if (!dead) {
+				const dx = -posX - x;
+				const dz = -posZ - z;
+				zombie.fromX = x;
+				zombie.fromZ = z;
+				zombie.moveTime = game.now;
+				if (Math.abs(dz) > Math.abs(dx) && game.evaluate(scene.grounded, x, z + Math.sign(dz))) {
+					zombie.z += Math.sign(dz);
+				} else if (game.evaluate(scene.grounded, x + Math.sign(dx), z)) {
+					zombie.x += Math.sign(dx);
+				} else if (game.evaluate(scene.grounded, x, z + Math.sign(dz))) {
+					zombie.z += Math.sign(dz);					
+				}
+
+				if (zombie.x === -posX && zombie.z === -posZ) {
+					sceneData.life--;
+					sceneData.hit = game.now;
+					if (sceneData.life < 0) {
+						sceneData.gameOver = game.now;
+						document.getElementById("gameOver").innerText = "GAME OVER";
+					}
+//					console.log(sceneData.life);
+				}
+			}
+		});
+	},
+	onChangeCell: (game, posX, posZ) => {
+		const { scene, sceneData } = game;
+		const { zombies } = sceneData;
+		scene.resetMap(game, posX, posZ);
+		scene.onProcessMove(game);
+	},
+	onShot: (game) => {
+		const { sceneData, scene } = game;
+		const { zombies } = sceneData;
+		const dx = - Math.round(Math.sin(sceneData.turn||0));
+		const dz = Math.round(Math.cos(sceneData.turn||0));
+		const posX = Math.floor(sceneData.cam[0] / 3);
+		const posZ = Math.floor(sceneData.cam[2] / 3);
+
+		const zombieMap = {};
+		zombies.forEach(zombie => {
+			const { x, z, dead } = zombie;
+			if (!dead) {
+				zombieMap[`${x}_${z}`] = zombie;
+			}
+		});
+
+		for (let x = -posX, z = -posZ, n = 0; game.evaluate(scene.grounded, x, z) && n < 10; x -= dx, z -= dz, n++) {
+			if (zombieMap[`${x}_${z}`]) {
+				zombieMap[`${x}_${z}`].dead = game.now;
+				sceneData.score ++;
+				document.getElementById("score").innerText = sceneData.score;
+				for (let i = 0; i < 3; i++) {
+					const newX = Math.floor(-posX + Math.random() * 40 - 20);
+					const newZ = Math.floor(-posZ + Math.random() * 40 - 20);
+					zombies.push(
+						{
+							fromX: newX,
+							fromZ: newZ,
+							moveTime: 0,
+							x: newX,
+							z: newZ,
+						},
+					);
+				}
+				break;
+			}
+		}
+
+		scene.onProcessMove(game);
+	},
+	grounded: (game, xPos, zPos) => {
+		const value = Math.abs(Math.sin(xPos * .1 + zPos * .3));
+		const value2 = Math.abs(Math.cos(zPos * .1 + xPos * .3));
+		return Math.floor(seed + value * 100000) % 2 !== 1 || Math.floor(seed + value2 * 10000) % 2 !== 1;
+	},
+	canMove: (game, dx, dz) => {
+		const { sceneData, scene } = game;
+		const { cam } = sceneData;
+		const tileSize = 3;
+		const xDest = Math.round((cam[0] + dx) / tileSize);
+		const zDest = Math.round((cam[2] + dz) / tileSize);
+		return game.evaluate(scene.grounded, xDest, zDest);
 	},
 	refresh: (game, scene) => {
 		const { sceneData, keyboard } = game;
 		let moving = false;
-		if (keyboard.controls.up <= 0 || keyboard.controls.down <= 0) {
-			if (keyboard.controls.up > 0) {
-				sceneData.moving = 1;
-				moving = true;
+		const tileSize = 3;
+		const speed = .2;
+		const cellX = Math.floor(sceneData.cam[0]/tileSize), cellZ = Math.floor(sceneData.cam[2]/tileSize);
+
+		if (!sceneData.gameOver) {
+			if (keyboard.controls.up <= 0 || keyboard.controls.down <= 0) {
+				if (keyboard.controls.up > 0) {
+					sceneData.moving = 1;
+					moving = true;
+				}
+				if (keyboard.controls.down > 0) {
+					sceneData.moving = -1;
+					moving = true;
+				}
 			}
-			if (keyboard.controls.down > 0) {
-				sceneData.moving = -1;
-				moving = true;
+			let dx = - Math.sin(sceneData.turn||0) * (sceneData.moving||0) * speed;
+			let dz = Math.cos(sceneData.turn||0) * (sceneData.moving||0) * speed;
+			let xGoal = Math.round(Math.round((sceneData.cam[0] + dx) / tileSize) * tileSize);
+			let zGoal = Math.round(Math.round((sceneData.cam[2] + dz) / tileSize) * tileSize);
+
+
+			if ((Math.abs(dx) > .01 || Math.abs(dz) > .01) && !game.evaluate(scene.canMove, dx, dz)) {
+				dx = 0;
+				dz = 0;
+				sceneData.moving = 0;
+				moving = false;
+				xGoal = Math.round(Math.round((sceneData.cam[0]) / tileSize) * tileSize);
+				zGoal = Math.round(Math.round((sceneData.cam[2]) / tileSize) * tileSize);
 			}
-		}
-//		if (sceneData.moving) {
-			const tileSize = 3;
-			const speed = .2;
-			const dx = - Math.sin(sceneData.turn||0) * (sceneData.moving||0) * speed;
-			const dz = Math.cos(sceneData.turn||0) * (sceneData.moving||0) * speed;
-			const xGoal = Math.round(Math.round((sceneData.cam[0] + dx) / tileSize) * tileSize);
-			const zGoal = Math.round(Math.round((sceneData.cam[2] + dz) / tileSize) * tileSize);					
+
 			if (moving) {
 				if (Math.abs(dx) > .01) {
 					sceneData.cam[0] += dx;
@@ -59,7 +219,7 @@ SceneManager.add({
 					sceneData.moving = 0;
 				}
 			}
-//		}
+		}
 
 		let turning = false;
 		if (keyboard.controls.left <= 0 || keyboard.controls.right <= 0) {
@@ -88,18 +248,24 @@ SceneManager.add({
 				}
 			}
 		}
-	},
-	keyboard: {
-		onKeyPress: (game, key) => {},
-		onLeftPress: (game) => {},
-		onRightPress: (game) => {},
-		onDownPress: (game) => {},
-		onUpPress: (game) => {},
+
+		if (!sceneData.gameOver) {
+			const newCellX = Math.floor(sceneData.cam[0]/tileSize), newCellZ = Math.floor(sceneData.cam[2]/tileSize);
+			if (newCellX !== cellX || newCellZ !== cellZ) {
+				scene.onChangeCell(game, newCellX, newCellZ);
+			}
+		}
 	},
 	settings: {
-		docBackground: 0,
-		background: 0x080523,
-		curvature: -1,
+		docBackground: game => {
+			const time = game.now - game.sceneData.hit;
+			return time < 300 ? 0xaa0000 : 0;
+		},
+		background: game => {
+			const time = game.now - game.sceneData.hit;
+			return time < 300 ? 0xaa0000 : 0x080523;
+		},
+		curvature: -3,
 	},
 	view: {
 		pos: [
@@ -110,16 +276,100 @@ SceneManager.add({
 		angle: 45,
 		height: .4,
 		turn: game => game.sceneData.turn,
-		cameraDistance: 4,
+		cameraDistance: 3,
 	},
+	keyboard: {
+		onActionPress: (game) => {
+			if (!game.sceneData.gameOver) {
+				game.sceneData.lastShot = game.now;
+				game.scene.onShot(game);
+			}
+		},
+	},	
 	sprites: [
 		{
-			src: "blue-wall",
-			type: SpriteType.Floor,
+			src: "gun",
+			hidden: game => game.sceneData.gameOver,
+			animation: {
+				frame: game => {
+					const { now, keyboard, sceneData } = game;
+					if (sceneData.lastShot) {
+						const shootTime = now - sceneData.lastShot;
+						const frame = Math.floor(shootTime / 50);
+						if (frame < 2) {
+							return frame+1;
+						}
+					}
+					return 0;
+				},
+				range: 3,
+				frameRate: 0,
+			},
 			pos: [
-				(game, definition, index) => (Math.floor(index % 40) - 20) * 3,
-				-.5,
-				(game, definition, index) => (Math.floor(index / 40) - 20) * 3,
+				game => -game.sceneData.cam[0],
+				0,
+				game => -game.sceneData.cam[2],
+			],
+			hotspot: [0, 0],
+			grid: [2, 2],
+			size: [3, 3],
+		},
+		{
+			src: "zombie",
+			animation: {
+				frame: (game, definition, index) => {
+					const {dead} = game.sceneData.zombies[index];
+					if (dead) {
+						const deathTime = game.now - dead;
+						const frame = Math.floor(deathTime / 50);
+						return Math.min(frame+2, 5);
+					}
+					return 0;
+				},
+				range: (game, definition, index) => {
+					const {dead} = game.sceneData.zombies[index];
+					return dead ? 6 : 2;
+				},
+				frameRate: (game, definition, index) => {
+					const {dead} = game.sceneData.zombies[index];
+					return dead ? 0 : 2;
+				},
+			},
+			pos: [
+				(game, definition, index) => {
+					const zombie = game.sceneData.zombies[index];
+					const time = game.now - zombie.moveTime;
+					const progress = Math.min(1, time / 200);
+					return progress * zombie.x * 3 + (1-progress) * zombie.fromX * 3;
+				},
+				-.5 * 3,
+				(game, definition, index) => {
+					const zombie = game.sceneData.zombies[index];
+					const time = game.now - zombie.moveTime;
+					const progress = Math.min(1, time / 200);
+					return progress * zombie.z * 3 + (1-progress) * zombie.fromZ * 3;
+				},
+			],
+			hotspot: [0, -1.2],
+			grid: [2, 3],
+			size: [3, 3],
+			count: game => game.sceneData.zombies.length,
+		},
+		{
+			src: "blue-wall",
+			grounded: (game, definition, index) => {
+				return game.evaluate(game.scene.grounded,
+					game.evaluate(definition.xPos, definition, index),
+					game.evaluate(definition.zPos, definition, index),
+				);
+			},
+			type: SpriteType.Floor,
+			xPos: (game, definition, index) => game.sceneData.cells[index].x,
+			zPos: (game, definition, index) => game.sceneData.cells[index].z,
+			pos: [
+				(game, definition, index) => (game.evaluate(definition.xPos, definition, index)) * 3,
+				(game, definition, index) => (game.evaluate(definition.grounded, definition, index) ? -.5 : .5) * 3,
+				(game, definition, index) => (game.evaluate(definition.zPos, definition, index)) * 3,
 			],
 			light: (game, definition, index) => {
 				const { scene } = game;
@@ -136,14 +386,18 @@ SceneManager.add({
 				frameRate: 0,
 			},
 			size: [3.1, 3.1],
-			count: 1600,
+			count: (game, definition, index) => game.sceneData.cells.length,
 		},
 		{
 			src: "blue-wall",
+			grounded: (game, definition, index) => {
+				return game.evaluate(game.scene.grounded,
+					game.evaluate(definition.xPos, definition, index),
+					game.evaluate(definition.zPos, definition, index),
+				);
+			},
 			hidden: (game, definition, index) => {
-				const x = Math.abs(game.evaluate(definition.xPos, definition, index));
-				const z = Math.abs(game.evaluate(definition.zPos, definition, index));
-				return x % 5 !== 1 || z % 3 !== 1;
+				return game.evaluate(definition.grounded, definition, index);
 			},
 			type: (game, definition, index) => {
 				switch(index % 4) {
@@ -191,8 +445,8 @@ SceneManager.add({
 						break;
 				}
 			},
-			xPos: (game, definition, index) => Math.floor(Math.floor(index / 4) % 40) - 20,
-			zPos: (game, definition, index) => Math.floor(Math.floor(index / 4) / 40) - 20,
+			xPos: (game, definition, index) => game.sceneData.cells[Math.floor(index/4)].x,
+			zPos: (game, definition, index) => game.sceneData.cells[Math.floor(index/4)].z,
 			pos: [
 				(game, definition, index) => {
 					const xShift = game.evaluate(definition.xShift, definition, index);
@@ -219,7 +473,7 @@ SceneManager.add({
 				frameRate: 0,
 			},
 			size: [3, 3],
-			count: 1600 * 4,
+			count: (game, definition, index) => game.sceneData.cells.length * 4,
 		},
 	],
 });

@@ -41,11 +41,15 @@
  		<script>SceneManager.loadingSceneName = "maze";</script>
 		<script src="generated/js/scenes/maze.js"></script>
 
-
+		<link href="https://fonts.googleapis.com/css?family=Creepster&display=swap" rel="stylesheet">
 	</head>
 
 	<body class="container">
-		<canvas id="canvas" width=800 height=500></canvas>
+		<div id=gameOver style="margin: 10px; font-size: 80pt; position: absolute; color: #990000; font-family: 'Creepster', cursive;"></div>
+		<div>
+			<div id=score style="margin: 10px; font-size: 20pt; position: absolute; color: silver"></div>
+			<canvas id="canvas" width=800 height=500></canvas>
+		</div>
 		<script>
 			const game = new Game();
 			function startGame() {

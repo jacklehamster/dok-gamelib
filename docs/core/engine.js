@@ -4,6 +4,7 @@
 
 class Engine {
 	constructor(game, canvas, sceneManager) {
+		canvas.focus();
 		this.game = game;
 		this.data = getData();
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.data.generated.config.imagedata);

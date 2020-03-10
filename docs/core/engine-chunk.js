@@ -75,10 +75,10 @@ class Chunk {
 		const { vertex, vertexSubarray, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		Chunk.assignValues(vertexSubarray,
-			- halfWidth - hotspotX, - halfHeight - hotspotY, 0,
-			- halfWidth - hotspotX, + halfHeight - hotspotY, 0,
 			+ halfWidth - hotspotX, + halfHeight - hotspotY, 0,
 			+ halfWidth - hotspotX, - halfHeight - hotspotY, 0,
+			- halfWidth - hotspotX, - halfHeight - hotspotY, 0,
+			- halfWidth - hotspotX, + halfHeight - hotspotY, 0,
 		);
 		vertex.chunkUpdateTimes[index] = now;
 	}

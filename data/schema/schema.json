@@ -13,7 +13,9 @@
 		"onDownPress": null,
 		"onDownRelease": null,
 		"onUpPress": null,
-		"onUpRelease": null
+		"onUpRelease": null,
+		"onActionPress": null,
+		"onActionRelease": null
 	},
 	"settings": {
 		"docBackground": 0,

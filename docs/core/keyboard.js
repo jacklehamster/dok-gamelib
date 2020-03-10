@@ -5,6 +5,8 @@ const KEY_LEFT_A = 65;
 const KEY_RIGHT_D = 68;
 const KEY_UP_W = 87;
 const KEY_DOWN_S = 83;
+const KEY_RIGHT_E = 69;
+const KEY_DOWN_X = 88;
 const KEY_ACTION_SPACE = 32;
 
 const KEY_LEFT_Q = 81;	//	azerty
@@ -23,13 +25,17 @@ class Keyboard {
 			action: 0,
 		};
 
-		document.addEventListener("keydown", ({keyCode}) => {
+		document.addEventListener("keydown", e => {
+			const {keyCode} = e;
 			keysDown[keyCode] = keyCode;
 			delete keysUp[keyCode];
+			e.preventDefault();
 		});
-		document.addEventListener("keyup", ({keyCode}) => {
+		document.addEventListener("keyup", e => {
+			const {keyCode} = e;
 			keysUp[keyCode] = keyCode;
 			delete keysDown[keyCode];
+			e.preventDefault();
 		});
 		this.keysDown = keysDown;
 		this.keysUp = keysUp;
@@ -66,6 +72,7 @@ class Keyboard {
 				}
 				break;
 			case KEY_RIGHT_D:
+			case KEY_RIGHT_E:
 				if (down && controls.right <= 0) {
 					controls.right = now;
 					listener.onRightPress();
@@ -74,6 +81,7 @@ class Keyboard {
 					listener.onRightRelease();
 				}
 				break;
+			case KEY_DOWN_X:
 			case KEY_DOWN_S:
 				if (down && controls.down <= 0) {
 					controls.down = now;

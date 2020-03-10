@@ -62,7 +62,7 @@
 			],
 			"index": 0
 		},
-		"penguin-bot-left": {
+		"gun": {
 			"offset": [
 				3896,
 				200
@@ -73,7 +73,7 @@
 			],
 			"index": 0
 		},
-		"penguin-down": {
+		"penguin-bot-left": {
 			"offset": [
 				3896,
 				336
@@ -106,36 +106,14 @@
 			],
 			"index": 0
 		},
-		"blue-wall": {
+		"zombie": {
 			"offset": [
 				3928,
 				520
 			],
 			"size": [
-				64,
-				128
-			],
-			"index": 0
-		},
-		"access-card": {
-			"offset": [
-				4000,
-				520
-			],
-			"size": [
-				64,
-				64
-			],
-			"index": 0
-		},
-		"water": {
-			"offset": [
-				3928,
-				656
-			],
-			"size": [
-				64,
-				64
+				128,
+				192
 			],
 			"index": 0
 		},
@@ -161,18 +139,29 @@
 			],
 			"index": 0
 		},
-		"penguin-right": {
+		"blue-wall": {
 			"offset": [
 				3896,
 				808
 			],
 			"size": [
-				128,
+				64,
 				128
 			],
 			"index": 0
 		},
-		"penguin-top-left": {
+		"access-card": {
+			"offset": [
+				3968,
+				808
+			],
+			"size": [
+				64,
+				64
+			],
+			"index": 0
+		},
+		"penguin-down": {
 			"offset": [
 				3896,
 				944
@@ -183,10 +172,43 @@
 			],
 			"index": 0
 		},
-		"penguin-up": {
+		"penguin-right": {
 			"offset": [
 				3896,
 				1080
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"water": {
+			"offset": [
+				3896,
+				1216
+			],
+			"size": [
+				64,
+				64
+			],
+			"index": 0
+		},
+		"penguin-top-left": {
+			"offset": [
+				3376,
+				1328
+			],
+			"size": [
+				128,
+				128
+			],
+			"index": 0
+		},
+		"penguin-up": {
+			"offset": [
+				3512,
+				1328
 			],
 			"size": [
 				128,

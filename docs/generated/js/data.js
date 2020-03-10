@@ -17,38 +17,40 @@ function getData() {
             },
             "cage": {"offset": [3896, 0], "size": [128, 192], "index": 0},
             "32x64": {"offset": [4032, 0], "size": [32, 64], "index": 0},
+            "gun": {"offset": [3896, 200], "size": [128, 128], "index": 0},
             "penguin-bot-left": {
-              "offset": [3896, 200],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-down": {
               "offset": [3896, 336],
               "size": [128, 128],
               "index": 0
             },
             "dobuki": {"offset": [3376, 520], "size": [280, 280], "index": 0},
             "yupa-dance": {"offset": [3664, 520], "size": [256, 256], "index": 0},
-            "blue-wall": {"offset": [3928, 520], "size": [64, 128], "index": 0},
-            "access-card": {"offset": [4000, 520], "size": [64, 64], "index": 0},
-            "water": {"offset": [3928, 656], "size": [64, 64], "index": 0},
+            "zombie": {"offset": [3928, 520], "size": [128, 192], "index": 0},
             "icewall.jpg": {
               "offset": [2568, 808],
               "size": [800, 800],
               "index": 0
             },
             "water.jpg": {"offset": [3376, 808], "size": [512, 512], "index": 0},
-            "penguin-right": {
-              "offset": [3896, 808],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-top-left": {
+            "blue-wall": {"offset": [3896, 808], "size": [64, 128], "index": 0},
+            "access-card": {"offset": [3968, 808], "size": [64, 64], "index": 0},
+            "penguin-down": {
               "offset": [3896, 944],
               "size": [128, 128],
               "index": 0
             },
-            "penguin-up": {"offset": [3896, 1080], "size": [128, 128], "index": 0}
+            "penguin-right": {
+              "offset": [3896, 1080],
+              "size": [128, 128],
+              "index": 0
+            },
+            "water": {"offset": [3896, 1216], "size": [64, 64], "index": 0},
+            "penguin-top-left": {
+              "offset": [3376, 1328],
+              "size": [128, 128],
+              "index": 0
+            },
+            "penguin-up": {"offset": [3512, 1328], "size": [128, 128], "index": 0}
           }
         }
       }
@@ -69,7 +71,9 @@ function getData() {
           "onDownPress": null,
           "onDownRelease": null,
           "onUpPress": null,
-          "onUpRelease": null
+          "onUpRelease": null,
+          "onActionPress": null,
+          "onActionRelease": null
         },
         "settings": {"docBackground": 0, "background": 0, "curvature": 0},
         "view": {

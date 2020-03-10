@@ -33,9 +33,9 @@ class SceneManager {
 	}
 
 	validateScenes(game, data) {
-		Object.values(this.scenes).forEach(scene => {
-			this.configProcessor.validateScene(game, scene, data);
-		});
+		// Object.values(this.scenes).forEach(scene => {
+		// 	this.configProcessor.validateScene(game, scene, data);
+		// });
 	}
 
 	getScene(name) {
