@@ -1,6 +1,3 @@
-const GROUND = 1;
-const WALL = 2;
-
 const seed = Math.random();
 
 SceneManager.add(class extends Game {
