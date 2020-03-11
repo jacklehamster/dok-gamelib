@@ -54,6 +54,7 @@ class Engine {
 	}
 
 	setScene(scene) {
+		window.game = scene;
 		this.currentScene = scene;
 		this.sceneRenderer.init(scene);
 		this.spriteDefinitionProcessor.init(scene.sprites, scene);

@@ -57,7 +57,6 @@ function getData() {
     },
     "schema": {
       "schema": {
-        "name": null,
         "firstScene": false,
         "init": null,
         "refresh": null,
