@@ -3,15 +3,38 @@ const WALL = 2;
 
 const seed = Math.random();
 
-SceneManager.add({
+SceneManager.add(null, {
 	firstScene: true,
-	init: (game, scene) => {
-		const { sceneData } = game;
+	settings: {
+		docBackground: game => {
+			const time = game.now - game.sceneData.hit;
+			return time < 300 ? 0xaa0000 : 0;
+		},
+		background: game => {
+			const time = game.now - game.sceneData.hit;
+			return time < 300 ? 0xaa0000 : 0x080523;
+		},
+		curvature: -3,
+	},
+	view: {
+		pos: [
+			game => game.sceneData.cam[0],
+			game => game.sceneData.cam[1],
+			game => game.sceneData.cam[2],
+		],
+		angle: 45,
+		height: .4,
+		turn: game => game.sceneData.turn,
+		cameraDistance: 3,
+	},
+	init: game => {
+		const sceneData = {};
+		game.sceneData = sceneData;
 		sceneData.cam = [0, 0, 0];
 		sceneData.turn = 0;
 		sceneData.cells = [];
 		sceneData.cellMap = {};
-		scene.resetMap(game, 0, 0);
+		game.resetMap(game, 0, 0);
 		sceneData.zombies = [
 			{
 				fromX: 0,
@@ -58,8 +81,8 @@ SceneManager.add({
 			}
 		}
 	},
-	onProcessMove: (game) => {
-		const { scene, sceneData } = game;
+	onProcessMove: game => {
+		const { sceneData } = game;
 		const { zombies } = sceneData;
 		sceneData.life = Math.min(sceneData.life + .2, 20);
 
@@ -73,11 +96,11 @@ SceneManager.add({
 				zombie.fromX = x;
 				zombie.fromZ = z;
 				zombie.moveTime = game.now;
-				if (Math.abs(dz) > Math.abs(dx) && game.evaluate(scene.grounded, x, z + Math.sign(dz))) {
+				if (Math.abs(dz) > Math.abs(dx) && game.evaluate(game.grounded, x, z + Math.sign(dz))) {
 					zombie.z += Math.sign(dz);
-				} else if (game.evaluate(scene.grounded, x + Math.sign(dx), z)) {
+				} else if (game.evaluate(game.grounded, x + Math.sign(dx), z)) {
 					zombie.x += Math.sign(dx);
-				} else if (game.evaluate(scene.grounded, x, z + Math.sign(dz))) {
+				} else if (game.evaluate(game.grounded, x, z + Math.sign(dz))) {
 					zombie.z += Math.sign(dz);					
 				}
 
@@ -94,13 +117,13 @@ SceneManager.add({
 		});
 	},
 	onChangeCell: (game, posX, posZ) => {
-		const { scene, sceneData } = game;
+		const { sceneData } = game;
 		const { zombies } = sceneData;
-		scene.resetMap(game, posX, posZ);
-		scene.onProcessMove(game);
+		game.resetMap(game, posX, posZ);
+		game.onProcessMove(game);
 	},
-	onShot: (game) => {
-		const { sceneData, scene } = game;
+	onShot: game => {
+		const { sceneData } = game;
 		const { zombies } = sceneData;
 		const dx = - Math.round(Math.sin(sceneData.turn||0));
 		const dz = Math.round(Math.cos(sceneData.turn||0));
@@ -115,7 +138,7 @@ SceneManager.add({
 			}
 		});
 
-		for (let x = -posX, z = -posZ, n = 0; game.evaluate(scene.grounded, x, z) && n < 10; x -= dx, z -= dz, n++) {
+		for (let x = -posX, z = -posZ, n = 0; game.evaluate(game.grounded, x, z) && n < 10; x -= dx, z -= dz, n++) {
 			if (zombieMap[`${x}_${z}`]) {
 				zombieMap[`${x}_${z}`].dead = game.now;
 				sceneData.score ++;
@@ -137,7 +160,7 @@ SceneManager.add({
 			}
 		}
 
-		scene.onProcessMove(game);
+		game.onProcessMove(game);
 	},
 	grounded: (game, xPos, zPos) => {
 		const value = Math.abs(Math.sin(xPos * .1 + zPos * .3));
@@ -145,27 +168,27 @@ SceneManager.add({
 		return Math.floor(seed + value * 100000) % 2 !== 1 || Math.floor(seed + value2 * 10000) % 2 !== 1;
 	},
 	canMove: (game, dx, dz) => {
-		const { sceneData, scene } = game;
+		const { sceneData } = game;
 		const { cam } = sceneData;
 		const tileSize = 3;
 		const xDest = Math.round((cam[0] + dx) / tileSize);
 		const zDest = Math.round((cam[2] + dz) / tileSize);
-		return game.evaluate(scene.grounded, xDest, zDest);
+		return game.evaluate(game.grounded, xDest, zDest);
 	},
-	refresh: (game, scene) => {
-		const { sceneData, keyboard } = game;
+	refresh: game => {
+		const { sceneData, keys } = game;
 		let moving = false;
 		const tileSize = 3;
 		const speed = .2;
 		const cellX = Math.floor(sceneData.cam[0]/tileSize), cellZ = Math.floor(sceneData.cam[2]/tileSize);
 
 		if (!sceneData.gameOver) {
-			if (keyboard.controls.up <= 0 || keyboard.controls.down <= 0) {
-				if (keyboard.controls.up > 0) {
+			if (keys.controls.up <= 0 || keys.controls.down <= 0) {
+				if (keys.controls.up > 0) {
 					sceneData.moving = 1;
 					moving = true;
 				}
-				if (keyboard.controls.down > 0) {
+				if (keys.controls.down > 0) {
 					sceneData.moving = -1;
 					moving = true;
 				}
@@ -176,7 +199,7 @@ SceneManager.add({
 			let zGoal = Math.round(Math.round((sceneData.cam[2] + dz) / tileSize) * tileSize);
 
 
-			if ((Math.abs(dx) > .01 || Math.abs(dz) > .01) && !game.evaluate(scene.canMove, dx, dz)) {
+			if ((Math.abs(dx) > .01 || Math.abs(dz) > .01) && !game.evaluate(game.canMove, dx, dz)) {
 				dx = 0;
 				dz = 0;
 				sceneData.moving = 0;
@@ -222,12 +245,12 @@ SceneManager.add({
 		}
 
 		let turning = false;
-		if (keyboard.controls.left <= 0 || keyboard.controls.right <= 0) {
-			if (keyboard.controls.left > 0) {
+		if (keys.controls.left <= 0 || keys.controls.right <= 0) {
+			if (keys.controls.left > 0) {
 				sceneData.turnDirection = -1;
 				turning = true;
 			}
-			if (keyboard.controls.right > 0) {
+			if (keys.controls.right > 0) {
 				sceneData.turnDirection = 1;
 				turning = true;
 			}
@@ -252,37 +275,15 @@ SceneManager.add({
 		if (!sceneData.gameOver) {
 			const newCellX = Math.floor(sceneData.cam[0]/tileSize), newCellZ = Math.floor(sceneData.cam[2]/tileSize);
 			if (newCellX !== cellX || newCellZ !== cellZ) {
-				scene.onChangeCell(game, newCellX, newCellZ);
+				game.onChangeCell(game, newCellX, newCellZ);
 			}
 		}
 	},
-	settings: {
-		docBackground: game => {
-			const time = game.now - game.sceneData.hit;
-			return time < 300 ? 0xaa0000 : 0;
-		},
-		background: game => {
-			const time = game.now - game.sceneData.hit;
-			return time < 300 ? 0xaa0000 : 0x080523;
-		},
-		curvature: -3,
-	},
-	view: {
-		pos: [
-			game => game.sceneData.cam[0],
-			game => game.sceneData.cam[1],
-			game => game.sceneData.cam[2],
-		],
-		angle: 45,
-		height: .4,
-		turn: game => game.sceneData.turn,
-		cameraDistance: 3,
-	},
 	keyboard: {
-		onActionPress: (game) => {
+		onActionPress: game => {
 			if (!game.sceneData.gameOver) {
 				game.sceneData.lastShot = game.now;
-				game.scene.onShot(game);
+				game.onShot(game);
 			}
 		},
 	},	
@@ -292,7 +293,7 @@ SceneManager.add({
 			hidden: game => game.sceneData.gameOver,
 			animation: {
 				frame: game => {
-					const { now, keyboard, sceneData } = game;
+					const { now, sceneData } = game;
 					if (sceneData.lastShot) {
 						const shootTime = now - sceneData.lastShot;
 						const frame = Math.floor(shootTime / 50);
@@ -358,7 +359,7 @@ SceneManager.add({
 		{
 			src: "blue-wall",
 			grounded: (game, definition, index) => {
-				return game.evaluate(game.scene.grounded,
+				return game.evaluate(game.grounded,
 					game.evaluate(definition.xPos, definition, index),
 					game.evaluate(definition.zPos, definition, index),
 				);
@@ -372,9 +373,8 @@ SceneManager.add({
 				(game, definition, index) => (game.evaluate(definition.zPos, definition, index)) * 3,
 			],
 			light: (game, definition, index) => {
-				const { scene } = game;
-				const posX = - game.evaluate(scene.view.pos[0], scene);
-				const posZ = - game.evaluate(scene.view.pos[2], scene);
+				const posX = - game.evaluate(game.view.pos[0]);
+				const posZ = - game.evaluate(game.view.pos[2]);
 				const x = Math.abs(posX - game.evaluate(definition.pos[0], definition, index));
 				const z = Math.abs(posZ - game.evaluate(definition.pos[2], definition, index));
 				return (x + z / 2) / 10;
@@ -391,7 +391,7 @@ SceneManager.add({
 		{
 			src: "blue-wall",
 			grounded: (game, definition, index) => {
-				return game.evaluate(game.scene.grounded,
+				return game.evaluate(game.grounded,
 					game.evaluate(definition.xPos, definition, index),
 					game.evaluate(definition.zPos, definition, index),
 				);
@@ -459,9 +459,8 @@ SceneManager.add({
 				},
 			],
 			light: (game, definition, index) => {
-				const { scene } = game;
-				const posX = - game.evaluate(scene.view.pos[0], scene);
-				const posZ = - game.evaluate(scene.view.pos[2], scene);
+				const posX = - game.evaluate(game.view.pos[0]);
+				const posZ = - game.evaluate(game.view.pos[2]);
 				const x = Math.abs(posX - game.evaluate(definition.pos[0], definition, index));
 				const z = Math.abs(posZ - game.evaluate(definition.pos[2], definition, index));
 				return (x + z / 2) / 10;

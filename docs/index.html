@@ -20,10 +20,10 @@
 		<script src="core/pool.js"></script>
 		<script src="core/texture-manager.js"></script>
 		<script src="core/shader.js"></script>
+		<script src="core/game.js"></script>
 		<script src="core/scene-renderer.js"></script>
 		<script src="core/data-store.js"></script>
 		<script src="core/keyboard.js"></script>
-		<script src="core/game.js"></script>
 		<script src="core/engine-buffer.js"></script>
 		<script src="core/engine-chunk.js"></script>
 		<script src="core/gl-renderer.js"></script>
@@ -37,7 +37,6 @@
 		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
 
- 		<!-- maze -->
  		<script>SceneManager.loadingSceneName = "maze";</script>
 		<script src="generated/js/scenes/maze.js"></script>
 
@@ -51,10 +50,9 @@
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
-			const game = new Game();
 			function startGame() {
 				const config = ({"title":"Hello World","description":"Description","scenes":["maze"]});
-				const engine = new Engine(game, document.getElementById("canvas"), SceneManager.instance);
+				const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 				engine.start();
 			}
 		

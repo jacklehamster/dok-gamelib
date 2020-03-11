@@ -1,21 +1,27 @@
 class SceneManager {
-	constructor() {
+	constructor(DefaultGameClass) {
+		this.DefaultGameClass = DefaultGameClass;
 		this.rawScenes = {};
 		this.scenes = {};
 		this.firstScene = null;
 		this.configProcessor = new ConfigProcessor();
 	}
 
-	add(name, scene) {
-		this.rawScenes[name] = scene;
-		const processedScene = this.configProcessor.process(scene);
-		processedScene.name = name;
-		this.scenes[name] = processedScene;
-		if (processedScene.firstScene) {
+	add(name, GameClass, config) {
+		if (!GameClass) {
+			GameClass = this.DefaultGameClass;
+		}
+		const sceneObj = new GameClass(name);
+
+		this.rawScenes[name] = config;
+ 		Object.assign(sceneObj, this.configProcessor.process(config, sceneObj));
+
+		this.scenes[name] = sceneObj;
+		if (sceneObj.firstScene) {
 			if (this.firstScene) {
-				console.warn(`First scene already set: ${this.firstScene.name}. Unable to set ${processedScene.name} as first scene.`);
+				console.warn(`First scene already set: ${this.firstScene.name}. Unable to set ${sceneObj.name} as first scene.`);
 			} else {
-				this.firstScene = processedScene;
+				this.firstScene = sceneObj;
 			}
 		}
 	}
@@ -36,8 +42,8 @@ class SceneManager {
 		return this.scenes[name];
 	}
 
-	static add(scene) {
-		SceneManager.instance.add(SceneManager.loadingSceneName, scene);
+	static add(GameClass, scene) {
+		SceneManager.instance.add(SceneManager.loadingSceneName, GameClass, scene);
 	}
 }
-SceneManager.instance = new SceneManager();
+SceneManager.instance = new SceneManager(Game);

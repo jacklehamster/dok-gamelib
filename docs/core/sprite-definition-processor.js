@@ -5,40 +5,38 @@
  */
 
 class SpriteDefinitionProcessor {
-	constructor(game) {
-		this.game = game;
+	constructor() {
 		this.spriteProvider = new SpriteProvider(() => new Sprite());
 		this.spriteCollector = [];
 	}
 
-	init(spriteDefinitions) {
-		const { game } = this;
+	init(spriteDefinitions, scene) {
 		if (spriteDefinitions) {
 			for (let i = 0; i < spriteDefinitions.length; i++) {
-				game.evaluate(spriteDefinitions[i].init, spriteDefinitions[i]);
+				scene.evaluate(spriteDefinitions[i].init, spriteDefinitions[i]);
 			}
 		}
 	}
 
-	process(spriteDefinitions) {
-		const { spriteCollector, game } = this;
+	process(spriteDefinitions, scene) {
+		const { spriteCollector } = this;
 		spriteCollector.length = 0;
 		for (let i = 0; i < spriteDefinitions.length; i++) {
 			const definition = spriteDefinitions[i];
-			game.evaluate(definition.refresh, definition);
-			this.processSpriteDefinition(definition, i, spriteCollector);
+			scene.evaluate(definition.refresh, definition);
+			this.processSpriteDefinition(definition, i, spriteCollector, scene);
 		}
 		return spriteCollector;
 	}
 
-	processSpriteDefinition(definition, definitionIndex, spriteCollector) {
-		const { game, spriteProvider } = this;
+	processSpriteDefinition(definition, definitionIndex, spriteCollector, scene) {
+		const { spriteProvider } = this;
 		const { count } = definition;
-		const totalCount = game.evaluate(count, definition, definitionIndex) || 1;
+		const totalCount = scene.evaluate(count, definition, definitionIndex) || 1;
 
 		for (let i = 0; i < totalCount; i ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);
-			sprite.getEvaluated(game, definition);
+			sprite.getEvaluated(scene, definition);
 			spriteCollector.push(sprite);
 		}
 	}
