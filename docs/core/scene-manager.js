@@ -11,7 +11,8 @@ class SceneManager {
 		if (!GameClass) {
 			GameClass = this.DefaultGameClass;
 		}
-		const sceneObj = new GameClass(name);
+		const sceneObj = new GameClass();
+		sceneObj.name = name;
 
 		this.rawScenes[name] = config;
  		Object.assign(sceneObj, this.configProcessor.process(config, sceneObj));
