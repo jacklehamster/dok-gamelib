@@ -115,8 +115,8 @@ app.get('/', function (req, res) {
 								res.send(html);
 								fs.writeFile(`${webDir}/index.html`, html, err => {
 									if (err) throw err;
+									zipGame();
 								});
-								zipGame();
 							})
 						)
 					);
