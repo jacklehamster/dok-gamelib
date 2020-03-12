@@ -9,3 +9,4 @@ data/generated/config/**
 *ignore*
 **.log**
 spritesheet.png
+build/**

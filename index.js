@@ -95,6 +95,15 @@ function assignData(root, path, value) {
 	}
 }
 
+function zipGame() {
+	fs.promises.mkdir(path.join(__dirname, 'build'), { recursive: true })
+		.then(() => {
+			const publicDirectory = `${__dirname}/${webDir}/`;
+			zip.zipDirectory(publicDirectory, `${__dirname}/build/archive.zip`);
+		}
+	)	
+}
+
 app.get('/', function (req, res) {
 	clearGenerated().then(() => {
 		copyScenes().then(() => {
@@ -107,6 +116,7 @@ app.get('/', function (req, res) {
 								fs.writeFile(`${webDir}/index.html`, html, err => {
 									if (err) throw err;
 								});
+								zipGame();
 							})
 						)
 					);
