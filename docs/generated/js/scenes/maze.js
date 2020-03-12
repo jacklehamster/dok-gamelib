@@ -5,7 +5,6 @@ SceneManager.add(class extends Game {
 		const { sceneData } = this;
 		const { cellMap, cells } = sceneData;
 		const mm = {};
-		console.log(x, z);
 		for (let zz = 0; zz < 40; zz++) {
 			for (let xx = 0; xx < 40; xx++) {
 				const xxx = xx-20 - x;
@@ -66,7 +65,6 @@ SceneManager.add(class extends Game {
 						sceneData.gameOver = this.now;
 						document.getElementById("gameOver").innerText = "GAME OVER";
 					}
-//					console.log(sceneData.life);
 				}
 			}
 		});
