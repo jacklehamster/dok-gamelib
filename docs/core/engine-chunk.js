@@ -50,74 +50,74 @@ class Chunk {
 		vertex.chunkUpdateTimes[index] = now;		
 	}
 
-	setWall([width, height], [hotspotX, hotspotY], now) {
+	setWall([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		Chunk.assignValues(subarrays.vertex,
-			- halfWidth - hotspotX, + halfHeight - hotspotY, 0,
-			- halfWidth - hotspotX, - halfHeight - hotspotY, 0,
-			+ halfWidth - hotspotX, - halfHeight - hotspotY, 0,
-			+ halfWidth - hotspotX, + halfHeight - hotspotY, 0,
+			- halfWidth - hotspotX, + halfHeight - hotspotY, A,
+			- halfWidth - hotspotX, - halfHeight - hotspotY, B,
+			+ halfWidth - hotspotX, - halfHeight - hotspotY, C,
+			+ halfWidth - hotspotX, + halfHeight - hotspotY, D,
 		);
 		vertex.chunkUpdateTimes[index] = now;
 	}
 
-	setBackWall([width, height], [hotspotX, hotspotY], now) {
+	setBackWall([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		Chunk.assignValues(subarrays.vertex,
-			+ halfWidth - hotspotX, + halfHeight - hotspotY, 0,
-			+ halfWidth - hotspotX, - halfHeight - hotspotY, 0,
-			- halfWidth - hotspotX, - halfHeight - hotspotY, 0,
-			- halfWidth - hotspotX, + halfHeight - hotspotY, 0,
+			+ halfWidth - hotspotX, + halfHeight - hotspotY, A,
+			+ halfWidth - hotspotX, - halfHeight - hotspotY, B,
+			- halfWidth - hotspotX, - halfHeight - hotspotY, C,
+			- halfWidth - hotspotX, + halfHeight - hotspotY, D,
 		);
 		vertex.chunkUpdateTimes[index] = now;
 	}
 
-	setFloor([width, height], [hotspotX, hotspotY], now) {
+	setFloor([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		Chunk.assignValues(subarrays.vertex,
-			- halfWidth - hotspotX, 0, - halfHeight - hotspotY,
-			- halfWidth - hotspotX, 0, + halfHeight - hotspotY,
-			+ halfWidth - hotspotX, 0, + halfHeight - hotspotY,
-			+ halfWidth - hotspotX, 0, - halfHeight - hotspotY,
+			- halfWidth - hotspotX, A, - halfHeight - hotspotY,
+			- halfWidth - hotspotX, B, + halfHeight - hotspotY,
+			+ halfWidth - hotspotX, C, + halfHeight - hotspotY,
+			+ halfWidth - hotspotX, D, - halfHeight - hotspotY,
 		);
 		vertex.chunkUpdateTimes[index] = now;		
 	}
 
-	setCeiling([width, height], [hotspotX, hotspotY], now) {
+	setCeiling([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		Chunk.assignValues(subarrays.vertex,
-			- halfWidth - hotspotX, 0, + halfHeight - hotspotY,
-			- halfWidth - hotspotX, 0, - halfHeight - hotspotY,
-			+ halfWidth - hotspotX, 0, - halfHeight - hotspotY,
-			+ halfWidth - hotspotX, 0, + halfHeight - hotspotY,
+			- halfWidth - hotspotX, A, + halfHeight - hotspotY,
+			- halfWidth - hotspotX, B, - halfHeight - hotspotY,
+			+ halfWidth - hotspotX, C, - halfHeight - hotspotY,
+			+ halfWidth - hotspotX, D, + halfHeight - hotspotY,
 		);
 		vertex.chunkUpdateTimes[index] = now;		
 	}
 
-	setLeftWall([width, height], [hotspotX, hotspotY], now) {
+	setLeftWall([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		Chunk.assignValues(subarrays.vertex,
-			0, + halfWidth - hotspotX, + halfHeight - hotspotY,
-			0, - halfWidth - hotspotX, + halfHeight - hotspotY,
-			0, - halfWidth - hotspotX, - halfHeight - hotspotY,
-			0, + halfWidth - hotspotX, - halfHeight - hotspotY,
+			A, + halfWidth - hotspotX, + halfHeight - hotspotY,
+			B, - halfWidth - hotspotX, + halfHeight - hotspotY,
+			C, - halfWidth - hotspotX, - halfHeight - hotspotY,
+			D, + halfWidth - hotspotX, - halfHeight - hotspotY,
 		);
 		vertex.chunkUpdateTimes[index] = now;		
 	}
 
-	setRightWall([width, height], [hotspotX, hotspotY], now) {
+	setRightWall([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, subarrays, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		Chunk.assignValues(subarrays.vertex,
-			0, + halfWidth - hotspotX, - halfHeight - hotspotY,
-			0, - halfWidth - hotspotX, - halfHeight - hotspotY,
-			0, - halfWidth - hotspotX, + halfHeight - hotspotY,
-			0, + halfWidth - hotspotX, + halfHeight - hotspotY,
+			A, + halfWidth - hotspotX, - halfHeight - hotspotY,
+			B, - halfWidth - hotspotX, - halfHeight - hotspotY,
+			C, - halfWidth - hotspotX, + halfHeight - hotspotY,
+			D, + halfWidth - hotspotX, + halfHeight - hotspotY,
 		);
 		vertex.chunkUpdateTimes[index] = now;		
 	}

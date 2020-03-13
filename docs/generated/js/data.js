@@ -93,6 +93,7 @@ function getData() {
             "animation": {"start": 0, "frame": 0, "range": 1, "frameRate": 0},
             "size": [1, 1],
             "hotspot": [0, 0],
+            "corners": [0, 0, 0, 0],
             "count": 1,
             "init": null,
             "refresh": null

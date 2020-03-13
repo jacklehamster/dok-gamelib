@@ -14,8 +14,20 @@ class Utils {
 		return vector;
 	}
 
+	static set4(vector, a, b, c, d) {
+		vector[0] = a;
+		vector[1] = b;
+		vector[2] = c;
+		vector[3] = d;
+		return vector;
+	}
+
 	static equal3(vector, x, y, z) {
 		return vector[0] === x && vector[1] === y && vector[2] === z;
+	}
+
+	static equal4(vector, a, b, c, d) {
+		return vector[0] === a && vector[1] === b && vector[2] === c && vector[3] === d;
 	}
 
 	static getDOMColor(color) {

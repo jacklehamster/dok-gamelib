@@ -32,7 +32,7 @@ class SpriteDefinitionProcessor {
 	processSpriteDefinition(definition, definitionIndex, spriteCollector, scene) {
 		const { spriteProvider } = this;
 		const { count } = definition;
-		const totalCount = scene.evaluate(count, definition, definitionIndex) || 1;
+		const totalCount = scene.evaluate(count, definition, definitionIndex);
 
 		for (let i = 0; i < totalCount; i ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);

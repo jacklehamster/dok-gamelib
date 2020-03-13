@@ -1,21 +1,31 @@
 class SceneManager {
-	constructor(DefaultGameClass) {
-		this.DefaultGameClass = DefaultGameClass;
+	constructor({Game, SpriteDefinition}) {
+		this.DefaultGameClass = Game;
+		this.DefaultSpriteDefinitionClass = SpriteDefinition;
 		this.rawScenes = {};
 		this.scenes = {};
 		this.firstScene = null;
 		this.configProcessor = new ConfigProcessor();
 	}
 
-	add(name, GameClass, config) {
-		if (!GameClass) {
-			GameClass = this.DefaultGameClass;
+	add(name, {Game, SpriteDefinition}, config) {
+		if (!Game) {
+			Game = this.DefaultGameClass;
 		}
-		const sceneObj = new GameClass();
+		if (!SpriteDefinition) {
+			SpriteDefinition = this.DefaultSpriteDefinitionClass;
+		}
+		const sceneObj = new Game();
 		sceneObj.name = name;
 
 		this.rawScenes[name] = config;
  		Object.assign(sceneObj, this.configProcessor.process(config, sceneObj));
+
+ 		for (let i = 0; i < sceneObj.sprites.length; i++) {
+ 			const spriteDefinition = new SpriteDefinition(sceneObj);
+ 			Object.assign(spriteDefinition, sceneObj.sprites[i]);
+ 			sceneObj.sprites[i] = spriteDefinition;
+ 		}
 
 		this.scenes[name] = sceneObj;
 		if (sceneObj.firstScene) {
@@ -43,8 +53,8 @@ class SceneManager {
 		return this.scenes[name];
 	}
 
-	static add(GameClass, scene) {
-		SceneManager.instance.add(SceneManager.loadingSceneName, GameClass, scene);
+	static add(classes, scene) {
+		SceneManager.instance.add(SceneManager.loadingSceneName, classes, scene);
 	}
 }
-SceneManager.instance = new SceneManager(Game);
+SceneManager.instance = new SceneManager({Game, SpriteDefinition});
