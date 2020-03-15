@@ -24,6 +24,7 @@ class Shader {
 				camRotation: "uCameraRotation",
 				camPosition: "uCamPosition",
 				lightPosition: "uLightPos",
+				lightIntensity: "uLightIntensity",
 				curvature: "uCurvature",
 				background: "uBackground",
 				textures: "uTextures",

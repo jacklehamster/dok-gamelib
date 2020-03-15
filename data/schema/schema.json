@@ -29,6 +29,7 @@
 			0
 		],
 		"angle": 45,
+		"range": [1, 60],
 		"height": 0,
 		"turn": 0,
 		"cameraDistance": 7
@@ -38,7 +39,11 @@
 			0,
 			0,
 			0
-		]
+		],
+		"ambient": 1,
+		"shininess": 3,
+		"specularStrength": 0.5,
+		"diffusionStrength": 0.5
 	},
 	"sprites": [
 		{

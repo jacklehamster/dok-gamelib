@@ -59,11 +59,7 @@ class GLRenderer {
 		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
 		this.textureManager = new TextureManager(gl, this.shader);
 
-		const { shader, textureManager, projectionMatrix, viewMatrix } = this;
-
-		//	initialize view and projection
-		this.setViewAngle(45);
-		this.setViewPosition(0, 0, 0, 0, 0, 0);
+		const { shader, textureManager } = this;
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
 		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => {
@@ -73,9 +69,6 @@ class GLRenderer {
 
 		//	load texture
 		imagedata.spritesheets.forEach((spritesheet, index) => textureManager.setImage(index, spritesheet));
-
-		this.setBackground(0x000000);
-		this.setCurvature(0);
 
 		this.lastRefresh = 0;
 	}
@@ -96,12 +89,11 @@ class GLRenderer {
 		canvas.style.backgroundColor = Utils.getDOMColor(color);
 	}
 
-	setViewAngle(viewAngle) {
+	setViewAngle(viewAngle, near, far) {
 		const { gl, shader, projectionMatrix } = this;
 		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
-		const zNear = 0.1, zFar = 1000.0;
-		mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
+		mat4.perspective(projectionMatrix, fieldOfView, aspect, near, far);
 		gl.uniformMatrix4fv(shader.programInfo.projection, false, projectionMatrix);
 	}
 
@@ -113,17 +105,16 @@ class GLRenderer {
 		const cameraQuat = pool.quat.get();
 		const cameraRotationMatrix = pool.mat4.get();
 		quat.rotateY(cameraQuat, quat.rotateX(cameraQuat, IDENTITY_QUAT, tilt), turn);
-		mat4.fromRotationTranslationScaleOrigin(viewMatrix, cameraQuat, 
-			ZERO_VEC3,
+		mat4.fromRotationTranslationScaleOrigin(viewMatrix, cameraQuat, ZERO_VEC3,
 			Utils.set3(pool.vec3.get(), scale, scale, scale),
 			Utils.set3(pool.vec3.get(), 0, -height, zOffset));
 		quat.conjugate(cameraQuat, cameraQuat);	//	conjugate for sprites			
-		mat4.translate(viewMatrix, viewMatrix, [-x, -y, -z + zOffset]);
+		mat4.translate(viewMatrix, viewMatrix, Utils.set3(pool.vec3.get(), -x, -y, -z + zOffset));
 
 		mat4.fromQuat(cameraRotationMatrix, cameraQuat);
 		gl.uniformMatrix4fv(shader.programInfo.view, false, viewMatrix);
 		gl.uniformMatrix4fv(shader.programInfo.camRotation, false, cameraRotationMatrix);
-		gl.uniform3fv(shader.programInfo.camPosition, [x, y, z - zOffset]);		
+		gl.uniform3f(shader.programInfo.camPosition, x, y, z - zOffset);
 	}
 
 	setCurvature(curvature) {
@@ -131,8 +122,10 @@ class GLRenderer {
 		gl.uniform1f(shader.programInfo.curvature, curvature);
 	}
 
-	setLightposition(position) {
+	setLight(position, ambient, diffusionStrength, specularStrength, shininess) {
 		const { gl, shader } = this;
+
+		gl.uniform4f(shader.programInfo.lightIntensity, ambient, diffusionStrength, specularStrength, shininess);
 		gl.uniform3fv(shader.programInfo.lightPosition, position);
 	}
 
@@ -172,6 +165,7 @@ class GLRenderer {
 	sendUpdatedBuffer(engineBuffer, now) {
 		const { usedChunks } = this;
 		const { chunkUpdateTimes, shaderBuffer } = engineBuffer;
+
 		const HOLE_LIMIT = 2;
 		let rangeStart = -1, holeSize = 0;
 		for (let i = 0; i < usedChunks; i++) {
@@ -181,21 +175,21 @@ class GLRenderer {
 				}
 			} else if (chunkUpdateTimes[i] !== now) {
 				holeSize++;
-				if (holeSize > HOLE_LIMIT) {
-					this.sendBuffer(shaderBuffer, engineBuffer, rangeStart, i - holeSize + 1);
+				if (holeSize >= HOLE_LIMIT) {
+					this.sendBuffer(engineBuffer, rangeStart, i);
 					rangeStart = -1;
 					holeSize = 0;
 				}
 			}
 		}
 		if (rangeStart >= 0) {
-			this.sendBuffer(shaderBuffer, engineBuffer, rangeStart, usedChunks);
+			this.sendBuffer(engineBuffer, rangeStart, usedChunks);
 		}		
 	}
 
-	sendBuffer(shaderBuffer, engineBuffer, rangeStart, rangeEnd) {
+	sendBuffer(engineBuffer, rangeStart, rangeEnd) {
 		const { gl, shader } = this;
-		const { floatPerVertex, verticesPerSprite } = engineBuffer;
+		const { floatPerVertex, verticesPerSprite, shaderBuffer } = engineBuffer;
 
 		//	set sprite data
 		gl.bindBuffer(gl.ARRAY_BUFFER, shaderBuffer);

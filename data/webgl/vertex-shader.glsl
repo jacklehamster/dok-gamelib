@@ -21,7 +21,6 @@ uniform vec3 uLightPos;
 
 varying mediump vec2 vTexturePoint;
 varying mediump float zDist;
-varying mediump float light;
 varying mediump vec3 vNormal;
 varying mediump vec3 vFragPos;
 
@@ -60,9 +59,7 @@ void main(void) {
 	vTexturePoint.x += texCol * aVertexTextureCoord[2];
 	vTexturePoint.y += texRow * aVertexTextureCoord[3];
 
-	zDist = (abs(position.z / 12.0) + abs(position.y / 10.0)) / 3.0;
-	light = 1.0;
-
+	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.y / 10.0)) * .2);
 	gl_Position = position;
 	vFragPos = worldPos.xyz;
 	vNormal = aNormal;

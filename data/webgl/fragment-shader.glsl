@@ -10,6 +10,7 @@ varying mediump vec3 vNormal;
 varying mediump vec3 vFragPos;
 uniform vec4 uBackground;
 uniform vec3 uLightPos;
+uniform vec4 uLightIntensity;
 uniform vec3 uCamPosition;
 
 vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {
@@ -51,11 +52,15 @@ void main(void) {
 	vec3 normal = normalize(vNormal);
 	vec3 lightDir = normalize(uLightPos - vFragPos.xyz);
 	vec3 viewDir = normalize(uCamPosition-vFragPos);
+	float ambient = uLightIntensity[0];
+	float diffusion = uLightIntensity[1];
+	float specular = uLightIntensity[2];
+	float shininess = uLightIntensity[3];
 
 	vec3 reflectDir = reflect(-lightDir, normal);  
 
-	float diffLight = .5 * max(dot(normal, lightDir), 0.0);
-	float spec = .2 * pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+	float diffLight = diffusion * max(dot(normal, lightDir), 0.0);
+	float spec = specular * pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
 	float textureSlot = floor(vTexturePoint.x);
 	vec2 textureCoord = vec2(mod(vTexturePoint.x, 1.0), vTexturePoint.y);
@@ -63,8 +68,8 @@ void main(void) {
 	if (color.w <= 0.1) {
 		discard;
 	}
-	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2,max(0.0, .8 + zDist * .3))));
-	color = mix(vec4(color.rgb * (light + diffLight + spec), color.a), uBackground, min(1.0, zDist * .3));
+	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2, max(0.0, .8 + zDist))));
+	color = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, zDist);
 
 	gl_FragColor = color;
 }

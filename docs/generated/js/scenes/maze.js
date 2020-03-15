@@ -4,8 +4,7 @@ SceneManager.add({
 			super();
 			this.seed = Math.random();
 
-			const sceneData = {};
-			this.sceneData = sceneData;
+			const sceneData = this.sceneData = {};
 			sceneData.cam = [0, 0, 0];
 			sceneData.turn = 0;
 			sceneData.cells = [];
@@ -25,6 +24,9 @@ SceneManager.add({
 			sceneData.score = 0;
 			sceneData.mapSize = 40;
 			sceneData.zombieRange = 40;
+
+			sceneData.npcs = [
+			];
 			this.resetMap(0, 0);
 		}
 
@@ -51,6 +53,16 @@ SceneManager.add({
 						};
 						cellMap[tag] = cell;
 						cells.push(cell);
+
+						if (cell.grounded && Math.random() * sceneData.npcs.length < 2) {
+							const src = Math.random() < .5 ? "dude" : "boolbool";
+							sceneData.npcs.push({
+								src,
+								x: xxx, z: zzz,
+								grid: src==='dude' ? [2,2] : [3,3],
+							});
+						}
+
 					}
 					mm[tag] = true;
 				}
@@ -68,13 +80,11 @@ SceneManager.add({
 			}
 		}
 
-		onProcessMove() {
+		onProcessMove(posX, posZ) {
 			const { sceneData } = this;
 			const { zombies } = sceneData;
 			sceneData.life = Math.min(sceneData.life + .2, 20);
 
-			const posX = Math.floor(sceneData.cam[0] / 3);
-			const posZ = Math.floor(sceneData.cam[2] / 3);
 			zombies.forEach(zombie => {
 				const { x, z, dead } = zombie;
 				if (!dead) {
@@ -114,7 +124,7 @@ SceneManager.add({
 		calcGrounded(xPos, zPos) {
 			const value = Math.abs(Math.sin(xPos * .1 + zPos * .3));
 			const value2 = Math.abs(Math.cos(zPos * .1 + xPos * .3));
-			return Math.floor(this.seed + value * 100000) % 2 !== 1 || Math.floor(this.seed + value2 * 10000) % 2 !== 1;			
+			return Math.floor(this.seed + value * 100000) % 3 === 2 || Math.floor(this.seed + value2 * 10000) % 2 !== 1;			
 		}
 
 		isGrounded(xPos, zPos) {
@@ -137,7 +147,7 @@ SceneManager.add({
 			const { sceneData } = this;
 			const { zombies } = sceneData;
 			this.resetMap(posX, posZ);
-			this.onProcessMove();
+			this.onProcessMove(posX, posZ);
 		}
 
 		onShot() {
@@ -156,7 +166,7 @@ SceneManager.add({
 				}
 			});
 
-			for (let x = posX, z = posZ, n = 0; this.isGrounded(x, z) && n < 10; x += dx, z += dz, n++) {
+			for (let x = posX, z = posZ, n = 0; this.isGrounded(x, z) && n < sceneData.mapSize/2; x += dx, z += dz, n++) {
 				if (zombieMap[`${x}_${z}`]) {
 					zombieMap[`${x}_${z}`].dead = this.now;
 					sceneData.score ++;
@@ -178,7 +188,7 @@ SceneManager.add({
 				}
 			}
 
-			this.onProcessMove();
+			this.onProcessMove(posX, posZ);
 		}
 
 	},
@@ -220,7 +230,7 @@ SceneManager.add({
 		let moving = false;
 		const tileSize = 3;
 		const speed = .2;
-		const cellX = Math.floor(sceneData.cam[0]/tileSize), cellZ = Math.floor(sceneData.cam[2]/tileSize);
+		const cellX = Math.round(sceneData.cam[0]/tileSize), cellZ = Math.round(sceneData.cam[2]/tileSize);
 
 		if (!sceneData.gameOver) {
 			if (keys.controls.up <= 0 || keys.controls.down <= 0) {
@@ -240,12 +250,11 @@ SceneManager.add({
 
 
 			if ((Math.abs(dx) > .01 || Math.abs(dz) > .01) && !game.canMove(dx, dz)) {
-				dx = 0;
-				dz = 0;
+				dx = 0; dz = 0;
 				sceneData.moving = 0;
 				moving = false;
-				xGoal = Math.round(Math.round((sceneData.cam[0]) / tileSize) * tileSize);
-				zGoal = Math.round(Math.round((sceneData.cam[2]) / tileSize) * tileSize);
+				xGoal = Math.round(Math.round(sceneData.cam[0] / tileSize) * tileSize);
+				zGoal = Math.round(Math.round(sceneData.cam[2] / tileSize) * tileSize);
 			}
 
 			if (moving) {
@@ -313,7 +322,7 @@ SceneManager.add({
 		}
 
 		if (!sceneData.gameOver) {
-			const newCellX = Math.floor(sceneData.cam[0]/tileSize), newCellZ = Math.floor(sceneData.cam[2]/tileSize);
+			const newCellX = Math.round(sceneData.cam[0]/tileSize), newCellZ = Math.round(sceneData.cam[2]/tileSize);
 			if (newCellX !== cellX || newCellZ !== cellZ) {
 				game.onChangeCell(newCellX, newCellZ);
 			}
@@ -397,6 +406,26 @@ SceneManager.add({
 			count: game => game.sceneData.zombies.length,
 		},
 		{
+			src: (game, definition, index) => game.sceneData.npcs[index].src,
+			pos: [
+				(game, definition, index) => {
+					const npc = game.sceneData.npcs[index];
+					return npc.x * 3;
+				},
+				-.5 * 3,
+				(game, definition, index) => {
+					const npc = game.sceneData.npcs[index];
+					return npc.z * 3;
+				},			
+			],
+			hotspot: [0, -1],
+			grid: [
+				(game, definition, index) => game.sceneData.npcs[index].grid[0],
+				(game, definition, index) => game.sceneData.npcs[index].grid[1],
+			],
+			count: (game, definition, index) => game.sceneData.npcs.length,
+		},
+		{
 			src: "blue-wall",
 			cell: (game, definition, index) => game.sceneData.cells[index],
 			grounded: (game, definition, index) => {
@@ -412,9 +441,9 @@ SceneManager.add({
 			xPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).x,
 			zPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).z,
 			pos: [
-				(game, definition, index) => (game.evaluate(definition.xPos, definition, index)) * 3,
+				(game, definition, index) => game.evaluate(definition.xPos, definition, index) * 3,
 				(game, definition, index) => (game.evaluate(definition.grounded, definition, index) ? -.5 : .5) * 3,
-				(game, definition, index) => (game.evaluate(definition.zPos, definition, index)) * 3,
+				(game, definition, index) => game.evaluate(definition.zPos, definition, index) * 3,
 			],
 			grid: [1, 2],
 			animation: {
@@ -453,16 +482,12 @@ SceneManager.add({
 				switch (type) {
 					case SpriteType.Front:
 						return 0;
-						break;
 					case SpriteType.Back:
 						return 0;
-						break;
 					case SpriteType.LeftWall:
 						return .5;
-						break;
 					case SpriteType.RightWall:
 						return -.5;
-						break;
 				}
 			},
 			zShift: (game, definition, index) => {
@@ -470,16 +495,12 @@ SceneManager.add({
 				switch (type) {
 					case SpriteType.Front:
 						return .5;
-						break;
 					case SpriteType.Back:
 						return -.5;
-						break;
 					case SpriteType.LeftWall:
 						return 0;
-						break;
 					case SpriteType.RightWall:
 						return 0;
-						break;
 				}
 			},
 			xPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).x,

@@ -19,6 +19,9 @@ class SceneRenderer {
 		};
 		this.light = {
 			pos: [0, 0, 0],
+			shininess: 0,
+			specularStrength: 0,
+			diffusionStrength: 0,
 		};
 	}
 
@@ -49,9 +52,20 @@ class SceneRenderer {
 		const newLightPosX = scene.evaluate(light.pos[0]);
 		const newLightPosY = scene.evaluate(light.pos[1]);
 		const newLightPosZ = scene.evaluate(light.pos[2]);
-		if (!Utils.equal3(this.light.pos, newLightPosX, newLightPosY, newLightPosZ)) {
+		const newDiffusionStrength = scene.evaluate(light.diffusionStrength);
+		const newSpecularStrength = scene.evaluate(light.specularStrength);
+		const newShininess = scene.evaluate(light.shininess);
+		const newAmbient = scene.evaluate(light.ambient);
+		if (!Utils.equal3(this.light.pos, newLightPosX, newLightPosY, newLightPosZ)
+			|| newDiffusionStrength !== this.light.diffusionStrength
+			|| newSpecularStrength !== this.light.specularStrength
+			|| newShininess !== this.light.shininess
+			|| newAmbient !== this.light.ambient) {
 			Utils.set3(this.light.pos, newLightPosX, newLightPosY, newLightPosZ);
-			glRenderer.setLightposition(this.light.pos);
+			this.light.diffusionStrength = newDiffusionStrength;
+			this.light.specularStrength = newSpecularStrength;
+			this.light.shininess = newShininess;
+			glRenderer.setLight(this.light.pos, newAmbient, newDiffusionStrength, newSpecularStrength, newShininess);
 		}
 
 		const newViewPosX = scene.evaluate(view.pos[0]);
@@ -68,8 +82,10 @@ class SceneRenderer {
 			this.view.turn = newTurn;
 		}
 		const newViewAngle = scene.evaluate(view.angle);
+		const newNear = scene.evaluate(view.range[0]);
+		const newFar = scene.evaluate(view.range[1]);
 		if (this.view.angle !== newViewAngle) {
-			glRenderer.setViewAngle(newViewAngle);
+			glRenderer.setViewAngle(newViewAngle, newNear, newFar);
 			this.view.angle = newViewAngle;
 		}
 		const newCurvature = scene.evaluate(settings.curvature);
