@@ -51,9 +51,9 @@
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 			function startGame() {
 				const config = ({"title":"Hello World","description":"Description","scenes":["maze"]});
-				const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 				engine.start();
 			}
 		

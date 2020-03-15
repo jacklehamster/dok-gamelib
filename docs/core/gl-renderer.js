@@ -47,13 +47,13 @@ class GLRenderer {
 		this.bufferInfo = {
 			vertex: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			offset: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			normal: 	new EngineBuffer(NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			move: 		new EngineBuffer(MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			gravity: 	new EngineBuffer(GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			spriteType: new EngineBuffer(SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			texCoord: 	new EngineBuffer(TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			animation: 	new EngineBuffer(ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			grid: 		new EngineBuffer(GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			light: 		new EngineBuffer(LIGHT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
 
 		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
@@ -67,7 +67,7 @@ class GLRenderer {
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
 		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => {
-			return new Chunk(index, this.bufferInfo);
+			return new Chunk(index, this.bufferInfo, this.pool);
 		});
 		this.usedChunks = 0;
 
@@ -76,6 +76,8 @@ class GLRenderer {
 
 		this.setBackground(0x000000);
 		this.setCurvature(0);
+
+		this.lastRefresh = 0;
 	}
 
 	newChunk() {
@@ -116,16 +118,22 @@ class GLRenderer {
 			Utils.set3(pool.vec3.get(), scale, scale, scale),
 			Utils.set3(pool.vec3.get(), 0, -height, zOffset));
 		quat.conjugate(cameraQuat, cameraQuat);	//	conjugate for sprites			
-		mat4.translate(viewMatrix, viewMatrix, [x, y, z + zOffset]);
+		mat4.translate(viewMatrix, viewMatrix, [-x, -y, -z + zOffset]);
 
 		mat4.fromQuat(cameraRotationMatrix, cameraQuat);
 		gl.uniformMatrix4fv(shader.programInfo.view, false, viewMatrix);
 		gl.uniformMatrix4fv(shader.programInfo.camRotation, false, cameraRotationMatrix);
+		gl.uniform3fv(shader.programInfo.camPosition, [x, y, z - zOffset]);		
 	}
 
 	setCurvature(curvature) {
 		const { gl, shader } = this;
 		gl.uniform1f(shader.programInfo.curvature, curvature);
+	}
+
+	setLightposition(position) {
+		const { gl, shader } = this;
+		gl.uniform3fv(shader.programInfo.lightPosition, position);
 	}
 
 	setTime(now) {
@@ -206,12 +214,11 @@ class GLRenderer {
 				sprite.updateChunk(this, chunk, now);
 			}
 		}
-
-		this.sendUpdatedBuffers(now);
 	}
 
-	draw() {
+	draw(now) {
 		const { gl } = this;
 		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
+		this.lastRefresh = now;
 	}
 }

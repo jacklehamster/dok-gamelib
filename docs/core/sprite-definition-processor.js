@@ -5,32 +5,34 @@
  */
 
 class SpriteDefinitionProcessor {
-	constructor() {
-		this.spriteProvider = new SpriteProvider(() => new Sprite());
+	constructor(spriteProvider) {
+		this.spriteProvider = spriteProvider;
 		this.spriteCollector = [];
 	}
 
 	init(spriteDefinitions, scene) {
-		if (spriteDefinitions) {
-			for (let i = 0; i < spriteDefinitions.length; i++) {
-				scene.evaluate(spriteDefinitions[i].init, spriteDefinitions[i]);
-			}
+		for (let i = 0; i < spriteDefinitions.length; i++) {
+			scene.evaluate(spriteDefinitions[i].init, spriteDefinitions[i]);
 		}
 	}
 
-	process(spriteDefinitions, scene) {
+	refresh(scene) {
+		for (let i = 0; i < scene.sprites.length; i++) {
+			const definition = scene.sprites[i];
+			scene.evaluate(definition.refresh, definition);
+		}		
+	}
+
+	process(spriteDefinitions, scene, spriteProvider) {
 		const { spriteCollector } = this;
 		spriteCollector.length = 0;
 		for (let i = 0; i < spriteDefinitions.length; i++) {
-			const definition = spriteDefinitions[i];
-			scene.evaluate(definition.refresh, definition);
-			this.processSpriteDefinition(definition, i, spriteCollector, scene);
+			this.processSpriteDefinition(spriteDefinitions[i], i, spriteCollector, scene, spriteProvider);
 		}
 		return spriteCollector;
 	}
 
-	processSpriteDefinition(definition, definitionIndex, spriteCollector, scene) {
-		const { spriteProvider } = this;
+	processSpriteDefinition(definition, definitionIndex, spriteCollector, scene, spriteProvider) {
 		const { count } = definition;
 		const totalCount = scene.evaluate(count, definition, definitionIndex);
 

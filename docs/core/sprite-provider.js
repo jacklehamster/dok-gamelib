@@ -14,6 +14,10 @@ class SpriteProvider {
 		this.count = 0;
 	}
 
+	getSprites() {
+		return this.sprites;
+	}
+
 	getSprite(definitionIndex, instanceIndex) {
 		const { definitionMapper } = this;
 		while (definitionIndex >= definitionMapper.length) {

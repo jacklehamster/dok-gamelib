@@ -9,6 +9,7 @@ class BaseSprite {
 		this.instanceIndex = -1;
 		this.chunkIndex = -1;
 		this.type = -1;
+		this.updated = 0;
 		this.updateTimes = {};
 	}
 
@@ -24,11 +25,11 @@ class BaseSprite {
 		}
 	}
 
-
 	updateChunk(engine, chunk, now) {
 		const { type, updateTimes } = this;
 		if (updateTimes.type === now) {
 			chunk.setType(type, now);
 		}
+		this.updated = now;
 	}
 }

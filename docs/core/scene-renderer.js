@@ -17,6 +17,9 @@ class SceneRenderer {
 			background : 0x000000,
 			curvature: 0,
 		};
+		this.light = {
+			pos: [0, 0, 0],
+		};
 	}
 
 	init(game) {
@@ -24,11 +27,13 @@ class SceneRenderer {
 		game.evaluate(init);
 	}
 
+	refresh(scene) {
+		scene.evaluate(scene.refresh);
+	}
+
 	render(scene) {
 		const { glRenderer, background } = this;
-		const { settings, view, refresh } = scene;
-
-		scene.evaluate(refresh);
+		const { settings, view, light } = scene;
 
 		const newBackground = scene.evaluate(settings.background);
 		if (newBackground !== background) {
@@ -41,6 +46,14 @@ class SceneRenderer {
 			this.docBackground = docBackground;
 		}
 
+		const newLightPosX = scene.evaluate(light.pos[0]);
+		const newLightPosY = scene.evaluate(light.pos[1]);
+		const newLightPosZ = scene.evaluate(light.pos[2]);
+		if (!Utils.equal3(this.light.pos, newLightPosX, newLightPosY, newLightPosZ)) {
+			Utils.set3(this.light.pos, newLightPosX, newLightPosY, newLightPosZ);
+			glRenderer.setLightposition(this.light.pos);
+		}
+
 		const newViewPosX = scene.evaluate(view.pos[0]);
 		const newViewPosY = scene.evaluate(view.pos[1]);
 		const newViewPosZ = scene.evaluate(view.pos[2]);
@@ -49,8 +62,8 @@ class SceneRenderer {
 		const newCameraDistance = scene.evaluate(view.cameraDistance);
 		if (!Utils.equal3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ)
 			|| newHeight !== this.view.height || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
-			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newHeight, newTurn, -newCameraDistance);
 			Utils.set3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ);
+			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newHeight, newTurn, -newCameraDistance);
 			this.view.height = newHeight;
 			this.view.turn = newTurn;
 		}

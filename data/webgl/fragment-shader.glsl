@@ -6,7 +6,11 @@ uniform sampler2D uTextures[NUM_TEXTURES];
 varying mediump vec2 vTexturePoint;
 varying mediump float zDist;
 varying mediump float light;
+varying mediump vec3 vNormal;
+varying mediump vec3 vFragPos;
 uniform vec4 uBackground;
+uniform vec3 uLightPos;
+uniform vec3 uCamPosition;
 
 vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {
 	int textureInt = int(textureSlot);
@@ -44,6 +48,15 @@ vec4 alterHueSatLum(vec4 color, vec3 vHSV) {
 }
 
 void main(void) {
+	vec3 normal = normalize(vNormal);
+	vec3 lightDir = normalize(uLightPos - vFragPos.xyz);
+	vec3 viewDir = normalize(uCamPosition-vFragPos);
+
+	vec3 reflectDir = reflect(-lightDir, normal);  
+
+	float diffLight = .5 * max(dot(normal, lightDir), 0.0);
+	float spec = .2 * pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+
 	float textureSlot = floor(vTexturePoint.x);
 	vec2 textureCoord = vec2(mod(vTexturePoint.x, 1.0), vTexturePoint.y);
 	vec4 color = getTextureColor(uTextures, textureSlot, vTexturePoint);
@@ -51,7 +64,7 @@ void main(void) {
 		discard;
 	}
 	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2,max(0.0, .8 + zDist * .3))));
-	color = mix(color, uBackground, min(1.0, (zDist + light) * 0.3));
+	color = mix(vec4(color.rgb * (light + diffLight + spec), color.a), uBackground, min(1.0, zDist * .3));
 
 	gl_FragColor = color;
 }

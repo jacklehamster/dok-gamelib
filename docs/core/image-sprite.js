@@ -6,14 +6,13 @@ class ImageSprite extends BaseSprite {
  	constructor() {
  		super();
 		this.src = null;
-		this.light = 0;
 		this.hidden = false;
  	}
 
 	getEvaluated(game, definition) {
 		super.getEvaluated(game, definition);
 		
-		const { src, hidden, light } = definition;
+		const { src, hidden } = definition;
 		const { instanceIndex } = this;
 		const { now } = game;
 		const spriteSrc = game.evaluate(src, definition, instanceIndex);
@@ -22,24 +21,17 @@ class ImageSprite extends BaseSprite {
 			this.updateTimes.src = now;
 		}
 
-		const spriteHidden = game.evaluate(hidden, definition, instanceIndex);
-		if (spriteHidden !== this.hidden) {
-			this.hidden = spriteHidden;
-			this.updateTimes.hidden = now;
-		}
+		this.setHidden(game.evaluate(hidden, definition, instanceIndex), now);
+	}
 
-		const spriteLight = game.evaluate(light, definition, instanceIndex);
-		if (spriteLight !== this.light) {
-			this.light = spriteLight;
-			this.updateTimes.light = now;
-		}
+	setHidden(value, now) {
+		if (value !== this.hidden) {
+			this.hidden = value;
+			this.updateTimes.hidden = now;
+		}		
 	}
 
 	updateChunk(engine, chunk, now) {
 		super.updateChunk(engine, chunk, now);
-		const { light, updateTimes } = this;
-		if (updateTimes.light === now) {
-			chunk.setLight(light, now);			
-		}
 	}
 }

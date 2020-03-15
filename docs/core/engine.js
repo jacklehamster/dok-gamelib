@@ -8,6 +8,7 @@ class Engine {
 		this.data = getData();
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.data.generated.config.imagedata);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer);
+		this.spriteProvider = new SpriteProvider(() => new Sprite());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard({
@@ -26,29 +27,53 @@ class Engine {
 		});
 		this.currentScene = EMPTY_OBJECT;
 
-		Engine.beginLooping(this);
+		this.spritesToRemove = [];
 	}
 
 	start() {
+		Engine.beginLooping(this);
 		this.setScene(this.sceneManager.getFirstScene());
 		console.log("start scene:", this.currentScene.name);
 	}
 
 	static beginLooping(engine) {
 		Engine.instance = engine;
-		const { glRenderer, sceneRenderer, spriteRenderer, spriteDefinitionProcessor, keyboard, game } = engine;
+		const { glRenderer, sceneRenderer, spriteDefinitionProcessor, spriteProvider, keyboard, spritesToRemove } = engine;
 		function animationFrame(now) {
+			requestAnimationFrame(animationFrame);
 			const { currentScene } = engine;
+			const frameDuration = 1000 / currentScene.getFrameRate();
+
 			currentScene.now = now;
 			currentScene.keys = keyboard.getKeyboard(now);
-			sceneRenderer.render(currentScene);
-			glRenderer.setTime(now);
-			glRenderer.clearScreen();
-			const sprites = spriteDefinitionProcessor.process(currentScene.sprites, currentScene);
-			glRenderer.sendSprites(sprites, now);
-			glRenderer.draw();
+			sceneRenderer.refresh(currentScene);
+			spriteDefinitionProcessor.refresh(currentScene);
+
+			if (now - glRenderer.lastRefresh >= frameDuration) {
+				glRenderer.setTime(now);
+				glRenderer.clearScreen();
+				sceneRenderer.render(currentScene);
+
+				//	show sprites to process
+				const sprites = spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);
+				glRenderer.sendSprites(sprites, now);
+
+				//	remove unprocessed sprites
+				spritesToRemove.length = 0;
+				const hiddenSprites = spriteProvider.getSprites();
+				for (let i = 0; i < hiddenSprites.length; i++) {
+					const sprite = hiddenSprites[i];
+					if (sprite.updated < now && !sprite.hidden) {
+						sprite.setHidden(true, now);
+						spritesToRemove.push(sprite);
+					}
+				}
+				glRenderer.sendSprites(spritesToRemove);
+
+				glRenderer.sendUpdatedBuffers(now);
+				glRenderer.draw(now);
+			}
 			Pool.resetAll();
-			requestAnimationFrame(animationFrame);
 		}
 		requestAnimationFrame(animationFrame);		
 	}

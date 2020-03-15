@@ -19,7 +19,8 @@
 	"settings": {
 		"docBackground": 0,
 		"background": 0,
-		"curvature": 0
+		"curvature": 0,
+		"frameRate": 60
 	},
 	"view": {
 		"pos": [
@@ -32,12 +33,18 @@
 		"turn": 0,
 		"cameraDistance": 7
 	},
+	"light": {
+		"pos": [
+			0,
+			0,
+			0
+		]
+	},
 	"sprites": [
 		{
 			"src": null,
 			"type": 0,
 			"hidden": false,
-			"light": 0,
 			"pos": [
 				0,
 				0,
