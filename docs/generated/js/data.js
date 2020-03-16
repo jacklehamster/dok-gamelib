@@ -6,61 +6,11 @@ function getData() {
       "config": {
         "imagedata": {
           "size": [4096, 4096],
-          "spritesheets": [
-            "generated/spritesheets/sheet0.png",
-            "generated/spritesheets/sheet1.png"
-          ],
+          "spritesheets": ["generated/spritesheets/sheet0.png"],
           "sprites": {
-            "landscape.jpg": {"offset": [0, 0], "size": [2560, 978], "index": 0},
-            "dude": {"offset": [2568, 0], "size": [1024, 1024], "index": 0},
-            "dobuki": {"offset": [3600, 0], "size": [280, 280], "index": 0},
-            "cage": {"offset": [3888, 0], "size": [128, 192], "index": 0},
-            "blue-wall": {"offset": [4024, 0], "size": [64, 128], "index": 0},
-            "access-card": {"offset": [3888, 200], "size": [64, 64], "index": 0},
-            "32x64": {"offset": [3960, 200], "size": [32, 64], "index": 0},
-            "water": {"offset": [4000, 200], "size": [64, 64], "index": 0},
-            "yupa-dance": {"offset": [3600, 288], "size": [256, 256], "index": 0},
-            "zombie": {"offset": [3864, 288], "size": [128, 192], "index": 0},
-            "gun": {"offset": [3864, 488], "size": [128, 128], "index": 0},
-            "penguin-bot-left": {
-              "offset": [3864, 624],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-down": {
-              "offset": [3864, 760],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-right": {
-              "offset": [3864, 896],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-top-left": {
-              "offset": [3600, 552],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-up": {"offset": [3600, 688], "size": [128, 128], "index": 0},
-            "icefloor.jpg": {
-              "offset": [2568, 1032],
-              "size": [800, 800],
-              "index": 0
-            },
-            "crystal-wall.jpg": {
-              "offset": [3376, 1032],
-              "size": [512, 512],
-              "index": 0
-            },
-            "water.jpg": {"offset": [3376, 1552], "size": [512, 512], "index": 0},
-            "icewall.jpg": {
-              "offset": [2568, 1840],
-              "size": [800, 800],
-              "index": 0
-            },
-            "boolbool": {"offset": [0, 986], "size": [1536, 1536], "index": 0},
-            "tp-boy": {"offset": [0, 0], "size": [1536, 2048], "index": 1}
+            "gun": {"offset": [0, 0], "size": [128, 128], "index": 0},
+            "zombie": {"offset": [136, 0], "size": [128, 192], "index": 0},
+            "blue-wall": {"offset": [272, 0], "size": [64, 128], "index": 0}
           }
         }
       }

@@ -44,10 +44,10 @@ SceneManager.add({
 							x: xxx, z: zzz,
 							index: cells.length,
 							corners: [
-								(this.makeRandom(xxx-1,xxx,zzz-1,zzz) % 10) / 20,
-								(this.makeRandom(xxx-1,xxx,zzz,zzz+1) % 10) / 20,
-								(this.makeRandom(xxx,xxx+1,zzz,zzz+1) % 10) / 20,
-								(this.makeRandom(xxx,xxx+1,zzz-1,zzz) % 10) / 20,
+								(this.makeRandom(xxx-1,xxx,zzz-1,zzz) % 10) / 30,
+								(this.makeRandom(xxx-1,xxx,zzz,zzz+1) % 10) / 30,
+								(this.makeRandom(xxx,xxx+1,zzz,zzz+1) % 10) / 30,
+								(this.makeRandom(xxx,xxx+1,zzz-1,zzz) % 10) / 30,
 							],
 							grounded: this.calcGrounded(xxx, zzz),
 						};
@@ -124,7 +124,7 @@ SceneManager.add({
 		calcGrounded(xPos, zPos) {
 			const value = Math.abs(Math.sin(xPos * .1 + zPos * .3));
 			const value2 = Math.abs(Math.cos(zPos * .1 + xPos * .3));
-			return Math.floor(this.seed + value * 100000) % 3 === 2 || Math.floor(this.seed + value2 * 10000) % 2 !== 1;			
+			return Math.floor(this.seed + value * 100000) % 2 !== 1 || Math.floor(this.seed + value2 * 10000) % 2 !== 1;			
 		}
 
 		isGrounded(xPos, zPos) {
@@ -203,7 +203,7 @@ SceneManager.add({
 		},
 		background: game => {
 			const hitTime = game.now - game.sceneData.hit;
-			return hitTime < 300 ? 0xaa0000 : 0xAACCFF;//0x080523;
+			return hitTime < 300 ? 0xaa0000 : 0x080523;
 		},
 		curvature: -3,
 	},
@@ -402,46 +402,8 @@ SceneManager.add({
 			],
 			hotspot: [0, -.4],
 			grid: [2, 3],
-			size: [2, 2],
+			size: [3, 3],
 			count: game => game.sceneData.zombies.length,
-		},
-		{
-			src: (game, definition, index) => game.sceneData.npcs[index].src,
-			pos: [
-				(game, definition, index) => {
-					const npc = game.sceneData.npcs[index];
-					return npc.x * 3;
-				},
-				-.5 * 3,
-				(game, definition, index) => {
-					const npc = game.sceneData.npcs[index];
-					return npc.z * 3;
-				},			
-			],
-			hotspot: [0, -.5],
-			size: [2, 2],
-			grid: [
-				(game, definition, index) => game.sceneData.npcs[index].grid[0],
-				(game, definition, index) => game.sceneData.npcs[index].grid[1],
-			],
-			count: (game, definition, index) => game.sceneData.npcs.length,
-		},
-		{
-			src: "tp-boy",
-			pos: [
-				0,
-				-.5 * 3,
-				0,
-			],
-			hotspot: [0, -.6],
-			size: [1, 1],
-			grid: [3, 4],
-			animation: {
-				frame: 0,
-				start: 0,
-				range: 4,
-				frameRate: 10,
-			},
 		},
 		{
 			src: "blue-wall",
@@ -449,12 +411,12 @@ SceneManager.add({
 			grounded: (game, definition, index) => {
 				return game.evaluate(definition.cell, definition, index).grounded;
 			},
-			// corners: [
-			// 	(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[0],
-			// 	(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[1],
-			// 	(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[2],
-			// 	(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[3],
-			// ],
+			corners: [
+				(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[0],
+				(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[1],
+				(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[2],
+				(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[3],
+			],
 			type: SpriteType.Floor,
 			xPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).x,
 			zPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).z,
