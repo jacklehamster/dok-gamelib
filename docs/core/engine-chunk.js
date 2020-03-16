@@ -49,7 +49,6 @@ class Chunk {
 	applyNormal(vertices, normalSubarray, index, pool) {
 		const vectorA = vec3.sub(pool.vec3.get(), vertices[index], vertices[(index + 1) % vertices.length]);
 		const vectorB = vec3.sub(pool.vec3.get(), vertices[index], vertices[(index - 1 + vertices.length) % vertices.length]);
-
 		normalSubarray.set(vec3.normalize(pool.vec3.get(), vec3.cross(pool.vec3.get(), vectorA, vectorB)), index * 3);
 	}
 
@@ -70,10 +69,10 @@ class Chunk {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX, + halfHeight - hotspotY, A),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX, - halfHeight - hotspotY, B),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX, - halfHeight - hotspotY, C),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX, + halfHeight - hotspotY, D),
+			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
+			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
+			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
+			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
 		);
 	}
 
@@ -81,10 +80,10 @@ class Chunk {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX, + halfHeight - hotspotY, A),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX, - halfHeight - hotspotY, B),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX, - halfHeight - hotspotY, C),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX, + halfHeight - hotspotY, D),
+			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
+			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
+			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
+			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
 		);
 		vertex.chunkUpdateTimes[index] = now;
 	}
@@ -93,10 +92,10 @@ class Chunk {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX, A, - halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX, B, + halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX, C, + halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX, D, - halfHeight - hotspotY),
+			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, A, - halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, B, + halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, C, + halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, D, - halfHeight - hotspotY * height),
 		);
 		vertex.chunkUpdateTimes[index] = now;		
 	}
@@ -105,10 +104,10 @@ class Chunk {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX, A, + halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX, B, - halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX, C, - halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX, D, + halfHeight - hotspotY),
+			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, A, + halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, B, - halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, C, - halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, D, + halfHeight - hotspotY * height),
 		);
 		vertex.chunkUpdateTimes[index] = now;
 	}
@@ -117,10 +116,10 @@ class Chunk {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), A, + halfWidth - hotspotX, + halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), B, - halfWidth - hotspotX, + halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), C, - halfWidth - hotspotX, - halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), D, + halfWidth - hotspotX, - halfHeight - hotspotY),
+			Utils.set3(pool.vec3.get(), A, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), B, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), C, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), D, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 		);
 		vertex.chunkUpdateTimes[index] = now;
 	}
@@ -129,10 +128,10 @@ class Chunk {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), A, + halfWidth - hotspotX, - halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), B, - halfWidth - hotspotX, - halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), C, - halfWidth - hotspotX, + halfHeight - hotspotY),
-			Utils.set3(pool.vec3.get(), D, + halfWidth - hotspotX, + halfHeight - hotspotY),
+			Utils.set3(pool.vec3.get(), A, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), B, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(pool.vec3.get(), D, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 		);
 		vertex.chunkUpdateTimes[index] = now;
 	}

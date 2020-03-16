@@ -6,7 +6,10 @@ function getData() {
       "config": {
         "imagedata": {
           "size": [4096, 4096],
-          "spritesheets": ["generated/spritesheets/sheet0.png"],
+          "spritesheets": [
+            "generated/spritesheets/sheet0.png",
+            "generated/spritesheets/sheet1.png"
+          ],
           "sprites": {
             "landscape.jpg": {"offset": [0, 0], "size": [2560, 978], "index": 0},
             "dude": {"offset": [2568, 0], "size": [1024, 1024], "index": 0},
@@ -56,7 +59,8 @@ function getData() {
               "size": [800, 800],
               "index": 0
             },
-            "boolbool": {"offset": [0, 986], "size": [1536, 1536], "index": 0}
+            "boolbool": {"offset": [0, 986], "size": [1536, 1536], "index": 0},
+            "tp-boy": {"offset": [0, 0], "size": [1536, 2048], "index": 1}
           }
         }
       }

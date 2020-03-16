@@ -400,9 +400,9 @@ SceneManager.add({
 					return progress * zombie.z * 3 + (1-progress) * zombie.fromZ * 3;
 				},
 			],
-			hotspot: [0, -1.2],
+			hotspot: [0, -.4],
 			grid: [2, 3],
-			size: [3, 3],
+			size: [2, 2],
 			count: game => game.sceneData.zombies.length,
 		},
 		{
@@ -418,7 +418,8 @@ SceneManager.add({
 					return npc.z * 3;
 				},			
 			],
-			hotspot: [0, -1],
+			hotspot: [0, -.5],
+			size: [2, 2],
 			grid: [
 				(game, definition, index) => game.sceneData.npcs[index].grid[0],
 				(game, definition, index) => game.sceneData.npcs[index].grid[1],
@@ -426,17 +427,34 @@ SceneManager.add({
 			count: (game, definition, index) => game.sceneData.npcs.length,
 		},
 		{
+			src: "tp-boy",
+			pos: [
+				0,
+				-.5 * 3,
+				0,
+			],
+			hotspot: [0, -.6],
+			size: [1, 1],
+			grid: [3, 4],
+			animation: {
+				frame: 0,
+				start: 0,
+				range: 4,
+				frameRate: 10,
+			},
+		},
+		{
 			src: "blue-wall",
 			cell: (game, definition, index) => game.sceneData.cells[index],
 			grounded: (game, definition, index) => {
 				return game.evaluate(definition.cell, definition, index).grounded;
 			},
-			corners: [
-				(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[0],
-				(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[1],
-				(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[2],
-				(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[3],
-			],
+			// corners: [
+			// 	(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[0],
+			// 	(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[1],
+			// 	(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[2],
+			// 	(game, definition, index) => !game.evaluate(definition.grounded, definition, index) ? 0 : game.sceneData.cells[index].corners[3],
+			// ],
 			type: SpriteType.Floor,
 			xPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).x,
 			zPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).z,
