@@ -5,7 +5,7 @@
 class Sprite extends AnimatedSprite {
 	constructor() {
 		super();
-		this.size = [0, 0];
+		this.scale = [0, 0];
 		this.hotspot = [0, 0];
 		this.pos = [0, 0, 0];
 		this.mov = [0, 0, 0];
@@ -15,17 +15,17 @@ class Sprite extends AnimatedSprite {
 
 	getEvaluated(game, definition) {
 		super.getEvaluated(game, definition);
-		const { src, animation, size, pos, mov, gravity, grid, hotspot, corners, refresh } = definition;
+		const { src, animation, scale, pos, mov, gravity, grid, hotspot, corners, refresh } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
-		const spriteWidth = game.evaluate(size[0], definition, instanceIndex);
-		const spriteHeight = game.evaluate(size[1], definition, instanceIndex);
+		const xScale = game.evaluate(scale[0], definition, instanceIndex);
+		const yScale = game.evaluate(scale[1], definition, instanceIndex);
 
-		if (this.size[0] !== spriteWidth || this.size[1] !== spriteHeight) {
-			this.size[0] = spriteWidth;
-			this.size[1] = spriteHeight;
-			updateTimes.size = now;
+		if (this.scale[0] !== xScale || this.scale[1] !== yScale) {
+			this.scale[0] = xScale;
+			this.scale[1] = yScale;
+			updateTimes.scale = now;
 		}
 
 		const hotspotX = game.evaluate(hotspot[0], definition, instanceIndex);
@@ -79,35 +79,37 @@ class Sprite extends AnimatedSprite {
 
 	updateChunk(engine, chunk, now) {
 		super.updateChunk(engine, chunk, now);
-		const { size, hotspot, pos, mov, gravity, hidden, corners, updateTimes } = this;
+		const { scale, hotspot, pos, mov, gravity, hidden, corners, updateTimes } = this;
 		if (updateTimes.pos === now) {
 			const [ x, y, z ] = pos;
 			chunk.setOffset(x, y, z, now);
 		}
-		if (updateTimes.size === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.hidden === now || updateTimes.corners === now) {
+		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.hidden === now || updateTimes.corners === now) {
 			if (hidden) {
 				chunk.setHidden(now);
 			} else {
+				const spriteWidth = Math.abs(scale[0]);
+				const spriteHeight = Math.abs(scale[1]);
 				switch (this.type) {
 					case SpriteType.Ceiling:
-						chunk.setCeiling(size, hotspot, corners, now);
+						chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, now);
 						break;
 					case SpriteType.Water:		
 					case SpriteType.Floor:
-						chunk.setFloor(size, hotspot, corners, now);
+						chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, now);
 						break;
 					case SpriteType.LeftWall:
-						chunk.setLeftWall(size, hotspot, corners, now);
+						chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, now);
 						break;
 					case SpriteType.RightWall:
-						chunk.setRightWall(size, hotspot, corners, now);
+						chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, now);
 						break;
 					case SpriteType.Sprite:
 					case SpriteType.Front:
-						chunk.setWall(size, hotspot, corners, now);			
+						chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, now);			
 						break;
 					case SpriteType.Back:
-						chunk.setBackWall(size, hotspot, corners, now);
+						chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, now);
 						break;
 					default:
 						console.error("invalid type");

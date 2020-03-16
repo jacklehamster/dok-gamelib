@@ -38,8 +38,8 @@
 		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
 
- 		<script>SceneManager.loadingSceneName = "maze";</script>
-		<script src="generated/js/scenes/maze.js"></script>
+ 		<script>SceneManager.loadingSceneName = "tp-boy";</script>
+		<script src="generated/js/scenes/tp-boy.js"></script>
 
 		<link href="https://fonts.googleapis.com/css?family=Creepster&display=swap" rel="stylesheet">
 	</head>
@@ -53,7 +53,7 @@
 		<script>
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 			function startGame() {
-				const config = ({"title":"Hello World","description":"Description","scenes":["maze"]});
+				const config = ({"title":"Hello World","description":"Description","scenes":["tp-boy"]});
 				engine.start();
 			}
 		

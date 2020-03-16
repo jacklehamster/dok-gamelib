@@ -44,14 +44,14 @@ class AnimatedSprite extends ImageSprite {
 
 	updateChunk(engine, chunk, now) {
 		super.updateChunk(engine, chunk, now);
-		const { src, animation, grid, size, updateTimes } = this;
+		const { src, animation, grid, scale, updateTimes } = this;
 		if (updateTimes.grid === now) {
 			const [ cols, rows ] = grid;
 			chunk.setGrid(cols, rows, now);
 		}
-		if (updateTimes.src === now) {
+		if (updateTimes.src === now || updateTimes.scale === now) {
 			if (!src) {
-				chunk.setTexture(0, 0, 0, 0);
+				chunk.setTexture(0, 0, 0, 0, scale, now);
 			} else {
 				const spriteData = engine.imagedata.sprites[src];
 				if (!spriteData) {
@@ -60,7 +60,8 @@ class AnimatedSprite extends ImageSprite {
 				const { offset, size, index } = spriteData;
 				const [ sheetWidth, sheetHeight ] = size;
 				const [ cols, rows ] = grid;
-				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows, now);
+
+				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows, scale, now);
 			}
 		}
 		if (updateTimes.grid === now || updateTimes.animation === now) {

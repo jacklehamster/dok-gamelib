@@ -12,7 +12,7 @@ function getData() {
           ],
           "sprites": {
             "landscape.jpg": {"offset": [0, 0], "size": [2560, 978], "index": 0},
-            "dude": {"offset": [2568, 0], "size": [1024, 1024], "index": 0},
+            "grass-tile": {"offset": [2568, 0], "size": [1024, 1536], "index": 0},
             "dobuki": {"offset": [3600, 0], "size": [280, 280], "index": 0},
             "cage": {"offset": [3888, 0], "size": [128, 192], "index": 0},
             "blue-wall": {"offset": [4024, 0], "size": [64, 128], "index": 0},
@@ -20,47 +20,26 @@ function getData() {
             "32x64": {"offset": [3960, 200], "size": [32, 64], "index": 0},
             "water": {"offset": [4000, 200], "size": [64, 64], "index": 0},
             "yupa-dance": {"offset": [3600, 288], "size": [256, 256], "index": 0},
-            "zombie": {"offset": [3864, 288], "size": [128, 192], "index": 0},
-            "gun": {"offset": [3864, 488], "size": [128, 128], "index": 0},
-            "penguin-bot-left": {
-              "offset": [3864, 624],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-down": {
-              "offset": [3864, 760],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-right": {
-              "offset": [3864, 896],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-top-left": {
-              "offset": [3600, 552],
-              "size": [128, 128],
-              "index": 0
-            },
-            "penguin-up": {"offset": [3600, 688], "size": [128, 128], "index": 0},
+            "dude": {"offset": [2568, 1544], "size": [1024, 1024], "index": 0},
             "icefloor.jpg": {
-              "offset": [2568, 1032],
+              "offset": [2568, 2576],
               "size": [800, 800],
               "index": 0
             },
             "crystal-wall.jpg": {
-              "offset": [3376, 1032],
+              "offset": [2568, 3384],
               "size": [512, 512],
               "index": 0
             },
-            "water.jpg": {"offset": [3376, 1552], "size": [512, 512], "index": 0},
+            "boolbool": {"offset": [0, 986], "size": [1536, 1536], "index": 0},
             "icewall.jpg": {
-              "offset": [2568, 1840],
+              "offset": [1544, 986],
               "size": [800, 800],
               "index": 0
             },
-            "boolbool": {"offset": [0, 986], "size": [1536, 1536], "index": 0},
-            "tp-boy": {"offset": [0, 0], "size": [1536, 2048], "index": 1}
+            "water.jpg": {"offset": [1544, 1794], "size": [512, 512], "index": 0},
+            "tp-boy": {"offset": [0, 0], "size": [1536, 2048], "index": 1},
+            "tp": {"offset": [1544, 0], "size": [1536, 2048], "index": 1}
           }
         }
       }
@@ -113,7 +92,7 @@ function getData() {
             "pos": [0, 0, 0],
             "grid": [1, 1],
             "animation": {"start": 0, "frame": 0, "range": 1, "frameRate": 0},
-            "size": [1, 1],
+            "scale": [1, 1],
             "hotspot": [0, 0],
             "corners": [0, 0, 0, 0],
             "count": 1,

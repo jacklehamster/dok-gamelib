@@ -65,7 +65,7 @@ class Chunk {
 		normal.chunkUpdateTimes[index] = now;
 	}
 
-	setWall([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
+	setWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
@@ -76,7 +76,7 @@ class Chunk {
 		);
 	}
 
-	setBackWall([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
+	setBackWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
@@ -88,7 +88,7 @@ class Chunk {
 		vertex.chunkUpdateTimes[index] = now;
 	}
 
-	setFloor([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
+	setFloor(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
@@ -100,7 +100,7 @@ class Chunk {
 		vertex.chunkUpdateTimes[index] = now;		
 	}
 
-	setCeiling([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
+	setCeiling(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
@@ -112,7 +112,7 @@ class Chunk {
 		vertex.chunkUpdateTimes[index] = now;
 	}
 
-	setLeftWall([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
+	setLeftWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
@@ -124,7 +124,7 @@ class Chunk {
 		vertex.chunkUpdateTimes[index] = now;
 	}
 
-	setRightWall([width, height], [hotspotX, hotspotY], [A,B,C,D], now) {
+	setRightWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, normal, subarrays, pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
@@ -158,17 +158,34 @@ class Chunk {
 		gravity.chunkUpdateTimes[index] = now;
 	}
 
-	setTexture(texIndex, offset, spriteWidth, spriteHeight, now) {
+	setTexture(texIndex, offset, spriteWidth, spriteHeight, scale, now) {
 		const { texCoord, subarrays, index } = this;
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const [ spriteX, spriteY ] = offset;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
+		const scaleH = Math.sign(scale[0]);
+		const scaleV = Math.sign(scale[1]);
+
+		let left = texIndex + texX, right = texIndex + texX + texWidth;
+		let up = texY, down = texY + texHeight;
+		if (scaleH < 0) {
+			const temp = left;
+			left = right;
+			right = temp;
+		}
+		if (scaleV < 0) {
+			const temp = up;
+			up = down;
+			down = temp;
+		}
+
 		Chunk.assignValues(subarrays.texCoord,
-			texIndex + texX,			texY,				texWidth,	texHeight,
-			texIndex + texX,			texY + texHeight,	texWidth,	texHeight,
-			texIndex + texX + texWidth,	texY + texHeight,	texWidth,	texHeight,
-			texIndex + texX + texWidth,	texY,				texWidth,	texHeight,
+			left,	up,		texWidth,	texHeight,
+			left,	down,	texWidth,	texHeight,
+			right,	down,	texWidth,	texHeight,
+			right,	up,		texWidth,	texHeight,
 		);
+
 		texCoord.chunkUpdateTimes[index] = now;
 	}
 
