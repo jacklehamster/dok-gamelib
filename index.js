@@ -115,7 +115,6 @@ app.get('/', function (req, res) {
 		copyScenes().then(() => {
 			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(items => {
 				const scenes = items.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
-
 				template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'config.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) })
 					.then(html => assets.produceSpritesheets(`${__dirname}/game/scenes/`, TEXTURE_SIZE, TEXTURE_SIZE)
 						.then(() => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js'))

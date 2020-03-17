@@ -38,7 +38,9 @@
 		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
 
- 		<script>SceneManager.loadingSceneName = "tp-boy";</script>
+		<script>SceneManager.loadingSceneName = "rogue-zombie";</script>
+		<script src="generated/js/scenes/rogue-zombie/start.js"></script>
+		<script>SceneManager.loadingSceneName = "tp-boy";</script>
 		<script src="generated/js/scenes/tp-boy/start.js"></script>
 
 		<link href="https://fonts.googleapis.com/css?family=Creepster&display=swap" rel="stylesheet">
@@ -53,7 +55,7 @@
 		<script>
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 			function startGame() {
-				const config = ({"title":"Hello World","description":"Description","scenes":["tp-boy"]});
+				const config = ({"title":"Hello World","description":"Description","scenes":["rogue-zombie","tp-boy"]});
 				engine.start();
 			}
 		
