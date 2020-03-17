@@ -62,9 +62,7 @@ class GLRenderer {
 		const { shader, textureManager } = this;
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
-		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => {
-			return new Chunk(index, this.bufferInfo, this.pool);
-		});
+		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => new Chunk(index, this.bufferInfo, this.pool));
 		this.usedChunks = 0;
 
 		//	load texture
@@ -197,15 +195,6 @@ class GLRenderer {
 			rangeStart * verticesPerSprite * floatPerVertex * Float32Array.BYTES_PER_ELEMENT,
 			engineBuffer.subarray(rangeStart, rangeEnd),
 		);
-
-		//	TODO: Remove once figured out why items don't get removed cross scene
-		const { bufferInfo } = this;
-		for (let b in bufferInfo) {
-			if (engineBuffer === bufferInfo[b]) {
-				console.log(b, rangeStart, rangeEnd);
-			}
-		}
-
 	}	
 
 	sendSprites(sprites, now) {

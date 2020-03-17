@@ -32,7 +32,7 @@ class Engine {
 
 	start() {
 		Engine.beginLooping(this);
-		this.setScene(this.sceneManager.getFirstSceneName());
+		this.resetScene(this.sceneManager.getFirstSceneName());
 		console.log("start scene:", this.currentScene.name);
 	}
 
@@ -68,7 +68,7 @@ class Engine {
 						spritesToRemove.push(sprite);
 					}
 				}
-				glRenderer.sendSprites(spritesToRemove);
+				glRenderer.sendSprites(spritesToRemove, now);
 				glRenderer.sendUpdatedBuffers(now);
 				glRenderer.draw(now);
 			}
@@ -77,11 +77,16 @@ class Engine {
 		requestAnimationFrame(animationFrame);		
 	}
 
-	setScene(sceneName) {
-		const scene = this.sceneManager.getScene(sceneName);
+	resetScene(sceneName) {
+		const scene = this.sceneManager.createScene(sceneName);
 		if (scene) {
+			const now = this.currentScene ? this.currentScene.now : 0;
+			const keys = this.currentScene ? this.currentScene.keys : {};
+
 			window.game = scene;
 			this.currentScene = scene;
+			this.currentScene.now = now;
+			this.currentScene.keys = keys;
 			this.currentScene.engine = this;
 			this.sceneRenderer.init(scene);
 			this.spriteDefinitionProcessor.init(scene.sprites, scene);

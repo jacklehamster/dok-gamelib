@@ -51,7 +51,6 @@ SceneManager.add({
 	settings: {
 		docBackground: 0x000000,
 		background: 0xAACCFF,
-		curvature: -3,
 	},
 	light: {
 		pos: [
@@ -102,7 +101,7 @@ SceneManager.add({
 					tpBoy.dx = 0;
 				}
 			},
-			size: [1.05, 1.05],
+			size: [1, 1],
 			grid: [2, 3],
 			hotspot: [0, -.1],
 			animation: {

@@ -210,6 +210,10 @@ SceneManager.add({
 			100,
 			0,
 		],
+		ambient: 1,
+		shininess: 2,
+		specularStrength: 0.3,
+		diffusionStrength: 0.5
 	},
 	view: {
 		pos: [

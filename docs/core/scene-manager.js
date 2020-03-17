@@ -2,9 +2,7 @@ class SceneManager {
 	constructor({Game, SpriteDefinition}) {
 		this.DefaultGameClass = Game;
 		this.DefaultSpriteDefinitionClass = SpriteDefinition;
-		this.rawScenes = {};
 		this.scenes = {};
-		this.firstScene = null;
 		this.configProcessor = new ConfigProcessor();
 	}
 
@@ -15,49 +13,55 @@ class SceneManager {
 		if (!SpriteDefinition) {
 			SpriteDefinition = this.DefaultSpriteDefinitionClass;
 		}
-		const sceneObj = new Game();
-		sceneObj.name = name;
+		this.scenes[name] = {
+			Game,
+			SpriteDefinition,
+			config,
+		};
+	}
 
-		this.rawScenes[name] = config;
- 		Object.assign(sceneObj, this.configProcessor.process(config, sceneObj));
+	createScene(name) {
+		const gameScene = this.scenes[name];
+		if (gameScene) {
+			const { Game, SpriteDefinition, config } = gameScene;
+			const sceneObj = new Game();
+			sceneObj.name = name;
 
- 		for (let i = 0; i < sceneObj.sprites.length; i++) {
- 			const spriteDefinition = new SpriteDefinition(sceneObj);
- 			Object.assign(spriteDefinition, sceneObj.sprites[i]);
- 			sceneObj.sprites[i] = spriteDefinition;
- 		}
+	 		Object.assign(sceneObj, this.configProcessor.process(config, sceneObj));
 
-		this.scenes[name] = sceneObj;
-		if (sceneObj.evaluate(sceneObj.firstScene)) {
-			if (this.firstScene) {
-				console.warn(`First scene already set: ${this.firstScene.name}. Unable to set ${sceneObj.name} as first scene.`);
-			} else {
-				this.firstScene = sceneObj;
-			}
+	 		for (let i = 0; i < sceneObj.sprites.length; i++) {
+	 			const spriteDefinition = new SpriteDefinition(sceneObj);
+	 			Object.assign(spriteDefinition, sceneObj.sprites[i]);
+	 			sceneObj.sprites[i] = spriteDefinition;
+	 		}
+			return sceneObj;
 		}
+		return null;
 	}
 
 	getFirstSceneName() {
-		if (!this.firstScene) {
-			const scenes = [];
-			for (let s in this.scenes) {
-				scenes.push(s);
+		const firstScenes = [];
+		const scenes = [];
+		for (let s in this.scenes) {
+			const { config } = this.scenes[s];
+			if (config.firstScene && (typeof(config.firstScene)==='function' ? config.firstScene() : config.firstScene)) {
+				firstScenes.push(s);
 			}
-
-			if (scenes.length) {
-				const sceneName = scenes[Math.floor(Math.random() * scenes.length)];
-				console.warn(`First scene not defined. Set a scene with 'firstScene: true'. Using ${sceneName} as first scene.`);
-				return this.scenes[sceneName].name;
-			}
-
-			console.warn("No scenes available.");
-			return null;
+			scenes.push(s);
 		}
-		return this.firstScene.name;
-	}
 
-	getScene(name) {
-		return this.scenes[name];
+		if (firstScenes.length) {
+			return firstScenes[Math.floor(Math.random() * firstScenes.length)];		
+		}
+
+		if (scenes.length) {
+			const sceneName = scenes[Math.floor(Math.random() * scenes.length)];
+			console.warn(`First scene not defined. Set a scene with 'firstScene: true'. Using ${sceneName} as first scene.`);
+			return sceneName;
+		}
+
+		console.warn("No scenes available.");
+		return null;
 	}
 
 	static add(classes, scene) {

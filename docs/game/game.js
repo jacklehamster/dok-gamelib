@@ -7,7 +7,7 @@ class Game {
 	}
 
 	gotoScene(name) {
-		this.engine.setScene(name);
+		this.engine.resetScene(name);
 	}
 
 	getFrameRate() {
