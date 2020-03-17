@@ -1,22 +1,31 @@
 /**
  *	Keyboard
  */
-const KEY_LEFT_A = 65;
-const KEY_RIGHT_D = 68;
-const KEY_UP_W = 87;
-const KEY_DOWN_S = 83;
-const KEY_RIGHT_E = 69;
-const KEY_DOWN_X = 88;
-const KEY_ACTION_SPACE = 32;
+const KEY_LEFT_A = 'KeyA';
+const KEY_RIGHT_D = 'KeyD';
+const KEY_UP_W = 'KeyW';
+const KEY_DOWN_S = 'KeyS';
+const KEY_RIGHT_E = 'KeyE';
+const KEY_DOWN_X = 'KeyX';
+const KEY_ACTION_SPACE = 'Space';
+const KEY_LEFT = "ArrowLeft";
+const KEY_RIGHT = "ArrowRight";
+const KEY_UP = "ArrowUp";
+const KEY_DOWN = "ArrowDown";
 
-const KEY_LEFT_Q = 81;	//	azerty
-const KEY_UP_Z = 90;	//	azerty
+// KeyboardEvent: key='ArrowUp' | code='ArrowUp'
+// KeyboardEvent: key='ArrowLeft' | code='ArrowLeft'
+// KeyboardEvent: key='ArrowDown' | code='ArrowDown'
+// KeyboardEvent: key='ArrowRight' | code='ArrowRight'
+
+const KEY_LEFT_Q = 'KeyQ';	//	azerty
+const KEY_UP_Z = 'KeyZ';	//	azerty
 
 class Keyboard {
 	constructor(listener) {
 		const keysDown = {};
 		const keysUp = {};
-		const keys = [];
+		const keys = {};
 		const controls = {
 			up: 0,
 			down: 0,
@@ -26,15 +35,15 @@ class Keyboard {
 		};
 
 		document.addEventListener("keydown", e => {
-			const {keyCode} = e;
-			keysDown[keyCode] = keyCode;
-			delete keysUp[keyCode];
+			const {code} = e;
+			keysDown[code] = code;
+			delete keysUp[code];
 			e.preventDefault();
 		});
 		document.addEventListener("keyup", e => {
-			const {keyCode} = e;
-			keysUp[keyCode] = keyCode;
-			delete keysDown[keyCode];
+			const {code} = e;
+			keysUp[code] = code;
+			delete keysDown[code];
 			e.preventDefault();
 		});
 		this.keysDown = keysDown;
@@ -53,6 +62,7 @@ class Keyboard {
 		switch(key) {
 			case KEY_LEFT_Q:
 			case KEY_LEFT_A:
+			case KEY_LEFT:
 				if (down && controls.left <= 0) {
 					controls.left = now;
 					listener.onLeftPress();
@@ -63,6 +73,7 @@ class Keyboard {
 				break;
 			case KEY_UP_W:
 			case KEY_UP_Z:
+			case KEY_UP:
 				if (down && controls.up <= 0) {
 					controls.up = now;
 					listener.onUpPress();
@@ -73,6 +84,7 @@ class Keyboard {
 				break;
 			case KEY_RIGHT_D:
 			case KEY_RIGHT_E:
+			case KEY_RIGHT:
 				if (down && controls.right <= 0) {
 					controls.right = now;
 					listener.onRightPress();
@@ -83,6 +95,7 @@ class Keyboard {
 				break;
 			case KEY_DOWN_X:
 			case KEY_DOWN_S:
+			case KEY_DOWN:
 				if (down && controls.down <= 0) {
 					controls.down = now;
 					listener.onDownPress();
