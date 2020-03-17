@@ -43,7 +43,7 @@ class Chunk {
 	setHidden(now) {
 		const { vertex, subarrays, index } = this;
 		subarrays.vertex.fill(0);
-		vertex.chunkUpdateTimes[index] = now;		
+		vertex.chunkUpdateTimes[index] = now;
 	}
 
 	applyNormal(vertices, normalSubarray, index, pool) {

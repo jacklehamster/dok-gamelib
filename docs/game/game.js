@@ -3,6 +3,13 @@
  */
 
 class Game {
+	constructor() {
+	}
+
+	gotoScene(name) {
+		this.engine.setScene(name);
+	}
+
 	getFrameRate() {
 		return this.evaluate(this.settings.frameRate);
 	}

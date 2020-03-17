@@ -28,7 +28,7 @@ class SceneManager {
  		}
 
 		this.scenes[name] = sceneObj;
-		if (sceneObj.firstScene) {
+		if (sceneObj.evaluate(sceneObj.firstScene)) {
 			if (this.firstScene) {
 				console.warn(`First scene already set: ${this.firstScene.name}. Unable to set ${sceneObj.name} as first scene.`);
 			} else {
@@ -37,16 +37,23 @@ class SceneManager {
 		}
 	}
 
-	getFirstScene() {
+	getFirstSceneName() {
 		if (!this.firstScene) {
+			const scenes = [];
 			for (let s in this.scenes) {
-				console.warn(`First scene not defined. Set a scene with 'firstScene: true'. Using ${s} as first scene.`);
-				return this.scenes[s];
+				scenes.push(s);
 			}
+
+			if (scenes.length) {
+				const sceneName = scenes[Math.floor(Math.random() * scenes.length)];
+				console.warn(`First scene not defined. Set a scene with 'firstScene: true'. Using ${sceneName} as first scene.`);
+				return this.scenes[sceneName].name;
+			}
+
 			console.warn("No scenes available.");
-			return EMPTY_OBJECT;
+			return null;
 		}
-		return this.firstScene;
+		return this.firstScene.name;
 	}
 
 	getScene(name) {

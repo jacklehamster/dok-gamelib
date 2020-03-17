@@ -193,9 +193,6 @@ SceneManager.add({
 
 	},
 }, {
-	firstScene: true,
-	init: game => {
-	},
 	settings: {
 		docBackground: game => {
 			const hitTime = game.now - game.sceneData.hit;
