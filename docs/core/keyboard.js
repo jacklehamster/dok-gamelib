@@ -13,11 +13,6 @@ const KEY_RIGHT = "ArrowRight";
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
 
-// KeyboardEvent: key='ArrowUp' | code='ArrowUp'
-// KeyboardEvent: key='ArrowLeft' | code='ArrowLeft'
-// KeyboardEvent: key='ArrowDown' | code='ArrowDown'
-// KeyboardEvent: key='ArrowRight' | code='ArrowRight'
-
 const KEY_LEFT_Q = 'KeyQ';	//	azerty
 const KEY_UP_Z = 'KeyZ';	//	azerty
 
