@@ -48,7 +48,6 @@ SceneManager.add({
 		}
 	},
 }, {
-	firstScene: true,
 	settings: {
 		docBackground: 0x000000,
 		background: 0xAACCFF,

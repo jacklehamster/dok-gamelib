@@ -64,7 +64,13 @@ function copyScenes() {
 		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/scenes`), { recursive: true })
 			.then(() => {
 				template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
-					Promise.all(scenes.map(scene => {
+					Promise.all(scenes.filter(file => path.extname(file)===".js").map(scene => {
+						//check if folder needs to be created
+					    const targetFolder = path.join(__dirname, webDir, 'generated', 'js', 'scenes', path.dirname(scene));
+					    if ( !fs.existsSync( targetFolder ) ) {
+					        fs.mkdirSync( targetFolder );
+					    }
+
 						fs.promises.copyFile(
 							path.join(__dirname, 'game', 'scenes', scene),
 							path.join(__dirname, webDir, 'generated', 'js', 'scenes', scene)
@@ -107,9 +113,11 @@ function zipGame() {
 app.get('/', function (req, res) {
 	clearGenerated().then(() => {
 		copyScenes().then(() => {
-			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
+			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(items => {
+				const scenes = items.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
+
 				template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'config.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) })
-					.then(html => assets.produceSpritesheets(`${__dirname}/game/assets/`, TEXTURE_SIZE, TEXTURE_SIZE)
+					.then(html => assets.produceSpritesheets(`${__dirname}/game/scenes/`, TEXTURE_SIZE, TEXTURE_SIZE)
 						.then(() => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js'))
 							.then(() => {
 								res.send(html);
@@ -126,7 +134,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/spritesheet', function(req, res) {
-	assets.produceSpritesheets(`${__dirname}/game/assets/`, TEXTURE_SIZE, TEXTURE_SIZE).then(({spritesheets, data}) => {
+	assets.produceSpritesheets(`${__dirname}/game/scenes`, TEXTURE_SIZE, TEXTURE_SIZE).then(({spritesheets, data}) => {
 		generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(code => {
 			res.writeHeader(200, {"Content-Type": "text/html"}); 
 			data.spritesheets.forEach(src => {
