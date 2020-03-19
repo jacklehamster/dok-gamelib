@@ -3,16 +3,21 @@ class SceneManager {
 		this.DefaultGameClass = Game;
 		this.DefaultSpriteDefinitionClass = SpriteDefinition;
 		this.scenes = {};
+		this.sceneNames = [];
 		this.configProcessor = new ConfigProcessor();
 	}
 
 	add(name, {Game, SpriteDefinition}, config) {
+		if (this.scenes[name]) {
+			return;
+		}
 		if (!Game) {
 			Game = this.DefaultGameClass;
 		}
 		if (!SpriteDefinition) {
 			SpriteDefinition = this.DefaultSpriteDefinitionClass;
 		}
+		this.sceneNames.push(name);
 		this.scenes[name] = {
 			Game,
 			SpriteDefinition,

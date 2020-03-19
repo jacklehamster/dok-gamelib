@@ -71,5 +71,9 @@ void main(void) {
 	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2, max(0.0, .8 + zDist))));
 	color = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, zDist);
 
+	float dist = color.a;
+    float alpha = smoothstep(.5 - .001, .5 + .001, dist);
+    color.a = alpha;
+
 	gl_FragColor = color;
 }

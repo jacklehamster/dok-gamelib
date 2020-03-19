@@ -437,6 +437,7 @@ SceneManager.add({
 		},
 		{
 			src: "blue-wall",
+			grid: [1, 2],
 			cell: (game, definition, index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
 			},
@@ -497,7 +498,6 @@ SceneManager.add({
 					return (game.evaluate(definition.zPos, definition, index) + zShift) * 3;
 				},
 			],
-			grid: [1, 2],
 			animation: {
 				frame: (game, definition, index) => index % 2,
 				range: 2,
@@ -506,5 +506,70 @@ SceneManager.add({
 			scale: [3, 3],
 			count: (game, definition, index) => game.sceneData.cells.length * 4,
 		},
+		{
+			src: "a",
+			grounded: (game, definition, index) => {
+				return game.evaluate(definition.cell, definition, index).grounded;
+			},
+			hidden: (game, definition, index) => {
+				return game.evaluate(definition.grounded, definition, index);
+			},
+			type: (game, definition, index) => {
+				switch(index % 4) {
+					case 0:
+						return SpriteType.Front;
+					case 1:
+						return SpriteType.Back;
+					case 2:
+						return SpriteType.LeftWall;
+					case 3:
+						return SpriteType.RightWall;
+				}
+			},
+			cell: (game, definition, index) => {
+				return game.sceneData.cells[Math.floor(index/4)];
+			},
+			xShift: (game, definition, index) => {
+				const type = game.evaluate(definition.type, definition, index);
+				switch (type) {
+					case SpriteType.Front:
+						return 0;
+					case SpriteType.Back:
+						return 0;
+					case SpriteType.LeftWall:
+						return .50001;
+					case SpriteType.RightWall:
+						return -.50001;
+				}
+			},
+			zShift: (game, definition, index) => {
+				const type = game.evaluate(definition.type, definition, index);
+				switch (type) {
+					case SpriteType.Front:
+						return .50001;
+					case SpriteType.Back:
+						return -.50001;
+					case SpriteType.LeftWall:
+						return 0;
+					case SpriteType.RightWall:
+						return 0;
+				}
+			},
+			xPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).x,
+			zPos: (game, definition, index) => game.evaluate(definition.cell, definition, index).z,
+			pos: [
+				(game, definition, index) => {
+					const xShift = game.evaluate(definition.xShift, definition, index);
+					return (game.evaluate(definition.xPos, definition, index) + xShift) * 3;
+				},
+				0,
+				(game, definition, index) => {
+					const zShift = game.evaluate(definition.zShift, definition, index);
+					return (game.evaluate(definition.zPos, definition, index) + zShift) * 3;
+				},
+			],
+			scale: [1, 1],
+			count: (game, definition, index) => game.sceneData.cells.length * 4,
+		},		
 	],
 });
