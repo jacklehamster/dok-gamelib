@@ -29,7 +29,7 @@ class Chunk {
 		spriteType.chunkUpdateTimes[index] = now;
 	}
 
-	setOffset(x, y, z, now) {
+	setOffset([x, y, z], now) {
 		const { offset, subarrays, index } = this;
 		Chunk.assignValues(subarrays.offset,
 			x, y, z,

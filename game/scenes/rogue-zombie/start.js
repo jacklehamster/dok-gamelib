@@ -31,7 +31,7 @@ SceneManager.add({
 		}
 
 		resetMap(x, z) {
-			const { sceneData } = this;
+			const { sceneData, now } = this;
 			const { cellMap, cells } = sceneData;
 			const mm = {};
 			for (let zz = 0; zz < sceneData.mapSize; zz++) {

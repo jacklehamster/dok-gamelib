@@ -17,7 +17,6 @@
     "canvas": "^2.6.1",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
-    "font-atlas-sdf": "^2.0.0",
     "fs-readdir-recursive": "^1.1.0",
     "image-size": "^0.8.3",
     "json-stringify-pretty-compact": "^2.0.0",

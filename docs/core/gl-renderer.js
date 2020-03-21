@@ -143,7 +143,8 @@ class GLRenderer {
 			chunk = this.newChunk();
 			if (chunk) {
 				sprite.chunkIndex = chunk.index;
-			} else {
+			} else if (!this.tooManySpriteError) {
+				this.tooManySpriteError = true;
 				console.error("Too many sprites.");
 			}
 		} else {
@@ -164,7 +165,7 @@ class GLRenderer {
 		const { usedChunks } = this;
 		const { chunkUpdateTimes, shaderBuffer } = engineBuffer;
 
-		const HOLE_LIMIT = 2;
+		const HOLE_LIMIT = 4;
 		let rangeStart = -1, holeSize = 0;
 		for (let i = 0; i < usedChunks; i++) {
 			if (rangeStart < 0) {
@@ -186,6 +187,7 @@ class GLRenderer {
 	}
 
 	sendBuffer(engineBuffer, rangeStart, rangeEnd) {
+//		console.log(this.getNameFromEngineBuffer(engineBuffer), rangeStart, rangeEnd);
 		const { gl, shader } = this;
 		const { floatPerVertex, verticesPerSprite, shaderBuffer } = engineBuffer;
 
@@ -195,7 +197,16 @@ class GLRenderer {
 			rangeStart * verticesPerSprite * floatPerVertex * Float32Array.BYTES_PER_ELEMENT,
 			engineBuffer.subarray(rangeStart, rangeEnd),
 		);
-	}	
+	}
+
+	getNameFromEngineBuffer(engineBuffer) {
+		for (let i in this.bufferInfo) {
+			if (engineBuffer === this.bufferInfo[i]) {
+				return i;
+			}
+		}
+		return null;
+	}
 
 	sendSprites(sprites, now) {
 		const { gl } = this;

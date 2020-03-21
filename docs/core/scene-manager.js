@@ -26,19 +26,23 @@ class SceneManager {
 	}
 
 	createScene(name) {
-		const gameScene = this.scenes[name];
+		const { scenes, configProcessor } = this;
+		const gameScene = scenes[name];
 		if (gameScene) {
 			const { Game, SpriteDefinition, config } = gameScene;
 			const sceneObj = new Game();
 			sceneObj.name = name;
 
-	 		Object.assign(sceneObj, this.configProcessor.process(config, sceneObj));
+	 		Object.assign(sceneObj, configProcessor.process(config, sceneObj));
 
 	 		for (let i = 0; i < sceneObj.sprites.length; i++) {
 	 			const spriteDefinition = new SpriteDefinition(sceneObj);
 	 			Object.assign(spriteDefinition, sceneObj.sprites[i]);
 	 			sceneObj.sprites[i] = spriteDefinition;
 	 		}
+
+	 		sceneObj.dynamicProperties = configProcessor.checkDynamicProperties(config);
+
 			return sceneObj;
 		}
 		return null;

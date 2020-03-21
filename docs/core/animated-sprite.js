@@ -16,6 +16,10 @@ class AnimatedSprite extends ImageSprite {
 
 	getEvaluated(game, definition) {
 		super.getEvaluated(game, definition);
+		if (this.hidden) {
+			return;
+		}
+
 		const { animation, grid } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;

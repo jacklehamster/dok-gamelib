@@ -94,6 +94,8 @@ function getData() {
             "type": 0,
             "hidden": false,
             "pos": [0, 0, 0],
+            "mov": [0, 0, 0],
+            "gravity": [0, 0, 0],
             "grid": [1, 1],
             "animation": {"start": 0, "frame": 0, "range": 1, "frameRate": 0},
             "scale": [1, 1],

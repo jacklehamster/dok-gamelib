@@ -15,6 +15,10 @@ class Sprite extends AnimatedSprite {
 
 	getEvaluated(game, definition) {
 		super.getEvaluated(game, definition);
+		if (this.hidden) {
+			return;
+		}
+
 		const { src, animation, scale, pos, mov, gravity, grid, hotspot, corners, refresh } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
@@ -54,26 +58,22 @@ class Sprite extends AnimatedSprite {
 			updateTimes.pos = now;
 		}
 
-		if (mov) {
-			const newMovX = game.evaluate(mov[0], definition, instanceIndex);
-			const newMovY = game.evaluate(mov[1], definition, instanceIndex);
-			const newMovZ = game.evaluate(mov[2], definition, instanceIndex);
+		const newMovX = game.evaluate(mov[0], definition, instanceIndex);
+		const newMovY = game.evaluate(mov[1], definition, instanceIndex);
+		const newMovZ = game.evaluate(mov[2], definition, instanceIndex);
 
-			if (!Utils.equal3(this.mov, newMovX, newMovY, newMovZ)) {
-				Utils.set3(this.mov, newMovX, newMovY, newMovZ);
-				updateTimes.mov = now;
-			}
+		if (!Utils.equal3(this.mov, newMovX, newMovY, newMovZ)) {
+			Utils.set3(this.mov, newMovX, newMovY, newMovZ);
+			updateTimes.mov = now;
 		}
 
-		if (gravity) {
-			const newGravityX = game.evaluate(gravity[0], definition, instanceIndex);
-			const newGravityY = game.evaluate(gravity[1], definition, instanceIndex);
-			const newGravityZ = game.evaluate(gravity[2], definition, instanceIndex);
+		const newGravityX = game.evaluate(gravity[0], definition, instanceIndex);
+		const newGravityY = game.evaluate(gravity[1], definition, instanceIndex);
+		const newGravityZ = game.evaluate(gravity[2], definition, instanceIndex);
 
-			if (!Utils.equal3(this.gravity, newGravityX, newGravityY, newGravityZ)) {
-				Utils.set3(this.gravity, newGravityX, newGravityY, newGravityZ);
-				updateTimes.gravity = now;
-			}
+		if (!Utils.equal3(this.gravity, newGravityX, newGravityY, newGravityZ)) {
+			Utils.set3(this.gravity, newGravityX, newGravityY, newGravityZ);
+			updateTimes.gravity = now;
 		}
 	}
 
@@ -81,8 +81,7 @@ class Sprite extends AnimatedSprite {
 		super.updateChunk(engine, chunk, now);
 		const { scale, hotspot, pos, mov, gravity, hidden, corners, updateTimes } = this;
 		if (updateTimes.pos === now) {
-			const [ x, y, z ] = pos;
-			chunk.setOffset(x, y, z, now);
+			chunk.setOffset(pos, now);
 		}
 		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.hidden === now || updateTimes.corners === now) {
 			if (hidden) {
