@@ -2,7 +2,7 @@
 	Sprite
 */
 
-class Sprite extends AnimatedSprite {
+class SpriteInstance extends AnimatedSpriteInstance {
 	constructor() {
 		super();
 		this.scale = [0, 0];
@@ -23,8 +23,8 @@ class Sprite extends AnimatedSprite {
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
-		const xScale = game.evaluate(scale[0], definition, instanceIndex);
-		const yScale = game.evaluate(scale[1], definition, instanceIndex);
+		const xScale = scale[0].get(definition, instanceIndex);
+		const yScale = scale[1].get(definition, instanceIndex);
 
 		if (this.scale[0] !== xScale || this.scale[1] !== yScale) {
 			this.scale[0] = xScale;
@@ -32,44 +32,44 @@ class Sprite extends AnimatedSprite {
 			updateTimes.scale = now;
 		}
 
-		const hotspotX = game.evaluate(hotspot[0], definition, instanceIndex);
-		const hotspotY = game.evaluate(hotspot[1], definition, instanceIndex);
+		const hotspotX = hotspot[0].get(definition, instanceIndex);
+		const hotspotY = hotspot[1].get(definition, instanceIndex);
 		if (hotspotX !== this.hotspot[0] || hotspotY !== this.hotspot[1]) {
 			this.hotspot[0] = hotspotX;
 			this.hotspot[1] = hotspotY;
 			updateTimes.hotspot = now;
 		}
 
-		const cornerA = game.evaluate(corners[0], definition, instanceIndex);
-		const cornerB = game.evaluate(corners[1], definition, instanceIndex);
-		const cornerC = game.evaluate(corners[2], definition, instanceIndex);
-		const cornerD = game.evaluate(corners[3], definition, instanceIndex);
+		const cornerA = corners[0].get(definition, instanceIndex);
+		const cornerB = corners[1].get(definition, instanceIndex);
+		const cornerC = corners[2].get(definition, instanceIndex);
+		const cornerD = corners[3].get(definition, instanceIndex);
 		if (!Utils.equal4(this.corners, cornerA, cornerB, cornerC, cornerD)) {
 			Utils.set4(this.corners, cornerA, cornerB, cornerC, cornerD);
 			updateTimes.corners = now;
 		}
 
-		const newPosX = game.evaluate(pos[0], definition, instanceIndex);
-		const newPosY = game.evaluate(pos[1], definition, instanceIndex);
-		const newPosZ = game.evaluate(pos[2], definition, instanceIndex);
+		const newPosX = pos[0].get(definition, instanceIndex);
+		const newPosY = pos[1].get(definition, instanceIndex);
+		const newPosZ = pos[2].get(definition, instanceIndex);
 
 		if (!Utils.equal3(this.pos, newPosX, newPosY, newPosZ)) {
 			Utils.set3(this.pos, newPosX, newPosY, newPosZ);
 			updateTimes.pos = now;
 		}
 
-		const newMovX = game.evaluate(mov[0], definition, instanceIndex);
-		const newMovY = game.evaluate(mov[1], definition, instanceIndex);
-		const newMovZ = game.evaluate(mov[2], definition, instanceIndex);
+		const newMovX = mov[0].get(definition, instanceIndex);
+		const newMovY = mov[1].get(definition, instanceIndex);
+		const newMovZ = mov[2].get(definition, instanceIndex);
 
 		if (!Utils.equal3(this.mov, newMovX, newMovY, newMovZ)) {
 			Utils.set3(this.mov, newMovX, newMovY, newMovZ);
 			updateTimes.mov = now;
 		}
 
-		const newGravityX = game.evaluate(gravity[0], definition, instanceIndex);
-		const newGravityY = game.evaluate(gravity[1], definition, instanceIndex);
-		const newGravityZ = game.evaluate(gravity[2], definition, instanceIndex);
+		const newGravityX = gravity[0].get(definition, instanceIndex);
+		const newGravityY = gravity[1].get(definition, instanceIndex);
+		const newGravityZ = gravity[2].get(definition, instanceIndex);
 
 		if (!Utils.equal3(this.gravity, newGravityX, newGravityY, newGravityZ)) {
 			Utils.set3(this.gravity, newGravityX, newGravityY, newGravityZ);

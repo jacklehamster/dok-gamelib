@@ -41,8 +41,6 @@ class SceneManager {
 	 			sceneObj.sprites[i] = spriteDefinition;
 	 		}
 
-	 		sceneObj.dynamicProperties = configProcessor.checkDynamicProperties(config);
-
 			return sceneObj;
 		}
 		return null;

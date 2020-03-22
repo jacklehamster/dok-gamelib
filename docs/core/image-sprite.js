@@ -2,7 +2,7 @@
  *	ImageSprite
  */
 
-class ImageSprite extends BaseSprite {
+class ImageSpriteInstance extends BaseSpriteInstance {
  	constructor() {
  		super();
 		this.src = null;
@@ -17,7 +17,7 @@ class ImageSprite extends BaseSprite {
 		const { src } = definition;
 		const { instanceIndex } = this;
 		const { now } = game;
-		const spriteSrc = game.evaluate(src, definition, instanceIndex);
+		const spriteSrc = src.get(definition, instanceIndex);
 		if (spriteSrc !== this.src) {
 			this.src = spriteSrc;
 			this.updateTimes.src = now;

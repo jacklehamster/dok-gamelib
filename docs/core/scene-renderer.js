@@ -27,35 +27,35 @@ class SceneRenderer {
 
 	init(game) {
 		const { init } = game;
-		game.evaluate(init);
+		init.get();
 	}
 
 	refresh(scene) {
-		scene.evaluate(scene.refresh);
+		scene.refresh.get();
 	}
 
 	render(scene) {
 		const { glRenderer, background } = this;
 		const { settings, view, light } = scene;
 
-		const newBackground = scene.evaluate(settings.background);
+		const newBackground = settings.background.get();
 		if (newBackground !== background) {
 			glRenderer.setBackground(newBackground);
 			this.background = newBackground;
 		}
-		const docBackground = scene.evaluate(settings.docBackground);
+		const docBackground = settings.docBackground.get();
 		if (docBackground !== this.docBackground) {
 			document.body.style.backgroundColor = Utils.getDOMColor(docBackground);
 			this.docBackground = docBackground;
 		}
 
-		const newLightPosX = scene.evaluate(light.pos[0]);
-		const newLightPosY = scene.evaluate(light.pos[1]);
-		const newLightPosZ = scene.evaluate(light.pos[2]);
-		const newDiffusionStrength = scene.evaluate(light.diffusionStrength);
-		const newSpecularStrength = scene.evaluate(light.specularStrength);
-		const newShininess = scene.evaluate(light.shininess);
-		const newAmbient = scene.evaluate(light.ambient);
+		const newLightPosX = light.pos[0].get();
+		const newLightPosY = light.pos[1].get();
+		const newLightPosZ = light.pos[2].get();
+		const newDiffusionStrength = light.diffusionStrength.get();
+		const newSpecularStrength = light.specularStrength.get();
+		const newShininess = light.shininess.get();
+		const newAmbient = light.ambient.get();
 		if (!Utils.equal3(this.light.pos, newLightPosX, newLightPosY, newLightPosZ)
 			|| newDiffusionStrength !== this.light.diffusionStrength
 			|| newSpecularStrength !== this.light.specularStrength
@@ -68,12 +68,12 @@ class SceneRenderer {
 			glRenderer.setLight(this.light.pos, newAmbient, newDiffusionStrength, newSpecularStrength, newShininess);
 		}
 
-		const newViewPosX = scene.evaluate(view.pos[0]);
-		const newViewPosY = scene.evaluate(view.pos[1]);
-		const newViewPosZ = scene.evaluate(view.pos[2]);
-		const newHeight = scene.evaluate(view.height);
-		const newTurn = scene.evaluate(view.turn);
-		const newCameraDistance = scene.evaluate(view.cameraDistance);
+		const newViewPosX = view.pos[0].get();
+		const newViewPosY = view.pos[1].get();
+		const newViewPosZ = view.pos[2].get();
+		const newHeight = view.height.get();
+		const newTurn = view.turn.get();
+		const newCameraDistance = view.cameraDistance.get();
 		if (!Utils.equal3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ)
 			|| newHeight !== this.view.height || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
 			Utils.set3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ);
@@ -81,14 +81,14 @@ class SceneRenderer {
 			this.view.height = newHeight;
 			this.view.turn = newTurn;
 		}
-		const newViewAngle = scene.evaluate(view.angle);
-		const newNear = scene.evaluate(view.range[0]);
-		const newFar = scene.evaluate(view.range[1]);
+		const newViewAngle = view.angle.get();
+		const newNear = view.range[0].get();
+		const newFar = view.range[1].get();
 		if (this.view.angle !== newViewAngle) {
 			glRenderer.setViewAngle(newViewAngle, newNear, newFar);
 			this.view.angle = newViewAngle;
 		}
-		const newCurvature = scene.evaluate(settings.curvature);
+		const newCurvature = settings.curvature.get();
 		if (this.view.curvature !== newCurvature) {
 			glRenderer.setCurvature(newCurvature);
 			this.view.curvature = newCurvature;

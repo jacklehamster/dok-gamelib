@@ -2,7 +2,7 @@
   *	BaseSprite
   */
 
-class BaseSprite {
+class BaseSpriteInstance {
 	constructor() {
 		this.providerIndex = -1;
 		this.definitionIndex = -1;
@@ -19,13 +19,13 @@ class BaseSprite {
 		const { now } = game;
 		const { type, hidden } = definition;
 
-		this.setHidden(game.evaluate(hidden, definition, instanceIndex), now);
+		this.setHidden(hidden.get(definition, instanceIndex), now);
 
 		if (this.hidden) {
 			return;
 		}
 
-		const newType = game.evaluate(type, definition, instanceIndex) || 0;
+		const newType = type.get(definition, instanceIndex) || 0;
 		if (this.type !== newType) {
 			this.type = newType;
 			updateTimes.type = now;

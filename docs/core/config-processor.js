@@ -8,34 +8,6 @@ class ConfigProcessor {
 		this.schema = getData().schema.schema;
 	}
 
-	checkDynamicProperties(obj, schema) {
-		if (!schema) {
-			schema = this.schema;
-		}
-		if (typeof(obj) !== 'object') {
-			return typeof(obj) === 'function';
-		}
- 		const isArray = Array.isArray(obj);
- 		const result = isArray ? [] : {};
- 		if (isArray) {
- 			obj.forEach((value, index) => result[index] = this.checkDynamicProperties(value, schema[0]));
- 		} else {
-	 		for (let o in obj) {
-	 			if (obj.hasOwnProperty(o)) {
-		 			if (typeof(schema[o]) !== 'undefined') {
-			 			result[o] = this.checkDynamicProperties(obj[o], schema[o]);
-		 			}
-	 			}
-	 		}
-	 		for (let s in schema) {
-	 			if (!result.hasOwnProperty(s)) {
-	 				result[s] = ConfigProcessor.dynamicPropertiesForSchema(schema[s]);
-	 			}
-	 		}
- 		}
- 		return result;
-	}
-
  	process(obj, sceneObj, schema, path) {
  		if (!schema) {
  			schema = this.schema;
@@ -44,7 +16,7 @@ class ConfigProcessor {
  			path = "scene";
  		}
  		if (typeof(obj) !== 'object') {
-			return typeof(obj) === 'function' ? obj.bind(sceneObj) : () => obj;
+ 			return ConfigProcessor.processLeafValue(obj, sceneObj);
  		}
  		const isArray = Array.isArray(obj);
  		const result = isArray ? [] : {};
@@ -61,7 +33,7 @@ class ConfigProcessor {
 	 		}
 	 		for (let s in schema) {
 	 			if (!result.hasOwnProperty(s)) {
-	 				const defaultValue = ConfigProcessor.defaultForSchema(schema[s]);
+	 				const defaultValue = ConfigProcessor.defaultForSchema(schema[s], sceneObj);
 	 				console.log(`Defaulting ${path}.${s} to ${JSON.stringify(ConfigProcessor.defaultEval(defaultValue, sceneObj))}`);
 	 				result[s] = defaultValue;
 	 			}
@@ -70,51 +42,43 @@ class ConfigProcessor {
  		return result;
  	}
 
- 	static defaultEval(value) {
-		if (Array.isArray(value)) {
-			return value.map(t => ConfigProcessor.defaultForSchema(t));
+	static processLeafValue(value, sceneObj) {
+		return new GameProperty(value, sceneObj);
+	}
+
+ 	static defaultEval(property, sceneObj) {
+ 		if (property && property.constructor === GameProperty) {
+ 			return property.get();
+ 		}
+		if (Array.isArray(property)) {
+			return property.map(t => ConfigProcessor.defaultEval(t, sceneObj));
 		}
- 		if (value && typeof(value) === 'object') {
+ 		if (property && typeof(property) === 'object' && property.constructor !== GameProperty) {
  			const result = {};
- 			for (let p in value) {
- 				if (value.hasOwnProperty(p)) {
- 					result[p] = ConfigProcessor.defaultEval(value[p]);
+ 			for (let p in property) {
+ 				if (property.hasOwnProperty(p)) {
+ 					result[p] = ConfigProcessor.defaultEval(property[p], sceneObj);
  				}
  			}
  			return result;
  		}
- 		return value();
+ 		console.error("Shouldn't reach this code.");
+ 		return property;
  	}
 
- 	static defaultForSchema(value) {
+ 	static defaultForSchema(value, sceneObj) {
 		if (Array.isArray(value)) {
-			return value.map(t => ConfigProcessor.defaultForSchema(t));
+			return value.map(t => ConfigProcessor.defaultForSchema(t, sceneObj));
 		}
  		if (value && typeof(value) === 'object') {
  			const result = {};
  			for (let p in value) {
  				if (value.hasOwnProperty(p)) {
- 					result[p] = ConfigProcessor.defaultForSchema(value[p]);
+ 					result[p] = ConfigProcessor.defaultForSchema(value[p], sceneObj);
  				}
  			}
  			return result;
  		}
- 		return () => value;
- 	}
-
- 	static dynamicPropertiesForSchema(value) {
-		if (Array.isArray(value)) {
-			return value.map(t => ConfigProcessor.dynamicPropertiesForSchema(t));
-		}
- 		if (value && typeof(value) === 'object') {
- 			const result = {};
- 			for (let p in value) {
- 				if (value.hasOwnProperty(p)) {
- 					result[p] = ConfigProcessor.dynamicPropertiesForSchema(value[p]);
- 				}
- 			}
- 			return result;
- 		}
- 		return false; 		
+ 		return ConfigProcessor.processLeafValue(value, sceneObj);
  	}
 }
