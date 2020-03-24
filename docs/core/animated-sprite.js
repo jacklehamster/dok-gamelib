@@ -24,10 +24,10 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
-		const animFrame = animation.frame.get(definition, instanceIndex);
-		const animStart = animation.start.get(definition, instanceIndex);
-		const animRange = animation.range.get(definition, instanceIndex);
-		const animFrameRate = animation.frameRate.get(definition, instanceIndex);
+		const animFrame = animation.frame.get(instanceIndex);
+		const animStart = animation.start.get(instanceIndex);
+		const animRange = animation.range.get(instanceIndex);
+		const animFrameRate = animation.frameRate.get(instanceIndex);
 
 		const spriteAnim = this.animation;
 		if (spriteAnim.frame !== animFrame || spriteAnim.start !== animStart || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
@@ -37,8 +37,8 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			spriteAnim.frameRate = animFrameRate;
 			updateTimes.animation = now;
 		}
-		const animCols = grid[0].get(definition, instanceIndex);
-		const animRows = grid[1].get(definition, instanceIndex);
+		const animCols = grid[0].get(instanceIndex);
+		const animRows = grid[1].get(instanceIndex);
 		if (this.grid[0] !== animCols || this.grid[1] !== animRows) {
 			this.grid[0] = animCols;
 			this.grid[1] = animRows;

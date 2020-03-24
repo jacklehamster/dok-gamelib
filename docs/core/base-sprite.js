@@ -19,13 +19,13 @@ class BaseSpriteInstance {
 		const { now } = game;
 		const { type, hidden } = definition;
 
-		this.setHidden(hidden.get(definition, instanceIndex), now);
+		this.setHidden(hidden.get(instanceIndex), now);
 
 		if (this.hidden) {
 			return;
 		}
 
-		const newType = type.get(definition, instanceIndex) || 0;
+		const newType = type.get(instanceIndex) || 0;
 		if (this.type !== newType) {
 			this.type = newType;
 			updateTimes.type = now;

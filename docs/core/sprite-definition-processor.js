@@ -12,14 +12,14 @@ class SpriteDefinitionProcessor {
 
 	init(spriteDefinitions, scene) {
 		for (let i = 0; i < spriteDefinitions.length; i++) {
-			spriteDefinitions[i].init.get(spriteDefinitions[i]);
+			spriteDefinitions[i].init.get();
 		}
 	}
 
 	refresh(scene) {
 		for (let i = 0; i < scene.sprites.length; i++) {
 			const definition = scene.sprites[i];
-			definition.refresh.get(definition);
+			definition.refresh.get();
 		}		
 	}
 
@@ -34,7 +34,7 @@ class SpriteDefinitionProcessor {
 
 	processSpriteDefinition(definition, definitionIndex, spriteCollector, scene, spriteProvider) {
 		const { count } = definition;
-		const totalCount = count.get(definition, definitionIndex);
+		const totalCount = count.get( definitionIndex);
 
 		for (let i = 0; i < totalCount; i ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);

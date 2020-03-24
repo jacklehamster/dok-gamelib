@@ -67,53 +67,53 @@ SceneManager.add({
 		{
 			src: "tp-boy",
 			pos: [
-				({tpBoy}) => tpBoy.x,
-				({tpBoy}) => tpBoy.y,
+				({game}) => game.tpBoy.x,
+				({game}) => game.tpBoy.y,
 				0,
 			],
 			hotspot: [0, -.6],
 			scale: [
-				({tpBoy}) => tpBoy.direction,
+				({game}) => game.tpBoy.direction,
 				1,
 			],
 			grid: [3, 4],
 			animation: {
 				frame: 0,
-				start: ({tpBoy}, definition, index) => tpBoy.dx ? 7 : 0,
+				start: ({game, definition}, index) => game.tpBoy.dx ? 7 : 0,
 				range: 4,
-				frameRate: ({tpBoy}) => tpBoy.dx ? 15 : 5,
+				frameRate: ({game}) => game.tpBoy.dx ? 15 : 5,
 			},
 		},
 		{
 			src: "grass-tile",
-			refresh: ({tpBoy}, definition, index) => {
+			refresh: ({game, definition}, index) => {
 				const speed = .05;
 				if (game.keys.controls.left > 0) {
-					tpBoy.dx = -speed;
-					tpBoy.direction = Math.sign(tpBoy.dx);
+					game.tpBoy.dx = -speed;
+					game.tpBoy.direction = Math.sign(game.tpBoy.dx);
 				} else if (game.keys.controls.right > 0) {
-					tpBoy.dx = speed;					
-					tpBoy.direction = Math.sign(tpBoy.dx);
+					game.tpBoy.dx = speed;					
+					game.tpBoy.direction = Math.sign(game.tpBoy.dx);
 				}
-				tpBoy.x += tpBoy.dx;
-				tpBoy.dx *= .7;
-				if (Math.abs(tpBoy.dx) < .01) {
-					tpBoy.dx = 0;
+				game.tpBoy.x += game.tpBoy.dx;
+				game.tpBoy.dx *= .7;
+				if (Math.abs(game.tpBoy.dx) < .01) {
+					game.tpBoy.dx = 0;
 				}
 			},
 			size: [1, 1],
 			grid: [2, 3],
 			hotspot: [0, -.1],
 			animation: {
-				frame: ({platforms}, definition, index) => platforms[index].index,
+				frame: ({game, definition}, index) => game.platforms[index].index,
 				range: 6,
 			},
 			pos: [
-				({platforms}, definition, index) => platforms[index].x,
-				({platforms}, definition, index) => platforms[index].y,
+				({game, definition}, index) => game.platforms[index].x,
+				({game, definition}, index) => game.platforms[index].y,
 				0,
 			],
-			count: ({platforms}) => platforms.length,
+			count: ({game}) => game.platforms.length,
 		},
 	],
 });

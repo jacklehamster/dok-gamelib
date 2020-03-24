@@ -194,11 +194,11 @@ SceneManager.add({
 	},
 }, {
 	settings: {
-		docBackground: game => {
+		docBackground: ({game}) => {
 			const hitTime = game.now - game.sceneData.hit;
 			return hitTime < 300 ? 0xaa0000 : 0;
 		},
-		background: game => {
+		background: ({game}) => {
 			const hitTime = game.now - game.sceneData.hit;
 			return hitTime < 300 ? 0xaa0000 : 0x080523;
 		},
@@ -217,16 +217,16 @@ SceneManager.add({
 	},
 	view: {
 		pos: [
-			game => game.sceneData.cam[0],
-			game => game.sceneData.cam[1],
-			game => game.sceneData.cam[2],
+			({game}) => game.sceneData.cam[0],
+			({game}) => game.sceneData.cam[1],
+			({game}) => game.sceneData.cam[2],
 		],
 		angle: 45,
 		height: .4,
-		turn: game => game.sceneData.turn,
+		turn: ({game}) => game.sceneData.turn,
 		cameraDistance: 3,
 	},
-	refresh: game => {
+	refresh: ({game}) => {
 		const { sceneData, keys } = game;
 		let moving = false;
 		const tileSize = 3;
@@ -330,7 +330,7 @@ SceneManager.add({
 		}
 	},
 	keyboard: {
-		onActionPress: game => {
+		onActionPress: ({game}) => {
 			if (!game.sceneData.gameOver) {
 				game.sceneData.lastShot = game.now;
 				game.onShot();
@@ -340,9 +340,9 @@ SceneManager.add({
 	sprites: [
 		{
 			src: "gun",
-			hidden: game => game.sceneData.gameOver,
+			hidden: ({game}) => game.sceneData.gameOver,
 			animation: {
-				frame: game => {
+				frame: ({game}) => {
 					const { now, sceneData } = game;
 					if (sceneData.lastShot) {
 						const shootTime = now - sceneData.lastShot;
@@ -357,9 +357,9 @@ SceneManager.add({
 				frameRate: 0,
 			},
 			pos: [
-				game => game.sceneData.cam[0],
+				({game}) => game.sceneData.cam[0],
 				0,
-				game => game.sceneData.cam[2],
+				({game}) => game.sceneData.cam[2],
 			],
 			hotspot: [0, 0],
 			grid: [2, 2],
@@ -368,7 +368,7 @@ SceneManager.add({
 		{
 			src: "zombie",
 			animation: {
-				frame: (game, definition, index) => {
+				frame: ({game, definition}, index) => {
 					const {dead} = game.sceneData.zombies[index];
 					if (dead) {
 						const deathTime = game.now - dead;
@@ -377,24 +377,24 @@ SceneManager.add({
 					}
 					return 0;
 				},
-				range: (game, definition, index) => {
+				range: ({game, definition},index) => {
 					const {dead} = game.sceneData.zombies[index];
 					return dead ? 6 : 2;
 				},
-				frameRate: (game, definition, index) => {
+				frameRate: ({game, definition},index) => {
 					const {dead} = game.sceneData.zombies[index];
 					return dead ? 0 : 2;
 				},
 			},
 			pos: [
-				(game, definition, index) => {
+				({game, definition},index) => {
 					const zombie = game.sceneData.zombies[index];
 					const time = game.now - zombie.moveTime;
 					const progress = Math.min(1, time / 200);
 					return progress * zombie.x * 3 + (1-progress) * zombie.fromX * 3;
 				},
 				-.5 * 3,
-				(game, definition, index) => {
+				({game, definition},index) => {
 					const zombie = game.sceneData.zombies[index];
 					const time = game.now - zombie.moveTime;
 					const progress = Math.min(1, time / 200);
@@ -404,50 +404,50 @@ SceneManager.add({
 			hotspot: [0, -.4],
 			grid: [2, 3],
 			scale: [3, 3],
-			count: game => game.sceneData.zombies.length,
+			count: ({game}) => game.sceneData.zombies.length,
 		},
 		{
 			src: "blue-wall",
-			cell: (game, definition, index) => game.sceneData.cells[index],
-			grounded: (game, definition, index) => {
-				return definition.cell.get(definition, index).grounded;
+			cell: ({game, definition},index) => game.sceneData.cells[index],
+			grounded: ({game, definition},index) => {
+				return definition.cell.get(index).grounded;
 			},
 			corners: [
-				(game, definition, index) => !definition.grounded.get(definition, index) ? 0 : game.sceneData.cells[index].corners[0],
-				(game, definition, index) => !definition.grounded.get(definition, index) ? 0 : game.sceneData.cells[index].corners[1],
-				(game, definition, index) => !definition.grounded.get(definition, index) ? 0 : game.sceneData.cells[index].corners[2],
-				(game, definition, index) => !definition.grounded.get(definition, index) ? 0 : game.sceneData.cells[index].corners[3],
+				({game, definition},index) => !definition.grounded.get(index) ? 0 : game.sceneData.cells[index].corners[0],
+				({game, definition},index) => !definition.grounded.get(index) ? 0 : game.sceneData.cells[index].corners[1],
+				({game, definition},index) => !definition.grounded.get(index) ? 0 : game.sceneData.cells[index].corners[2],
+				({game, definition},index) => !definition.grounded.get(index) ? 0 : game.sceneData.cells[index].corners[3],
 			],
 			type: SpriteType.Floor,
-			xPos: (game, definition, index) => definition.cell.get(definition, index).x,
-			zPos: (game, definition, index) => definition.cell.get(definition, index).z,
+			xPos: ({game, definition},index) => definition.cell.get(index).x,
+			zPos: ({game, definition},index) => definition.cell.get(index).z,
 			pos: [
-				(game, definition, index) => definition.xPos.get(definition, index) * 3,
-				(game, definition, index) => (definition.grounded.get(definition, index) ? -.5 : .5) * 3,
-				(game, definition, index) => definition.zPos.get(definition, index) * 3,
+				({game, definition},index) => definition.xPos.get(index) * 3,
+				({game, definition},index) => (definition.grounded.get(index) ? -.5 : .5) * 3,
+				({game, definition},index) => definition.zPos.get(index) * 3,
 			],
 			grid: [1, 2],
 			animation: {
-				frame: (game, definition, index) => index % 2,
+				frame: ({game, definition},index) => index % 2,
 				range: 2,
 				frameRate: 0,
 			},
 			scale: [3.1, 3.1],
-			count: (game, definition, index) => game.sceneData.cells.length,
+			count: ({game, definition},index) => game.sceneData.cells.length,
 		},
 		{
 			src: "blue-wall",
 			grid: [1, 2],
-			cell: (game, definition, index) => {
+			cell: ({game, definition},index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
 			},
-			grounded: (game, definition, index) => {
-				return definition.cell.get(definition, index).grounded;
+			grounded: ({game, definition},index) => {
+				return definition.cell.get(index).grounded;
 			},
-			hidden: (game, definition, index) => {
-				return definition.grounded.get(definition, index);
+			hidden: ({game, definition},index) => {
+				return definition.grounded.get(index);
 			},
-			type: (game, definition, index) => {
+			type: ({game, definition},index) => {
 				switch(index % 4) {
 					case 0:
 						return SpriteType.Front;
@@ -459,8 +459,8 @@ SceneManager.add({
 						return SpriteType.RightWall;
 				}
 			},
-			xShift: (game, definition, index) => {
-				const type = definition.type.get(definition, index);
+			xShift: ({game, definition},index) => {
+				const type = definition.type.get(index);
 				switch (type) {
 					case SpriteType.Front:
 						return 0;
@@ -472,8 +472,8 @@ SceneManager.add({
 						return -.5;
 				}
 			},
-			zShift: (game, definition, index) => {
-				const type = definition.type.get(definition, index);
+			zShift: ({game, definition},index) => {
+				const type = definition.type.get(index);
 				switch (type) {
 					case SpriteType.Front:
 						return .5;
@@ -485,36 +485,36 @@ SceneManager.add({
 						return 0;
 				}
 			},
-			xPos: (game, definition, index) => definition.cell.get(definition, index).x,
-			zPos: (game, definition, index) => definition.cell.get(definition, index).z,
+			xPos: ({game, definition},index) => definition.cell.get(index).x,
+			zPos: ({game, definition},index) => definition.cell.get(index).z,
 			pos: [
-				(game, definition, index) => {
-					const xShift = definition.xShift.get(definition, index);
-					return (definition.xPos.get(definition, index) + xShift) * 3;
+				({game, definition},index) => {
+					const xShift = definition.xShift.get(index);
+					return (definition.xPos.get(index) + xShift) * 3;
 				},
 				0,
-				(game, definition, index) => {
-					const zShift = definition.zShift.get(definition, index);
-					return (definition.zPos.get(definition, index) + zShift) * 3;
+				({game, definition},index) => {
+					const zShift = definition.zShift.get(index);
+					return (definition.zPos.get(index) + zShift) * 3;
 				},
 			],
 			animation: {
-				frame: (game, definition, index) => index % 2,
+				frame: ({game, definition},index) => index % 2,
 				range: 2,
 				frameRate: 0,
 			},
 			scale: [3, 3],
-			count: (game, definition, index) => game.sceneData.cells.length * 4,
+			count: ({game, definition},index) => game.sceneData.cells.length * 4,
 		},
 		{
 			src: "a",
-			grounded: (game, definition, index) => {
-				return definition.cell.get(definition, index).grounded;
+			grounded: ({game, definition},index) => {
+				return definition.cell.get(index).grounded;
 			},
-			hidden: (game, definition, index) => {
-				return definition.grounded.get(definition, index);
+			hidden: ({game, definition},index) => {
+				return definition.grounded.get(index);
 			},
-			type: (game, definition, index) => {
+			type: ({game, definition},index) => {
 				switch(index % 4) {
 					case 0:
 						return SpriteType.Front;
@@ -526,11 +526,11 @@ SceneManager.add({
 						return SpriteType.RightWall;
 				}
 			},
-			cell: (game, definition, index) => {
+			cell: ({game, definition},index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
 			},
-			xShift: (game, definition, index) => {
-				const type = definition.type.get(definition, index);
+			xShift: ({game, definition},index) => {
+				const type = definition.type.get(index);
 				switch (type) {
 					case SpriteType.Front:
 						return 0;
@@ -542,8 +542,8 @@ SceneManager.add({
 						return -.50001;
 				}
 			},
-			zShift: (game, definition, index) => {
-				const type = definition.type.get(definition, index);
+			zShift: ({game, definition},index) => {
+				const type = definition.type.get(index);
 				switch (type) {
 					case SpriteType.Front:
 						return .50001;
@@ -555,21 +555,21 @@ SceneManager.add({
 						return 0;
 				}
 			},
-			xPos: (game, definition, index) => definition.cell.get(definition, index).x,
-			zPos: (game, definition, index) => definition.cell.get(definition, index).z,
+			xPos: ({game, definition},index) => definition.cell.get(index).x,
+			zPos: ({game, definition},index) => definition.cell.get(index).z,
 			pos: [
-				(game, definition, index) => {
-					const xShift = definition.xShift.get(definition, index);
-					return (definition.xPos.get(definition, index) + xShift) * 3;
+				({game, definition},index) => {
+					const xShift = definition.xShift.get(index);
+					return (definition.xPos.get(index) + xShift) * 3;
 				},
 				0,
-				(game, definition, index) => {
-					const zShift = definition.zShift.get(definition, index);
-					return (definition.zPos.get(definition, index) + zShift) * 3;
+				({game, definition},index) => {
+					const zShift = definition.zShift.get(index);
+					return (definition.zPos.get(index) + zShift) * 3;
 				},
 			],
 			scale: [1, 1],
-			count: (game, definition, index) => game.sceneData.cells.length * 4,
+			count: ({game, definition},index) => game.sceneData.cells.length * 4,
 		},		
 	],
 });

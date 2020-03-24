@@ -53,7 +53,7 @@ class ConfigProcessor {
 		if (Array.isArray(property)) {
 			return property.map(t => ConfigProcessor.defaultEval(t, sceneObj));
 		}
- 		if (property && typeof(property) === 'object' && property.constructor !== GameProperty) {
+ 		if (property && typeof(property) === 'object') {
  			const result = {};
  			for (let p in property) {
  				if (property.hasOwnProperty(p)) {

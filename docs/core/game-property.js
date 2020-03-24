@@ -8,10 +8,10 @@ class GameProperty {
 		this.value = dynamic ? value.bind(game) : () => value;
 		this.dynamic = dynamic;
 		this.game = game;
+		this.definition = game;
 	}
 
-	get(... params) {
-		const { game, value }  = this;
-		return value(game, ...params);
+	get(index) {
+		return this.value(this, index);
 	}
 }

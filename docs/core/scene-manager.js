@@ -36,9 +36,7 @@ class SceneManager {
 	 		Object.assign(sceneObj, configProcessor.process(config, sceneObj));
 
 	 		for (let i = 0; i < sceneObj.sprites.length; i++) {
-	 			const spriteDefinition = new SpriteDefinition(sceneObj);
-	 			Object.assign(spriteDefinition, sceneObj.sprites[i]);
-	 			sceneObj.sprites[i] = spriteDefinition;
+	 			sceneObj.sprites[i] = new SpriteDefinition(sceneObj.sprites[i], sceneObj);
 	 		}
 
 			return sceneObj;

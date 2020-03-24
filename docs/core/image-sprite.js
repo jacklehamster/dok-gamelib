@@ -17,7 +17,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 		const { src } = definition;
 		const { instanceIndex } = this;
 		const { now } = game;
-		const spriteSrc = src.get(definition, instanceIndex);
+		const spriteSrc = src.get(instanceIndex);
 		if (spriteSrc !== this.src) {
 			this.src = spriteSrc;
 			this.updateTimes.src = now;
