@@ -110,33 +110,64 @@ function zipGame() {
 	)	
 }
 
+function getSpritesheets() {
+	const gamesDirectory = `${__dirname}/game/scenes`;
+
+	//	Check sha
+    const generatedDir = `${__dirname}/data/generated`;
+	return Promise.all([
+		assets.getAssetsSha(gamesDirectory),
+		new Promise((resolve, reject) => {
+			if (!fs.existsSync(`${generatedDir}/config/sha.json`)) {
+				resolve(null);
+			} else {
+				fs.promises.readFile(`${generatedDir}/config/sha.json`, 'utf8').then(result => resolve(JSON.parse(result)));
+			}
+		}),
+	]).then(([newSha, savedSha]) => {
+		const sameSha = JSON.stringify(newSha) === JSON.stringify(savedSha);
+		if (sameSha) {
+			return readData(`generated/config/imagedata.json`);
+		} else {
+		    const publicDir = `${webDir}/generated`;
+		    const generatedDir = 'data/generated';
+		    return assets.deleteFolders(publicDir, generatedDir).then(() => {
+				assets.getAssetsSha(gamesDirectory).then(data => {
+			        const generatedDir = `${__dirname}/data/generated`;
+					fs.promises.mkdir(`${generatedDir}/config`, { recursive: true })
+						.then(() => fs.promises.writeFile(`${generatedDir}/config/sha.json`, JSON.stringify(data, null, '\t'))
+					);
+				});
+				return assets.produceSpritesheets(gamesDirectory, TEXTURE_SIZE, TEXTURE_SIZE);
+		    });
+		}
+	});
+}
+
 app.get('/', function (req, res) {
-	clearGenerated().then(() => {
+	getSpritesheets().then(() => {
 		copyScenes().then(() => {
 			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(items => {
 				const scenes = items.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
 				template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'config.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) })
-					.then(html => assets.produceSpritesheets(`${__dirname}/game/scenes/`, TEXTURE_SIZE, TEXTURE_SIZE)
-						.then(() => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js'))
-							.then(() => {
-								res.send(html);
-								fs.writeFile(`${webDir}/index.html`, html, err => {
-									if (err) throw err;
-									zipGame();
-								});
-							})
-						)
-					);
+					.then(html => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(() => {
+						res.send(html);
+						fs.writeFile(`${webDir}/index.html`, html, err => {
+							if (err) throw err;
+							zipGame();
+						});
+					})
+				);
 			});
 		});
 	});
 });
 
 app.get('/spritesheet', function(req, res) {
-	assets.produceSpritesheets(`${__dirname}/game/scenes`, TEXTURE_SIZE, TEXTURE_SIZE).then(({spritesheets, data}) => {
+	getSpritesheets().then(({spritesheets}) => {
 		generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(code => {
 			res.writeHeader(200, {"Content-Type": "text/html"}); 
-			data.spritesheets.forEach(src => {
+			spritesheets.forEach(src => {
 		        res.write(`<a href="${src}"><img style='background-color: #ddddee; border: 1px solid black' src="${src}" width=200></a>`);  
 			});
 			res.write(`<pre>${code}</pre>`);
