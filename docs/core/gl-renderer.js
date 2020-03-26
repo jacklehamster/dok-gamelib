@@ -5,10 +5,10 @@ GLRenderer Engine
 */
 
 class GLRenderer {
-	constructor(canvas, webgl, imagedata) {
+	constructor(canvas, webgl, {imagedata, game}) {
 		const resolution = devicePixelRatio;
-		canvas.width = canvas.offsetWidth * resolution;
-		canvas.height = canvas.offsetHeight * resolution;
+		canvas.width = game.width * resolution;
+		canvas.height = game.height * resolution;
 		canvas.style.width = `${canvas.width / resolution}px`;
 		canvas.style.height = `${canvas.height / resolution}px`;
 

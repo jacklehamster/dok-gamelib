@@ -3,6 +3,9 @@ docs/index.html
 docs/generated
 docs/generated/**
 docs/generated/data/**
+generated
+generated/**
+generated/config/**
 data/generated
 data/generated/**
 data/generated/config/**

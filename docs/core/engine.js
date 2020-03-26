@@ -6,7 +6,7 @@ class Engine {
 	constructor(canvas, sceneManager) {
 		canvas.focus();
 		this.data = getData();
-		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.data.generated.config.imagedata);
+		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.data.generated.config);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer);
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();

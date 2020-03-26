@@ -43,8 +43,6 @@
 		<script src="generated/js/scenes/rogue-zombie/start.js"></script>
 		<script>SceneManager.loadingSceneName = "tp-boy";</script>
 		<script src="generated/js/scenes/tp-boy/start.js"></script>
-
-		<link href="https://fonts.googleapis.com/css?family=Creepster&display=swap" rel="stylesheet">
 	</head>
 
 	<body class="container">
@@ -54,9 +52,9 @@
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
-			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
+			const config = ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Comic Sans MS","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":380,"cellSize":512}},"scenes":["rogue-zombie","tp-boy"]});
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, config);
 			function startGame() {
-				const config = ({"title":"Hello World","description":"Description","width":800,"height":500,"scenes":["rogue-zombie","tp-boy"]});
 				engine.start();
 			}
 		

@@ -18,39 +18,43 @@ function indented(string, indentation) {
 
 function readData(filePath) {
 	if (path.extname(filePath) === ".json") {
-		return new Promise((resolve, reject) => {
-			fs.promises.readFile(`${__dirname}/data/${filePath}`, 'utf8').then(result => resolve(JSON.parse(result)));
-		});
+		return fs.promises.readFile(`${__dirname}/data/${filePath}`, 'utf8').then(result => Promise.resolve(JSON.parse(result)));
 	} else {
 		return fs.promises.readFile(`${__dirname}/data/${filePath}`, 'utf8');
 	}
 }
 
 function generateDataCode(outputPath) {
-	return new Promise((resolve, reject) => {
-		template.getFolderAsData(path.join(__dirname, 'data'))
-			.then(items => Promise.all(items.map(filePath => readData(filePath)))
-				.then(contents => {
-					const root = {};
-					items.forEach((path, index) => {
-						assignData(root, path, contents[index]);
-					});
+	return template.getFolderAsData(path.join(__dirname, 'data'))
+		.then(items => Promise.all(items.map(filePath => readData(filePath)))
+			.then(contents => {
+				const root = {};
+				items.forEach((path, index) => {
+					assignData(root, path, contents[index]);
+				});
 
-					const code = `function getData() {
-						\n${indented(`// global game data\nreturn ${stringify(root, null, 3)};`, "  ")}
-					\n}`;
+				const code = `function getData() {
+					\n${indented(`// global game data\nreturn ${stringify(root, null, 3)};`, "  ")}
+				\n}`;
 
+				return new Promise((resolve, reject) => {
 					fs.mkdir(path.dirname(outputPath), { recursive: true }, err => {
-						if (err) throw err;
-						fs.writeFile(outputPath, code, err => {
-							if (err) throw err;
-						});
+						if (err) {
+							reject(err);
+						} else {
+							fs.writeFile(outputPath, code, err => {
+								if (err) {
+									reject(err);
+								} else {
+									resolve(code);
+								}
+							});
+						}
 					});
-					resolve(code);
-				}
-			)
-		);
-	});
+				});
+			}
+		)
+	);
 }
 
 function clearGenerated() {
@@ -61,24 +65,24 @@ function clearGenerated() {
 
 function copyScenes() {
 	return new Promise((resolve, reject) =>
-		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/scenes`), { recursive: true })
-			.then(() => {
-				template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
-					Promise.all(scenes.filter(file => path.extname(file)===".js").map(scene => {
-						//check if folder needs to be created
-					    const targetFolder = path.join(__dirname, webDir, 'generated', 'js', 'scenes', path.dirname(scene));
-					    if ( !fs.existsSync( targetFolder ) ) {
-					        fs.mkdirSync( targetFolder );
-					    }
+		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/scenes`), { recursive: true }).then(() => {
+			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
+				Promise.all(scenes.filter(file => path.extname(file)===".js").map(scene => {
+					//check if folder needs to be created
+				    const targetFolder = path.join(__dirname, webDir, 'generated', 'js', 'scenes', path.dirname(scene));
+				    if ( !fs.existsSync( targetFolder ) ) {
+				        fs.mkdirSync( targetFolder );
+				    }
 
-						fs.promises.copyFile(
-							path.join(__dirname, 'game', 'scenes', scene),
-							path.join(__dirname, webDir, 'generated', 'js', 'scenes', scene)
-						);
-					})).then(resolve);
-				});
-			}
-		)
+					return fs.promises.copyFile(
+						path.join(__dirname, 'game', 'scenes', scene),
+						path.join(__dirname, webDir, 'generated', 'js', 'scenes', scene)
+					);
+				}).concat([
+					fs.promises.copyFile(`${__dirname}/game/game.json`, `${__dirname}/data/generated/config/game.json`),
+				])).then(resolve);
+			});
+		})
 	);
 }
 
@@ -112,16 +116,17 @@ function zipGame() {
 
 function getSpritesheets() {
 	const gamesDirectory = `${__dirname}/game/scenes`;
+	const generatedAssetDir = `${__dirname}/generated`;
+    const generatedDataDir = `${__dirname}/data/generated`;
 
 	//	Check sha
-    const generatedDir = `${__dirname}/data/generated`;
 	return Promise.all([
-		assets.getAssetsSha(gamesDirectory),
+		assets.getAssetsSha(gamesDirectory, generatedAssetDir),
 		new Promise((resolve, reject) => {
-			if (!fs.existsSync(`${generatedDir}/config/sha.json`)) {
+			if (!fs.existsSync(`${generatedDataDir}/config/sha.json`)) {
 				resolve(null);
 			} else {
-				fs.promises.readFile(`${generatedDir}/config/sha.json`, 'utf8').then(result => resolve(JSON.parse(result)));
+				fs.promises.readFile(`${generatedDataDir}/config/sha.json`, 'utf8').then(result => resolve(JSON.parse(result)));
 			}
 		}),
 	]).then(([newSha, savedSha]) => {
@@ -130,49 +135,84 @@ function getSpritesheets() {
 			return readData(`generated/config/imagedata.json`);
 		} else {
 		    const publicDir = `${webDir}/generated`;
-		    const generatedDir = 'data/generated';
-		    return assets.deleteFolders(publicDir, generatedDir).then(() => {
-				assets.getAssetsSha(gamesDirectory).then(data => {
-			        const generatedDir = `${__dirname}/data/generated`;
-					fs.promises.mkdir(`${generatedDir}/config`, { recursive: true })
-						.then(() => fs.promises.writeFile(`${generatedDir}/config/sha.json`, JSON.stringify(data, null, '\t'))
-					);
+		    const generatedDataDir = 'data/generated';
+		    assets.deleteFolders(publicDir, generatedDataDir).then(() => {
+				return assets.produceSpritesheets([gamesDirectory, generatedAssetDir], TEXTURE_SIZE, TEXTURE_SIZE).then(data => {
+					assets.getAssetsSha(gamesDirectory, generatedAssetDir).then(data => {
+				        const generatedDataDir = `${__dirname}/data/generated`;
+						fs.promises.mkdir(`${generatedDataDir}/config`, { recursive: true })
+							.then(() => fs.promises.writeFile(`${generatedDataDir}/config/sha.json`, JSON.stringify(data, null, '\t'))
+						);
+					});
+					return Promise.resolve(data);
 				});
-				return assets.produceSpritesheets(gamesDirectory, TEXTURE_SIZE, TEXTURE_SIZE);
 		    });
 		}
 	});
 }
 
+function saveFontMap() {
+	return fs.promises.readFile(`${__dirname}/game/game.json`, 'utf8').then(result => {
+		const { fonts } = JSON.parse(result);
+		return fs.promises.mkdir(`generated/assets`, { recursive: true }).then(() => {
+			if (!fs.existsSync(`generated/assets/fonts.json`)) {
+				fs.writeFileSync(`generated/assets/fonts.json`, "{}");
+			}
+			return fs.promises.readFile(`generated/assets/fonts.json`, 'utf8')
+		}).then(result => Promise.resolve(JSON.parse(result))).then(savedFonts => {
+			const fontsArray = [];
+			for (let id in fonts) {
+				fontsArray.push({ ... fonts[id], id });
+			}
+			if (JSON.stringify(savedFonts) === JSON.stringify(fonts)) {
+				return Promise.resolve(fontsArray);
+			} else {
+				return Promise.all(fontsArray.filter(({id})=> id).map(font => {
+					const buffer = assets.createFontSheet(font);
+					return fs.promises.writeFile(`generated/assets/${font.id}.png`, buffer).then(() => {
+						fs.promises.writeFile(`generated/assets/fonts.json`, JSON.stringify(fonts, null, '\t'));
+					});
+				})).then(() => {
+					return Promise.resolve(fontsArray);
+				});
+			}
+		});
+	});
+}
+
 app.get('/', function (req, res) {
-	getSpritesheets().then(() => {
-		copyScenes().then(() => {
-			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(items => {
-				const scenes = items.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
-				template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'config.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) })
-					.then(html => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(() => {
-						res.send(html);
-						fs.writeFile(`${webDir}/index.html`, html, err => {
-							if (err) throw err;
-							zipGame();
-						});
-					})
-				);
+	saveFontMap().then(() => {
+		getSpritesheets().then(() => {
+			copyScenes().then(() => {
+				template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(items => {
+					const scenes = items.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
+					template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'game.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) })
+						.then(html => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(() => {
+							res.send(html);
+							fs.writeFile(`${webDir}/index.html`, html, err => {
+								if (err) throw err;
+								zipGame();
+							});
+						})
+					);
+				});
 			});
 		});
 	});
 });
 
 app.get('/spritesheet', function(req, res) {
-	getSpritesheets().then(({spritesheets}) => {
-		generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(code => {
-			res.writeHeader(200, {"Content-Type": "text/html"}); 
-			spritesheets.forEach(src => {
-		        res.write(`<a href="${src}"><img style='background-color: #ddddee; border: 1px solid black' src="${src}" width=200></a>`);  
-			});
-			res.write(`<pre>${code}</pre>`);
-			res.end();
-		});				
+	saveFontMap().then(() => {
+		getSpritesheets().then(({spritesheets}) => {
+			generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(code => {
+				res.writeHeader(200, {"Content-Type": "text/html"}); 
+				spritesheets.forEach(src => {
+			        res.write(`<a href="${src}"><img style='background-color: #ddddee; border: 1px solid black' src="${src}" width=200></a>`);  
+				});
+				res.write(`<pre>${code}</pre>`);
+				res.end();
+			});				
+		});
 	});
 });
 
@@ -194,12 +234,22 @@ app.get('/get-from-files', function(req, res) {
 });
 
 app.get('/data', (req, res) => {
-	generateDataCode(path.join(webDir, 'generated', 'data', 'data.js'))
+	generateDataCode(path.join(webDir, 'generated', 'js', 'data.js'))
 		.then(code => {
 			res.writeHeader(200, {"Content-Type": "javascript:application"}); 
 			res.write(code);
 			res.end();			
 		});
+});
+
+app.get('/fonts', (req, res) => {
+	saveFontMap().then(([font]) => {
+		return fs.promises.readFile(`${__dirname}/generated/assets/${font.id}.png`);
+	}).then(data => {
+		res.setHeader('Content-Type', 'image/png');
+		res.end(data);
+	});
+
 });
 
 app.use(express.static(`${__dirname}/${webDir}`));

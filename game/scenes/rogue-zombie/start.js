@@ -499,15 +499,25 @@ SceneManager.add({
 				},
 			],
 			animation: {
-				frame: ({game, definition},index) => index % 2,
+				frame: ({game, definition}, index) => index % 2,
 				range: 2,
 				frameRate: 0,
 			},
 			scale: [3, 3],
-			count: ({game, definition},index) => game.sceneData.cells.length * 4,
+			count: ({game, definition}, index) => game.sceneData.cells.length * 4,
 		},
 		{
-			src: "a",
+			src: "comic",
+			animation: {
+				frame: 0,
+				range: ({definition}) => definition.characters.get().length,
+				frameRate: 24,
+			},
+			characters: ({game}) => game.engine.data.generated.config.game.fonts.comic.characters,
+			grid: [
+				({definition}) => Math.ceil(Math.sqrt(definition.characters.get().length)),
+				({definition}) => Math.ceil(definition.characters.get().length / definition.grid[0].get()),
+			],
 			grounded: ({game, definition},index) => {
 				return definition.cell.get(index).grounded;
 			},
@@ -558,17 +568,11 @@ SceneManager.add({
 			xPos: ({game, definition},index) => definition.cell.get(index).x,
 			zPos: ({game, definition},index) => definition.cell.get(index).z,
 			pos: [
-				({game, definition},index) => {
-					const xShift = definition.xShift.get(index);
-					return (definition.xPos.get(index) + xShift) * 3;
-				},
+				({game, definition}, index) => (definition.xPos.get(index) + definition.xShift.get(index)) * 3,
 				0,
-				({game, definition},index) => {
-					const zShift = definition.zShift.get(index);
-					return (definition.zPos.get(index) + zShift) * 3;
-				},
+				({game, definition}, index) => (definition.zPos.get(index) + definition.zShift.get(index)) * 3,
 			],
-			scale: [1, 1],
+			scale: [2, 2],
 			count: ({game, definition},index) => game.sceneData.cells.length * 4,
 		},		
 	],
