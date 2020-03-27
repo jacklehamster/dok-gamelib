@@ -48,20 +48,41 @@
 	<body class="container">
 		<div id=gameOver style="margin: 10px; font-size: 80pt; position: absolute; color: #990000; font-family: 'Creepster', cursive;"></div>
 		<div>
-			<div style="display: flex; flex-direction: row">
-				
-			</div>
+			<div id="scene-thumbnails" style="display: flex; flex-direction: row"></div>
 			<div id=score style="margin: 10px; font-size: 20pt; position: absolute; color: silver"></div>
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
-			const config = ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Comic Sans MS","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256}},"scenes":["rogue-zombie","tp-boy"]});
-			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, config);
-			function startGame() {
-				engine.start();
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Comic Sans MS","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256}},"scenes":["rogue-zombie","tp-boy"]}));
+			document.addEventListener("DOMContentLoaded", () => engine.start());
+
+			function setupSceneThumbnails() {
+				const sceneThumbnails = document.getElementById("scene-thumbnails");
+				for (let s in engine.sceneManager.scenes) {
+					const tab = sceneThumbnails.appendChild(document.createElement("div"));
+					tab.id = `tab-${s}`;
+					tab.classList.add("tab");
+					tab.innerText = s;
+					tab.scene = s;
+					tab.addEventListener("click", e => {
+						engine.resetScene(e.currentTarget.scene);
+					});
+				}
 			}
-		
-			document.addEventListener("DOMContentLoaded", startGame);
+			setupSceneThumbnails();
+			engine.addOnSceneChangeListener(currentScene => {
+				const sceneThumbnails = document.getElementById("scene-thumbnails");
+				const tabs = sceneThumbnails.querySelectorAll(".tab");
+				for (let t = 0; t < tabs.length; t++) {
+					const tab = tabs[t];
+					if (tab.id === `tab-${currentScene}`) {
+						tab.classList.add("selected");
+					} else {
+						tab.classList.remove("selected");
+					}
+				}
+			});
+
 		</script>
 	</body>
 </html>

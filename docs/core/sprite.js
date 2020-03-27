@@ -78,69 +78,70 @@ class SpriteInstance extends AnimatedSpriteInstance {
 	}
 
 	updateChunkOffset(chunk, now) {
-		const { pos, updateTimes } = this;
-		if (updateTimes.pos === now) {
-			chunk.setOffset(pos, now);
-		}		
+		const { pos } = this;
+		chunk.setOffset(pos, now);
 	}
 
 	updateChunkPos(chunk, now) {
-		const { scale, hotspot, hidden, corners, updateTimes } = this;
-		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.hidden === now || updateTimes.corners === now) {
-			if (hidden) {
-				chunk.setHidden(now);
-			} else {
-				const spriteWidth = Math.abs(scale[0]);
-				const spriteHeight = Math.abs(scale[1]);
-				switch (this.type) {
-					case SpriteType.Ceiling:
-						chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					case SpriteType.Water:		
-					case SpriteType.Floor:
-						chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					case SpriteType.LeftWall:
-						chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					case SpriteType.RightWall:
-						chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					case SpriteType.Sprite:
-					case SpriteType.Front:
-						chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, now);			
-						break;
-					case SpriteType.Back:
-						chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					default:
-						console.error("invalid type");
-				}
+		const { scale, hotspot, hidden, corners } = this;
+		if (hidden) {
+			chunk.setHidden(now);
+		} else {
+			const spriteWidth = Math.abs(scale[0]);
+			const spriteHeight = Math.abs(scale[1]);
+			switch (this.type) {
+				case SpriteType.Ceiling:
+					chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				case SpriteType.Water:		
+				case SpriteType.Floor:
+					chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				case SpriteType.LeftWall:
+					chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				case SpriteType.RightWall:
+					chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				case SpriteType.Sprite:
+				case SpriteType.Front:
+					chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, now);			
+					break;
+				case SpriteType.Back:
+					chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				default:
+					console.error("invalid type");
 			}
-		}		
+		}
 	}
 
 	updateChunkMov(chunk, now) {
-		const { mov, updateTimes } = this;
-		if (updateTimes.mov === now) {
-			const [ mx, my, mz ] = mov;
-			chunk.setMove(mx, my, mz, now);
-		}
+		const { mov } = this;
+		const [ mx, my, mz ] = mov;
+		chunk.setMove(mx, my, mz, now);
 	}
 
 	updateChunkGravity(chunk, now) {
-		const { gravity, updateTimes } = this;
-		if (updateTimes.gravity === now) {
-			const [ gx, gy, gz ] = gravity;
-			chunk.setGravity(gx, gy, gz, now);
-		}
+		const { gravity } = this;
+		const [ gx, gy, gz ] = gravity;
+		chunk.setGravity(gx, gy, gz, now);
 	}
 
 	updateChunk(engine, chunk, now) {
 		super.updateChunk(engine, chunk, now);
-		this.updateChunkOffset(chunk, now);
-		this.updateChunkPos(chunk, now);
-		this.updateChunkMov(chunk, now);
-		this.updateChunkGravity(chunk, now);
+		const { updateTimes } = this;
+		if (updateTimes.pos === now) {
+			this.updateChunkOffset(chunk, now);
+		}
+		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.hidden === now || updateTimes.corners === now) {
+			this.updateChunkPos(chunk, now);
+		}
+		if (updateTimes.mov === now) {
+			this.updateChunkMov(chunk, now);
+		}
+		if (updateTimes.gravity === now) {
+			this.updateChunkGravity(chunk, now);
+		}
 	}
 }

@@ -26,8 +26,8 @@ class Engine {
 			onActionRelease: () => this.currentScene.keyboard.onActionRelease.get(),
 		});
 		this.currentScene = EMPTY_OBJECT;
-
 		this.spritesToRemove = [];
+		this.onSceneChangeListener = [];
 	}
 
 	start() {
@@ -77,6 +77,15 @@ class Engine {
 		requestAnimationFrame(animationFrame);		
 	}
 
+	addOnSceneChangeListener(callback) {
+		this.onSceneChangeListener.push(callback);
+	}
+
+	removeOnSceneChangeListener(callback) {
+		const index = this.onSceneChangeListener.indexOf(callback);
+		this.onSceneChangeListener.splice(index, 1);
+	}
+
 	resetScene(sceneName) {
 		const scene = this.sceneManager.createScene(sceneName);
 		if (scene) {
@@ -90,6 +99,7 @@ class Engine {
 			this.currentScene.engine = this;
 			this.sceneRenderer.init(scene);
 			this.spriteDefinitionProcessor.init(scene.sprites, scene);
+			this.onSceneChangeListener.forEach(callback => callback(sceneName));
 		}
 	}
 }

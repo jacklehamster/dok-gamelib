@@ -49,6 +49,7 @@ SceneManager.add({
 	},
 }, {
 	settings: {
+		thumbnail: "tp-boy",
 		docBackground: 0x000000,
 		background: 0xAACCFF,
 	},

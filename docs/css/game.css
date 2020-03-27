@@ -24,3 +24,24 @@ html, body {
     image-rendering: optimize-contrast;
     -ms-interpolation-mode: nearest-neighbor;				
 }
+
+.tab {
+  background-color: #555555;
+  padding: 5px;
+  margin: 1px;
+  font-size: 8pt;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: #FFFFCC;
+}
+
+.tab.selected {
+  cursor: default;
+  background-color: #999999;
+  color: #000000;
+}
+

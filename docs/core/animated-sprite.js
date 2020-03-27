@@ -47,48 +47,48 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 	}
 
 	updateChunkGrid(chunk, now) {
-		const { grid, updateTimes } = this;
-		if (updateTimes.grid === now) {
-			const [ cols, rows ] = grid;
-			chunk.setGrid(cols, rows, now);
-		}
+		const { grid } = this;
+		const [ cols, rows ] = grid;
+		chunk.setGrid(cols, rows, now);
 	}
 
 	updateChunkTexture(engine, chunk, now) {
-		const { src, grid, scale, updateTimes } = this;
+		const { src, grid, scale } = this;
 
-		if (updateTimes.src === now || updateTimes.scale === now) {
-			if (!src) {
-				chunk.setTexture(0, 0, 0, 0, scale, now);
-			} else {
-				const spriteData = engine.imagedata.sprites[src];
-				if (!spriteData) {
-					console.error(`Invalid image ${src}.`);
-				}
-				const { offset, size, index } = spriteData;
-				const [ sheetWidth, sheetHeight ] = size;
-				const [ cols, rows ] = grid;
-
-				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows, scale, now);
+		if (!src) {
+			chunk.setTexture(0, 0, 0, 0, scale, now);
+		} else {
+			const spriteData = engine.imagedata.sprites[src];
+			if (!spriteData) {
+				console.error(`Invalid image ${src}.`);
 			}
-		}		
+			const { offset, size, index } = spriteData;
+			const [ sheetWidth, sheetHeight ] = size;
+			const [ cols, rows ] = grid;
+
+			chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows, scale, now);
+		}
 	}
 
 	updateChunkAnimation(chunk, now) {
-		const { src, animation, grid, updateTimes } = this;
+		const { animation, grid } = this;
 
-		if (updateTimes.grid === now || updateTimes.animation === now) {
-			const { frame, start, range, frameRate } = animation;
-			const [ cols, rows ] = grid;
-			chunk.setAnimation(frame, start, range, frameRate, now);
-		}		
+		const { frame, start, range, frameRate } = animation;
+		const [ cols, rows ] = grid;
+		chunk.setAnimation(frame, start, range, frameRate, now);
 	}
-
 
 	updateChunk(engine, chunk, now) {
 		super.updateChunk(engine, chunk, now);
-		this.updateChunkGrid(chunk, now);
-		this.updateChunkTexture(engine, chunk, now);
-		this.updateChunkAnimation(chunk, now);
+		const { updateTimes } = this;
+		if (updateTimes.grid === now) {
+			this.updateChunkGrid(chunk, now);
+		}
+		if (updateTimes.src === now || updateTimes.scale === now) {
+			this.updateChunkTexture(engine, chunk, now);
+		}
+		if (updateTimes.grid === now || updateTimes.animation === now) {
+			this.updateChunkAnimation(chunk, now);
+		}
 	}
 }
