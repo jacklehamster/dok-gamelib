@@ -46,13 +46,17 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		}
 	}
 
-	updateChunk(engine, chunk, now) {
-		super.updateChunk(engine, chunk, now);
-		const { src, animation, grid, scale, updateTimes } = this;
+	updateChunkGrid(chunk, now) {
+		const { grid, updateTimes } = this;
 		if (updateTimes.grid === now) {
 			const [ cols, rows ] = grid;
 			chunk.setGrid(cols, rows, now);
 		}
+	}
+
+	updateChunkTexture(engine, chunk, now) {
+		const { src, grid, scale, updateTimes } = this;
+
 		if (updateTimes.src === now || updateTimes.scale === now) {
 			if (!src) {
 				chunk.setTexture(0, 0, 0, 0, scale, now);
@@ -67,11 +71,24 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 
 				chunk.setTexture(index, offset, sheetWidth / cols, sheetHeight / rows, scale, now);
 			}
-		}
+		}		
+	}
+
+	updateChunkAnimation(chunk, now) {
+		const { src, animation, grid, updateTimes } = this;
+
 		if (updateTimes.grid === now || updateTimes.animation === now) {
 			const { frame, start, range, frameRate } = animation;
 			const [ cols, rows ] = grid;
 			chunk.setAnimation(frame, start, range, frameRate, now);
-		}
+		}		
+	}
+
+
+	updateChunk(engine, chunk, now) {
+		super.updateChunk(engine, chunk, now);
+		this.updateChunkGrid(chunk, now);
+		this.updateChunkTexture(engine, chunk, now);
+		this.updateChunkAnimation(chunk, now);
 	}
 }

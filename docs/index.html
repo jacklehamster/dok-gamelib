@@ -48,11 +48,14 @@
 	<body class="container">
 		<div id=gameOver style="margin: 10px; font-size: 80pt; position: absolute; color: #990000; font-family: 'Creepster', cursive;"></div>
 		<div>
+			<div style="display: flex; flex-direction: row">
+				
+			</div>
 			<div id=score style="margin: 10px; font-size: 20pt; position: absolute; color: silver"></div>
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
-			const config = ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Comic Sans MS","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":380,"cellSize":512}},"scenes":["rogue-zombie","tp-boy"]});
+			const config = ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Comic Sans MS","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256}},"scenes":["rogue-zombie","tp-boy"]});
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, config);
 			function startGame() {
 				engine.start();

@@ -77,12 +77,15 @@ class SpriteInstance extends AnimatedSpriteInstance {
 		}
 	}
 
-	updateChunk(engine, chunk, now) {
-		super.updateChunk(engine, chunk, now);
-		const { scale, hotspot, pos, mov, gravity, hidden, corners, updateTimes } = this;
+	updateChunkOffset(chunk, now) {
+		const { pos, updateTimes } = this;
 		if (updateTimes.pos === now) {
 			chunk.setOffset(pos, now);
-		}
+		}		
+	}
+
+	updateChunkPos(chunk, now) {
+		const { scale, hotspot, hidden, corners, updateTimes } = this;
 		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.hidden === now || updateTimes.corners === now) {
 			if (hidden) {
 				chunk.setHidden(now);
@@ -114,14 +117,30 @@ class SpriteInstance extends AnimatedSpriteInstance {
 						console.error("invalid type");
 				}
 			}
-		}
+		}		
+	}
+
+	updateChunkMov(chunk, now) {
+		const { mov, updateTimes } = this;
 		if (updateTimes.mov === now) {
 			const [ mx, my, mz ] = mov;
 			chunk.setMove(mx, my, mz, now);
 		}
+	}
+
+	updateChunkGravity(chunk, now) {
+		const { gravity, updateTimes } = this;
 		if (updateTimes.gravity === now) {
 			const [ gx, gy, gz ] = gravity;
 			chunk.setGravity(gx, gy, gz, now);
 		}
+	}
+
+	updateChunk(engine, chunk, now) {
+		super.updateChunk(engine, chunk, now);
+		this.updateChunkOffset(chunk, now);
+		this.updateChunkPos(chunk, now);
+		this.updateChunkMov(chunk, now);
+		this.updateChunkGravity(chunk, now);
 	}
 }

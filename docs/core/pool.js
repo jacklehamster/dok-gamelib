@@ -11,12 +11,12 @@ class Pool {
 		Pool.pools.push(this);
 	}
 
-	get() {
+	get(init) {
 		if (this.index >= this.pool.length) {
 			this.pool.push(this.createCall());
 		}
 		const value = this.pool[this.index];
-		if (this.initCall) {
+		if (init && this.initCall) {
 			this.initCall(value);
 		}
 		this.index++;

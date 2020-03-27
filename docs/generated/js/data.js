@@ -4,6 +4,20 @@ function getData() {
   return {
     "generated": {
       "config": {
+        "game": {
+          "title": "Hello World",
+          "description": "Description",
+          "width": 800,
+          "height": 500,
+          "fonts": {
+            "comic": {
+              "name": "Comic Sans MS",
+              "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ",
+              "fontSize": 160,
+              "cellSize": 256
+            }
+          }
+        },
         "imagedata": {
           "size": [4096, 4096],
           "spritesheets": [
@@ -79,7 +93,7 @@ function getData() {
           "boolbool=bbdeeb3ccc0dd018fae8c83561dcbb2ed6cb161761916b2ed329f1d8fda06b0c",
           "cage=ddb62921f34a01ab79047d789ac090ee530b603b22d234747431625358ca6dd1",
           "color-blocks=afee4762dd872c26c4efdc0c3e8d02c3e8ac72ae88864221f1efebc0ad8829a9",
-          "comic=9c3e1d264a2027ec6686df5f7a25deb9daa24db553364962888e1e2d601c38fe",
+          "comic=07daae65673b874e54e3c195ef3ecc32f939661d9251a61e90932477046eab87",
           "crystal-wall.jpg=b13dc3e43cbb80a18501d4b9e177920e4db02722db873bbefb39a711ffc1295a",
           "dobuki=68170001dff751094f728f353190b79f6c270ddec113962f68a97f76ae9a5b00",
           "dude=d78885bc5a0c826745e3d6ba9fa95d2100afc854d179163dffb6f7dd64264cab",

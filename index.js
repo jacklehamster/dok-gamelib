@@ -136,7 +136,7 @@ function getSpritesheets() {
 		} else {
 		    const publicDir = `${webDir}/generated`;
 		    const generatedDataDir = 'data/generated';
-		    assets.deleteFolders(publicDir, generatedDataDir).then(() => {
+		    return assets.deleteFolders(publicDir, generatedDataDir).then(() => {
 				return assets.produceSpritesheets([gamesDirectory, generatedAssetDir], TEXTURE_SIZE, TEXTURE_SIZE).then(data => {
 					assets.getAssetsSha(gamesDirectory, generatedAssetDir).then(data => {
 				        const generatedDataDir = `${__dirname}/data/generated`;
