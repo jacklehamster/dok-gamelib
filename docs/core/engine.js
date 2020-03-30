@@ -91,6 +91,7 @@ class Engine {
 	resetScene(sceneName) {
 		const scene = this.sceneManager.createScene(sceneName, this.dataStore);
 		if (scene) {
+			this.spriteProvider.clear();
 			if (this.currentScene) {
 				this.currentScene.destroy.run();
 				this.currentScene.sprites.forEach(sprite => sprite.destroy.run());

@@ -12,6 +12,7 @@ class SpriteProvider {
 
 	clear() {
 		this.count = 0;
+		this.definitionMapper.length = 0;
 	}
 
 	getSprites() {

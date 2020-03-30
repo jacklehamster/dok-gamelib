@@ -10,20 +10,10 @@ SceneManager.add({
 			sceneData.cells = [];
 			sceneData.cellMap = {};
 
-			sceneData.zombies = [
-				{
-					fromX: 0,
-					fromZ: -1,
-					moveTime: 0,
-					x: 0,
-					z: -1,
-				},
-			];
 			sceneData.life = 20;
 			sceneData.hit = 0;
 			sceneData.score = 0;
 			sceneData.mapSize = 40;
-			sceneData.zombieRange = 40;
 
 			sceneData.npcs = [
 			];
@@ -80,39 +70,6 @@ SceneManager.add({
 			}
 		}
 
-		onProcessMove(posX, posZ) {
-			const { sceneData } = this;
-			const { zombies } = sceneData;
-			sceneData.life = Math.min(sceneData.life + .2, 20);
-
-			zombies.forEach(zombie => {
-				const { x, z, dead } = zombie;
-				if (!dead) {
-					const dx = posX - x;
-					const dz = posZ - z;
-					zombie.fromX = x;
-					zombie.fromZ = z;
-					zombie.moveTime = this.now;
-					if (Math.abs(dz) > Math.abs(dx) && this.isGrounded(x, z + Math.sign(dz))) {
-						zombie.z += Math.sign(dz);
-					} else if (this.isGrounded(x + Math.sign(dx), z)) {
-						zombie.x += Math.sign(dx);
-					} else if (this.isGrounded(x, z + Math.sign(dz))) {
-						zombie.z += Math.sign(dz);					
-					}
-
-					if (zombie.x === posX && zombie.z === posZ) {
-						sceneData.life--;
-						sceneData.hit = this.now;
-						if (sceneData.life < 0) {
-							sceneData.gameOver = this.now;
-							document.getElementById("gameOver").innerText = "GAME OVER";
-						}
-					}
-				}
-			});
-		}
-
 		makeRandom(...values) {
 			let val = 0;
 			for (let i = 0; i < values.length; i++) {
@@ -145,52 +102,8 @@ SceneManager.add({
 
 		onChangeCell(posX, posZ) {
 			const { sceneData } = this;
-			const { zombies } = sceneData;
 			this.resetMap(posX, posZ);
-			this.onProcessMove(posX, posZ);
 		}
-
-		onShot() {
-			const { sceneData } = this;
-			const { zombies } = sceneData;
-			const dx = Math.round(Math.sin(sceneData.turn||0));
-			const dz = - Math.round(Math.cos(sceneData.turn||0));
-			const posX = Math.floor(sceneData.cam[0] / 3);
-			const posZ = Math.floor(sceneData.cam[2] / 3);
-
-			const zombieMap = {};
-			zombies.forEach(zombie => {
-				const { x, z, dead } = zombie;
-				if (!dead) {
-					zombieMap[`${x}_${z}`] = zombie;
-				}
-			});
-
-			for (let x = posX, z = posZ, n = 0; this.isGrounded(x, z) && n < sceneData.mapSize/2; x += dx, z += dz, n++) {
-				if (zombieMap[`${x}_${z}`]) {
-					zombieMap[`${x}_${z}`].dead = this.now;
-					sceneData.score ++;
-					document.getElementById("score").innerText = sceneData.score;
-					for (let i = 0; i < 3; i++) {
-						const newX = Math.floor(posX + (Math.random()/2) * sceneData.zombieRange);
-						const newZ = Math.floor(posZ + (Math.random()/2) * sceneData.zombieRange);
-						zombies.push(
-							{
-								fromX: newX,
-								fromZ: newZ,
-								moveTime: 0,
-								x: newX,
-								z: newZ,
-							},
-						);
-					}
-					break;
-				}
-			}
-
-			this.onProcessMove(posX, posZ);
-		}
-
 	},
 }, {
 	settings: {
@@ -203,7 +116,7 @@ SceneManager.add({
 			const hitTime = game.now - game.sceneData.hit;
 			return hitTime < 300 ? 0xaa0000 : 0x080523;
 		},
-		curvature: -3,
+		curvature: 5,
 	},
 	light: {
 		pos: [
@@ -330,83 +243,7 @@ SceneManager.add({
 			}
 		}
 	},
-	keyboard: {
-		onActionPress: ({game}) => {
-			if (!game.sceneData.gameOver) {
-				game.sceneData.lastShot = game.now;
-				game.onShot();
-			}
-		},
-	},	
 	sprites: [
-		{
-			src: "gun",
-			hidden: ({game}) => game.sceneData.gameOver,
-			animation: {
-				frame: ({game}) => {
-					const { now, sceneData } = game;
-					if (sceneData.lastShot) {
-						const shootTime = now - sceneData.lastShot;
-						const frame = Math.floor(shootTime / 50);
-						if (frame < 2) {
-							return frame+1;
-						}
-					}
-					return 0;
-				},
-				range: 3,
-				frameRate: 0,
-			},
-			pos: [
-				({game}) => game.sceneData.cam[0],
-				0,
-				({game}) => game.sceneData.cam[2],
-			],
-			hotspot: [0, 0],
-			grid: [2, 2],
-			scale: [3, 3],
-		},
-		{
-			src: "zombie",
-			animation: {
-				frame: ({game, definition}, index) => {
-					const {dead} = game.sceneData.zombies[index];
-					if (dead) {
-						const deathTime = game.now - dead;
-						const frame = Math.floor(deathTime / 50);
-						return Math.min(frame+2, 5);
-					}
-					return 0;
-				},
-				range: ({game, definition},index) => {
-					const {dead} = game.sceneData.zombies[index];
-					return dead ? 6 : 2;
-				},
-				frameRate: ({game, definition},index) => {
-					const {dead} = game.sceneData.zombies[index];
-					return dead ? 0 : 2;
-				},
-			},
-			pos: [
-				({game, definition},index) => {
-					const zombie = game.sceneData.zombies[index];
-					const time = game.now - zombie.moveTime;
-					const progress = Math.min(1, time / 200);
-					return progress * zombie.x * 3 + (1-progress) * zombie.fromX * 3;
-				},
-				-.5 * 3,
-				({game, definition},index) => {
-					const zombie = game.sceneData.zombies[index];
-					const time = game.now - zombie.moveTime;
-					const progress = Math.min(1, time / 200);
-					return progress * zombie.z * 3 + (1-progress) * zombie.fromZ * 3;
-				},
-			],
-			hotspot: [0, -.4],
-			grid: [2, 3],
-			scale: [3, 3],
-			count: ({game}) => game.sceneData.zombies.length,
-		},
 		{
 			src: "blue-wall",
 			cell: ({game, definition},index) => game.sceneData.cells[index],
@@ -440,6 +277,7 @@ SceneManager.add({
 			src: "double-king",
 			init: ({game}) => {
 				game.getVideo("double-king").play();
+				game.getVideo("double-king").volume = 0;
 			},
 			destroy: ({game}) => {
 				game.getVideo("double-king").pause();
