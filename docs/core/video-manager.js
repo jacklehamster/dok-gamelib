@@ -15,11 +15,9 @@ class VideoManager {
 				const video = videos[name] = document.createElement("video");
 				video.src = config.video[name].path;
 				video.crossOrigin = '';
+				video.preload = 'auto';
 				video.addEventListener('canplay', function(e) {
-					console.log(e.type, video.videoWidth);
-				}, true);
-				video.addEventListener('playing', function(e) {
-					console.log(e.type, "playing");
+					video.ready = true;
 				}, true);
 			}
 			return videos[name];

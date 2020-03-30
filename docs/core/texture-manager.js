@@ -49,7 +49,6 @@ class TextureManager {
 	}
 
 	updateVideoTexture(videoFrame, index, x, y) {
-//		console.log(videoFrame.videoWidth, videoFrame.videoHeight);
 		const { gl, glTextures } = this;
 		const { glTexture, isVideo, width, height } = glTextures[index];
 		gl.activeTexture(gl[`TEXTURE${index}`]);
@@ -63,9 +62,9 @@ class TextureManager {
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 		}
-//void gl.texSubImage2D(target, level, xoffset, yoffset, format, type, HTMLVideoElement? pixels);
 
-
-		gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGBA, gl.UNSIGNED_BYTE, videoFrame);
+		if (videoFrame.videoWidth && videoFrame.videoHeight && videoFrame.ready) {
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGBA, gl.UNSIGNED_BYTE, videoFrame);
+		}
 	}
 }
