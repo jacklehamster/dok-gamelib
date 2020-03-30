@@ -52,13 +52,13 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		chunk.setGrid(cols, rows, now);
 	}
 
-	updateChunkTexture(engine, chunk, now) {
+	updateChunkTexture(renderer, chunk, now) {
 		const { src, grid, scale } = this;
 
 		if (!src) {
 			chunk.setTexture(0, 0, 0, 0, scale, now);
 		} else {
-			const spriteData = engine.imagedata.sprites[src];
+			const spriteData = renderer.imagedata.sprites[src] || renderer.textureManager.getVideoTexture(src);
 			if (!spriteData) {
 				console.error(`Invalid image ${src}.`);
 			}
@@ -78,14 +78,14 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		chunk.setAnimation(frame, start, range, frameRate, now);
 	}
 
-	updateChunk(engine, chunk, now) {
-		super.updateChunk(engine, chunk, now);
+	updateChunk(renderer, chunk, now) {
+		super.updateChunk(renderer, chunk, now);
 		const { updateTimes } = this;
 		if (updateTimes.grid === now) {
 			this.updateChunkGrid(chunk, now);
 		}
 		if (updateTimes.src === now || updateTimes.scale === now) {
-			this.updateChunkTexture(engine, chunk, now);
+			this.updateChunkTexture(renderer, chunk, now);
 		}
 		if (updateTimes.grid === now || updateTimes.animation === now) {
 			this.updateChunkAnimation(chunk, now);

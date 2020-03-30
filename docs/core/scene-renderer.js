@@ -27,11 +27,16 @@ class SceneRenderer {
 
 	init(game) {
 		const { init } = game;
-		init.get();
+		init.run();
 	}
 
 	refresh(scene) {
-		scene.refresh.get();
+		const refreshRate = scene.refreshRate.get();
+		if (refreshRate && scene.now - scene.lastRefresh < 1000 / refreshRate) {
+			return;
+		}
+		scene.refresh.run();
+		scene.lastRefresh = scene.now;
 	}
 
 	render(scene) {

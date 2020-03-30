@@ -24,7 +24,6 @@ const SpriteType = {
 	Water: 7,
 };
 
-const MAX_TEXTURES = 16;
 const MAX_SPRITE = 16000;
 const TEXTURE_SIZE = 4096;
 

@@ -4,6 +4,20 @@
 
 class Game {
 	constructor() {
+		this.lastRefresh = 0;
+	}
+
+	setEngine(value) {
+		this.engine = value;
+		this.videoManager = this.engine.videoManager;
+	}
+
+	get data() {
+		return this.dataStore.getData();
+	}
+
+	get situation() {
+		return this.dataStore.getSituation(this.name);
 	}
 
 	get scenes() {
@@ -16,5 +30,9 @@ class Game {
 
 	getFrameRate() {
 		return this.settings.frameRate.get();
+	}
+
+	getVideo(name) {
+		return this.videoManager.getVideo(name);
 	}
 }

@@ -7,6 +7,7 @@ class SpriteDefinition {
 		this.game = game;
 		this.propagateDefinition(config);
 		Object.assign(this, config);
+		this.lastRefresh = 0;
 	}
 
 	propagateDefinition(property) {

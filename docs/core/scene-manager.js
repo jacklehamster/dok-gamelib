@@ -25,12 +25,13 @@ class SceneManager {
 		};
 	}
 
-	createScene(name) {
+	createScene(name, dataStore) {
 		const { scenes, configProcessor } = this;
 		const gameScene = scenes[name];
 		if (gameScene) {
 			const { Game, SpriteDefinition, config } = gameScene;
 			const sceneObj = new Game();
+			sceneObj.dataStore = dataStore;
 			sceneObj.name = name;
 
 	 		Object.assign(sceneObj, configProcessor.process(config, sceneObj));

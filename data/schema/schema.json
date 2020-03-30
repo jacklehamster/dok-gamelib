@@ -1,7 +1,9 @@
 {
 	"firstScene": false,
 	"init": null,
+	"destroy": null,
 	"refresh": null,
+	"refreshRate": 0,
 	"keyboard": {
 		"onKeyPress": null,
 		"onKeyRelease": null,
@@ -91,7 +93,9 @@
 			],
 			"count": 1,
 			"init": null,
-			"refresh": null
+			"destroy": null,
+			"refresh": null,
+			"refreshRate": 0
 		}
 	]
 }

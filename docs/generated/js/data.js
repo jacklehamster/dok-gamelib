@@ -90,6 +90,7 @@ function getData() {
           "a=3a374069b002d080d0425916341d832f9938e0ca4408b07d2c800d0ff593f621",
           "access-card=f099f0d2076d4794c1c384e203654c3ac41f6f40a6bfa8031f5fa3b81fb6ba1f",
           "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
+          "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
           "boolbool=bbdeeb3ccc0dd018fae8c83561dcbb2ed6cb161761916b2ed329f1d8fda06b0c",
           "cage=ddb62921f34a01ab79047d789ac090ee530b603b22d234747431625358ca6dd1",
           "color-blocks=afee4762dd872c26c4efdc0c3e8d02c3e8ac72ae88864221f1efebc0ad8829a9",
@@ -97,25 +98,33 @@ function getData() {
           "crystal-wall.jpg=b13dc3e43cbb80a18501d4b9e177920e4db02722db873bbefb39a711ffc1295a",
           "dobuki=68170001dff751094f728f353190b79f6c270ddec113962f68a97f76ae9a5b00",
           "dude=d78885bc5a0c826745e3d6ba9fa95d2100afc854d179163dffb6f7dd64264cab",
-          "grass-tile=f198927b5af525fb90fb7f6969893685f4b8b8bf008bfa6951c57092c7f33ce6",
+          "grass-tile=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
           "gun=cc82ad5fb0f9d24f82d195decd1f57af69e4bc6072f930927c5cf588b1e52226",
           "icefloor.jpg=f7d4ce79235b500ee9558ffbcc88c61a1a7864b67f934109633754ad824d6e6c",
           "icewall.jpg=450e93a073b150b27034e5c4ef8ca5979c42f103899ede49d546188986331b4e",
           "landscape.jpg=07fe4f08f11cfe8dfd3dcd7bb5124a40874db70f9894a62c4b705e77e5feff98",
-          "tp-boy=2608067cb74c4368b19e439d1f64809a307af9aeba5deee38ff81d1d9ade5022",
+          "tp-boy=33e8cfc18e19a439cae09e340ffb5fbdfc53db5790cc1d9d19c425fdd9ed49cf",
           "tp=58560e5173712d77920de86824d3a0ecf46238d909af4df15593c1479be6b906",
           "water.jpg=2ca8903494c6ae85beeedd303881f58d7112667dc9555a8d982561ccb7bd0844",
           "water=cfaa1a1ad365ec6e3b6dea3d06104d80d2eb75e9f36b9e66b4e6f8f169343724",
           "yupa-dance=040c81c00fa266d51090731d00aa568a9b86289ff8594ee0b450b6c6d06586f9",
           "zombie=9b90d03bea08ca90684529ac1ea3c6d2d10e2c985725e2081b0fcb031372ed42"
-        ]
+        ],
+        "video": {
+          "double-king": {
+            "id": "double-king",
+            "path": "generated/videos/double-king.mp4"
+          }
+        }
       }
     },
     "schema": {
       "schema": {
         "firstScene": false,
         "init": null,
+        "destroy": null,
         "refresh": null,
+        "refreshRate": 0,
         "keyboard": {
           "onKeyPress": null,
           "onKeyRelease": null,
@@ -166,7 +175,9 @@ function getData() {
             "corners": [0, 0, 0, 0],
             "count": 1,
             "init": null,
-            "refresh": null
+            "destroy": null,
+            "refresh": null,
+            "refreshRate": 0
           }
         ]
       }

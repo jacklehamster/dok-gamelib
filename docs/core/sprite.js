@@ -128,8 +128,8 @@ class SpriteInstance extends AnimatedSpriteInstance {
 		chunk.setGravity(gx, gy, gz, now);
 	}
 
-	updateChunk(engine, chunk, now) {
-		super.updateChunk(engine, chunk, now);
+	updateChunk(renderer, chunk, now) {
+		super.updateChunk(renderer, chunk, now);
 		const { updateTimes } = this;
 		if (updateTimes.pos === now) {
 			this.updateChunkOffset(chunk, now);

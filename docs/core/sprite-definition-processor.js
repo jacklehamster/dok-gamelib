@@ -12,15 +12,20 @@ class SpriteDefinitionProcessor {
 
 	init(spriteDefinitions, scene) {
 		for (let i = 0; i < spriteDefinitions.length; i++) {
-			spriteDefinitions[i].init.get();
+			spriteDefinitions[i].init.run();
 		}
 	}
 
 	refresh(scene) {
 		for (let i = 0; i < scene.sprites.length; i++) {
 			const definition = scene.sprites[i];
-			definition.refresh.get();
-		}		
+			const refreshRate = definition.refreshRate.get();
+			if (refreshRate && scene.now - definition.lastRefresh < 1000 / refreshRate) {
+				continue;
+			}
+			definition.refresh.run();
+			definition.lastRefresh = scene.now;
+		}
 	}
 
 	process(spriteDefinitions, scene, spriteProvider) {

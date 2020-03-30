@@ -63,6 +63,38 @@ function clearGenerated() {
     return assets.deleteFolders(publicDir, generatedDir);
 }
 
+function copyVideos() {
+	return fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/videos`), { recursive: true }).then(() => {
+	}).then(() => {
+		return template.getFolderAsData(path.join(__dirname, 'game'));
+	}).then(files => files.filter(filename => path.extname(filename).toLowerCase()===".mp4"))
+	.then(videopaths => {
+		return Promise.all(
+			videopaths.map(videopath => {
+				return fs.promises.copyFile(
+					path.join(__dirname, 'game', videopath),
+					path.join(__dirname, webDir, 'generated', 'videos', path.basename(videopath))
+				);
+			})
+		).then(() => {
+			const videos = {};
+			videopaths.forEach(videopath => {
+				const id = path.basename(videopath, ".mp4");
+				videos[id] = {
+					id,
+					path: `generated/videos/${path.basename(videopath)}`,
+				};
+			});
+			return videos;
+		});		
+	}).then(data => {
+        const generatedDataDir = `${__dirname}/data/generated`;
+		return fs.promises.mkdir(`${generatedDataDir}/config`, { recursive: true })
+			.then(() => fs.promises.writeFile(`${generatedDataDir}/config/video.json`, JSON.stringify(data, null, '\t'))
+		).then(() => data);
+	});
+}
+
 function copyScenes() {
 	return new Promise((resolve, reject) =>
 		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/scenes`), { recursive: true }).then(() => {
@@ -181,23 +213,37 @@ function saveFontMap() {
 }
 
 app.get('/', function (req, res) {
+	console.log(`Processing game: ${new Date()}`);
+	const startTime = Date.now();
 	saveFontMap().then(() => {
-		getSpritesheets().then(() => {
-			copyScenes().then(() => {
-				template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(items => {
-					const scenes = items.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
-					template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'game.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) })
-						.then(html => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(() => {
-							res.send(html);
-							fs.writeFile(`${webDir}/index.html`, html, err => {
-								if (err) throw err;
-								zipGame();
-							});
-						})
-					);
-				});
-			});
+		return Promise.all([
+			copyVideos(),
+			getSpritesheets(),
+			copyScenes(),
+		])
+	})
+	.then(() => console.log(`Done processing assets: ${Date.now() - startTime}ms`))
+	.then(() => template.getFolderAsData(path.join(__dirname, 'game', 'scenes')))
+	.then(items => {
+		const scenes = items.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
+		return template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'game.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) });
+	})
+	.then(html => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(() => html))
+	.then(html => {
+		res.send(html);
+		return fs.promises.writeFile(`${webDir}/index.html`, html).then(() => {
+			zipGame();
+			return html;
 		});
+	})
+	.then(() => {
+		console.log(`Done game processing: ${Date.now() - startTime}ms`);
+	});
+});
+
+app.get('/videos', function(req, res) {
+	copyVideos().then(data => {
+		res.send(data);
 	});
 });
 

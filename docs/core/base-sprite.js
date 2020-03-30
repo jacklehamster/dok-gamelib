@@ -39,7 +39,7 @@ class BaseSpriteInstance {
 		}		
 	}
 
-	updateChunk(engine, chunk, now) {
+	updateChunk(renderer, chunk, now) {
 		const { type, updateTimes } = this;
 		this.updated = now;
 		if (updateTimes.type === now) {

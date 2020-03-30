@@ -9,6 +9,10 @@
  		};
  	}
 
+ 	getData() {
+ 		return this.data;
+ 	}
+
  	getSituation(name) {
  		const { situations } = this.data;
  		if (!situations[name]) {

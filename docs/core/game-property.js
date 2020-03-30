@@ -11,7 +11,11 @@ class GameProperty {
 		this.definition = game;
 	}
 
-	get(index) {
-		return this.value(this, index);
+	get(...params) {
+		return this.value(this, ...params);
+	}
+
+	run() {
+		this.value(this);
 	}
 }

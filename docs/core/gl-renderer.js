@@ -66,7 +66,9 @@ class GLRenderer {
 		this.usedChunks = 0;
 
 		//	load texture
-		imagedata.spritesheets.forEach((spritesheet, index) => textureManager.setImage(index, spritesheet));
+		imagedata.spritesheets.forEach((src, index) => {
+			Utils.load(src).then(image => textureManager.setImage(index, image));
+		});
 
 		this.lastRefresh = 0;
 	}
@@ -187,7 +189,6 @@ class GLRenderer {
 	}
 
 	sendBuffer(engineBuffer, rangeStart, rangeEnd) {
-//		console.log(this.getNameFromEngineBuffer(engineBuffer), rangeStart, rangeEnd);
 		const { gl, shader } = this;
 		const { floatPerVertex, verticesPerSprite, shaderBuffer } = engineBuffer;
 

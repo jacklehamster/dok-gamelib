@@ -24,7 +24,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 		}
 	}
 
-	updateChunk(engine, chunk, now) {
-		super.updateChunk(engine, chunk, now);
+	updateChunk(renderer, chunk, now) {
+		super.updateChunk(renderer, chunk, now);
 	}
 }

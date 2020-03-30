@@ -6,10 +6,12 @@ class Engine {
 	constructor(canvas, sceneManager) {
 		canvas.focus();
 		this.data = getData();
+		this.dataStore = new DataStore();
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.data.generated.config);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer);
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
+		this.videoManager = new VideoManager(this.data.generated.config);
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard({
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.get(key),
@@ -25,7 +27,7 @@ class Engine {
 			onActionPress: () => this.currentScene.keyboard.onActionPress.get(),
 			onActionRelease: () => this.currentScene.keyboard.onActionRelease.get(),
 		});
-		this.currentScene = EMPTY_OBJECT;
+		this.currentScene = null;
 		this.spritesToRemove = [];
 		this.onSceneChangeListener = [];
 	}
@@ -87,8 +89,12 @@ class Engine {
 	}
 
 	resetScene(sceneName) {
-		const scene = this.sceneManager.createScene(sceneName);
+		const scene = this.sceneManager.createScene(sceneName, this.dataStore);
 		if (scene) {
+			if (this.currentScene) {
+				this.currentScene.destroy.run();
+				this.currentScene.sprites.forEach(sprite => sprite.destroy.run());
+			}
 			const now = this.currentScene ? this.currentScene.now : 0;
 			const keys = this.currentScene ? this.currentScene.keys : {};
 
@@ -96,7 +102,7 @@ class Engine {
 			this.currentScene = scene;
 			this.currentScene.now = now;
 			this.currentScene.keys = keys;
-			this.currentScene.engine = this;
+			this.currentScene.setEngine(this);
 			this.sceneRenderer.init(scene);
 			this.spriteDefinitionProcessor.init(scene.sprites, scene);
 			this.onSceneChangeListener.forEach(callback => callback(sceneName));
