@@ -97,7 +97,7 @@ SceneManager.add({
 				const platform = definition.onPlatform.get();
 				const grounded = platform && game.tpBoy.y-platformOffset <= platform.y && game.tpBoy.dy <= 0;
 
-				const speed = grounded ? .06 : .09;
+				const speed = grounded ? .06 : .12;
 				if (game.keys.controls.left > 0) {
 					game.tpBoy.dx = -speed;
 					game.tpBoy.direction = Math.sign(game.tpBoy.dx);
@@ -111,7 +111,7 @@ SceneManager.add({
 				}
 
 				const toPlatform = definition.onPlatform.get(game.tpBoy.dx * 5, game.tpBoy.dy);
-				if (toPlatform && toPlatform.blocked) {
+				if (toPlatform && (!grounded || toPlatform.blocked)) {
 					game.tpBoy.dx = 0;
 				}
 
