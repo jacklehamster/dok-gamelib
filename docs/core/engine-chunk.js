@@ -114,7 +114,7 @@ class Chunk {
 
 	setLeftWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, normal, subarrays, pool, index } = this;
-		const halfWidth = width/2, halfHeight = height/2;
+		const halfWidth = height/2, halfHeight = width/2;
 		this.assignVertices(now,
 			Utils.set3(pool.vec3.get(), A, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 			Utils.set3(pool.vec3.get(), B, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
@@ -126,7 +126,7 @@ class Chunk {
 
 	setRightWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
 		const { vertex, normal, subarrays, pool, index } = this;
-		const halfWidth = width/2, halfHeight = height/2;
+		const halfWidth = height/2, halfHeight = width/2;
 		this.assignVertices(now,
 			Utils.set3(pool.vec3.get(), A, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 			Utils.set3(pool.vec3.get(), B, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),

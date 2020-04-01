@@ -5,12 +5,12 @@
 class SpriteInstance extends AnimatedSpriteInstance {
 	constructor() {
 		super();
-		this.scale = [0, 0];
-		this.hotspot = [0, 0];
-		this.pos = [0, 0, 0];
-		this.mov = [0, 0, 0];
-		this.corners = [0, 0, 0, 0];
-		this.gravity = [0, 0, 0];
+		this.scale = 	[0, 0];
+		this.hotspot = 	[0, 0];
+		this.pos = 		[0, 0, 0];
+		this.mov = 		[0, 0, 0];
+		this.corners = 	[0, 0, 0, 0];
+		this.gravity = 	[0, 0, 0];
 	}
 
 	getEvaluated(game, definition) {

@@ -97,10 +97,9 @@ class GLRenderer {
 		gl.uniformMatrix4fv(shader.programInfo.projection, false, projectionMatrix);
 	}
 
-	setViewPosition(x, y, z, height, turn, cameraDistance) {
+	setViewPosition(x, y, z, height, tilt, turn, cameraDistance) {
 		const { gl, shader, viewMatrix, pool } = this;
 		const scale = 1;
-		const tilt = height/2;
 		const zOffset = cameraDistance;	//	camera distance
 		const cameraQuat = pool.quat.get();
 		const cameraRotationMatrix = pool.mat4.get();

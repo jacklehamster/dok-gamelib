@@ -40,6 +40,8 @@
 		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
 
+		<script>SceneManager.loadingSceneName = "rogue-one";</script>
+		<script src="generated/js/scenes/rogue-one/start.js"></script>
 		<script>SceneManager.loadingSceneName = "rogue-zombie";</script>
 		<script src="generated/js/scenes/rogue-zombie/start.js"></script>
 		<script>SceneManager.loadingSceneName = "tp-boy";</script>
@@ -56,7 +58,7 @@
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
-			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Comic Sans MS","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256}},"scenes":["rogue-zombie","tp-boy","video-maze"]}));
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Comic Sans MS","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256}},"scenes":["rogue-one","rogue-zombie","tp-boy","video-maze"]}));
 			document.addEventListener("DOMContentLoaded", () => engine.start());
 
 			function setupSceneThumbnails() {

@@ -97,7 +97,7 @@ SceneManager.add({
 				const platform = definition.onPlatform.get();
 				const grounded = platform && game.tpBoy.y-platformOffset <= platform.y && game.tpBoy.dy <= 0;
 
-				const speed = grounded ? .06 : .12;
+				const speed = grounded ? .06 : .13;
 				if (game.keys.controls.left > 0) {
 					game.tpBoy.dx = -speed;
 					game.tpBoy.direction = Math.sign(game.tpBoy.dx);

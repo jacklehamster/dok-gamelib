@@ -9,6 +9,7 @@ class SceneRenderer {
 			pos: [0, 0, 0],
 			angle: 0,
 			height: 0,
+			tilt: 0,
 			turn: 0,
 			cameraDistance: 0,
 		};
@@ -77,12 +78,13 @@ class SceneRenderer {
 		const newViewPosY = view.pos[1].get();
 		const newViewPosZ = view.pos[2].get();
 		const newHeight = view.height.get();
+		const newTilt = view.tilt.get();
 		const newTurn = view.turn.get();
 		const newCameraDistance = view.cameraDistance.get();
 		if (!Utils.equal3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ)
-			|| newHeight !== this.view.height || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
+			|| newHeight !== this.view.height || newTilt !== this.view.tilt || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
 			Utils.set3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ);
-			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newHeight, newTurn, -newCameraDistance);
+			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newHeight, newTilt, newTurn, -newCameraDistance);
 			this.view.height = newHeight;
 			this.view.turn = newTurn;
 		}
