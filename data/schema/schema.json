@@ -30,7 +30,7 @@
 			0,
 			0
 		],
-		"angle": 45,
+		"viewAngle": 45,
 		"range": [1, 60],
 		"height": 0,
 		"tilt": 0,
@@ -96,6 +96,8 @@
 			"init": null,
 			"destroy": null,
 			"refresh": null,
+			"brightness": 100,
+			"padding": 0,
 			"refreshRate": 0
 		}
 	]

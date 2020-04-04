@@ -222,7 +222,7 @@ SceneManager.add({
 			({game}) => game.sceneData.cam[1],
 			({game}) => game.sceneData.cam[2],
 		],
-		angle: 45,
+		viewAngle: 45,
 		height: .4,
 		turn: ({game}) => game.sceneData.turn,
 		cameraDistance: 3,

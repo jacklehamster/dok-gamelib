@@ -23,7 +23,8 @@ varying mediump vec2 vTexturePoint;
 varying mediump float zDist;
 varying mediump vec3 vNormal;
 varying mediump vec3 vFragPos;
-
+varying mediump float vTextureSlot;
+varying mediump float vBrightness;
 
 
 void main(void) {
@@ -56,8 +57,13 @@ void main(void) {
 	float texCol = mod(index, cols);
 	float texRow = floor(index / cols);
 	vTexturePoint = aVertexTextureCoord.xy;
+	vTexturePoint.x = mod(vTexturePoint.x, 2.0);
+	vTexturePoint.y = mod(vTexturePoint.y, 2.0);
 	vTexturePoint.x += texCol * aVertexTextureCoord[2];
 	vTexturePoint.y += texRow * aVertexTextureCoord[3];
+
+	vTextureSlot = floor(aVertexTextureCoord.x / 2.0);
+	vBrightness = floor(aVertexTextureCoord.y / 2.0);
 
 	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.y / 10.0)) * .2);
 	gl_Position = position;

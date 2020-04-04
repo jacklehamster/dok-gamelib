@@ -6,6 +6,7 @@ SceneManager.add({
 
 			const sceneData = this.sceneData = {};
 			sceneData.cam = [0, 0, 0];
+			sceneData.camShift = [0, 0, 0];
 			sceneData.turn = 0;
 			sceneData.cells = [];
 			sceneData.cellMap = {};
@@ -15,8 +16,7 @@ SceneManager.add({
 			sceneData.score = 0;
 			sceneData.mapSize = 30;
 
-			sceneData.npcs = [
-			];
+			sceneData.npcs = [];
 			this.resetMap(0, 0);
 		}
 
@@ -112,10 +112,7 @@ SceneManager.add({
 			const hitTime = game.now - game.sceneData.hit;
 			return hitTime < 300 ? 0xaa0000 : 0;
 		},
-		background: ({game}) => {
-			const hitTime = game.now - game.sceneData.hit;
-			return hitTime < 300 ? 0xaa0000 : 0x080523;
-		},
+		background: ({game}) => 0xC8C5C3,
 		curvature: -2,
 	},
 	light: {
@@ -125,25 +122,26 @@ SceneManager.add({
 			0,
 		],
 		ambient: 1,
-		shininess: 2,
-		specularStrength: 0.3,
+		shininess: 1,
+		specularStrength: 0.1,
 		diffusionStrength: 0.5
 	},
 	view: {
 		pos: [
-			({game}) => game.sceneData.cam[0],
-			({game}) => game.sceneData.cam[1],
-			({game}) => game.sceneData.cam[2],
+			({game}) => game.sceneData.cam[0] + game.sceneData.camShift[0],// + game.sceneData.penguin.mov[0] * 5,
+			({game}) => game.sceneData.cam[1] + game.sceneData.camShift[1],
+			({game}) => game.sceneData.cam[2] + game.sceneData.camShift[2],// + game.sceneData.penguin.mov[2] * 5,
 		],
-		angle: 45,
+		viewAngle: 45,
 		height: 1,
-		tilt: .5,
+		tilt: .4,
 		turn: ({game}) => game.sceneData.turn,
-		cameraDistance: 5,
+		cameraDistance: 4,
 		range: [0, 60]
 	},
 	refresh: ({game}) => {
 		const { sceneData, keys } = game;
+
 		let moving = false;
 		const tileSize = 3;
 		const speed = .2;
@@ -227,7 +225,8 @@ SceneManager.add({
 			if (turning) {
 				sceneData.turn += sceneData.turnDirection * turnSpeed;
 			} else {
-				const turnGoal = (Math.PI/2) * (Math.floor(sceneData.turn / (Math.PI/2)) + (sceneData.turnDirection > 0 ? 1 : 0));
+				const turnStep = Math.PI/2;
+				const turnGoal = turnStep * (Math.floor(sceneData.turn / turnStep) + (sceneData.turnDirection > 0 ? 1 : 0));
 				let dTurn = (turnGoal - sceneData.turn);
 				if (Math.abs(dTurn) > turnSpeed) {
 					sceneData.turn += sceneData.turnDirection * turnSpeed;	
@@ -248,22 +247,78 @@ SceneManager.add({
 	sprites: [
 		{
 			src: "penguin",
+			init: ({game}) => {
+				const penguinFrames = [
+					{ orientation: 'E', startFrame: 8, flip: true, },
+					{ orientation: 'NE', startFrame: 12, flip: true, },
+					{ orientation: 'N', startFrame: 16, flip: false, },
+					{ orientation: 'NW', startFrame: 12, flip: false, },
+					{ orientation: 'W', startFrame: 8, flip: false, },
+					{ orientation: 'SW', startFrame: 4, flip: false, },
+					{ orientation: 'S', startFrame: 0, flip: false, },
+					{ orientation: 'SE', startFrame: 4, flip: true, },
+				];
+
+				game.sceneData.penguin = {
+					pos: [game.sceneData.cam[0], -1.3, game.sceneData.cam[2]],
+					moving: false,
+					mov: [0, 0, .1],
+					penguinFrames,
+				};
+			},
+			angledFrame: ({game, definition}) => {
+				const { penguinFrames } = game.sceneData.penguin;
+				const index = Math.round(definition.angle.get() / 45) % penguinFrames.length;
+				return penguinFrames[index];
+			},
+			angle: ({game}) => {
+				const [ dx, , dz ] = game.sceneData.penguin.mov;
+				return ((game.view.turn.get() - Math.atan2(dz, dx)) / Math.PI * 180 % 360 + 360) % 360;
+			},
+			refresh: ({game, definition}) => {
+				const { cam, penguin, camShift } = game.sceneData;
+				const { pos } = penguin;
+				const dx = cam[0] - pos[0];
+				const dz = cam[2] - pos[2];
+				const dist = Math.sqrt(dx * dx + dz * dz);
+				if (dist > .2) {
+					const speed = .2;
+					pos[0] += (dx / dist) * speed;
+					pos[2] += (dz / dist) * speed;
+					penguin.moving = true;
+					penguin.mov[0] = dx;
+					penguin.mov[2] = dz;
+				} else if (penguin.moving) {
+					penguin.moving = false;
+				}
+
+				const angledFrame = definition.angledFrame.get();
+				const camShiftGoalX = angledFrame.orientation.indexOf('N')>=0 ? 0 : penguin.mov[0] * 3;
+				const camShiftGoalY = angledFrame.orientation.indexOf('N')>=0 ? 0 : penguin.mov[2] * 3;
+				camShift[0] += (camShiftGoalX - camShift[0]) / 5;
+				camShift[2] += (camShiftGoalY - camShift[2]) / 5;
+			},
 			grid: [4, 5],
 			pos: [
-				({game}) => game.sceneData.cam[0],
-				-1.3,
-				({game}) => game.sceneData.cam[2],
+				({game}) => game.sceneData.penguin.pos[0],
+				({game}) => game.sceneData.penguin.pos[1],
+				({game}) => game.sceneData.penguin.pos[2],
 			],
 			animation: {
-				frame: ({game, definition},index) => 0,
+				start: ({game, definition}) => definition.angledFrame.get().startFrame,
 				range: 4,
-				frameRate: 10,
+				frameRate: ({game}) => game.sceneData.penguin.moving ? 10 : 0,
 			},
 			hotspot: [0, -.6],
-			scale: [1, .9],
+			scale: [
+				({game, definition},index) => definition.angledFrame.get().flip ? -1 : 1,
+				.9,
+			],
 		},
 		{	//	ground
-			src: "blue-wall",
+			src: "artic",
+			brightness: 70,
+			padding: 1,
 			cell: ({game, definition},index) => game.sceneData.cells[index],
 			grounded: ({game, definition},index) => {
 				return definition.cell.get(index).grounded;
@@ -293,6 +348,8 @@ SceneManager.add({
 		},
 		{	//	walls
 			src: "blue-wall",
+			brightness: 200,
+			padding: 1,
 			grid: [1, 2],
 			animation: {
 				frame: ({game, definition}, index) => index % 2,

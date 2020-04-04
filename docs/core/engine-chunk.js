@@ -3,171 +3,163 @@
 	*/
 
 class Chunk {
-	constructor(index, bufferInfo, pool) {
-		this.subarrays = {};
+	constructor(index, bufferInfo, vec3pool) {
 		this.index = index;
-		this.pool = pool;
-
-		for (let b in bufferInfo) {
-			if (bufferInfo.hasOwnProperty(b)) {
-				const buffer = bufferInfo[b];
-				this[b] = buffer;
-				this.subarrays[b] = buffer.subarray(this.index, this.index+1);
-			}
-		}
+		this.vec3pool = vec3pool;
+		this.bufferInfo = bufferInfo;
 	}
 
-	static assignValues(float32Array, ... values) {
-		for (let i = 0; i < values.length; i++) {
-			float32Array[i] = values[i];
-		}
+	assignValues(buffer, ... values) {
+		buffer.assignValues(this.index, ... values);
 	}
 
 	setType(type, now) {
-		const { spriteType, subarrays, index } = this;
-		Chunk.assignValues(subarrays.spriteType, type, type, type, type);
-		spriteType.chunkUpdateTimes[index] = now;
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.spriteType, type, type, type, type);
+		bufferInfo.spriteType.chunkUpdateTimes[index] = now;
 	}
 
 	setOffset([x, y, z], now) {
-		const { offset, subarrays, index } = this;
-		Chunk.assignValues(subarrays.offset,
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.offset,
 			x, y, z,
 			x, y, z,
 			x, y, z,
 			x, y, z,
 		);
-		offset.chunkUpdateTimes[index] = now;
+		bufferInfo.offset.chunkUpdateTimes[index] = now;
 	}
 
 	setHidden(now) {
-		const { vertex, subarrays, index } = this;
-		subarrays.vertex.fill(0);
-		vertex.chunkUpdateTimes[index] = now;
+		const { bufferInfo, index } = this;
+ 		const { buffer, floatPerVertex, verticesPerSprite } = bufferInfo.vertex;
+		buffer.fill(0, this.index * verticesPerSprite * floatPerVertex, (this.index+1) * verticesPerSprite * floatPerVertex);
+		bufferInfo.vertex.chunkUpdateTimes[index] = now;
 	}
 
-	applyNormal(vertices, normalSubarray, index, pool) {
-		const vectorA = vec3.sub(pool.vec3.get(), vertices[index], vertices[(index + 1) % vertices.length]);
-		const vectorB = vec3.sub(pool.vec3.get(), vertices[index], vertices[(index - 1 + vertices.length) % vertices.length]);
-		normalSubarray.set(vec3.normalize(pool.vec3.get(), vec3.cross(pool.vec3.get(), vectorA, vectorB)), index * 3);
+	applyNormal(vertices, engineBuffer, i) {
+		const { vec3pool } = this;
+ 		const { buffer, floatPerVertex, verticesPerSprite } = engineBuffer;
+		const vectorA = vec3.sub(vec3pool.get(), vertices[i], vertices[(i + 1) % vertices.length]);
+		const vectorB = vec3.sub(vec3pool.get(), vertices[i], vertices[(i - 1 + vertices.length) % vertices.length]);
+		const cross = vec3.normalize(vec3pool.get(), vec3.cross(vec3pool.get(), vectorA, vectorB));
+		buffer.set(cross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 	}
 
 	assignVertices(now, ... vertices) {
-		const { vertex, normal, subarrays, pool, index } = this;
+		const { bufferInfo, index } = this;
+ 		const { buffer, floatPerVertex, verticesPerSprite } = bufferInfo.vertex;
 		for (let i = 0; i < vertices.length; i++) {
-			subarrays.vertex.set(vertices[i], i * FLOAT_PER_VERTEX);
+			buffer.set(vertices[i], index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 		}
-		vertex.chunkUpdateTimes[index] = now;
+		bufferInfo.vertex.chunkUpdateTimes[index] = now;
 
 		for (let i = 0; i < vertices.length; i++) {
-			this.applyNormal(vertices, subarrays.normal, i, pool);
+			this.applyNormal(vertices, bufferInfo.normal, i);
 		}
-		normal.chunkUpdateTimes[index] = now;
+		bufferInfo.normal.chunkUpdateTimes[index] = now;
 	}
 
 	setWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
-		const { vertex, normal, subarrays, pool, index } = this;
+		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
 		);
 	}
 
 	setBackWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
-		const { vertex, normal, subarrays, pool, index } = this;
+		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
 		);
-		vertex.chunkUpdateTimes[index] = now;
 	}
 
 	setFloor(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
-		const { vertex, normal, subarrays, pool, index } = this;
+		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, A, - halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, B, + halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, C, + halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, D, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, A, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, B, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, D, - halfHeight - hotspotY * height),
 		);
-		vertex.chunkUpdateTimes[index] = now;		
 	}
 
 	setCeiling(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
-		const { vertex, normal, subarrays, pool, index } = this;
+		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, A, + halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), - halfWidth - hotspotX * width, B, - halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, C, - halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), + halfWidth - hotspotX * width, D, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, A, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, B, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, D, + halfHeight - hotspotY * height),
 		);
-		vertex.chunkUpdateTimes[index] = now;
 	}
 
 	setLeftWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
-		const { vertex, normal, subarrays, pool, index } = this;
+		const { vec3pool, index } = this;
 		const halfWidth = height/2, halfHeight = width/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), A, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), B, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), C, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), D, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), A, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), B, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 		);
-		vertex.chunkUpdateTimes[index] = now;
 	}
 
 	setRightWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
-		const { vertex, normal, subarrays, pool, index } = this;
+		const { vec3pool, index } = this;
 		const halfWidth = height/2, halfHeight = width/2;
 		this.assignVertices(now,
-			Utils.set3(pool.vec3.get(), A, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), B, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
-			Utils.set3(pool.vec3.get(), D, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), A, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), B, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 		);
-		vertex.chunkUpdateTimes[index] = now;
 	}
 
 	setMove(dx, dy, dz, now) {
-		const { move, subarrays, index } = this;
-		Chunk.assignValues(subarrays.move,
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.move,
 			dx, dy, dz, now,
 			dx, dy, dz, now,
 			dx, dy, dz, now,
 			dx, dy, dz, now,
 		);
-		move.chunkUpdateTimes[index] = now;
+		bufferInfo.move.chunkUpdateTimes[index] = now;
 	}
 
 	setGravity(gx, gy, gz, now) {
-		const { gravity, subarrays, index } = this;
-		Chunk.assignValues(subarrays.gravity,
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.gravity,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
 		);
-		gravity.chunkUpdateTimes[index] = now;
+		bufferInfo.gravity.chunkUpdateTimes[index] = now;
 	}
 
-	setTexture(texIndex, offset, spriteWidth, spriteHeight, scale, now) {
-		const { texCoord, subarrays, index } = this;
+	setTexture(texIndex, offset, spriteWidth, spriteHeight, scale, brightness, padding, now) {
+		const { bufferInfo, index } = this;
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const [ spriteX, spriteY ] = offset;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
 		const scaleH = Math.sign(scale[0]);
 		const scaleV = Math.sign(scale[1]);
+		const horizontalShift = texIndex * 2;
+		const verticalShift = Math.round(brightness) * 2;
 
-		let left = texIndex + texX, right = texIndex + texX + texWidth;
-		let up = texY, down = texY + texHeight;
+		let left = horizontalShift + texX + (padding * texWidth / 100), right = horizontalShift + texX + texWidth - (padding * texWidth / 100);
+		let up = verticalShift + texY + (padding * texHeight / 100), down = verticalShift + texY + texHeight - (padding * texHeight / 100);
 		if (scaleH < 0) {
 			const temp = left;
 			left = right;
@@ -179,41 +171,41 @@ class Chunk {
 			down = temp;
 		}
 
-		Chunk.assignValues(subarrays.texCoord,
+		this.assignValues(bufferInfo.texCoord,
 			left,	up,		texWidth,	texHeight,
 			left,	down,	texWidth,	texHeight,
 			right,	down,	texWidth,	texHeight,
 			right,	up,		texWidth,	texHeight,
 		);
 
-		texCoord.chunkUpdateTimes[index] = now;
+		bufferInfo.texCoord.chunkUpdateTimes[index] = now;
 	}
 
 	setGrid(cols, rows, now) {
-		const { grid, subarrays, index } = this;
-		Chunk.assignValues(subarrays.grid,
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.grid,
 			cols, rows,
 			cols, rows,
 			cols, rows,
 			cols, rows,
 		);
-		grid.chunkUpdateTimes[index] = now;
+		bufferInfo.grid.chunkUpdateTimes[index] = now;
 	}
 
 	setLight(value, now) {
-		const { light, subarrays, index } = this;
-		Chunk.assignValues(subarrays.light, value, value, value, value);
-		light.chunkUpdateTimes[index] = now;		
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.light, value, value, value, value);
+		bufferInfo.light.chunkUpdateTimes[index] = now;		
 	}
 
 	setAnimation(frame, start, range, frameRate, now) {
-		const { animation, subarrays, index } = this;
-		Chunk.assignValues(subarrays.animation,
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.animation,
 			frame, start, range, frameRate,
 			frame, start, range, frameRate,
 			frame, start, range, frameRate,
 			frame, start, range, frameRate,
 		);
-		animation.chunkUpdateTimes[index] = now;
+		bufferInfo.animation.chunkUpdateTimes[index] = now;
 	}
 }

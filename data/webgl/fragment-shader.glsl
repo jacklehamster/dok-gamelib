@@ -8,6 +8,8 @@ varying mediump float zDist;
 varying mediump float light;
 varying mediump vec3 vNormal;
 varying mediump vec3 vFragPos;
+varying mediump float vTextureSlot;
+varying mediump float vBrightness;
 uniform vec4 uBackground;
 uniform vec3 uLightPos;
 uniform vec4 uLightIntensity;
@@ -52,7 +54,7 @@ void main(void) {
 	vec3 normal = normalize(vNormal);
 	vec3 lightDir = normalize(uLightPos - vFragPos.xyz);
 	vec3 viewDir = normalize(uCamPosition-vFragPos);
-	float ambient = uLightIntensity[0];
+	float ambient = uLightIntensity[0] * vBrightness / 100.0;
 	float diffusion = uLightIntensity[1];
 	float specular = uLightIntensity[2];
 	float shininess = uLightIntensity[3];
@@ -62,9 +64,7 @@ void main(void) {
 	float diffLight = diffusion * max(dot(normal, lightDir), 0.0);
 	float spec = specular * pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
-	float textureSlot = floor(vTexturePoint.x);
-	vec2 textureCoord = vec2(mod(vTexturePoint.x, 1.0), vTexturePoint.y);
-	vec4 color = getTextureColor(uTextures, textureSlot, vTexturePoint);
+	vec4 color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);
 
 	float limit = .5;
     color.a = smoothstep(limit - .0001, limit + .0001, color.a);

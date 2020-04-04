@@ -30,6 +30,7 @@ class Engine {
 		this.currentScene = null;
 		this.spritesToRemove = [];
 		this.onSceneChangeListener = [];
+		this.onLoopListener = [];
 	}
 
 	start() {
@@ -39,19 +40,18 @@ class Engine {
 	}
 
 	static beginLooping(engine) {
-		Engine.instance = engine;
-		const { glRenderer, sceneRenderer, spriteDefinitionProcessor, spriteProvider, keyboard, spritesToRemove } = engine;
+		const { glRenderer, sceneRenderer, spriteDefinitionProcessor, spriteProvider, keyboard, spritesToRemove, onLoopListener } = engine;
 		function animationFrame(now) {
 			requestAnimationFrame(animationFrame);
 			const { currentScene } = engine;
 			const frameDuration = 1000 / currentScene.getFrameRate();
 
-			currentScene.now = now;
-			currentScene.keys = keyboard.getKeyboard(now);
-			sceneRenderer.refresh(currentScene);
-			spriteDefinitionProcessor.refresh(currentScene);
-
 			if (now - glRenderer.lastRefresh >= frameDuration) {
+				currentScene.now = now;
+				currentScene.keys = keyboard.getKeyboard(now);
+				sceneRenderer.refresh(currentScene);
+				spriteDefinitionProcessor.refresh(currentScene);
+
 				glRenderer.setTime(now);
 				glRenderer.clearScreen();
 				sceneRenderer.render(currentScene);
@@ -73,33 +73,49 @@ class Engine {
 				glRenderer.sendSprites(spritesToRemove, now);
 				glRenderer.sendUpdatedBuffers(now);
 				glRenderer.draw(now);
+				onLoopListener.forEach(callback => callback(now));
+				glRenderer.resetPools();
 			}
-			Pool.resetAll();
 		}
 		requestAnimationFrame(animationFrame);		
 	}
 
-	addOnSceneChangeListener(callback) {
-		this.onSceneChangeListener.push(callback);
+	getListeners(type) {
+		switch(type) {
+			case "sceneChange":
+				return this.onSceneChangeListener;
+			case "loop":
+				return this.onLoopListener;
+		}
 	}
 
-	removeOnSceneChangeListener(callback) {
-		const index = this.onSceneChangeListener.indexOf(callback);
-		this.onSceneChangeListener.splice(index, 1);
+	addEventListener(type, callback) {
+		const listener = this.getListeners(type);
+		listener.push(callback);
+	}
+
+	removeEventListener(type, callback) {
+		const listener = this.getListeners(type);
+		const index = listener.indexOf(callback);
+		listener.splice(index, 1);
+	}
+
+	clearScene() {
+		if (this.currentScene) {
+			this.currentScene.destroy.run();
+			this.currentScene.sprites.forEach(sprite => sprite.destroy.run());
+		}
+		this.spriteProvider.clear();
 	}
 
 	resetScene(sceneName) {
-		const scene = this.sceneManager.createScene(sceneName, this.dataStore);
-		if (scene) {
-			this.spriteProvider.clear();
-			if (this.currentScene) {
-				this.currentScene.destroy.run();
-				this.currentScene.sprites.forEach(sprite => sprite.destroy.run());
-			}
+		const { sceneManager, dataStore } = this;
+		if (sceneManager.hasScene(sceneName)) {
+			this.clearScene();
+			const scene = sceneManager.createScene(sceneName, dataStore);
 			const now = this.currentScene ? this.currentScene.now : 0;
 			const keys = this.currentScene ? this.currentScene.keys : {};
 
-			window.game = scene;
 			this.currentScene = scene;
 			this.currentScene.now = now;
 			this.currentScene.keys = keys;
@@ -107,6 +123,7 @@ class Engine {
 			this.sceneRenderer.init(scene);
 			this.spriteDefinitionProcessor.init(scene.sprites, scene);
 			this.onSceneChangeListener.forEach(callback => callback(sceneName));
+			window.game = scene;
 		}
 	}
 }

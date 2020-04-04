@@ -6,44 +6,49 @@
 class ConfigProcessor {
 	constructor() {
 		this.schema = getData().schema.schema;
+		this.gamePropertyPool = new Pool(
+			() => new GameProperty(),
+			gameProperty => gameProperty.init(null, null),
+		);
+	}
+
+	processScene(config, scene) {
+		this.gamePropertyPool.reset();
+		return this.process(config, scene, this.schema, "scene");
 	}
 
  	process(obj, sceneObj, schema, path) {
- 		if (!schema) {
- 			schema = this.schema;
- 		}
- 		if (!path) {
- 			path = "scene";
- 		}
  		if (typeof(obj) !== 'object') {
- 			return ConfigProcessor.processLeafValue(obj, sceneObj);
+ 			return this.processLeafValue(obj, sceneObj);
  		}
  		const isArray = Array.isArray(obj);
  		const result = isArray ? [] : {};
  		if (isArray) {
- 			obj.forEach((value, index) => result[index] = this.process(value, sceneObj, schema[0], `${path}[${index}]`));
+ 			obj.forEach((value, index) => result[index] = this.process(value, sceneObj, schema ? schema[0] : null, `${path}[${index}]`));
  		} else {
 	 		for (let o in obj) {
 	 			if (obj.hasOwnProperty(o)) {
-		 			if (typeof(schema[o]) === 'undefined') {
+		 			if (!schema || typeof(schema[o]) === 'undefined') {
 		 				console.warn(`Unknown config property: ${path}.${o}`);
 		 			}
-		 			result[o] = this.process(obj[o], sceneObj, schema[o], `${path}.${o}`);
+		 			result[o] = this.process(obj[o], sceneObj, schema ? schema[o] : null, `${path}.${o}`);
 	 			}
 	 		}
-	 		for (let s in schema) {
-	 			if (!result.hasOwnProperty(s)) {
-	 				const defaultValue = ConfigProcessor.defaultForSchema(schema[s], sceneObj);
-	 				console.log(`Defaulting ${path}.${s} to ${JSON.stringify(ConfigProcessor.defaultEval(defaultValue, sceneObj))}`);
-	 				result[s] = defaultValue;
-	 			}
+	 		if (schema) {
+		 		for (let s in schema) {
+		 			if (!result.hasOwnProperty(s)) {
+		 				const defaultValue = this.defaultForSchema(schema[s], sceneObj);
+		 				console.log(`Defaulting ${path}.${s} to ${JSON.stringify(ConfigProcessor.defaultEval(defaultValue, sceneObj))}`);
+		 				result[s] = defaultValue;
+		 			}
+		 		}
 	 		}
  		}
  		return result;
  	}
 
-	static processLeafValue(value, sceneObj) {
-		return new GameProperty(value, sceneObj);
+	processLeafValue(value, sceneObj) {
+		return this.gamePropertyPool.get(true).init(value, sceneObj);
 	}
 
  	static defaultEval(property, sceneObj) {
@@ -66,19 +71,19 @@ class ConfigProcessor {
  		return property;
  	}
 
- 	static defaultForSchema(value, sceneObj) {
+ 	defaultForSchema(value, sceneObj) {
 		if (Array.isArray(value)) {
-			return value.map(t => ConfigProcessor.defaultForSchema(t, sceneObj));
+			return value.map(t => this.defaultForSchema(t, sceneObj));
 		}
  		if (value && typeof(value) === 'object') {
  			const result = {};
  			for (let p in value) {
  				if (value.hasOwnProperty(p)) {
- 					result[p] = ConfigProcessor.defaultForSchema(value[p], sceneObj);
+ 					result[p] = this.defaultForSchema(value[p], sceneObj);
  				}
  			}
  			return result;
  		}
- 		return ConfigProcessor.processLeafValue(value, sceneObj);
+ 		return this.processLeafValue(value, sceneObj);
  	}
 }

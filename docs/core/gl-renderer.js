@@ -42,6 +42,7 @@ class GLRenderer {
 			vec3: new Pool(vec3.create, Utils.clear3),
 			quat: new Pool(quat.create, quat.identity),
 			mat4: new Pool(mat4.create, mat4.identity),
+			vec3forChunk: new Pool(vec3.create, Utils.clear3), 
 		};
 
 		this.bufferInfo = {
@@ -62,7 +63,7 @@ class GLRenderer {
 		const { shader, textureManager } = this;
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
-		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => new Chunk(index, this.bufferInfo, this.pool));
+		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => new Chunk(index, this.bufferInfo, this.pool.vec3forChunk));
 		this.usedChunks = 0;
 
 		//	load texture
@@ -71,6 +72,12 @@ class GLRenderer {
 		});
 
 		this.lastRefresh = 0;
+	}
+
+	resetPools() {
+		for (let p in this.pool) {
+			this.pool[p].reset();
+		}
 	}
 
 	newChunk() {
@@ -209,11 +216,12 @@ class GLRenderer {
 	}
 
 	sendSprites(sprites, now) {
-		const { gl } = this;
+		const { gl, pool } = this;
 		for (let i = 0; i < sprites.length; i++) {
 			const sprite = sprites[i];			
 			const chunk = this.getChunkFor(sprite)
 			if (chunk) {
+				pool.vec3forChunk.reset();
 				sprite.updateChunk(this, chunk, now);
 			}
 		}

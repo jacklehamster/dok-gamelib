@@ -25,6 +25,10 @@ class SceneManager {
 		};
 	}
 
+	hasScene(name) {
+		return this.scenes[name];
+	}
+
 	createScene(name, dataStore) {
 		const { scenes, configProcessor } = this;
 		const gameScene = scenes[name];
@@ -33,8 +37,9 @@ class SceneManager {
 			const sceneObj = new Game();
 			sceneObj.dataStore = dataStore;
 			sceneObj.name = name;
+			sceneObj.config = config;
 
-	 		Object.assign(sceneObj, configProcessor.process(config, sceneObj));
+	 		Object.assign(sceneObj, configProcessor.processScene(config, sceneObj));
 
 	 		for (let i = 0; i < sceneObj.sprites.length; i++) {
 	 			sceneObj.sprites[i] = new SpriteDefinition(sceneObj.sprites[i], sceneObj);

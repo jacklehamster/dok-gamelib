@@ -19,4 +19,12 @@ class EngineBuffer {
  	setShaderBuffer(shaderBuffer) {
  		this.shaderBuffer = shaderBuffer;
  	}
+
+	assignValues(offset, ... values) {
+ 		const { buffer, floatPerVertex, verticesPerSprite } = this;
+ 		const elementOffset = offset * verticesPerSprite * floatPerVertex;
+		for (let i = 0; i < values.length; i++) {
+			this.buffer[elementOffset + i] = values[i];
+		}
+	}
 }

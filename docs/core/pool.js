@@ -26,9 +26,5 @@ class Pool {
 	reset() {
 		this.index = 0;
 	}
-
-	static resetAll() {
-		Pool.pools.forEach(pool => pool.reset());
-	}
 }
 Pool.pools = [];

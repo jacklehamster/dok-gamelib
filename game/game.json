@@ -5,7 +5,7 @@
 	"height": 500,
 	"fonts": {
 		"comic": {
-			"name": "Comic Sans MS",
+			"name": "Arctic",
 			"characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ",
 			"fontSize": 160,
 			"cellSize": 256

@@ -41,6 +41,8 @@ class SpriteDefinitionProcessor {
 		const { count } = definition;
 		const totalCount = count.get( definitionIndex);
 
+		SpriteDefinitionProcessor.lastProcessedDefinition = definition;
+
 		for (let i = 0; i < totalCount; i ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);
 			sprite.getEvaluated(scene, definition);

@@ -13,12 +13,13 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-title" content="Hello World">
 
+		<script src="lib/gl-matrix.js"></script>
 		<script src="generated/js/data.js"></script>
 		<script src="game/game.js"></script>
 		<script src="game/sprite-definition.js"></script>
-		<script src="core/gl-matrix.js"></script>
+		<script src="utils/log.js"></script>
+		<script src="utils/utils.js"></script>
 		<script src="core/constants.js"></script>
-		<script src="core/utils.js"></script>
 		<script src="core/pool.js"></script>
 		<script src="core/texture-manager.js"></script>
 		<script src="core/shader.js"></script>
@@ -35,6 +36,7 @@
 		<script src="core/sprite.js"></script>
 		<script src="core/sprite-definition-processor.js"></script>
 		<script src="core/video-manager.js"></script>
+		<script src="core/source-code.js"></script>
 		<script src="core/engine.js"></script>
 		<script src="core/game-property.js"></script>
 		<script src="core/config-processor.js"></script>
@@ -52,13 +54,15 @@
 
 	<body class="container">
 		<div id=gameOver style="margin: 10px; font-size: 80pt; position: absolute; color: #990000; font-family: 'Creepster', cursive;"></div>
-		<div>
+		<div id="panel" class="panel">
 			<div id="scene-thumbnails" style="display: flex; flex-direction: row"></div>
 			<div id=score style="margin: 10px; font-size: 20pt; position: absolute; color: silver"></div>
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
+		<div id="source-code">
+		</div>
 		<script>
-			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Comic Sans MS","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256}},"scenes":["rogue-one","rogue-zombie","tp-boy","video-maze"]}));
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"comic":{"name":"Arctic","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256}},"scenes":["rogue-one","rogue-zombie","tp-boy","video-maze"]}));
 			document.addEventListener("DOMContentLoaded", () => engine.start());
 
 			function setupSceneThumbnails() {
@@ -75,7 +79,7 @@
 				}
 			}
 			setupSceneThumbnails();
-			engine.addOnSceneChangeListener(currentScene => {
+			engine.addEventListener("sceneChange", currentScene => {
 				const sceneThumbnails = document.getElementById("scene-thumbnails");
 				const tabs = sceneThumbnails.querySelectorAll(".tab");
 				for (let t = 0; t < tabs.length; t++) {
@@ -88,6 +92,13 @@
 				}
 			});
 
+			function shiftPanel(doShift) {
+				if (doShift) {
+					document.getElementById("panel").classList.add("shifted");
+				} else {
+					document.getElementById("panel").classList.remove("shifted");
+				}
+			}
 		</script>
 	</body>
 </html>

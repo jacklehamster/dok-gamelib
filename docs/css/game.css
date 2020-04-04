@@ -9,6 +9,7 @@ html, body {
 
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -45,3 +46,10 @@ html, body {
   color: #000000;
 }
 
+.panel {
+  transition: transform .2s ease-in-out;
+}
+
+.panel.shifted {
+  transform: perspective(1000px) translate3d(-350px, 0, -300px) rotate3d(0, 1, 0, 90deg);
+}
