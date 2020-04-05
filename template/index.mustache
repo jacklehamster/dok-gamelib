@@ -52,25 +52,28 @@
 
 	<body class="container">
 		<div id="editor" class="editor">
-			<div class="tap-container">
-				<div class="tab">Game Config</div>
-				<div class="tab selected">Scene Code</div>
+			<div class="tab-container">
+				<div id="editor-tabs" class="tab-container">
+					<div id="config" class="tab">Game Config</div>
+					<div id="scene-code" class="tab selected">Scene Code</div>
+				</div>
 				<div style="width: 100%"></div>
-				<div id="panel-exit-button" class="panel-button" onclick="SceneThumbnail.instance.shiftPanel()">GAME ➡️</div>
+				<div id="panel-exit-button" class="panel-button" onclick="SceneThumbnail.instance.shiftPanel()">
+					GAME ➡️
+				</div>
 			</div>
 			<div class="editor-container">
 				<div id="source-code" class="source-code"></div>
 			</div>
 		</div>
 		<div id="panel" class="panel">
-			<div id=score style="margin: 10px; font-size: 20pt; position: absolute; color: silver"></div>
 			<canvas id="canvas" width={{obj.width}} height={{obj.height}}></canvas>
 		</div>
 		<script>
-			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, ({{{json}}}));
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 			document.addEventListener("DOMContentLoaded", () => engine.start());
 		</script>
 		<script src="editor/scene-thumbnail.js"></script>
-		<script src="editor/source-code.js"></script>
+		<script src="editor/editor.js"></script>
 	</body>
 </html>

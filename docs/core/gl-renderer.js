@@ -25,6 +25,8 @@ class GLRenderer {
 		};
 		this.gl = canvas.getContext("webgl", this.webGLOptions);
 
+		this.checkSupport();
+
 		const { gl } = this;
 		//	initialize gl
 		gl.enable(gl.BLEND);
@@ -73,6 +75,18 @@ class GLRenderer {
 		});
 
 		this.lastRefresh = 0;
+	}
+
+	checkSupport() {
+		const { gl } = this;
+		const settings = {
+			maxVertexAttributes: gl.getParameter(gl.MAX_VERTEX_ATTRIBS),
+			maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+			maxTextureUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
+			maxVarying: gl.getParameter(gl.MAX_VARYING_VECTORS),
+			maxUniform: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
+		};
+		console.info(settings);
 	}
 
 	resetPools() {

@@ -183,7 +183,13 @@ class Chunk {
 
 	setTint(value, now) {
 		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.tintColor, value, value, value, value);
+		const color = value & 0xFFFFFF;
+		const mixRatio = Math.max(0, (value / 0xFFFFFF) / 255);
+		this.assignValues(bufferInfo.tintColor,
+			color, mixRatio,
+			color, mixRatio,
+			color, mixRatio,
+			color, mixRatio);
 		bufferInfo.tintColor.chunkUpdateTimes[index] = now;				
 	}
 

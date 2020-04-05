@@ -37,6 +37,17 @@ class Game {
 	}
 
 	getFont(fontName) {
-		return this.engine.data.generated.config.game.fonts[fontName];
+		return this.engine.data.generated.config.fonts[fontName];
+	}
+
+	getLetterInfo(letter, fontName) {
+		const { fonts } = this.engine.data.generated.config;
+		if (!fontName) {
+			for (let f in fonts) {
+				fontName = f;
+				break;
+			}
+		}
+		return fontName ? fonts[fontName].letterInfo[letter] : null;
 	}
 }

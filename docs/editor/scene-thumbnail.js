@@ -20,10 +20,12 @@ class SceneThumbnail {
 	setupSceneThumbnails({canvas}) {
 		const sceneThumbnails = canvas.parentElement.insertBefore(document.createElement("div"), canvas);
 		sceneThumbnails.id = "scene-thumbnails";
-		sceneThumbnails.classList.add("tap-container");
+		sceneThumbnails.classList.add("tab-container");
 
+		const tabs = sceneThumbnails.appendChild(document.createElement("div"));
+		tabs.classList.add("tab-container");
 		for (let s in engine.sceneManager.scenes) {
-			const tab = sceneThumbnails.appendChild(document.createElement("div"));
+			const tab = tabs.appendChild(document.createElement("div"));
 			tab.id = `tab-${s}`;
 			tab.classList.add("tab");
 			tab.classList.add("scene-tab");

@@ -29,4 +29,8 @@ class SpriteDefinition {
  		}
  		console.error("Shouldn't reach this code.");
 	}
+
+	getLetterInfo(letter, fontName) {
+		return this.game.getLetterInfo(letter, fontName);
+	}
 }

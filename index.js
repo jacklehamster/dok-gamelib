@@ -209,16 +209,28 @@ function saveFontMap() {
 			for (let id in fonts) {
 				fontsArray.push({ ... fonts[id], id });
 			}
-			if (JSON.stringify(savedFonts) === JSON.stringify(fonts)) {
-				return Promise.resolve(fontsArray);
-			} else {
-				return Promise.all(fontsArray.filter(({id})=> id).map(font => {
-					const { buffer } = assets.createFontSheet(font);
-					return fs.promises.writeFile(`generated/assets/${font.id}.png`, buffer);
-				})).then(() => {
-					return fs.promises.writeFile(`generated/assets/fonts.json`, JSON.stringify(fonts, null, '\t'))
-				}).then(() => fontsArray);
-			}
+			return Promise.all(fontsArray.filter(({id})=> id).map(font => {
+				const { name, characters, fontSize, cellSize, letterInfo, id } = font;
+				if (savedFonts && savedFonts[id] && name === savedFonts[id].name && characters === savedFonts[id].characters
+					&& fontSize === savedFonts[id].fontSize && cellSize === savedFonts[id].cellSize) {
+					return { ... savedFonts[id], id };
+				} else {
+					const { buffer, letterInfo } = assets.createFontSheet(font);
+					return fs.promises.writeFile(`generated/assets/${id}.png`, buffer).then(() => {
+						return {
+							name, characters, fontSize, cellSize, letterInfo, id,
+						};
+					});
+				}
+			})).then((fontsArray) => {
+				const fonts = {};
+				fontsArray.forEach(({ name, characters, fontSize, cellSize, letterInfo, id }) => {
+					fonts[id] = { name, characters, fontSize, cellSize, letterInfo };
+				});
+				return fs.promises.writeFile(`generated/assets/fonts.json`, JSON.stringify(fonts, null, '\t'))
+					.then(() => fs.promises.copyFile(`generated/assets/fonts.json`, `${__dirname}/data/generated/config/fonts.json`))
+					.then(() => fonts);
+			});
 		});
 	});
 }
@@ -307,13 +319,17 @@ app.get('/data', (req, res) => {
 });
 
 app.get('/fonts', (req, res) => {
-	saveFontMap().then(([font]) => {
-		return fs.promises.readFile(`${__dirname}/generated/assets/${font.id}.png`);
+	saveFontMap().then((fonts) => {
+		for (let id in fonts) {
+			return fs.promises.readFile(`${__dirname}/generated/assets/${id}.png`);
+		}
+		return Promise.reject("Font not found");
 	}).then(data => {
 		res.setHeader('Content-Type', 'image/png');
 		res.end(data);
+	}).catch(error => {
+		res.status(500).send(error);
 	});
-
 });
 
 app.use(express.static(`${__dirname}/${webDir}`));

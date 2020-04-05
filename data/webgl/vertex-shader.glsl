@@ -11,7 +11,7 @@ attribute float aType;					//	wall/floor=0, sprite=1, water=2, ...
 attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
 attribute vec4 aAnimationData; 			//	[ cols, start, total, frameRate ]
 attribute vec2 aGrid;					//	[ cols, rows ]
-attribute float aTintColor;				//	tint color
+attribute vec2 aTintColor;				//	[ tint color, mix ]
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
@@ -28,8 +28,12 @@ varying mediump float vTextureSlot;
 varying mediump float vBrightness;
 varying mediump vec4 vTintColor;
 
-vec4 makeColorFromARGB(float argb) {
-	return vec4(mod(floor(argb / (256.0 * 256.0)), 256.0) / 256.0, mod(floor(argb / 256.0), 256.0) / 256.0, mod(floor(argb), 256.0) / 256.0, mod(floor(argb / (256.0 * 256.0 * 256.0)), 256.0) / 256.0);
+vec4 makeColorFromRGB(float rgb, float mixRatio) {
+	return vec4(
+		mod(rgb / (256.0 * 256.0), 256.0) / 255.0,
+		mod(rgb / 256.0, 256.0) / 255.0,
+		mod(rgb, 256.0) / 255.0,
+		min(1.0, mixRatio));
 }
 
 void main(void) {
@@ -69,7 +73,7 @@ void main(void) {
 
 	vTextureSlot = floor(aVertexTextureCoord.x / 2.0);
 	vBrightness = floor(aVertexTextureCoord.y / 2.0);
-	vTintColor = makeColorFromARGB(aTintColor);
+	vTintColor = makeColorFromRGB(aTintColor[0], aTintColor[1]);
 
 	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.y / 10.0)) * .2);
 	gl_Position = position;

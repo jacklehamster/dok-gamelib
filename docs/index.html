@@ -54,25 +54,28 @@
 
 	<body class="container">
 		<div id="editor" class="editor">
-			<div class="tap-container">
-				<div class="tab">Game Config</div>
-				<div class="tab selected">Scene Code</div>
+			<div class="tab-container">
+				<div id="editor-tabs" class="tab-container">
+					<div id="config" class="tab">Game Config</div>
+					<div id="scene-code" class="tab selected">Scene Code</div>
+				</div>
 				<div style="width: 100%"></div>
-				<div id="panel-exit-button" class="panel-button" onclick="SceneThumbnail.instance.shiftPanel()">GAME ➡️</div>
+				<div id="panel-exit-button" class="panel-button" onclick="SceneThumbnail.instance.shiftPanel()">
+					GAME ➡️
+				</div>
 			</div>
 			<div class="editor-container">
 				<div id="source-code" class="source-code"></div>
 			</div>
 		</div>
 		<div id="panel" class="panel">
-			<div id=score style="margin: 10px; font-size: 20pt; position: absolute; color: silver"></div>
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
-			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, ({"title":"Hello World","description":"Description","width":800,"height":500,"fonts":{"primary-font":{"name":"Arctic","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256},"creep-font":{"name":"Creepster","characters":"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ","fontSize":160,"cellSize":256}},"scenes":["rogue-one","rogue-zombie","tp-boy","video-maze"],"libs":["json-compact.js"]}));
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 			document.addEventListener("DOMContentLoaded", () => engine.start());
 		</script>
 		<script src="editor/scene-thumbnail.js"></script>
-		<script src="editor/source-code.js"></script>
+		<script src="editor/editor.js"></script>
 	</body>
 </html>
