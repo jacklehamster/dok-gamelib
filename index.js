@@ -118,6 +118,21 @@ function copyScenes() {
 	);
 }
 
+function copyLibs() {
+	return new Promise((resolve, reject) =>
+		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/lib`), { recursive: true }).then(() => {
+			template.getFolderAsData(path.join(__dirname, 'generated/lib')).then(libs => {
+				Promise.all(libs.filter(file => path.extname(file)===".js").map(lib => {
+					return fs.promises.copyFile(
+						path.join(__dirname, 'generated/lib', lib),
+						path.join(__dirname, webDir, 'generated', 'js', 'lib', lib)
+					);
+				})).then(resolve);
+			});
+		})
+	);	
+}
+
 function assignData(root, path, value) {
 	if (typeof path === "string") {
 		path = path.split("/");
@@ -169,15 +184,13 @@ function getSpritesheets() {
 		    const publicDir = `${webDir}/generated`;
 		    const generatedDataDir = 'data/generated';
 		    return assets.deleteFolders(publicDir, generatedDataDir).then(() => {
-				return assets.produceSpritesheets([gamesDirectory, generatedAssetDir], TEXTURE_SIZE, TEXTURE_SIZE).then(data => {
-					assets.getAssetsSha(gamesDirectory, generatedAssetDir).then(data => {
-				        const generatedDataDir = `${__dirname}/data/generated`;
-						fs.promises.mkdir(`${generatedDataDir}/config`, { recursive: true })
-							.then(() => fs.promises.writeFile(`${generatedDataDir}/config/sha.json`, JSON.stringify(data, null, '\t'))
-						);
-					});
-					return Promise.resolve(data);
-				});
+		    	return assets.produceSpritesheets([gamesDirectory, generatedAssetDir], TEXTURE_SIZE, TEXTURE_SIZE);
+		    }).then(data => {
+		    	return assets.getAssetsSha(gamesDirectory, generatedAssetDir);
+		    }).then(data => {
+				fs.promises.mkdir(`${generatedDataDir}/config`, { recursive: true })
+					.then(() => fs.promises.writeFile(`${generatedDataDir}/config/sha.json`, JSON.stringify(data, null, '\t')));
+				return data;
 		    });
 		}
 	});
@@ -200,13 +213,11 @@ function saveFontMap() {
 				return Promise.resolve(fontsArray);
 			} else {
 				return Promise.all(fontsArray.filter(({id})=> id).map(font => {
-					const buffer = assets.createFontSheet(font);
-					return fs.promises.writeFile(`generated/assets/${font.id}.png`, buffer).then(() => {
-						fs.promises.writeFile(`generated/assets/fonts.json`, JSON.stringify(fonts, null, '\t'));
-					});
+					const { buffer } = assets.createFontSheet(font);
+					return fs.promises.writeFile(`generated/assets/${font.id}.png`, buffer);
 				})).then(() => {
-					return Promise.resolve(fontsArray);
-				});
+					return fs.promises.writeFile(`generated/assets/fonts.json`, JSON.stringify(fonts, null, '\t'))
+				}).then(() => fontsArray);
 			}
 		});
 	});
@@ -220,13 +231,20 @@ app.get('/', function (req, res) {
 			copyVideos(),
 			getSpritesheets(),
 			copyScenes(),
+			copyLibs(),
 		])
 	})
 	.then(() => console.log(`Done processing assets: ${Date.now() - startTime}ms`))
-	.then(() => template.getFolderAsData(path.join(__dirname, 'game', 'scenes')))
-	.then(items => {
-		const scenes = items.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
-		return template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'game.json'), { scenes: scenes.map(fileName => path.parse(fileName).name) });
+	.then(() => Promise.all([
+		template.getFolderAsData(path.join(__dirname, 'game', 'scenes')),
+		template.getFolderAsData(path.join(__dirname, 'docs/generated/js/lib')),
+	]))
+	.then(([sceneItems, libs]) => {
+		const scenes = sceneItems.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
+		return template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'game.json'), {
+			scenes: scenes.map(fileName => path.parse(fileName).name),
+			libs,
+		});
 	})
 	.then(html => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(() => html))
 	.then(html => {

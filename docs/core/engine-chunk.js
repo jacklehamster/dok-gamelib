@@ -181,6 +181,12 @@ class Chunk {
 		bufferInfo.texCoord.chunkUpdateTimes[index] = now;
 	}
 
+	setTint(value, now) {
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.tintColor, value, value, value, value);
+		bufferInfo.tintColor.chunkUpdateTimes[index] = now;				
+	}
+
 	setGrid(cols, rows, now) {
 		const { bufferInfo, index } = this;
 		this.assignValues(bufferInfo.grid,
@@ -190,12 +196,6 @@ class Chunk {
 			cols, rows,
 		);
 		bufferInfo.grid.chunkUpdateTimes[index] = now;
-	}
-
-	setLight(value, now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.light, value, value, value, value);
-		bufferInfo.light.chunkUpdateTimes[index] = now;		
 	}
 
 	setAnimation(frame, start, range, frameRate, now) {

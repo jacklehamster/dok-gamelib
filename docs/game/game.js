@@ -35,4 +35,8 @@ class Game {
 	getVideo(name) {
 		return this.videoManager.getVideo(name);
 	}
+
+	getFont(fontName) {
+		return this.engine.data.generated.config.game.fonts[fontName];
+	}
 }

@@ -106,7 +106,6 @@ SceneManager.add({
 						sceneData.hit = this.now;
 						if (sceneData.life < 0) {
 							sceneData.gameOver = this.now;
-							document.getElementById("gameOver").innerText = "GAME OVER";
 						}
 					}
 				}
@@ -170,7 +169,6 @@ SceneManager.add({
 				if (zombieMap[`${x}_${z}`]) {
 					zombieMap[`${x}_${z}`].dead = this.now;
 					sceneData.score ++;
-					document.getElementById("score").innerText = sceneData.score;
 					for (let i = 0; i < 3; i++) {
 						const newX = Math.floor(posX + (Math.random()/2) * sceneData.zombieRange);
 						const newZ = Math.floor(posZ + (Math.random()/2) * sceneData.zombieRange);
@@ -367,6 +365,80 @@ SceneManager.add({
 			scale: [3, 3],
 		},
 		{
+			src: "primary-font",
+			tintColor: 0xFFcccccc,
+			scale: [.2, .2],
+			text: ({game}) => game.sceneData.score.toString(),
+			hidden: ({game}) => !game.sceneData.score,
+			refresh: ({definition, game}) => {
+				const text = definition.text.get();
+				const characters = game.getFont(definition.src.get()).characters;
+				definition.charIndexes = text.split("").map(letter => characters.indexOf(letter));
+			},
+			pos: [
+				({game}, index) => {
+					const angle = game.view.turn.get();
+					const dx = Math.cos(angle);
+					const dz = Math.sin(angle);
+					return game.sceneData.cam[0] + dx * ((index - 10) * .12);
+				},
+				1,
+				({game}, index) => {
+					const angle = game.view.turn.get();
+					const dz = Math.sin(angle);
+					const dx = Math.cos(angle);
+					return game.sceneData.cam[2] + dz * ((index - 10) * .12);
+				}
+			],
+			animation: {
+				frame: ({definition}, index) => definition.charIndexes[index],
+				range: ({definition}) => definition.characters.get().length,
+			},
+			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
+			grid: [
+				({definition}) => Math.ceil(Math.sqrt(definition.characters.get().length)),
+				({definition}) => Math.ceil(definition.characters.get().length / definition.grid[0].get()),
+			],
+			count: ({definition}) => definition.text.get().length,
+		},
+		{
+			src: "creep-font",
+			tintColor: 0xFFaa0066,
+			scale: [1, 1],
+			text: "Game Over",
+			hidden: ({game: { sceneData }}) => !sceneData.gameOver,
+			init: ({definition, game}) => {
+				const text = definition.text.get();
+				const characters = game.getFont(definition.src.get()).characters;
+				definition.charIndexes = text.split("").map(letter => characters.indexOf(letter));
+			},
+			pos: [
+				({game}, index) => {
+					const angle = game.view.turn.get();
+					const dx = Math.cos(angle);
+					const dz = Math.sin(angle);
+					return game.sceneData.cam[0] + dx * ((index - 3) * .25) - dz * (.01);
+				},
+				0,
+				({game}, index) => {
+					const angle = game.view.turn.get();
+					const dz = Math.sin(angle);
+					const dx = Math.cos(angle);
+					return game.sceneData.cam[2] + dz * ((index - 3) * .25) - dx * (.01);
+				}
+			],
+			animation: {
+				frame: ({definition}, index) => definition.charIndexes[index],
+				range: ({definition}) => definition.characters.get().length,
+			},
+			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
+			grid: [
+				({definition}) => Math.ceil(Math.sqrt(definition.characters.get().length)),
+				({definition}) => Math.ceil(definition.characters.get().length / definition.grid[0].get()),
+			],
+			count: ({definition}) => definition.text.get().length,			
+		},
+		{
 			src: "zombie",
 			animation: {
 				frame: ({game, definition}, index) => {
@@ -508,13 +580,13 @@ SceneManager.add({
 			count: ({game, definition}, index) => game.sceneData.cells.length * 4,
 		},
 		{
-			src: "comic",
+			src: "primary-font",
 			animation: {
 				frame: 0,
 				range: ({definition}) => definition.characters.get().length,
 				frameRate: 24,
 			},
-			characters: ({game}) => game.engine.data.generated.config.game.fonts.comic.characters,
+			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
 			grid: [
 				({definition}) => Math.ceil(Math.sqrt(definition.characters.get().length)),
 				({definition}) => Math.ceil(definition.characters.get().length / definition.grid[0].get()),

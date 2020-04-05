@@ -4,8 +4,14 @@
 	"width": 800,
 	"height": 500,
 	"fonts": {
-		"comic": {
+		"primary-font": {
 			"name": "Arctic",
+			"characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ",
+			"fontSize": 160,
+			"cellSize": 256
+		},
+		"creep-font": {
+			"name": "Creepster",
 			"characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ",
 			"fontSize": 160,
 			"cellSize": 256

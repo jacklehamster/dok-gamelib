@@ -151,6 +151,7 @@ SceneManager.add({
 		},
 		{
 			src: "grass-tile",
+			padding: 1,
 			hidden: ({game}, index) => {
 				const px = Math.floor(game.tpBoy.x);
 				const py = Math.floor(game.tpBoy.y);

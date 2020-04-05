@@ -97,6 +97,7 @@
 			"destroy": null,
 			"refresh": null,
 			"brightness": 100,
+			"tintColor": 0,
 			"padding": 0,
 			"refreshRate": 0
 		}

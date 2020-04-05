@@ -12,7 +12,6 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			frameRate: 0,
 		};
 		this.grid = [0, 0];
-		this.brightness = 0;
 		this.padding = 0;
 	}
 

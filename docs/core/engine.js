@@ -5,6 +5,7 @@
 class Engine {
 	constructor(canvas, sceneManager) {
 		canvas.focus();
+		this.canvas = canvas;
 		this.data = getData();
 		this.dataStore = new DataStore();
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.data.generated.config);
@@ -31,10 +32,12 @@ class Engine {
 		this.spritesToRemove = [];
 		this.onSceneChangeListener = [];
 		this.onLoopListener = [];
+		this.onStartListener = [];
 	}
 
 	start() {
 		Engine.beginLooping(this);
+		this.onStartListener.forEach(listener => listener(this));
 		this.resetScene(this.sceneManager.getFirstSceneName());
 		console.log("start scene:", this.currentScene.name);
 	}
@@ -86,6 +89,8 @@ class Engine {
 				return this.onSceneChangeListener;
 			case "loop":
 				return this.onLoopListener;
+			case "start":
+				return this.onStartListener;
 		}
 	}
 
@@ -122,7 +127,7 @@ class Engine {
 			this.currentScene.setEngine(this);
 			this.sceneRenderer.init(scene);
 			this.spriteDefinitionProcessor.init(scene.sprites, scene);
-			this.onSceneChangeListener.forEach(callback => callback(sceneName));
+			this.onSceneChangeListener.forEach(callback => callback({name:sceneName, scene, config: scene.config}));
 			window.game = scene;
 		}
 	}

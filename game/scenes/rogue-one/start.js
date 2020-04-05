@@ -246,6 +246,40 @@ SceneManager.add({
 	},
 	sprites: [
 		{
+			src: "creep-font",
+			tintColor: 0xFFaa0066,
+			scale: [1, 1],
+			text: "Penguin",
+			init: ({definition, game}) => {
+				const text = definition.text.get();
+				const characters = game.getFont(definition.src.get()).characters;
+				definition.charIndexes = text.split("").map(letter => characters.indexOf(letter));
+			},
+			pos: [
+				({game}, index) => {
+					const angle = game.view.turn.get();
+					const dx = Math.cos(angle);
+					return game.sceneData.cam[0] + dx * index * .25;
+				},
+				0,
+				({game}, index) => {
+					const angle = game.view.turn.get();
+					const dz = Math.sin(angle);
+					return game.sceneData.cam[2] + dz * index * .25;
+				}
+			],
+			animation: {
+				frame: ({definition}, index) => definition.charIndexes[index],
+				range: ({definition}) => definition.characters.get().length,
+			},
+			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
+			grid: [
+				({definition}) => Math.ceil(Math.sqrt(definition.characters.get().length)),
+				({definition}) => Math.ceil(definition.characters.get().length / definition.grid[0].get()),
+			],
+			count: ({definition}) => definition.text.get().length,			
+		},
+		{
 			src: "penguin",
 			init: ({game}) => {
 				const penguinFrames = [

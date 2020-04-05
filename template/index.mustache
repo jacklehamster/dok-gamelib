@@ -6,6 +6,7 @@
 		<meta name="description" content="{{obj.description}}">
 
 		<link rel="stylesheet" type="text/css" href="css/game.css" media="print" onload="this.media='all'">
+		<link rel="stylesheet" type="text/css" href="css/night-owl.css" media="print" onload="this.media='all'">
 
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="viewport" content="minimal-ui, user-scalable=no, initial-scale=1">
@@ -14,6 +15,9 @@
 		<meta name="apple-mobile-web-app-title" content="{{obj.title}}">
 
 		<script src="lib/gl-matrix.js"></script>
+ 		{{#obj.libs}}
+		<script src="generated/js/lib/{{.}}"></script>
+		{{/obj.libs}}
 		<script src="generated/js/data.js"></script>
 		<script src="game/game.js"></script>
 		<script src="game/sprite-definition.js"></script>
@@ -36,12 +40,10 @@
 		<script src="core/sprite.js"></script>
 		<script src="core/sprite-definition-processor.js"></script>
 		<script src="core/video-manager.js"></script>
-		<script src="core/source-code.js"></script>
 		<script src="core/engine.js"></script>
 		<script src="core/game-property.js"></script>
 		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
-
  		{{#obj.scenes}}
 		<script>SceneManager.loadingSceneName = "{{.}}";</script>
 		<script src="generated/js/scenes/{{.}}/start.js"></script>
@@ -49,52 +51,26 @@
 	</head>
 
 	<body class="container">
-		<div id=gameOver style="margin: 10px; font-size: 80pt; position: absolute; color: #990000; font-family: 'Creepster', cursive;"></div>
+		<div id="editor" class="editor">
+			<div class="tap-container">
+				<div class="tab">Game Config</div>
+				<div class="tab selected">Scene Code</div>
+				<div style="width: 100%"></div>
+				<div id="panel-exit-button" class="panel-button" onclick="SceneThumbnail.instance.shiftPanel()">GAME ➡️</div>
+			</div>
+			<div class="editor-container">
+				<div id="source-code" class="source-code"></div>
+			</div>
+		</div>
 		<div id="panel" class="panel">
-			<div id="scene-thumbnails" style="display: flex; flex-direction: row"></div>
 			<div id=score style="margin: 10px; font-size: 20pt; position: absolute; color: silver"></div>
 			<canvas id="canvas" width={{obj.width}} height={{obj.height}}></canvas>
-		</div>
-		<div id="source-code">
 		</div>
 		<script>
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, ({{{json}}}));
 			document.addEventListener("DOMContentLoaded", () => engine.start());
-
-			function setupSceneThumbnails() {
-				const sceneThumbnails = document.getElementById("scene-thumbnails");
-				for (let s in engine.sceneManager.scenes) {
-					const tab = sceneThumbnails.appendChild(document.createElement("div"));
-					tab.id = `tab-${s}`;
-					tab.classList.add("tab");
-					tab.innerText = s;
-					tab.scene = s;
-					tab.addEventListener("click", e => {
-						engine.resetScene(e.currentTarget.scene);
-					});
-				}
-			}
-			setupSceneThumbnails();
-			engine.addEventListener("sceneChange", currentScene => {
-				const sceneThumbnails = document.getElementById("scene-thumbnails");
-				const tabs = sceneThumbnails.querySelectorAll(".tab");
-				for (let t = 0; t < tabs.length; t++) {
-					const tab = tabs[t];
-					if (tab.id === `tab-${currentScene}`) {
-						tab.classList.add("selected");
-					} else {
-						tab.classList.remove("selected");
-					}
-				}
-			});
-
-			function shiftPanel(doShift) {
-				if (doShift) {
-					document.getElementById("panel").classList.add("shifted");
-				} else {
-					document.getElementById("panel").classList.remove("shifted");
-				}
-			}
 		</script>
+		<script src="editor/scene-thumbnail.js"></script>
+		<script src="editor/source-code.js"></script>
 	</body>
 </html>

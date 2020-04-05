@@ -55,6 +55,7 @@ class GLRenderer {
 			texCoord: 	new EngineBuffer(TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			animation: 	new EngineBuffer(ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			grid: 		new EngineBuffer(GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			tintColor: 	new EngineBuffer(TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
 
 		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
@@ -163,7 +164,6 @@ class GLRenderer {
 
 	sendUpdatedBuffers(now) {
 		const { shader, bufferInfo } = this;
-		const { vertex, offset, move, gravity, spriteType, texCoord, animation, grid } = this.bufferInfo;
 		for (let b in bufferInfo) {
 			this.sendUpdatedBuffer(bufferInfo[b], now);
 		}

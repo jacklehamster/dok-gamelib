@@ -10,6 +10,7 @@ varying mediump vec3 vNormal;
 varying mediump vec3 vFragPos;
 varying mediump float vTextureSlot;
 varying mediump float vBrightness;
+varying mediump vec4 vTintColor;
 uniform vec4 uBackground;
 uniform vec3 uLightPos;
 uniform vec4 uLightIntensity;
@@ -72,6 +73,7 @@ void main(void) {
 	if (color.a <= 0.1) {
 		discard;
 	}
+	color = mix(color, vec4(vTintColor.rgb, color.a), vTintColor.a);
 	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2, max(0.0, .8 + zDist))));
 	color = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, zDist);
 

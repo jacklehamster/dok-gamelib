@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "forever --minUptime 1000 --spinSleepTime 1000 -w index.js"
+    "create-dir": "npx mkdirp generated/lib",
+    "browserify": "npm run create-dir && browserify main.js -o generated/lib/json-compact.js",
+    "forever": "forever --minUptime 1000 --spinSleepTime 1000 -w index.js",
+    "start": "npm run browserify && npm run forever"
   },
   "author": "jacklehamster",
   "repository": {
@@ -18,7 +21,9 @@
     "crypto": "^1.0.1",
     "express": "^4.17.1",
     "fs-readdir-recursive": "^1.1.0",
+    "highlight.js": "^9.18.1",
     "image-size": "^0.8.3",
+    "js-beautify": "^1.10.3",
     "json-stringify-pretty-compact": "^2.0.0",
     "mustache": "^4.0.1",
     "rimraf": "^3.0.2",

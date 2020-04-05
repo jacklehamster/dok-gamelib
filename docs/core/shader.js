@@ -3,7 +3,6 @@
  */
 
 class Shader {
-
 	constructor(gl, vertexShader, fragmentShader, bufferInfo) {
 		const shaderConfig = {
 			attributes: {
@@ -16,6 +15,7 @@ class Shader {
 				texCoord: "aVertexTextureCoord",
 				animation: "aAnimationData",
 				grid: "aGrid",
+				tintColor: "aTintColor",
 			},
 			uniforms: {
 				projection: "uProjectionMatrix",
