@@ -14,7 +14,7 @@ class SourceCode {
 			});
 			config.addEventListener("click", () => {
 				this.selectTab("config");
-				SourceCode.instance.render(getData().generated.config);
+				SourceCode.instance.render(getData().generated.config.game);
 			});
 		});
 	}
@@ -49,7 +49,7 @@ class SourceCode {
 				SourceCode.instance.render(this.engine.currentScene.config);
 				break;
 			case "config":
-				SourceCode.instance.render(getData().generated.config);
+				SourceCode.instance.render(getData().generated.config.game);
 				break;
 		}
 	}
