@@ -1083,7 +1083,7 @@ function getData() {
             },
             "dobuki": {"offset": [3624, 956], "size": [280, 280], "index": 0},
             "artic": {"offset": [3624, 1256], "size": [256, 256], "index": 0},
-            "dude": {"offset": [2580, 1556], "size": [1024, 1024], "index": 0},
+            "dok": {"offset": [2580, 1556], "size": [1024, 1024], "index": 0},
             "yupa-dance": {
               "offset": [3624, 1556],
               "size": [256, 256],
@@ -1091,23 +1091,24 @@ function getData() {
             },
             "cage": {"offset": [3900, 1556], "size": [128, 192], "index": 0},
             "gun": {"offset": [3624, 1832], "size": [128, 128], "index": 0},
-            "icefloor.jpg": {
-              "offset": [2580, 2600],
-              "size": [800, 800],
-              "index": 0
-            },
-            "crystal-wall.jpg": {
-              "offset": [2580, 3420],
-              "size": [512, 512],
-              "index": 0
-            },
+            "dude": {"offset": [2580, 2600], "size": [1024, 1024], "index": 0},
             "boolbool": {"offset": [0, 998], "size": [1536, 1536], "index": 0},
-            "icewall.jpg": {
+            "icefloor.jpg": {
               "offset": [1556, 998],
               "size": [800, 800],
               "index": 0
             },
-            "water.jpg": {"offset": [1556, 1818], "size": [512, 512], "index": 0},
+            "icewall.jpg": {
+              "offset": [1556, 1818],
+              "size": [800, 800],
+              "index": 0
+            },
+            "crystal-wall.jpg": {
+              "offset": [1556, 2638],
+              "size": [512, 512],
+              "index": 0
+            },
+            "water.jpg": {"offset": [1556, 3170], "size": [512, 512], "index": 0},
             "tp-boy": {"offset": [0, 0], "size": [1536, 2048], "index": 1},
             "tp": {"offset": [1556, 0], "size": [1536, 2048], "index": 1}
           },
@@ -1127,98 +1128,46 @@ function getData() {
             {"offset": [3900, 1768], "size": [196, 64], "index": 0},
             {"offset": [3772, 1832], "size": [324, 2264], "index": 0},
             {"offset": [3624, 1980], "size": [148, 2116], "index": 0},
-            {"offset": [3400, 2600], "size": [224, 1496], "index": 0},
-            {"offset": [3112, 3420], "size": [288, 676], "index": 0},
-            {"offset": [2580, 3952], "size": [532, 144], "index": 0},
+            {"offset": [2580, 3644], "size": [1044, 452], "index": 0},
             {"offset": [2376, 998], "size": [204, 820], "index": 0},
-            {"offset": [2088, 1818], "size": [492, 2278], "index": 0},
-            {"offset": [1556, 2350], "size": [532, 1746], "index": 0},
+            {"offset": [2376, 1818], "size": [204, 2278], "index": 0},
+            {"offset": [2088, 2638], "size": [288, 1458], "index": 0},
+            {"offset": [1556, 3702], "size": [532, 394], "index": 0},
             {"offset": [0, 2554], "size": [1556, 1542], "index": 0},
             {"offset": [3112, 0], "size": [984, 2068], "index": 1},
             {"offset": [1556, 2068], "size": [2540, 2028], "index": 1},
             {"offset": [0, 2068], "size": [1556, 2028], "index": 1}
           ]
         },
-        "sha": {
-          "size": [4096, 4096],
-          "spritesheets": [
-            "generated/spritesheets/sheet0.png",
-            "generated/spritesheets/sheet1.png"
-          ],
-          "sprites": {
-            "landscape.jpg": {"offset": [0, 0], "size": [2560, 978], "index": 0},
-            "grass-tile": {"offset": [2580, 0], "size": [1024, 1536], "index": 0},
-            "penguin": {"offset": [3624, 0], "size": [256, 320], "index": 0},
-            "zombie": {"offset": [3900, 0], "size": [128, 192], "index": 0},
-            "color-blocks": {"offset": [4048, 0], "size": [2, 2], "index": 0},
-            "access-card": {"offset": [3900, 212], "size": [64, 64], "index": 0},
-            "32x64": {"offset": [3984, 212], "size": [32, 64], "index": 0},
-            "creep-font": {"offset": [3624, 340], "size": [320, 288], "index": 0},
-            "blue-wall": {"offset": [3964, 340], "size": [64, 128], "index": 0},
-            "water": {"offset": [3964, 488], "size": [64, 64], "index": 0},
-            "primary-font": {
-              "offset": [3624, 648],
-              "size": [320, 288],
-              "index": 0
-            },
-            "dobuki": {"offset": [3624, 956], "size": [280, 280], "index": 0},
-            "artic": {"offset": [3624, 1256], "size": [256, 256], "index": 0},
-            "dude": {"offset": [2580, 1556], "size": [1024, 1024], "index": 0},
-            "yupa-dance": {
-              "offset": [3624, 1556],
-              "size": [256, 256],
-              "index": 0
-            },
-            "cage": {"offset": [3900, 1556], "size": [128, 192], "index": 0},
-            "gun": {"offset": [3624, 1832], "size": [128, 128], "index": 0},
-            "icefloor.jpg": {
-              "offset": [2580, 2600],
-              "size": [800, 800],
-              "index": 0
-            },
-            "crystal-wall.jpg": {
-              "offset": [2580, 3420],
-              "size": [512, 512],
-              "index": 0
-            },
-            "boolbool": {"offset": [0, 998], "size": [1536, 1536], "index": 0},
-            "icewall.jpg": {
-              "offset": [1556, 998],
-              "size": [800, 800],
-              "index": 0
-            },
-            "water.jpg": {"offset": [1556, 1818], "size": [512, 512], "index": 0},
-            "tp-boy": {"offset": [0, 0], "size": [1536, 2048], "index": 1},
-            "tp": {"offset": [1556, 0], "size": [1536, 2048], "index": 1}
-          },
-          "freeCells": [
-            {"offset": [4070, 0], "size": [26, 22], "index": 0},
-            {"offset": [4048, 22], "size": [48, 190], "index": 0},
-            {"offset": [4036, 212], "size": [60, 84], "index": 0},
-            {"offset": [3984, 296], "size": [112, 44], "index": 0},
-            {"offset": [3900, 296], "size": [84, 44], "index": 0},
-            {"offset": [4048, 340], "size": [48, 148], "index": 0},
-            {"offset": [4048, 488], "size": [48, 1068], "index": 0},
-            {"offset": [3964, 572], "size": [84, 984], "index": 0},
-            {"offset": [3924, 956], "size": [40, 600], "index": 0},
-            {"offset": [3900, 1256], "size": [24, 300], "index": 0},
-            {"offset": [3624, 1532], "size": [276, 24], "index": 0},
-            {"offset": [4048, 1556], "size": [48, 212], "index": 0},
-            {"offset": [3900, 1768], "size": [196, 64], "index": 0},
-            {"offset": [3772, 1832], "size": [324, 2264], "index": 0},
-            {"offset": [3624, 1980], "size": [148, 2116], "index": 0},
-            {"offset": [3400, 2600], "size": [224, 1496], "index": 0},
-            {"offset": [3112, 3420], "size": [288, 676], "index": 0},
-            {"offset": [2580, 3952], "size": [532, 144], "index": 0},
-            {"offset": [2376, 998], "size": [204, 820], "index": 0},
-            {"offset": [2088, 1818], "size": [492, 2278], "index": 0},
-            {"offset": [1556, 2350], "size": [532, 1746], "index": 0},
-            {"offset": [0, 2554], "size": [1556, 1542], "index": 0},
-            {"offset": [3112, 0], "size": [984, 2068], "index": 1},
-            {"offset": [1556, 2068], "size": [2540, 2028], "index": 1},
-            {"offset": [0, 2068], "size": [1556, 2028], "index": 1}
-          ]
-        },
+        "sha": [
+          "32x64=243fc25a0a5f1039a9d1e6de34b8c829d8cd295480d3cd6b685d149dc670de06",
+          "access-card=f099f0d2076d4794c1c384e203654c3ac41f6f40a6bfa8031f5fa3b81fb6ba1f",
+          "artic=bd39173160f9c80c55e2510a722334c3fe87916bf33c8f7490c8318143214486",
+          "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
+          "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
+          "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
+          "boolbool=bbdeeb3ccc0dd018fae8c83561dcbb2ed6cb161761916b2ed329f1d8fda06b0c",
+          "cage=ddb62921f34a01ab79047d789ac090ee530b603b22d234747431625358ca6dd1",
+          "color-blocks=afee4762dd872c26c4efdc0c3e8d02c3e8ac72ae88864221f1efebc0ad8829a9",
+          "creep-font=4b32593978151de7386cdf3fa00f99a719b31a9a93ca9a017a4bc55c4a821319",
+          "crystal-wall.jpg=b13dc3e43cbb80a18501d4b9e177920e4db02722db873bbefb39a711ffc1295a",
+          "dobuki=68170001dff751094f728f353190b79f6c270ddec113962f68a97f76ae9a5b00",
+          "dok=910cf66b9d9890d0f2c64b1d3e3e1b6311467ba2725acef9313c5bb6f8ee2c47",
+          "dude=d78885bc5a0c826745e3d6ba9fa95d2100afc854d179163dffb6f7dd64264cab",
+          "grass-tile=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
+          "gun=cc82ad5fb0f9d24f82d195decd1f57af69e4bc6072f930927c5cf588b1e52226",
+          "icefloor.jpg=f7d4ce79235b500ee9558ffbcc88c61a1a7864b67f934109633754ad824d6e6c",
+          "icewall.jpg=450e93a073b150b27034e5c4ef8ca5979c42f103899ede49d546188986331b4e",
+          "landscape.jpg=07fe4f08f11cfe8dfd3dcd7bb5124a40874db70f9894a62c4b705e77e5feff98",
+          "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
+          "primary-font=e5c7bedfb5640014b9c22be1408e73190b8de0f9d20df71a29eb6e71b29f636a",
+          "tp-boy=33e8cfc18e19a439cae09e340ffb5fbdfc53db5790cc1d9d19c425fdd9ed49cf",
+          "tp=58560e5173712d77920de86824d3a0ecf46238d909af4df15593c1479be6b906",
+          "water.jpg=2ca8903494c6ae85beeedd303881f58d7112667dc9555a8d982561ccb7bd0844",
+          "water=cfaa1a1ad365ec6e3b6dea3d06104d80d2eb75e9f36b9e66b4e6f8f169343724",
+          "yupa-dance=040c81c00fa266d51090731d00aa568a9b86289ff8594ee0b450b6c6d06586f9",
+          "zombie=9b90d03bea08ca90684529ac1ea3c6d2d10e2c985725e2081b0fcb031372ed42"
+        ],
         "video": {
           "double-king": {
             "id": "double-king",

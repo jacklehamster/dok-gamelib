@@ -181,11 +181,11 @@ function getSpritesheets() {
 		    return assets.deleteFolders(publicDir, generatedDataDir)
 		    .then(() => saveFontMap())
 		    .then(() => assets.produceSpritesheets([gamesDirectory, generatedAssetDir], TEXTURE_SIZE, TEXTURE_SIZE))
-		    .then(data => assets.getAssetsSha(gamesDirectory, generatedAssetDir).then(() => data))
-		    .then(data => {
+		    .then(spritesheets => assets.getAssetsSha(gamesDirectory, generatedAssetDir).then(data => { return {data, spritesheets}; }))
+		    .then(({data, spritesheets}) => {
 				fs.promises.mkdir(`${generatedDataDir}/config`, { recursive: true })
 					.then(() => fs.promises.writeFile(`${generatedDataDir}/config/sha.json`, JSON.stringify(data, null, '\t')));
-				return Promise.resolve(data);
+				return Promise.resolve(spritesheets);
 		    });
 		}
 	});

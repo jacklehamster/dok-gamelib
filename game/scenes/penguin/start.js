@@ -326,6 +326,7 @@ SceneManager.add({
 		},
 		{
 			src: "penguin",
+			brightness: 150,
 			init: ({game}) => {
 				const penguinFrames = [
 					{ orientation: 'E', startFrame: 8, flip: true, },
