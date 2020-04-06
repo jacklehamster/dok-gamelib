@@ -13,7 +13,7 @@ SceneManager.add({
 			sceneData.life = 20;
 			sceneData.hit = 0;
 			sceneData.score = 0;
-			sceneData.mapSize = 40;
+			sceneData.mapSize = 30;
 
 			sceneData.npcs = [
 			];
@@ -283,7 +283,7 @@ SceneManager.add({
 				game.getVideo("double-king").pause();
  			},
 			refresh: ({game}) => {
-				game.engine.glRenderer.textureManager.updateVideoTexture(game.getVideo("double-king"), 15, 0, 0);
+				game.engine.glRenderer.textureManager.updateVideoTexture(game.getVideo("double-king"), 15, 0, 140);
 			},
 			refreshRate: 24,
 			cell: ({game, definition},index) => {

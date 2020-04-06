@@ -57,12 +57,6 @@ function generateDataCode(outputPath) {
 	);
 }
 
-function clearGenerated() {
-    const publicDir = `${webDir}/generated`;
-    const generatedDir = 'data/generated';
-    return assets.deleteFolders(publicDir, generatedDir);
-}
-
 function copyVideos() {
 	return fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/videos`), { recursive: true }).then(() => {
 	}).then(() => {
@@ -105,11 +99,12 @@ function copyScenes() {
 				    if ( !fs.existsSync( targetFolder ) ) {
 				        fs.mkdirSync( targetFolder );
 				    }
-
 					return fs.promises.copyFile(
 						path.join(__dirname, 'game', 'scenes', scene),
 						path.join(__dirname, webDir, 'generated', 'js', 'scenes', scene)
-					);
+					).catch(e => {
+						console.error(e.messsage);
+					});
 				}).concat([
 					fs.promises.copyFile(`${__dirname}/game/game.json`, `${__dirname}/data/generated/config/game.json`),
 				])).then(resolve);
@@ -183,14 +178,14 @@ function getSpritesheets() {
 		} else {
 		    const publicDir = `${webDir}/generated`;
 		    const generatedDataDir = 'data/generated';
-		    return assets.deleteFolders(publicDir, generatedDataDir).then(() => {
-		    	return assets.produceSpritesheets([gamesDirectory, generatedAssetDir], TEXTURE_SIZE, TEXTURE_SIZE);
-		    }).then(data => {
-		    	return assets.getAssetsSha(gamesDirectory, generatedAssetDir);
-		    }).then(data => {
+		    return assets.deleteFolders(publicDir, generatedDataDir)
+		    .then(() => saveFontMap())
+		    .then(() => assets.produceSpritesheets([gamesDirectory, generatedAssetDir], TEXTURE_SIZE, TEXTURE_SIZE))
+		    .then(data => assets.getAssetsSha(gamesDirectory, generatedAssetDir).then(() => data))
+		    .then(data => {
 				fs.promises.mkdir(`${generatedDataDir}/config`, { recursive: true })
 					.then(() => fs.promises.writeFile(`${generatedDataDir}/config/sha.json`, JSON.stringify(data, null, '\t')));
-				return data;
+				return Promise.resolve(data);
 		    });
 		}
 	});
@@ -228,6 +223,7 @@ function saveFontMap() {
 					fonts[id] = { name, characters, fontSize, cellSize, letterInfo };
 				});
 				return fs.promises.writeFile(`generated/assets/fonts.json`, JSON.stringify(fonts, null, '\t'))
+					.then(() => fs.promises.mkdir(`${__dirname}/data/generated/config`, { recursive: true}))
 					.then(() => fs.promises.copyFile(`generated/assets/fonts.json`, `${__dirname}/data/generated/config/fonts.json`))
 					.then(() => fonts);
 			});
@@ -238,14 +234,12 @@ function saveFontMap() {
 app.get('/', function (req, res) {
 	console.log(`Processing game: ${new Date()}`);
 	const startTime = Date.now();
-	saveFontMap().then(() => {
-		return Promise.all([
-			copyVideos(),
-			getSpritesheets(),
-			copyScenes(),
-			copyLibs(),
-		])
-	})
+	getSpritesheets()
+	.then(() => Promise.all([
+		copyVideos(),
+		copyScenes(),
+		copyLibs(),
+	]))
 	.then(() => console.log(`Done processing assets: ${Date.now() - startTime}ms`))
 	.then(() => Promise.all([
 		template.getFolderAsData(path.join(__dirname, 'game', 'scenes')),

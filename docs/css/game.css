@@ -64,7 +64,7 @@ html, body {
 .editor-container {
   overflow-x: visible;
   overflow-y: auto;
-  width: 600px;
+  width: 620px;
   height: 400px;
 }
 
@@ -88,7 +88,7 @@ html, body {
   white-space: pre;
   border: 1px solid #ccc;
   margin: 2px;
-  padding: 6px;
+  padding: 3px;
   overflow-x: auto;
 }
 
@@ -105,7 +105,7 @@ html, body {
 .editor.shifted {
   visibility: visible;
   opacity: 1;
-  transform: perspective(1000px) translate3d(100px, 0, 0) rotate3d(0, 1, 0, 0);
+  transform: perspective(1000px) translate3d(110px, 0, 0) rotate3d(0, 1, 0, 0);
 }
 
 .hidden {

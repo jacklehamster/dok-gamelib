@@ -1,3 +1,6 @@
+const GROUND_ICE = 1;
+const GROUND_WATER = 2;
+
 SceneManager.add({
 	Game: class extends Game {
 		constructor() {
@@ -11,13 +14,25 @@ SceneManager.add({
 			sceneData.cells = [];
 			sceneData.cellMap = {};
 
-			sceneData.life = 20;
-			sceneData.hit = 0;
-			sceneData.score = 0;
-			sceneData.mapSize = 30;
+			sceneData.mapSize = 22;
 
-			sceneData.npcs = [];
+			sceneData.viewTop = 1;
+			sceneData.viewZoom = 0;
+
 			this.resetMap(0, 0);
+		}
+
+		getCorner(x0, x1, z0, z1) {
+			const types = [
+				this.calcGroundedType(x0, z0),
+				this.calcGroundedType(x0, z1),
+				this.calcGroundedType(x1, z0),
+				this.calcGroundedType(x1, z1),
+			];
+			if (types.some(type => type === GROUND_ICE)) {
+				return 0;
+			}
+			return (this.makeRandom(x0,x1,z0,z1) % 10) / 20;
 		}
 
 		resetMap(x, z) {
@@ -26,33 +41,25 @@ SceneManager.add({
 			const mm = {};
 			for (let zz = 0; zz < sceneData.mapSize; zz++) {
 				for (let xx = 0; xx < sceneData.mapSize; xx++) {
-					const xxx = xx-sceneData.mapSize/2 + x;
-					const zzz = zz-sceneData.mapSize/2 + z;
+					const xxx = xx-Math.floor(sceneData.mapSize/2) + x;
+					const zzz = zz-Math.floor(sceneData.mapSize/2) + z;
 					const tag = `${xxx}_${zzz}`;
 					if (!cellMap[tag]) {
+						const type = this.calcGroundedType(xxx, zzz);
 						const cell = {
 							x: xxx, z: zzz,
 							index: cells.length,
 							corners: [
-								(this.makeRandom(xxx-1,xxx,zzz-1,zzz) % 10) / 30,
-								(this.makeRandom(xxx-1,xxx,zzz,zzz+1) % 10) / 30,
-								(this.makeRandom(xxx,xxx+1,zzz,zzz+1) % 10) / 30,
-								(this.makeRandom(xxx,xxx+1,zzz-1,zzz) % 10) / 30,
+								this.getCorner(xxx-1,xxx,zzz-1,zzz),
+								this.getCorner(xxx-1,xxx,zzz,zzz+1),
+								this.getCorner(xxx,xxx+1,zzz,zzz+1),
+								this.getCorner(xxx,xxx+1,zzz-1,zzz),
 							],
-							grounded: this.calcGrounded(xxx, zzz),
+							type,
+							grounded: type < 8,
 						};
 						cellMap[tag] = cell;
 						cells.push(cell);
-
-						if (cell.grounded && Math.random() * sceneData.npcs.length < 2) {
-							const src = Math.random() < .5 ? "dude" : "boolbool";
-							sceneData.npcs.push({
-								src,
-								x: xxx, z: zzz,
-								grid: src==='dude' ? [2,2] : [3,3],
-							});
-						}
-
 					}
 					mm[tag] = true;
 				}
@@ -78,10 +85,10 @@ SceneManager.add({
 			return Math.abs(val);
 		}
 
-		calcGrounded(xPos, zPos) {
+		calcGroundedType(xPos, zPos) {
 			const value = Math.abs(Math.sin(xPos * .1 + zPos * .3));
 			const value2 = Math.abs(Math.cos(zPos * .1 + xPos * .3));
-			return Math.floor(this.seed + value * 100000) % 2 !== 1 || Math.floor(this.seed + value2 * 10000) % 2 !== 1;			
+			return Math.abs((Math.floor(this.seed + value * 100000) % 11 ^ Math.floor(this.seed + value2 * 10000) % 7 !== 1)) % 13;
 		}
 
 		isGrounded(xPos, zPos) {
@@ -108,12 +115,9 @@ SceneManager.add({
 }, {
 	settings: {
 		thumbnail: "penguin",
-		docBackground: ({game}) => {
-			const hitTime = game.now - game.sceneData.hit;
-			return hitTime < 300 ? 0xaa0000 : 0;
-		},
-		background: ({game}) => 0xC8C5C3,
-		curvature: -2,
+		background: 0xE8E5E3,
+//		background: 0xC8C5C3,
+		curvature: 2,
 	},
 	light: {
 		pos: [
@@ -121,22 +125,54 @@ SceneManager.add({
 			100,
 			0,
 		],
-		ambient: 1,
+		ambient: .7,
 		shininess: 1,
 		specularStrength: 0.1,
 		diffusionStrength: 0.5
 	},
+	keyboard: {
+		onKeyPress: ({game}, code) => {
+			const { sceneData } = game;
+			switch(code) {
+				case "KeyV":
+					if (sceneData.viewTop < sceneData.viewZoom) {
+						sceneData.viewTop = game.now;
+					} else {
+						sceneData.viewZoom = game.now;
+					}
+					break;
+				default:
+//					console.log(code);
+					break;
+			}
+		},
+	},
 	view: {
 		pos: [
-			({game}) => game.sceneData.cam[0] + game.sceneData.camShift[0],// + game.sceneData.penguin.mov[0] * 5,
+			({game}) => game.sceneData.cam[0] + game.sceneData.camShift[0],
 			({game}) => game.sceneData.cam[1] + game.sceneData.camShift[1],
-			({game}) => game.sceneData.cam[2] + game.sceneData.camShift[2],// + game.sceneData.penguin.mov[2] * 5,
+			({game}) => game.sceneData.cam[2] + game.sceneData.camShift[2],
 		],
 		viewAngle: 45,
-		height: 1,
-		tilt: .4,
 		turn: ({game}) => game.sceneData.turn,
-		cameraDistance: 4,
+		// tilt: .7,
+		// cameraDistance: 15,
+		// tilt: .4,
+		// cameraDistance: 5,
+		tilt: ({game}) => {
+			const { sceneData, now } = game;
+			const progress = Math.min(1, (now - Math.max(sceneData.viewTop, sceneData.viewZoom)) / 300);
+			const titlFrom = sceneData.viewTop > sceneData.viewZoom ? .4 : .7;
+			const tiltGoal = sceneData.viewTop > sceneData.viewZoom ? .7 : .4;
+			return progress * tiltGoal + (1 - progress) * titlFrom;
+		},
+		cameraDistance: ({game}) => {
+			const { sceneData, now } = game;
+			const progress = Math.min(1, (now - Math.max(sceneData.viewTop, sceneData.viewZoom)) / 300);
+			const distFrom = sceneData.viewTop > sceneData.viewZoom ? 5 : 15;
+			const distGoal = sceneData.viewTop > sceneData.viewZoom ? 15 : 5;
+			return progress * distGoal + (1 - progress) * distFrom;
+		},
 		range: [0, 60]
 	},
 	refresh: ({game}) => {
@@ -319,7 +355,7 @@ SceneManager.add({
 				return ((game.view.turn.get() - Math.atan2(dz, dx)) / Math.PI * 180 % 360 + 360) % 360;
 			},
 			refresh: ({game, definition}) => {
-				const { cam, penguin, camShift } = game.sceneData;
+				const { cam, penguin, camShift, viewZoom, viewTop } = game.sceneData;
 				const { pos } = penguin;
 				const dx = cam[0] - pos[0];
 				const dz = cam[2] - pos[2];
@@ -336,8 +372,9 @@ SceneManager.add({
 				}
 
 				const angledFrame = definition.angledFrame.get();
-				const camShiftGoalX = angledFrame.orientation.indexOf('N')>=0 ? 0 : penguin.mov[0] * 3;
-				const camShiftGoalY = angledFrame.orientation.indexOf('N')>=0 ? 0 : penguin.mov[2] * 3;
+				const movValue = viewZoom < viewTop ? (angledFrame.orientation.indexOf('S')>=0 ? 10 : 5) : (angledFrame.orientation.indexOf('S')>=0 ? 6 : angledFrame.orientation.indexOf('N')>=0 ? 0 : 3);
+				const camShiftGoalX = penguin.mov[0] * movValue;
+				const camShiftGoalY = penguin.mov[2] * movValue;
 				camShift[0] += (camShiftGoalX - camShift[0]) / 5;
 				camShift[2] += (camShiftGoalY - camShift[2]) / 5;
 			},
@@ -355,12 +392,26 @@ SceneManager.add({
 			hotspot: [0, -.6],
 			scale: [
 				({game, definition},index) => definition.angledFrame.get().flip ? -1 : 1,
-				.9,
+				({game}) => {
+					const { sceneData } = game;
+					if (sceneData.viewTop > sceneData.viewZoom) {
+						return .8;
+					} else {
+						return .9;
+					}
+				}
 			],
 		},
 		{	//	ground
-			src: "artic",
-			brightness: 70,
+			src: ({game, definition}, index) => {
+				const { type } = definition.cell.get(index);
+				if (type === GROUND_WATER) {
+					return "water";
+				}
+				return "artic";
+			},
+			tintColor: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 0x6600ccFF : 0,
+			brightness: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 80 : 70,
 			padding: 1,
 			cell: ({game, definition},index) => game.sceneData.cells[index],
 			grounded: ({game, definition},index) => {
@@ -372,19 +423,31 @@ SceneManager.add({
 				({game, definition},index) => !definition.grounded.get(index) ? 0 : game.sceneData.cells[index].corners[2],
 				({game, definition},index) => !definition.grounded.get(index) ? 0 : game.sceneData.cells[index].corners[3],
 			],
-			type: SpriteType.Floor,
+			type: ({definition}, index) => {
+				const { type } = definition.cell.get(index);
+				if (type === GROUND_WATER) {
+					return SpriteType.Water;
+				}
+				return SpriteType.Floor;
+			},
 			xPos: ({game, definition},index) => definition.cell.get(index).x,
 			zPos: ({game, definition},index) => definition.cell.get(index).z,
 			pos: [
 				({game, definition},index) => definition.xPos.get(index) * 3,
-				-1.5,
+				({game, definition},index) => definition.grounded.get(index) ? -1.5 : 2.5,
 				({game, definition},index) => definition.zPos.get(index) * 3,
 			],
-			grid: [1, 2],
+			grid: [2, 2],
 			animation: {
-				frame: ({game, definition},index) => index % 2,
-				range: 2,
-				frameRate: 0,
+				frame: ({game, definition}, index) => index % 4,
+				range: 4,
+				frameRate: ({definition}, index) => {
+					const { type } = definition.cell.get(index);
+					if (type === GROUND_WATER) {
+						return 10;
+					}
+					return 0;
+				},
 			},
 			scale: [3.1, 3.1],
 			count: ({game, definition},index) => game.sceneData.cells.length,

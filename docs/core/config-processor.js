@@ -29,7 +29,7 @@ class ConfigProcessor {
 	 		for (let o in obj) {
 	 			if (obj.hasOwnProperty(o)) {
 		 			if (!schema || typeof(schema[o]) === 'undefined') {
-		 				console.warn(`Unknown config property: ${path}.${o}`);
+//		 				console.warn(`Unknown config property: ${path}.${o}`);
 		 			}
 		 			result[o] = this.process(obj[o], sceneObj, schema ? schema[o] : null, `${path}.${o}`);
 	 			}
@@ -38,7 +38,7 @@ class ConfigProcessor {
 		 		for (let s in schema) {
 		 			if (!result.hasOwnProperty(s)) {
 		 				const defaultValue = this.defaultForSchema(schema[s], sceneObj);
-		 				console.log(`Defaulting ${path}.${s} to ${JSON.stringify(ConfigProcessor.defaultEval(defaultValue, sceneObj))}`);
+//		 				console.log(`Defaulting ${path}.${s} to ${JSON.stringify(ConfigProcessor.defaultEval(defaultValue, sceneObj))}`);
 		 				result[s] = defaultValue;
 		 			}
 		 		}

@@ -40,7 +40,7 @@ class TextureManager {
 		if (!this.videoTextures[src]) {
 			this.videoTextures[src] = {
 				offset: [0, 0],
-				size: [640, 360],
+				size: [640, 640],
 				grid: [1, 1],
 				index: this.glTextures.length - 1,
 			};

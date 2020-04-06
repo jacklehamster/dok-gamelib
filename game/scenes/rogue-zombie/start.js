@@ -22,8 +22,8 @@ SceneManager.add({
 			sceneData.life = 20;
 			sceneData.hit = 0;
 			sceneData.score = 0;
-			sceneData.mapSize = 40;
-			sceneData.zombieRange = 40;
+			sceneData.mapSize = 30;
+			sceneData.zombieRange = 30;
 
 			sceneData.npcs = [
 			];
@@ -594,7 +594,7 @@ SceneManager.add({
 			grounded: ({game, definition},index) => {
 				return definition.cell.get(index).grounded;
 			},
-			hidden: ({game, definition},index) => {
+			hidden: ({definition},index) => {
 				return definition.grounded.get(index);
 			},
 			type: ({game, definition},index) => {

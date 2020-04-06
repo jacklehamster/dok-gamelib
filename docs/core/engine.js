@@ -39,7 +39,7 @@ class Engine {
 		Engine.beginLooping(this);
 		this.onStartListener.forEach(listener => listener(this));
 		this.resetScene(this.sceneManager.getFirstSceneName());
-		console.log("start scene:", this.currentScene.name);
+//		console.log("start scene:", this.currentScene.name);
 	}
 
 	static beginLooping(engine) {

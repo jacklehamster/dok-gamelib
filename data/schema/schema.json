@@ -32,7 +32,6 @@
 		],
 		"viewAngle": 45,
 		"range": [1, 60],
-		"height": 0,
 		"tilt": 0,
 		"turn": 0,
 		"cameraDistance": 7

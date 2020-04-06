@@ -119,7 +119,7 @@ class GLRenderer {
 		gl.uniformMatrix4fv(shader.programInfo.projection, false, projectionMatrix);
 	}
 
-	setViewPosition(x, y, z, height, tilt, turn, cameraDistance) {
+	setViewPosition(x, y, z, tilt, turn, cameraDistance) {
 		const { gl, shader, viewMatrix, pool } = this;
 		const scale = 1;
 		const zOffset = cameraDistance;	//	camera distance
@@ -128,7 +128,7 @@ class GLRenderer {
 		quat.rotateY(cameraQuat, quat.rotateX(cameraQuat, IDENTITY_QUAT, tilt), turn);
 		mat4.fromRotationTranslationScaleOrigin(viewMatrix, cameraQuat, ZERO_VEC3,
 			Utils.set3(pool.vec3.get(), scale, scale, scale),
-			Utils.set3(pool.vec3.get(), 0, -height, zOffset));
+			Utils.set3(pool.vec3.get(), 0, -tilt * 2, zOffset));
 		quat.conjugate(cameraQuat, cameraQuat);	//	conjugate for sprites			
 		mat4.translate(viewMatrix, viewMatrix, Utils.set3(pool.vec3.get(), -x, -y, -z + zOffset));
 
