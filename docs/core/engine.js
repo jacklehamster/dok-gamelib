@@ -49,12 +49,11 @@ class Engine {
 			const { currentScene } = engine;
 			const frameDuration = 1000 / currentScene.getFrameRate();
 
-			if (now - glRenderer.lastRefresh >= frameDuration) {
-				currentScene.now = now;
-				currentScene.keys = keyboard.getKeyboard(now);
-				sceneRenderer.refresh(currentScene);
-				spriteDefinitionProcessor.refresh(currentScene);
+			currentScene.now = now;
+			sceneRenderer.refresh(currentScene);
+			spriteDefinitionProcessor.refresh(currentScene);
 
+			if (now - glRenderer.lastRefresh >= frameDuration) {
 				glRenderer.setTime(now);
 				glRenderer.clearScreen();
 				sceneRenderer.render(currentScene);
@@ -119,11 +118,9 @@ class Engine {
 			this.clearScene();
 			const scene = sceneManager.createScene(sceneName, dataStore);
 			const now = this.currentScene ? this.currentScene.now : 0;
-			const keys = this.currentScene ? this.currentScene.keys : {};
 
 			this.currentScene = scene;
 			this.currentScene.now = now;
-			this.currentScene.keys = keys;
 			this.currentScene.setEngine(this);
 			this.sceneRenderer.init(scene);
 			this.spriteDefinitionProcessor.init(scene.sprites, scene);

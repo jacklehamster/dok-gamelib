@@ -24,6 +24,10 @@ class Game {
 		return this.engine.sceneManager.sceneNames;
 	}
 
+	get keys() {
+		return this.engine.keyboard.getKeyboard(this.now);		
+	}
+
 	gotoScene(name) {
 		this.engine.resetScene(name);
 	}
