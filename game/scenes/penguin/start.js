@@ -58,6 +58,7 @@ SceneManager.add({
 							type,
 							grounded: type < 8,
 						};
+						cell.height = Math.max(0, (cell.corners[0] + cell.corners[1] + cell.corners[2] + cell.corners[3]) / 4);
 						cellMap[tag] = cell;
 						cells.push(cell);
 					}
@@ -98,6 +99,15 @@ SceneManager.add({
 			return cellMap[tag] ? cellMap[tag].grounded : false;
 		}
 
+		getCell(xPos, zPos) {
+			xPos = Math.floor(xPos);
+			zPos = Math.floor(zPos);
+			const tag = `${xPos}_${zPos}`;
+			const { sceneData } = this;
+			const { cellMap } = sceneData;
+			return cellMap[tag];
+		}
+
 		canMove(dx, dz) {
 			const { sceneData } = this;
 			const { cam } = sceneData;
@@ -116,7 +126,6 @@ SceneManager.add({
 	settings: {
 		thumbnail: "penguin",
 		background: 0xE8E5E3,
-//		background: 0xC8C5C3,
 		curvature: 2,
 	},
 	light: {
@@ -142,7 +151,6 @@ SceneManager.add({
 					}
 					break;
 				default:
-//					console.log(code);
 					break;
 			}
 		},
@@ -155,10 +163,6 @@ SceneManager.add({
 		],
 		viewAngle: 45,
 		turn: ({game}) => game.sceneData.turn,
-		// tilt: .7,
-		// cameraDistance: 15,
-		// tilt: .4,
-		// cameraDistance: 5,
 		tilt: ({game}) => {
 			const { sceneData, now } = game;
 			const progress = Math.min(1, (now - Math.max(sceneData.viewTop, sceneData.viewZoom)) / 300);
@@ -372,8 +376,22 @@ SceneManager.add({
 					penguin.moving = false;
 				}
 
+				const cell = game.getCell(pos[0], pos[2]);
+				if (!cell) {
+					penguin.pos[1] +=  (-1.3 - penguin.pos[1]) / 5;
+				} else {
+					penguin.pos[1] += (cell.height -1.3 - penguin.pos[1]) / 5;
+				}
+
 				const angledFrame = definition.angledFrame.get();
-				const movValue = viewZoom < viewTop ? (angledFrame.orientation.indexOf('S')>=0 ? 10 : 5) : (angledFrame.orientation.indexOf('S')>=0 ? 6 : angledFrame.orientation.indexOf('N')>=0 ? 0 : 3);
+				const movValue = viewZoom < viewTop 
+					? (angledFrame.orientation.indexOf('S')>=0 ? 10 : 5)
+					: (angledFrame.orientation.indexOf('S')>=0
+						? 6
+						: angledFrame.orientation.indexOf('N')>=0
+						? 0
+						: 3
+					);
 				const camShiftGoalX = penguin.mov[0] * movValue;
 				const camShiftGoalY = penguin.mov[2] * movValue;
 				camShift[0] += (camShiftGoalX - camShift[0]) / 5;
