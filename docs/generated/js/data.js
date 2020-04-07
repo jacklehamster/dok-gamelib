@@ -1049,13 +1049,15 @@ function getData() {
               "name": "Arctic",
               "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ",
               "fontSize": 160,
-              "cellSize": 256
+              "cellSize": 256,
+              "finalCellSize": 32
             },
             "creep-font": {
               "name": "Creepster",
               "characters": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz.,?'#@!♪()[]/-+_“”éè:©% ",
               "fontSize": 160,
-              "cellSize": 256
+              "cellSize": 256,
+              "finalCellSize": 32
             }
           }
         },
