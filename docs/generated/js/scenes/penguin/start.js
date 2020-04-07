@@ -383,9 +383,15 @@ SceneManager.add({
 					penguin.pos[1] += (cell.height -1.3 - penguin.pos[1]) / 5;
 				}
 
-
 				const angledFrame = definition.angledFrame.get();
-				const movValue = viewZoom < viewTop ? (angledFrame.orientation.indexOf('S')>=0 ? 10 : 5) : (angledFrame.orientation.indexOf('S')>=0 ? 6 : angledFrame.orientation.indexOf('N')>=0 ? 0 : 3);
+				const movValue = viewZoom < viewTop 
+					? (angledFrame.orientation.indexOf('S')>=0 ? 10 : 5)
+					: (angledFrame.orientation.indexOf('S')>=0
+						? 6
+						: angledFrame.orientation.indexOf('N')>=0
+						? 0
+						: 3
+					);
 				const camShiftGoalX = penguin.mov[0] * movValue;
 				const camShiftGoalY = penguin.mov[2] * movValue;
 				camShift[0] += (camShiftGoalX - camShift[0]) / 5;
