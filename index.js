@@ -18,7 +18,8 @@ function indented(string, indentation) {
 
 function readData(filePath) {
 	if (path.extname(filePath) === ".json") {
-		return fs.promises.readFile(`${__dirname}/data/${filePath}`, 'utf8').then(result => Promise.resolve(JSON.parse(result)));
+		return fs.promises.readFile(`${__dirname}/data/${filePath}`, 'utf8')
+			.then(result => Promise.resolve(JSON.parse(result)));
 	} else {
 		return fs.promises.readFile(`${__dirname}/data/${filePath}`, 'utf8');
 	}
