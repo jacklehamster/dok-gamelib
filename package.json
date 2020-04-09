@@ -32,6 +32,7 @@
     "spritesheet-js": "^1.2.6"
   },
   "devDependencies": {
+    "compress-images": "^1.6.3",
     "forever": "^2.0.0"
   }
 }

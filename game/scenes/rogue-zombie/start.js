@@ -393,6 +393,7 @@ SceneManager.add({
 			animation: {
 				frame: ({definition}, index) => definition.charIndexes[index],
 				range: ({definition}) => definition.characters.get().length,
+				frameRate: 0,
 			},
 			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
 			grid: [
@@ -430,6 +431,7 @@ SceneManager.add({
 			animation: {
 				frame: ({definition}, index) => definition.charIndexes[index],
 				range: ({definition}) => definition.characters.get().length,
+				frameRate: 0,
 			},
 			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
 			grid: [
@@ -581,6 +583,7 @@ SceneManager.add({
 		},
 		{
 			src: "primary-font",
+			tintColor: 0xFFFFFFFF,
 			animation: {
 				frame: 0,
 				range: ({definition}) => definition.characters.get().length,

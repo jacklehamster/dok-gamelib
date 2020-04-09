@@ -174,7 +174,7 @@ function getSpritesheets() {
 		}),
 	]).then(([newSha, savedSha]) => {
 		const sameSha = JSON.stringify(newSha) === JSON.stringify(savedSha);
-		if (sameSha) {
+		if (sameSha && fs.existsSync(`generated/config/imagedata.json`)) {
 			return readData(`generated/config/imagedata.json`);
 		} else {
 		    const publicDir = `${webDir}/generated`;

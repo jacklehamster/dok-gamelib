@@ -13,3 +13,5 @@ data/generated/config/**
 **.log**
 spritesheet.png
 build/**
+node_modules/**
+log/**

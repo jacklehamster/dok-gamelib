@@ -48,13 +48,15 @@ class Engine {
 			requestAnimationFrame(animationFrame);
 			const { currentScene } = engine;
 			const frameDuration = 1000 / currentScene.getFrameRate();
-
+			if (!currentScene.startTime) {
+				currentScene.startTime = now;
+			}
 			currentScene.now = now;
 			sceneRenderer.refresh(currentScene);
 			spriteDefinitionProcessor.refresh(currentScene);
 
 			if (now - glRenderer.lastRefresh >= frameDuration) {
-				glRenderer.setTime(now);
+				glRenderer.setTime(now - currentScene.startTime);
 				glRenderer.clearScreen();
 				sceneRenderer.render(currentScene);
 
@@ -117,10 +119,10 @@ class Engine {
 		if (sceneManager.hasScene(sceneName)) {
 			this.clearScene();
 			const scene = sceneManager.createScene(sceneName, dataStore);
-			const now = this.currentScene ? this.currentScene.now : 0;
 
 			this.currentScene = scene;
-			this.currentScene.now = now;
+			this.currentScene.startTime = 0;
+			this.currentScene.now = 0;
 			this.currentScene.setEngine(this);
 			this.sceneRenderer.init(scene);
 			this.spriteDefinitionProcessor.init(scene.sprites, scene);

@@ -20,13 +20,13 @@ uniform float uCurvature;
 uniform float uNow;
 uniform vec3 uLightPos;  
 
-varying mediump vec2 vTexturePoint;
-varying mediump float zDist;
-varying mediump vec3 vNormal;
-varying mediump vec3 vFragPos;
-varying mediump float vTextureSlot;
-varying mediump float vBrightness;
-varying mediump vec4 vTintColor;
+varying vec2 vTexturePoint;
+varying float zDist;
+varying vec3 vNormal;
+varying vec3 vFragPos;
+varying float vTextureSlot;
+varying float vBrightness;
+varying vec4 vTintColor;
 
 vec4 makeColorFromRGB(float rgb, float mixRatio) {
 	return vec4(
@@ -62,9 +62,9 @@ void main(void) {
 	float start = aAnimationData[1];
 	float total = aAnimationData[2];
 	float fps = aAnimationData[3];
-	float index = start + mod(floor(frame + uNow * fps / 1000.0) + .0001, total);
+	float index = start + mod(floor(frame + uNow * fps / 1000.0) + .4, total);
 	float texRow = floor(index / cols);
-	float texCol = floor(mod(index + .0001, cols));
+	float texCol = floor(mod(index + .4, cols));
 	vTexturePoint = aVertexTextureCoord.xy;
 	vTexturePoint.x = mod(vTexturePoint.x, 2.0);
 	vTexturePoint.y = mod(vTexturePoint.y, 2.0);
