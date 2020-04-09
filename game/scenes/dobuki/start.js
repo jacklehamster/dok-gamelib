@@ -1,6 +1,5 @@
 SceneManager.add({}, {
 	settings: {
-		thumbnail: "dok",
 		background: 0xE8E5E3,
 	},
 	sprites: [

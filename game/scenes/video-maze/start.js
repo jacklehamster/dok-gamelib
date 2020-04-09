@@ -107,7 +107,6 @@ SceneManager.add({
 	},
 }, {
 	settings: {
-		thumbnail: "zombie",
 		docBackground: ({game}) => {
 			const hitTime = game.now - game.sceneData.hit;
 			return hitTime < 300 ? 0xaa0000 : 0;

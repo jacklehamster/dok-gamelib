@@ -14,6 +14,10 @@ class GameProperty {
 		return this;
 	}
 
+	get now() {
+		return this.game.now;
+	}
+
 	get(...params) {
 		return this.value(this, ...params);
 	}

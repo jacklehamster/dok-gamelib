@@ -124,7 +124,6 @@ SceneManager.add({
 	},
 }, {
 	settings: {
-		thumbnail: "penguin",
 		background: 0xE8E5E3,
 		curvature: 2,
 	},

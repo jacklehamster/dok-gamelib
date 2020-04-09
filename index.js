@@ -159,7 +159,7 @@ function zipGame() {
 
 function getSpritesheets() {
 	const gamesDirectory = `${__dirname}/game/scenes`;
-	const generatedAssetDir = `${__dirname}/generated`;
+	const generatedAssetDir = `${__dirname}/generated/assets`;
     const generatedDataDir = `${__dirname}/data/generated`;
 
 	//	Check sha
