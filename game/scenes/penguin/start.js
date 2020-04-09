@@ -320,6 +320,7 @@ SceneManager.add({
 					return letterInfo.index;
 				},
 				range: ({definition}) => definition.characters.get().length,
+				frameRate: 0,
 			},
 			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
 			grid: [

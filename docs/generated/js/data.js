@@ -1063,34 +1063,37 @@ function getData() {
         },
         "imagedata": {
           "size": [4096, 4096],
-          "spritesheets": ["generated/spritesheets/sheet0.png"],
+          "spritesheets": [
+            "generated/spritesheets/sheet0.png",
+            "generated/spritesheets/sheet1.png"
+          ],
           "sprites": {
-            "dok": {"offset": [0, 0], "size": [1024, 1024], "index": 0},
-            "tp-boy": {"offset": [1034, 0], "size": [384, 512], "index": 0},
-            "tp": {"offset": [1428, 0], "size": [384, 512], "index": 0},
-            "penguin": {"offset": [1822, 0], "size": [256, 320], "index": 0},
-            "creep-font": {"offset": [2088, 0], "size": [320, 288], "index": 0},
-            "primary-font": {"offset": [2418, 0], "size": [320, 288], "index": 0},
-            "artic": {"offset": [2748, 0], "size": [256, 256], "index": 0},
-            "zombie": {"offset": [3014, 0], "size": [128, 192], "index": 0},
-            "blue-wall": {"offset": [3152, 0], "size": [64, 128], "index": 0},
-            "gun": {"offset": [3226, 0], "size": [128, 128], "index": 0},
-            "grass-tile": {"offset": [3364, 0], "size": [64, 96], "index": 0},
-            "water": {"offset": [3438, 0], "size": [64, 64], "index": 0},
-            "color-blocks": {"offset": [3512, 0], "size": [2, 2], "index": 0}
+            "dok": {"offset": [0, 0], "size": [4096, 4096], "index": 0},
+            "tp-boy": {"offset": [0, 0], "size": [384, 512], "index": 1},
+            "tp": {"offset": [392, 0], "size": [384, 512], "index": 1},
+            "penguin": {"offset": [784, 0], "size": [256, 320], "index": 1},
+            "creep-font": {"offset": [1048, 0], "size": [320, 288], "index": 1},
+            "primary-font": {"offset": [1376, 0], "size": [320, 288], "index": 1},
+            "artic": {"offset": [1704, 0], "size": [256, 256], "index": 1},
+            "zombie": {"offset": [1968, 0], "size": [128, 192], "index": 1},
+            "blue-wall": {"offset": [2104, 0], "size": [64, 128], "index": 1},
+            "gun": {"offset": [2176, 0], "size": [128, 128], "index": 1},
+            "grass-tile": {"offset": [2312, 0], "size": [64, 96], "index": 1},
+            "water": {"offset": [2384, 0], "size": [64, 64], "index": 1},
+            "color-blocks": {"offset": [2456, 0], "size": [2, 2], "index": 1}
           },
           "freeCells": [
-            {"offset": [3524, 0], "size": [572, 12], "index": 0},
-            {"offset": [3512, 12], "size": [584, 62], "index": 0},
-            {"offset": [3438, 74], "size": [658, 32], "index": 0},
-            {"offset": [3364, 106], "size": [732, 32], "index": 0},
-            {"offset": [3152, 138], "size": [944, 64], "index": 0},
-            {"offset": [3014, 202], "size": [1082, 64], "index": 0},
-            {"offset": [2748, 266], "size": [1348, 32], "index": 0},
-            {"offset": [2088, 298], "size": [2008, 32], "index": 0},
-            {"offset": [1822, 330], "size": [2274, 192], "index": 0},
-            {"offset": [1034, 522], "size": [3062, 3574], "index": 0},
-            {"offset": [0, 1034], "size": [1034, 3062], "index": 0}
+            {"offset": [2466, 0], "size": [1630, 10], "index": 1},
+            {"offset": [2456, 10], "size": [1640, 62], "index": 1},
+            {"offset": [2384, 72], "size": [1712, 32], "index": 1},
+            {"offset": [2312, 104], "size": [1784, 32], "index": 1},
+            {"offset": [2104, 136], "size": [1992, 64], "index": 1},
+            {"offset": [1968, 200], "size": [2128, 64], "index": 1},
+            {"offset": [1704, 264], "size": [2392, 32], "index": 1},
+            {"offset": [1048, 296], "size": [3048, 32], "index": 1},
+            {"offset": [784, 328], "size": [3312, 192], "index": 1},
+            {"offset": [392, 520], "size": [3704, 3576], "index": 1},
+            {"offset": [0, 520], "size": [392, 3576], "index": 1}
           ]
         },
         "sha": [
@@ -1100,7 +1103,7 @@ function getData() {
           "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
           "color-blocks=afee4762dd872c26c4efdc0c3e8d02c3e8ac72ae88864221f1efebc0ad8829a9",
           "creep-font=4b32593978151de7386cdf3fa00f99a719b31a9a93ca9a017a4bc55c4a821319",
-          "dok=910cf66b9d9890d0f2c64b1d3e3e1b6311467ba2725acef9313c5bb6f8ee2c47",
+          "dok=d376825a59cd713007a63c948ff8f61f98ce0942aa474bdb03aa0cfa9a823b24",
           "grass-tile@16x=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
           "gun=cc82ad5fb0f9d24f82d195decd1f57af69e4bc6072f930927c5cf588b1e52226",
           "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
@@ -1155,7 +1158,7 @@ function getData() {
           "cameraDistance": 7
         },
         "light": {
-          "pos": [0, 0, 0],
+          "pos": [0, 100, 0],
           "ambient": 1,
           "shininess": 3,
           "specularStrength": 0.5,
@@ -1170,7 +1173,8 @@ function getData() {
             "mov": [0, 0, 0],
             "gravity": [0, 0, 0],
             "grid": [1, 1],
-            "animation": {"start": 0, "frame": 0, "range": 1, "frameRate": 0},
+            "spriteSize": [0, 0],
+            "animation": {"start": 0, "frame": 0, "range": 1, "frameRate": 24},
             "scale": [1, 1],
             "hotspot": [0, 0],
             "corners": [0, 0, 0, 0],
@@ -1187,8 +1191,8 @@ function getData() {
       }
     },
     "webgl": {
-      "fragmentShader": "precision mediump float;\n\nconst int NUM_TEXTURES = 16;\n\nuniform sampler2D uTextures[NUM_TEXTURES];\nvarying mediump vec2 vTexturePoint;\nvarying mediump float zDist;\nvarying mediump float light;\nvarying mediump vec3 vNormal;\nvarying mediump vec3 vFragPos;\nvarying mediump float vTextureSlot;\nvarying mediump float vBrightness;\nvarying mediump vec4 vTintColor;\nuniform vec4 uBackground;\nuniform vec3 uLightPos;\nuniform vec4 uLightIntensity;\nuniform vec3 uCamPosition;\n\nvec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {\n\tint textureInt = int(textureSlot);\n\tfor (int i = 0; i < NUM_TEXTURES; ++i) {\n\t\tif (textureInt == i) {\n\t\t\treturn texture2D(textures[i], vTexturePoint);\n\t\t}\n\t}\n\treturn texture2D(textures[0], vTexturePoint);\n}\n\nvec3 rgb2hsv(vec3 c) {\n    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);\n    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));\n    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));\n\n    float d = q.x - min(q.w, q.y);\n    float e = 1.0e-10;\n    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);\n}\n\nvec3 hsv2rgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nvec4 alterHueSatLum(vec4 color, vec3 vHSV) {\n    vec3 fragRGB = color.rgb;\n    vec3 fragHSV = rgb2hsv(fragRGB).xyz;\n    fragHSV.x += vHSV.x;\n    fragHSV.yz *= vHSV.yz;\n    fragRGB = hsv2rgb(fragHSV);\n    return vec4(fragRGB, color.a);\n}\n\nvoid main(void) {\n\tvec3 normal = normalize(vNormal);\n\tvec3 lightDir = normalize(uLightPos - vFragPos.xyz);\n\tvec3 viewDir = normalize(uCamPosition-vFragPos);\n\tfloat ambient = uLightIntensity[0] * vBrightness / 100.0;\n\tfloat diffusion = uLightIntensity[1];\n\tfloat specular = uLightIntensity[2];\n\tfloat shininess = uLightIntensity[3];\n\n\tvec3 reflectDir = reflect(-lightDir, normal);  \n\n\tfloat diffLight = diffusion * max(dot(normal, lightDir), 0.0);\n\tfloat spec = specular * pow(max(dot(viewDir, reflectDir), 0.0), shininess);\n\n\tvec4 color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);\n\n\tfloat limit = .5;\n    color.a = smoothstep(limit - .0001, limit + .0001, color.a);\n\n\tif (color.a <= 0.1) {\n\t\tdiscard;\n\t}\n\tcolor = mix(color, vec4(vTintColor.rgb, color.a), vTintColor.a);\n\tcolor = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2, max(0.0, .8 + zDist))));\n\tcolor = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, zDist);\n\n\tgl_FragColor = color;\n}\n",
-      "vertexShader": "precision mediump float;\n\nattribute vec3 aVertexPosition;\t\t\t//\t[ x, y, z ]\nattribute vec3 aOffset;\t\t\t\t\t//\t[ x, y, z ]\nattribute vec3 aNormal;\t\t\t\t\t//\t[ x, y, z ]\nattribute vec4 aVertexMove;\t\t\t\t//\t[ x, y, z, time ]\nattribute vec3 aVertexGravity;\t\t\t//\t[ x, y, z ]\n\nattribute float aType;\t\t\t\t\t//\twall/floor=0, sprite=1, water=2, ...\n\nattribute vec4 aVertexTextureCoord;\t\t//\t[ x, y, spritewidth, spriteheight ]\nattribute vec4 aAnimationData; \t\t\t//\t[ cols, start, total, frameRate ]\nattribute vec2 aGrid;\t\t\t\t\t//\t[ cols, rows ]\nattribute vec2 aTintColor;\t\t\t\t//\t[ tint color, mix ]\n\nuniform mat4 uProjectionMatrix;\nuniform mat4 uViewMatrix;\nuniform mat4 uCameraRotation;\nuniform float uCurvature;\nuniform float uNow;\nuniform vec3 uLightPos;  \n\nvarying mediump vec2 vTexturePoint;\nvarying mediump float zDist;\nvarying mediump vec3 vNormal;\nvarying mediump vec3 vFragPos;\nvarying mediump float vTextureSlot;\nvarying mediump float vBrightness;\nvarying mediump vec4 vTintColor;\n\nvec4 makeColorFromRGB(float rgb, float mixRatio) {\n\treturn vec4(\n\t\tmod(rgb / (256.0 * 256.0), 256.0) / 255.0,\n\t\tmod(rgb / 256.0, 256.0) / 255.0,\n\t\tmod(rgb, 256.0) / 255.0,\n\t\tmin(1.0, mixRatio));\n}\n\nvoid main(void) {\n\tfloat timeStart = aVertexMove.w;\n\tfloat time = uNow - timeStart;\n\tvec4 worldPos = vec4(aVertexPosition, 1.0);\n\tif (aType == 0.0) {\t//\tsprite face camera\n\t\tworldPos = uCameraRotation * worldPos;\n\t}\n\n\tworldPos.xyz += aOffset;\n\n\tif (aType == 7.0) {\t//\twater wave\n\t\tworldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .05;\n\t}\n\n\tworldPos.xyz += aVertexMove.xyz * time;\n\tworldPos.xyz += aVertexGravity.xyz * time * time / 2.0;\n\n\tvec4 position = uProjectionMatrix * uViewMatrix * worldPos;\n\tposition.y -= uCurvature * (position.z * position.z + position.x * position.x) / 500.0;\n\n\tfloat cols = aGrid[0];\n\tfloat rows = aGrid[1];\n\tfloat frame = aAnimationData[0];\n\tfloat start = aAnimationData[1];\n\tfloat total = aAnimationData[2];\n\tfloat fps = aAnimationData[3];\n\tfloat index = start + mod(floor(frame + uNow * fps / 1000.0), total);\n\tfloat texCol = mod(index, cols);\n\tfloat texRow = floor(index / cols);\n\tvTexturePoint = aVertexTextureCoord.xy;\n\tvTexturePoint.x = mod(vTexturePoint.x, 2.0);\n\tvTexturePoint.y = mod(vTexturePoint.y, 2.0);\n\tvTexturePoint.x += texCol * aVertexTextureCoord[2];\n\tvTexturePoint.y += texRow * aVertexTextureCoord[3];\n\n\tvTextureSlot = floor(aVertexTextureCoord.x / 2.0);\n\tvBrightness = floor(aVertexTextureCoord.y / 2.0);\n\tvTintColor = makeColorFromRGB(aTintColor[0], aTintColor[1]);\n\n\tzDist = min(1.0, (abs(position.z / 12.0) + abs(position.y / 10.0)) * .2);\n\tgl_Position = position;\n\tvFragPos = worldPos.xyz;\n\tvNormal = aNormal;\n}"
+      "fragmentShader": "precision mediump float;\n\nconst int NUM_TEXTURES = 16;\n\nuniform sampler2D uTextures[NUM_TEXTURES];\nvarying mediump vec2 vTexturePoint;\nvarying mediump float zDist;\nvarying mediump float light;\nvarying mediump vec3 vNormal;\nvarying mediump vec3 vFragPos;\nvarying mediump float vTextureSlot;\nvarying mediump float vBrightness;\nvarying mediump vec4 vTintColor;\nuniform vec4 uBackground;\nuniform vec3 uLightPos;\nuniform vec4 uLightIntensity;\nuniform vec3 uCamPosition;\n\nvec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {\n\tint textureInt = int(textureSlot);\n\tfor (int i = 0; i < NUM_TEXTURES; ++i) {\n\t\tif (textureInt == i) {\n\t\t\treturn texture2D(textures[i], vTexturePoint);\n\t\t}\n\t}\n\treturn texture2D(textures[0], vTexturePoint);\n}\n\nvec3 rgb2hsv(vec3 c) {\n    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);\n    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));\n    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));\n\n    float d = q.x - min(q.w, q.y);\n    float e = 1.0e-10;\n    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);\n}\n\nvec3 hsv2rgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nvec4 alterHueSatLum(vec4 color, vec3 vHSV) {\n    vec3 fragRGB = color.rgb;\n    vec3 fragHSV = rgb2hsv(fragRGB).xyz;\n    fragHSV.x += vHSV.x;\n    fragHSV.yz *= vHSV.yz;\n    fragRGB = hsv2rgb(fragHSV);\n    return vec4(fragRGB, color.a);\n}\n\nvoid main(void) {\n\tvec3 normal = normalize(vNormal);\n\tvec3 lightDir = normalize(uLightPos - vFragPos.xyz);\n\tvec3 viewDir = normalize(uCamPosition-vFragPos);\n\tfloat ambient = uLightIntensity[0] * vBrightness / 100.0;\n\tfloat diffusion = uLightIntensity[1];\n\tfloat specular = uLightIntensity[2];\n\tfloat shininess = uLightIntensity[3];\n\n\tvec3 reflectDir = reflect(-lightDir, normal);  \n\n\tfloat diffLight = diffusion * max(dot(normal, lightDir), 0.0);\n\tfloat spec = specular * pow(max(dot(viewDir, reflectDir), 0.0), shininess);\n\n\tvec4 color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);\n\n    color.a = smoothstep(.5 - .01, .5 + .01, color.a);\n\n\tif (color.a <= 0.1) {\n\t\tdiscard;\n\t}\n\tcolor = mix(color, vec4(vTintColor.rgb, color.a), vTintColor.a);\n\tcolor = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2, max(0.0, .8 + zDist))));\n\tcolor = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, zDist);\n\n\tgl_FragColor = color;\n}\n",
+      "vertexShader": "precision mediump float;\n\nattribute vec3 aVertexPosition;\t\t\t//\t[ x, y, z ]\nattribute vec3 aOffset;\t\t\t\t\t//\t[ x, y, z ]\nattribute vec3 aNormal;\t\t\t\t\t//\t[ x, y, z ]\nattribute vec4 aVertexMove;\t\t\t\t//\t[ x, y, z, time ]\nattribute vec3 aVertexGravity;\t\t\t//\t[ x, y, z ]\n\nattribute float aType;\t\t\t\t\t//\twall/floor=0, sprite=1, water=2, ...\n\nattribute vec4 aVertexTextureCoord;\t\t//\t[ x, y, spritewidth, spriteheight ]\nattribute vec4 aAnimationData; \t\t\t//\t[ cols, start, total, frameRate ]\nattribute vec2 aGrid;\t\t\t\t\t//\t[ cols, rows ]\nattribute vec2 aTintColor;\t\t\t\t//\t[ tint color, mix ]\n\nuniform mat4 uProjectionMatrix;\nuniform mat4 uViewMatrix;\nuniform mat4 uCameraRotation;\nuniform float uCurvature;\nuniform float uNow;\nuniform vec3 uLightPos;  \n\nvarying mediump vec2 vTexturePoint;\nvarying mediump float zDist;\nvarying mediump vec3 vNormal;\nvarying mediump vec3 vFragPos;\nvarying mediump float vTextureSlot;\nvarying mediump float vBrightness;\nvarying mediump vec4 vTintColor;\n\nfloat modFix(float intA, float intB) {\n\treturn floor(mod(intA + .0001, intB));\n}\n\nvec4 makeColorFromRGB(float rgb, float mixRatio) {\n\treturn vec4(\n\t\tmod(rgb / (256.0 * 256.0), 256.0) / 255.0,\n\t\tmod(rgb / 256.0, 256.0) / 255.0,\n\t\tmod(rgb, 256.0) / 255.0,\n\t\tmin(1.0, mixRatio));\n}\n\nvoid main(void) {\n\tfloat timeStart = aVertexMove.w;\n\tfloat time = uNow - timeStart;\n\tvec4 worldPos = vec4(aVertexPosition, 1.0);\n\tif (aType == 0.0) {\t//\tsprite face camera\n\t\tworldPos = uCameraRotation * worldPos;\n\t}\n\n\tworldPos.xyz += aOffset;\n\n\tif (aType == 7.0) {\t//\twater wave\n\t\tworldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .05;\n\t}\n\n\tworldPos.xyz += aVertexMove.xyz * time;\n\tworldPos.xyz += aVertexGravity.xyz * time * time / 2.0;\n\n\tvec4 position = uProjectionMatrix * uViewMatrix * worldPos;\n\tposition.y -= uCurvature * (position.z * position.z + position.x * position.x) / 500.0;\n\n\tfloat cols = aGrid[0];\n\tfloat rows = aGrid[1];\n\tfloat frame = aAnimationData[0];\n\tfloat start = aAnimationData[1];\n\tfloat total = aAnimationData[2];\n\tfloat fps = aAnimationData[3];\n\tfloat index = start + mod(floor(frame + uNow * fps / 1000.0) + .0001, total);\n\tfloat texRow = floor(index / cols);\n\tfloat texCol = floor(mod(index + .0001, cols));\n\tvTexturePoint = aVertexTextureCoord.xy;\n\tvTexturePoint.x = mod(vTexturePoint.x, 2.0);\n\tvTexturePoint.y = mod(vTexturePoint.y, 2.0);\n\tvTexturePoint.x += texCol * aVertexTextureCoord[2];\n\tvTexturePoint.y += texRow * aVertexTextureCoord[3];\n\n\tvTextureSlot = floor(aVertexTextureCoord.x / 2.0);\n\tvBrightness = floor(aVertexTextureCoord.y / 2.0);\n\tvTintColor = makeColorFromRGB(aTintColor[0], aTintColor[1]);\n\n\tzDist = min(1.0, (abs(position.z / 12.0) + abs(position.y / 10.0)) * .2);\n\tgl_Position = position;\n\tvFragPos = worldPos.xyz;\n\tvNormal = aNormal;\n}"
     }
   };
 				

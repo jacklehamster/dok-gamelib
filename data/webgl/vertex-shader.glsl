@@ -62,9 +62,9 @@ void main(void) {
 	float start = aAnimationData[1];
 	float total = aAnimationData[2];
 	float fps = aAnimationData[3];
-	float index = start + mod(floor(frame + uNow * fps / 1000.0), total);
-	float texCol = mod(index, cols);
+	float index = start + mod(floor(frame + uNow * fps / 1000.0) + .0001, total);
 	float texRow = floor(index / cols);
+	float texCol = floor(mod(index + .0001, cols));
 	vTexturePoint = aVertexTextureCoord.xy;
 	vTexturePoint.x = mod(vTexturePoint.x, 2.0);
 	vTexturePoint.y = mod(vTexturePoint.y, 2.0);

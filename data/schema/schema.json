@@ -39,7 +39,7 @@
 	"light": {
 		"pos": [
 			0,
-			0,
+			100,
 			0
 		],
 		"ambient": 1,
@@ -71,11 +71,15 @@
 				1,
 				1
 			],
+			"spriteSize": [
+				0,
+				0
+			],
 			"animation": {
 				"start": 0,
 				"frame": 0,
 				"range": 1,
-				"frameRate": 0
+				"frameRate": 24
 			},
 			"scale": [
 				1,

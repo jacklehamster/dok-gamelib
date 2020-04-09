@@ -163,6 +163,7 @@ SceneManager.add({
 			animation: {
 				frame: ({game, definition}, index) => game.platforms[index].index,
 				range: 6,
+				frameRate: 0,
 			},
 			pos: [
 				({game, definition}, index) => game.platforms[index].x,

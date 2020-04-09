@@ -19,7 +19,7 @@ class SpriteInstance extends AnimatedSpriteInstance {
 			return;
 		}
 
-		const { src, animation, scale, pos, mov, gravity, grid, hotspot, corners, refresh } = definition;
+		const { src, animation, scale, pos, mov, gravity, hotspot, corners, refresh } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 

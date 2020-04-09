@@ -67,8 +67,7 @@ void main(void) {
 
 	vec4 color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);
 
-	float limit = .5;
-    color.a = smoothstep(limit - .0001, limit + .0001, color.a);
+    color.a = smoothstep(.5 - .01, .5 + .01, color.a);
 
 	if (color.a <= 0.1) {
 		discard;
