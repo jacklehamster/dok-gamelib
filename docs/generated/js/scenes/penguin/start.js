@@ -284,50 +284,19 @@ SceneManager.add({
 		}
 	},
 	sprites: [
-		{
-			src: "primary-font",
+		TextUtils.makeSprite({
+			text: "Penguin",
+			fontId: "primary-font",
 			tintColor: 0xFF00ccFF,
 			scale: [.2, .2],
-			text: "Penguin",
-			refresh: ({definition}) => {
-				const text = definition.text.get();
-				if (definition.cachedText !== text) {
-					definition.cachedText = text;
-					definition.positions = [0];
-					for (let i = 0; i < text.length; i++) {
-						const { width } = definition.getLetterInfo(text[i], definition.src.get());
-						definition.positions[i + 1] = definition.positions[i] + width;
-					}
-				}
-			},
-			pos: [
-				({game, definition}, index) => {
-					const angle = game.view.turn.get();
-					const dx = Math.cos(angle);
-					return game.sceneData.cam[0] + dx * .2 * (definition.positions[index] - .5);
-				},
+			letterDistance: .2,
+			faceUser: true,
+			position: [
+				({game}) => game.sceneData.cam[0],
 				-.1,
-				({game, definition}, index) => {
-					const angle = game.view.turn.get();
-					const dz = Math.sin(angle);
-					return game.sceneData.cam[2] + dz * .2 * (definition.positions[index] - .5);
-				}
+				({game}) => game.sceneData.cam[2],
 			],
-			animation: {
-				frame: ({definition}, index) => {
-					const letterInfo = definition.getLetterInfo(definition.text.get().charAt(index), definition.src.get());
-					return letterInfo.index;
-				},
-				range: ({definition}) => definition.characters.get().length,
-				frameRate: 0,
-			},
-			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
-			grid: [
-				({definition}) => Math.ceil(Math.sqrt(definition.characters.get().length)),
-				({definition}) => Math.ceil(definition.characters.get().length / definition.grid[0].get()),
-			],
-			count: ({definition}) => definition.text.get().length,			
-		},
+		}),
 		{
 			src: "penguin",
 			brightness: 150,

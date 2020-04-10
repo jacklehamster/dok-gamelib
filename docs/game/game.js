@@ -42,18 +42,20 @@ class Game {
 		return this.videoManager.getVideo(name);
 	}
 
+	getFirstFontName() {
+		const { fonts } = this.engine.data.generated.config;
+		for (let f in fonts) {
+			return f;
+		}
+		return null;
+	}
+
 	getFont(fontName) {
-		return this.engine.data.generated.config.fonts[fontName];
+		return this.engine.data.generated.config.fonts[fontName || this.getFirstFontName()];
 	}
 
 	getLetterInfo(letter, fontName) {
-		const { fonts } = this.engine.data.generated.config;
-		if (!fontName) {
-			for (let f in fonts) {
-				fontName = f;
-				break;
-			}
-		}
-		return fontName ? fonts[fontName].letterInfo[letter] : null;
+		const font = this.getFont(fontName);
+		return font ? font.letterInfo[letter] : null;
 	}
 }
