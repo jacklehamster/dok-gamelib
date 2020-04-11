@@ -23,6 +23,7 @@ const SpriteType = {
 	LeftWall: 5,
 	RightWall: 6,
 	Water: 7,
+	Shadow: 8,
 };
 
 const MAX_SPRITE = 16000;

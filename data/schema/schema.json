@@ -16,7 +16,11 @@
 		"onUpPress": null,
 		"onUpRelease": null,
 		"onActionPress": null,
-		"onActionRelease": null
+		"onActionRelease": null,
+		"onLeftTurnPress": null,
+		"onLeftTurnRelease": null,
+		"onRightTurnPress": null,
+		"onRightTurnRelease": null
 	},
 	"settings": {
 		"docBackground": 0,
@@ -72,6 +76,12 @@
 				1
 			],
 			"spriteSize": [
+				0,
+				0
+			],
+			"crop": [
+				0,
+				0,
 				0,
 				0
 			],

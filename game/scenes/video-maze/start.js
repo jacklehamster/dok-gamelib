@@ -284,7 +284,7 @@ SceneManager.add({
 			refresh: ({game}) => {
 				game.engine.glRenderer.textureManager.updateVideoTexture(game.getVideo("double-king"), 15, 0, 140);
 			},
-			refreshRate: 24,
+			refreshRate: ({game}) => Math.min(24, game.getFrameRate()),
 			cell: ({game, definition},index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
 			},

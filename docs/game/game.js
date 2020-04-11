@@ -7,6 +7,8 @@ class Game {
 		this.now = 0;
 		this.startTime = 0;
 		this.lastRefresh = 0;
+		this.classes = { Game, SpriteDefinition };
+		this.config = {};
 	}
 
 	setEngine(value) {
@@ -43,7 +45,7 @@ class Game {
 	}
 
 	getFirstFontName() {
-		const { fonts } = this.engine.data.generated.config;
+		const { fonts } = this.engine.data.generated;
 		for (let f in fonts) {
 			return f;
 		}
@@ -51,11 +53,25 @@ class Game {
 	}
 
 	getFont(fontName) {
-		return this.engine.data.generated.config.fonts[fontName || this.getFirstFontName()];
+		return this.engine.data.generated.fonts[fontName || this.getFirstFontName()];
 	}
 
 	getLetterInfo(letter, fontName) {
 		const font = this.getFont(fontName);
 		return font ? font.letterInfo[letter] : null;
 	}
+
+	toSourceCode(editor) {
+		const { classes, config } = this;
+		const classesParam = {
+			... classes,
+		};
+		if (classesParam.Game === Game) {
+			delete classesParam.Game;
+		}
+		if (classesParam.SpriteDefinition === SpriteDefinition) {
+			delete classesParam.SpriteDefinition;
+		}
+		return `SceneManager.add(${editor.formatCode(classesParam)}, ${editor.formatCode(config)});`;
+	}	
 }

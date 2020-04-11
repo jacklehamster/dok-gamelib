@@ -59,8 +59,8 @@ class TextureManager {
 		}
 		if (!isVideo) {
 			glTextures[index].isVideo = true;
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 		}
 
 		if (videoFrame.videoWidth && videoFrame.videoHeight && videoFrame.ready) {

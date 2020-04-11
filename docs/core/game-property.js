@@ -22,7 +22,7 @@ class GameProperty {
 		return this.value(this, ...params);
 	}
 
-	run() {
-		this.value(this);
+	run(...params) {
+		this.value(this, ...params);
 	}
 }

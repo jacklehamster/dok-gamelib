@@ -6,15 +6,16 @@ class SourceCode {
 		});
 
 		engine.addEventListener("start", engine => {
-			const config = document.getElementById("config");
-			const sceneCode = document.getElementById("scene-code");
-			sceneCode.addEventListener("click", () => {
+			document.getElementById("scene-code").addEventListener("click", () => {
 				this.selectTab("scene-code");
-				SourceCode.instance.render(game.config);
+				SourceCode.instance.render(game);
 			});
-			config.addEventListener("click", () => {
+			document.getElementById("config").addEventListener("click", () => {
 				this.selectTab("config");
-				SourceCode.instance.render(getData().generated.config.game);
+				SourceCode.instance.render(getData().generated.game);
+			});
+			document.getElementById("assets").addEventListener("click", () => {
+				this.selectTab("assets");
 			});
 		});
 	}
@@ -46,22 +47,51 @@ class SourceCode {
 	refreshView() {
 		switch (this.selectedTab()) {
 			case "scene-code":
-				SourceCode.instance.render(this.engine.currentScene.config);
+				SourceCode.instance.render(this.engine.currentScene);
 				break;
 			case "config":
-				SourceCode.instance.render(getData().generated.config.game);
+				SourceCode.instance.render(getData().generated.game);
+				break;
+			case "assets":
+				const { sprites } = this.engine.data.generated.imagedata;
+				const sceneName = this.engine.currentScene.name;
+				for (let id in sprites) {
+					if (sprites[id].scenes.indexOf(sceneName) >= 0) {
+						console.log("+" + id);
+					}
+				}
 				break;
 		}
+		document.querySelector('#scene-code').innerText = `scenes/${this.engine.currentScene.name}/start.js`;
+		document.querySelector('#assets').innerText = `scenes/${this.engine.currentScene.name}/assets`;
+	}
+
+	static formatCode(obj) {
+		return SourceCode.instance.formatCode(obj);
 	}
 
  	formatCode(obj) {
- 		if (typeof(obj) !== 'object') {
- 			if (typeof(obj) === "function") {
+ 		switch(typeof(obj)) {
+ 			case "function":
  				return obj.toString();
- 			} else {
- 				return typeof(obj) === 'string' ? `"${obj}"` : `${obj}`;
- 			}
+			case "string":
+				return JSON.stringify(obj);
+			case "object":
+				if (obj.toSourceCode) {
+					return obj.toSourceCode(this);
+				}
+				break;
+			case "number":
+				if (obj % 1 === 0 && obj >= 10) {
+					return `${JSON.stringify(obj)} /*0x${obj.toString(16)}*/`;
+				} else {
+					return JSON.stringify(obj);
+				}
+				break;
+			default:
+				return `${obj}`;
  		}
+
  		const isArray = Array.isArray(obj);
  		const result = isArray ? [] : {};
  		if (isArray) {

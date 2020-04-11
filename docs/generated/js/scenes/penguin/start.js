@@ -284,8 +284,8 @@ SceneManager.add({
 		}
 	},
 	sprites: [
-		TextUtils.makeSprite({
-			text: "Penguin",
+		... TextUtils.makeSprites({
+			text: "Mr.\nPenguin",
 			fontId: "primary-font",
 			tintColor: 0xFF00ccFF,
 			scale: [.2, .2],

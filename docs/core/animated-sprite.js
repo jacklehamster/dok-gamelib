@@ -13,6 +13,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		};
 		this.grid = [0, 0];
 		this.spriteSize = [0, 0];
+		this.crop = [0, 0];
 		this.padding = 0;
 	}
 
@@ -22,7 +23,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			return;
 		}
 
-		const { animation, grid, brightness, padding, spriteSize } = definition;
+		const { animation, grid, brightness, padding, spriteSize, crop } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
@@ -46,6 +47,15 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			this.spriteSize[1] = spriteHeight;
 			updateTimes.spriteSize = now;
 		}
+
+		const cropX = crop[0].get(instanceIndex);
+		const cropY = crop[1].get(instanceIndex);
+		const cropWidth = crop[2].get(instanceIndex);
+		const cropHeight = crop[3].get(instanceIndex);
+		if (!Utils.equal4(this.crop, cropX, cropY, cropWidth, cropHeight)) {
+			Utils.set4(this.crop, cropX, cropY, cropWidth, cropHeight);
+			updateTimes.crop = now;
+		}		
 
 		const animCols = grid[0].get(instanceIndex);
 		const animRows = grid[1].get(instanceIndex);
@@ -73,22 +83,21 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 	}
 
 	updateChunkTexture(renderer, chunk, now) {
-		const { src, grid, spriteSize, scale, brightness, padding } = this;
+		const { src, grid, crop, spriteSize, scale, brightness, padding } = this;
 
 		if (!src) {
 			chunk.setTexture(0, 0, 0, 0, scale, brightness, padding, now);
 		} else {
-			const { updateTimes } = this;
 			const spriteData = renderer.imagedata.sprites[src] || renderer.textureManager.getVideoTexture(src);
 			if (!spriteData) {
 				console.error(`Invalid image ${src}.`);
 			}
-			const { offset, size, index } = spriteData;
-			const [ sheetWidth, sheetHeight ] = size;
+			const { rect, index } = spriteData;
+			const [ x, y, sheetWidth, sheetHeight ] = rect;
 			const [ cols, rows ] = grid;
 			const [ spriteWidth, spriteHeight ] = spriteSize;
 
-			chunk.setTexture(index, offset, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, now);
+			chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, now);
 		}
 	}
 
@@ -106,7 +115,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		if (updateTimes.grid === now) {
 			this.updateChunkGrid(chunk, now);
 		}
-		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now || updateTimes.spriteSize === now) {
+		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now || updateTimes.spriteSize === now || updateTimes.crop === now) {
 			this.updateChunkTexture(renderer, chunk, now);
 		}
 		if (updateTimes.grid === now || updateTimes.animation === now) {

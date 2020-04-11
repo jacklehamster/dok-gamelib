@@ -5,16 +5,14 @@ const KEY_LEFT_A = 'KeyA';
 const KEY_RIGHT_D = 'KeyD';
 const KEY_UP_W = 'KeyW';
 const KEY_DOWN_S = 'KeyS';
-const KEY_RIGHT_E = 'KeyE';
 const KEY_DOWN_X = 'KeyX';
 const KEY_ACTION_SPACE = 'Space';
 const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
 const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
-
-const KEY_LEFT_Q = 'KeyQ';	//	azerty
-const KEY_UP_Z = 'KeyZ';	//	azerty
+const KEY_TURN_RIGHT_E = 'KeyE';
+const KEY_TURN_LEFT_Q = 'KeyQ';
 
 class Keyboard {
 	constructor(listener) {
@@ -26,19 +24,19 @@ class Keyboard {
 			down: 0,
 			left: 0,
 			right: 0,
+			leftTurn: 0,
+			rightTurn: 0,
 			action: 0,
 		};
 
 		document.addEventListener("keydown", e => {
-			const {code} = e;
-			keysDown[code] = code;
-			delete keysUp[code];
+			keysDown[e.code] = true;
+			delete keysUp[e.code];
 			e.preventDefault();
 		});
 		document.addEventListener("keyup", e => {
-			const {code} = e;
-			keysUp[code] = code;
-			delete keysDown[code];
+			keysUp[e.code] = true;
+			delete keysDown[e.code];
 			e.preventDefault();
 		});
 		this.keysDown = keysDown;
@@ -55,7 +53,17 @@ class Keyboard {
 	handlerDirection(key, down, now) {
 		const { controls, listener } = this;
 		switch(key) {
-			case KEY_LEFT_Q:
+			case KEY_TURN_LEFT_Q:
+				if (down && controls.leftTurn <= 0) {
+					controls.leftTurn = now;
+					listener.onLeftTurnPress();
+				} else if (!down && controls.leftTurn >= 0) {
+					controls.leftTurn = -now;
+					listener.onLeftTurnRelease();
+				}
+				break;
+			case KEY_TURN_RIGHT_E:
+				break;
 			case KEY_LEFT_A:
 			case KEY_LEFT:
 				if (down && controls.left <= 0) {
@@ -67,7 +75,6 @@ class Keyboard {
 				}
 				break;
 			case KEY_UP_W:
-			case KEY_UP_Z:
 			case KEY_UP:
 				if (down && controls.up <= 0) {
 					controls.up = now;
@@ -78,7 +85,6 @@ class Keyboard {
 				}
 				break;
 			case KEY_RIGHT_D:
-			case KEY_RIGHT_E:
 			case KEY_RIGHT:
 				if (down && controls.right <= 0) {
 					controls.right = now;

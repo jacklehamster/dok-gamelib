@@ -38,6 +38,7 @@ class SceneManager {
 			sceneObj.dataStore = dataStore;
 			sceneObj.name = name;
 			sceneObj.config = config;
+			sceneObj.classes = { Game, SpriteDefinition };
 
 	 		Object.assign(sceneObj, configProcessor.processScene(config, sceneObj));
 

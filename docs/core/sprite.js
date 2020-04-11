@@ -95,6 +95,7 @@ class SpriteInstance extends AnimatedSpriteInstance {
 					break;
 				case SpriteType.Water:		
 				case SpriteType.Floor:
+				case SpriteType.Shadow:
 					chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, now);
 					break;
 				case SpriteType.LeftWall:

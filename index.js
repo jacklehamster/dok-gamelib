@@ -84,8 +84,8 @@ function copyVideos() {
 		});		
 	}).then(data => {
         const generatedDataDir = `${__dirname}/data/generated`;
-		return fs.promises.mkdir(`${generatedDataDir}/config`, { recursive: true })
-			.then(() => fs.promises.writeFile(`${generatedDataDir}/config/video.json`, JSON.stringify(data, null, '\t'))
+		return fs.promises.mkdir(`${generatedDataDir}`, { recursive: true })
+			.then(() => fs.promises.writeFile(`${generatedDataDir}/video.json`, JSON.stringify(data, null, '\t'))
 		).then(() => data);
 	});
 }
@@ -107,7 +107,7 @@ function copyScenes() {
 						console.error(e.messsage);
 					});
 				}).concat([
-					fs.promises.copyFile(`${__dirname}/game/game.json`, `${__dirname}/data/generated/config/game.json`),
+					fs.promises.copyFile(`${__dirname}/game/game.json`, `${__dirname}/data/generated/game.json`),
 				])).then(resolve);
 			});
 		})
@@ -166,16 +166,16 @@ function getSpritesheets() {
 	return Promise.all([
 		assets.getAssetsSha(gamesDirectory, generatedAssetDir),
 		new Promise((resolve, reject) => {
-			if (!fs.existsSync(`${generatedDataDir}/config/sha.json`)) {
+			if (!fs.existsSync(`${generatedDataDir}/sha.json`)) {
 				resolve(null);
 			} else {
-				fs.promises.readFile(`${generatedDataDir}/config/sha.json`, 'utf8').then(result => resolve(JSON.parse(result)));
+				fs.promises.readFile(`${generatedDataDir}/sha.json`, 'utf8').then(result => resolve(JSON.parse(result)));
 			}
 		}),
 	]).then(([newSha, savedSha]) => {
 		const sameSha = JSON.stringify(newSha) === JSON.stringify(savedSha);
-		if (sameSha && fs.existsSync(`generated/config/imagedata.json`)) {
-			return readData(`generated/config/imagedata.json`);
+		if (sameSha && fs.existsSync(`generated/imagedata.json`)) {
+			return readData(`generated/imagedata.json`);
 		} else {
 		    const publicDir = `${webDir}/generated`;
 		    const generatedDataDir = 'data/generated';
@@ -184,8 +184,8 @@ function getSpritesheets() {
 		    .then(() => assets.produceSpritesheets([gamesDirectory, generatedAssetDir], TEXTURE_SIZE, TEXTURE_SIZE))
 		    .then(spritesheets => assets.getAssetsSha(gamesDirectory, generatedAssetDir).then(data => { return {data, spritesheets}; }))
 		    .then(({data, spritesheets}) => {
-				fs.promises.mkdir(`${generatedDataDir}/config`, { recursive: true })
-					.then(() => fs.promises.writeFile(`${generatedDataDir}/config/sha.json`, JSON.stringify(data, null, '\t')));
+				fs.promises.mkdir(`${generatedDataDir}`, { recursive: true })
+					.then(() => fs.promises.writeFile(`${generatedDataDir}/sha.json`, JSON.stringify(data, null, '\t')));
 				return Promise.resolve(spritesheets);
 		    });
 		}
@@ -224,8 +224,8 @@ function saveFontMap() {
 					fonts[id] = { name, characters, fontSize, cellSize, letterInfo };
 				});
 				return fs.promises.writeFile(`generated/assets/fonts.json`, JSON.stringify(fonts, null, '\t'))
-					.then(() => fs.promises.mkdir(`${__dirname}/data/generated/config`, { recursive: true}))
-					.then(() => fs.promises.copyFile(`generated/assets/fonts.json`, `${__dirname}/data/generated/config/fonts.json`))
+					.then(() => fs.promises.mkdir(`${__dirname}/data/generated`, { recursive: true}))
+					.then(() => fs.promises.copyFile(`generated/assets/fonts.json`, `${__dirname}/data/generated/fonts.json`))
 					.then(() => fonts);
 			});
 		});

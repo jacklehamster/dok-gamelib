@@ -148,18 +148,21 @@ class Chunk {
 		bufferInfo.gravity.chunkUpdateTimes[index] = now;
 	}
 
-	setTexture(texIndex, offset, spriteWidth, spriteHeight, scale, brightness, padding, now) {
+	setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, crop, now) {
 		const { bufferInfo, index } = this;
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
-		const [ spriteX, spriteY ] = offset;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
-		const scaleH = Math.sign(scale[0]);
-		const scaleV = Math.sign(scale[1]);
+		const [ scaleH, scaleV ] = scale;
 		const horizontalShift = texIndex * 2;
 		const verticalShift = Math.round(brightness) * 2;
+		const cropX = crop[0] / TEXTURE_SIZE;
+		const cropY = crop[1] / TEXTURE_SIZE;
+		const cropWidth = crop[2] / TEXTURE_SIZE;
+		const cropHeight = crop[3] / TEXTURE_SIZE;
 
-		let left = horizontalShift + texX + (padding * texWidth / 100), right = horizontalShift + texX + texWidth - (padding * texWidth / 100);
-		let up = verticalShift + texY + (padding * texHeight / 100), down = verticalShift + texY + texHeight - (padding * texHeight / 100);
+		let left = horizontalShift + texX + (padding * texWidth / 100) + cropX, right = horizontalShift + texX + cropX + (cropWidth || texWidth) - (padding * texWidth / 100);
+		let up = verticalShift + texY + (padding * texHeight / 100) + cropY, down = verticalShift + texY + cropY + (cropHeight || texHeight) - (padding * texHeight / 100);
+
 		if (scaleH < 0) {
 			const temp = left;
 			left = right;

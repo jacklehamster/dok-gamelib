@@ -43,6 +43,16 @@ void main(void) {
 	if (aType == 0.0) {	//	sprite face camera
 		worldPos = uCameraRotation * worldPos;
 	}
+	if (aType == 8.0) {	//	shadow face camera except for tilt
+		mat4 M = uCameraRotation;
+		float xLen = sqrt(M[0][0]*M[0][0] + M[2][0]*M[2][0]); // Singularity if either of these
+		float zLen = sqrt(M[0][2]*M[0][2] + M[2][2]*M[2][2]); //  is equal to zero.
+
+		M[0][0]/=xLen; 	M[1][0]=0.0; 	M[2][0]/=xLen; 	// Set the x column
+		M[0][1]=0.0;    M[1][1]=1.0;	M[2][1]=0.0;	// Set the y column
+		M[0][2]/zLen;	M[1][2]=0.0; 	M[2][2]/=zLen; 	// Set the z column
+		worldPos = M * worldPos;
+	}
 
 	worldPos.xyz += aOffset;
 
