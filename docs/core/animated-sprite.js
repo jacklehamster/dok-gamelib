@@ -15,6 +15,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		this.spriteSize = [0, 0];
 		this.crop = [0, 0];
 		this.padding = 0;
+		this.circleRadius = 0;
 	}
 
 	getEvaluated(game, definition) {
@@ -23,7 +24,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			return;
 		}
 
-		const { animation, grid, brightness, padding, spriteSize, crop } = definition;
+		const { animation, grid, brightness, padding, spriteSize, crop, circleRadius } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
@@ -74,6 +75,11 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			this.padding = newPadding;
 			updateTimes.padding = now;
 		}
+		const newCircleRadius = circleRadius.get(instanceIndex);
+		if (newCircleRadius !== this.circleRadius) {
+			this.circleRadius = newCircleRadius;
+			updateTimes.circleRadius = now;
+		}
 	}
 
 	updateChunkGrid(chunk, now) {
@@ -83,10 +89,10 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 	}
 
 	updateChunkTexture(renderer, chunk, now) {
-		const { src, grid, crop, spriteSize, scale, brightness, padding } = this;
+		const { src, grid, crop, spriteSize, scale, brightness, padding, circleRadius } = this;
 
 		if (!src) {
-			chunk.setTexture(0, 0, 0, 0, scale, brightness, padding, now);
+			chunk.setTexture(0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
 		} else {
 			const spriteData = renderer.imagedata.sprites[src] || renderer.textureManager.getVideoTexture(src);
 			if (!spriteData) {
@@ -97,7 +103,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			const [ cols, rows ] = grid;
 			const [ spriteWidth, spriteHeight ] = spriteSize;
 
-			chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, now);
+			chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
 		}
 	}
 
@@ -115,7 +121,8 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		if (updateTimes.grid === now) {
 			this.updateChunkGrid(chunk, now);
 		}
-		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now || updateTimes.spriteSize === now || updateTimes.crop === now) {
+		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
+			|| updateTimes.spriteSize === now || updateTimes.crop === now || updateTimes.circleRadius) {
 			this.updateChunkTexture(renderer, chunk, now);
 		}
 		if (updateTimes.grid === now || updateTimes.animation === now) {

@@ -13,6 +13,7 @@ class Shader {
 				gravity: "aVertexGravity",
 				spriteType: "aType",
 				texCoord: "aVertexTextureCoord",
+				texCenter: "aVertexTextureCenter",
 				animation: "aAnimationData",
 				grid: "aGrid",
 				tintColor: "aTintColor",

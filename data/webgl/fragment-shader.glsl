@@ -4,6 +4,8 @@ const int NUM_TEXTURES = 16;
 
 uniform sampler2D uTextures[NUM_TEXTURES];
 varying vec2 vTexturePoint;
+varying vec2 vTextureCenter;
+varying vec2 vTextureSize;
 varying float zDist;
 varying float light;
 varying vec3 vNormal;
@@ -67,12 +69,23 @@ void main(void) {
 
 	vec4 color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);
 
-    color.a = smoothstep(.5 - .01, .5 + .01, color.a);
+	//	texture as circle
+	if (vTextureSize[0] > 0.0 && vTextureSize[1] > 0.0) {
+		float dx = (vTexturePoint.x - vTextureCenter.x) / vTextureSize[0];
+		float dy = (vTexturePoint.y - vTextureCenter.y) / vTextureSize[1];
+		float textureDist = sqrt(dx * dx + dy * dy);
+		color.a *= (.995 - textureDist);
+	}
 
+	//	SDF handling, mostly for text font
+    color.a = smoothstep(.5 - .01, .5 + .01, color.a);
 	if (color.a <= 0.1) {
 		discard;
 	}
+
+	//	tint
 	color = mix(color, vec4(vTintColor.rgb, color.a), vTintColor.a);
+	//	desaturate / blend with background with distance
 	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2, max(0.0, .8 + zDist))));
 	color = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, zDist);
 

@@ -1,6 +1,6 @@
 SceneManager.add({}, {
 	settings: {
-		background: 0xE8E5E3,
+		background: 0x000000,
 	},
 	view: {
 		tilt: .4,
@@ -35,6 +35,7 @@ SceneManager.add({}, {
 		{
 			src: "home-floor",
 			type: SpriteType.Floor,
+			circleRadius: 1,
 			tintColor: 0x88995555,
 			pos: [0, -1.15, 0],
 			scale: [10, 10],

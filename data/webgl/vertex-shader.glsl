@@ -9,6 +9,7 @@ attribute vec3 aVertexGravity;			//	[ x, y, z ]
 attribute float aType;					//	wall/floor=0, sprite=1, water=2, ...
 
 attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
+attribute vec4 aVertexTextureCenter;	//	[ x, y, texWidth, texHeight ]
 attribute vec4 aAnimationData; 			//	[ cols, start, total, frameRate ]
 attribute vec2 aGrid;					//	[ cols, rows ]
 attribute vec2 aTintColor;				//	[ tint color, mix ]
@@ -21,6 +22,8 @@ uniform float uNow;
 uniform vec3 uLightPos;  
 
 varying vec2 vTexturePoint;
+varying vec2 vTextureCenter;
+varying vec2 vTextureSize;
 varying float zDist;
 varying vec3 vNormal;
 varying vec3 vFragPos;
@@ -80,6 +83,10 @@ void main(void) {
 	vTexturePoint.y = mod(vTexturePoint.y, 2.0);
 	vTexturePoint.x += texCol * aVertexTextureCoord[2];
 	vTexturePoint.y += texRow * aVertexTextureCoord[3];
+	vTextureCenter = aVertexTextureCenter.xy;
+	vTextureCenter.x += texCol * aVertexTextureCoord[2];
+	vTextureCenter.y += texRow * aVertexTextureCoord[3];
+	vTextureSize = aVertexTextureCenter.zw;
 
 	vTextureSlot = floor(aVertexTextureCoord.x / 2.0);
 	vBrightness = floor(aVertexTextureCoord.y / 2.0);

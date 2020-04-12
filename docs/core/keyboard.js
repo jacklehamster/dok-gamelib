@@ -30,14 +30,18 @@ class Keyboard {
 		};
 
 		document.addEventListener("keydown", e => {
-			keysDown[e.code] = true;
-			delete keysUp[e.code];
-			e.preventDefault();
+			if (this.active) {
+				keysDown[e.code] = true;
+				delete keysUp[e.code];
+				e.preventDefault();
+			}
 		});
 		document.addEventListener("keyup", e => {
-			keysUp[e.code] = true;
-			delete keysDown[e.code];
-			e.preventDefault();
+			if (this.active) {
+				keysUp[e.code] = true;
+				delete keysDown[e.code];
+				e.preventDefault();
+			}
 		});
 		this.keysDown = keysDown;
 		this.keysUp = keysUp;
@@ -48,6 +52,7 @@ class Keyboard {
 			keys,
 			controls,
 		};
+		this.active = true;
 	}
 
 	handlerDirection(key, down, now) {
@@ -63,6 +68,14 @@ class Keyboard {
 				}
 				break;
 			case KEY_TURN_RIGHT_E:
+				if (down && controls.rightTurn <= 0) {
+					controls.rightTurn = now;
+					listener.onRightTurnPress();
+				} else if (!down && controls.rightTurn >= 0) {
+					controls.rightTurn = -now;
+					listener.onRightTurnRelease();
+				}
+				break;
 				break;
 			case KEY_LEFT_A:
 			case KEY_LEFT:
@@ -119,22 +132,20 @@ class Keyboard {
 
 	getKeyboard(now) {
 		const { keys, keysDown, keysUp, listener, keyboard } = this;
-		for (let k in keysDown) {
-			const key = keysDown[k];
+		for (let key in keysDown) {
 			if (!keys[key] || keys[key] < 0) {
 				keys[key] = now;
 				listener.onKeyPress(key);
 			}
-			delete keysDown[k];
+			delete keysDown[key];
 			this.handlerDirection(key, true, now);
 		}
-		for (let k in keysUp) {
-			const key = keysUp[k];
+		for (let key in keysUp) {
 			if (!keys[key] || keys[key] > 0) {
 				keys[key] = -now;
 				listener.onKeyRelease(key);
 			}
-			delete keysUp[k];
+			delete keysUp[key];
 			this.handlerDirection(key, false, now);
 		}
 		return keyboard;

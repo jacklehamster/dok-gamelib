@@ -73,10 +73,18 @@ function copyVideos() {
 			})
 		).then(() => {
 			const videos = {};
+			const regexScene = /(?<scene>[\w\d-]+)\/assets\/[\w\d-@]+.[\w]+$/;
 			videopaths.forEach(videopath => {
+				const match = videopath ? videopath.match(regexScene) : null;
+				const scene = match && match.groups.scene !== "generated" ? match.groups.scene : null;
+
 				const id = path.basename(videopath, ".mp4");
+				if (videos[id]) {
+					videos[id].scenes.push(scene);
+				}
 				videos[id] = {
 					id,
+					scenes: [scene],
 					path: `generated/videos/${path.basename(videopath)}`,
 				};
 			});
@@ -85,7 +93,7 @@ function copyVideos() {
 	}).then(data => {
         const generatedDataDir = `${__dirname}/data/generated`;
 		return fs.promises.mkdir(`${generatedDataDir}`, { recursive: true })
-			.then(() => fs.promises.writeFile(`${generatedDataDir}/video.json`, JSON.stringify(data, null, '\t'))
+			.then(() => fs.promises.writeFile(`${generatedDataDir}/videos.json`, JSON.stringify(data, null, '\t'))
 		).then(() => data);
 	});
 }
@@ -169,12 +177,13 @@ function getSpritesheets() {
 			if (!fs.existsSync(`${generatedDataDir}/sha.json`)) {
 				resolve(null);
 			} else {
-				fs.promises.readFile(`${generatedDataDir}/sha.json`, 'utf8').then(result => resolve(JSON.parse(result)));
+				fs.promises.readFile(`${generatedDataDir}/sha.json`, 'utf8')
+					.then(result => resolve(JSON.parse(result)));
 			}
 		}),
 	]).then(([newSha, savedSha]) => {
 		const sameSha = JSON.stringify(newSha) === JSON.stringify(savedSha);
-		if (sameSha && fs.existsSync(`generated/imagedata.json`)) {
+		if (sameSha && fs.existsSync(`${generatedDataDir}/imagedata.json`)) {
 			return readData(`generated/imagedata.json`);
 		} else {
 		    const publicDir = `${webDir}/generated`;

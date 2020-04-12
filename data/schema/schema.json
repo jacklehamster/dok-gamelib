@@ -111,6 +111,7 @@
 			"refresh": null,
 			"brightness": 100,
 			"tintColor": 0,
+			"circleRadius": 0,
 			"padding": 0,
 			"refreshRate": 0
 		}

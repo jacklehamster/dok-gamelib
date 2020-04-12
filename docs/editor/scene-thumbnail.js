@@ -15,6 +15,7 @@ class SceneThumbnail {
 				}
 			}
 		});
+		this.onShiftListener = [];
 	}
 
 	setupSceneThumbnails({canvas}) {
@@ -61,6 +62,32 @@ class SceneThumbnail {
 			document.getElementById("editor").classList.remove("shifted");
 			document.getElementById("panel-button").classList.remove("hidden");
 			document.getElementById("panel-exit-button").classList.add("hidden");
+		}
+
+		const shifted = document.getElementById("panel").classList.contains("shifted");
+		this.onShiftListener.forEach(callback => {
+			callback(shifted);
+		});
+	}
+
+	addEventListener(type, callback) {
+		switch(type) {
+			case "shift":
+				if (this.onShiftListener.indexOf(callback) < 0) {
+					this.onShiftListener.push(callback);
+				}
+				break;
+		}
+	}
+
+	removeEventListener(type, callback) {
+		switch(type) {
+			case "shift":
+				const index = this.onShiftListener.indexOf(callback);
+				if (index >= 0) {
+					this.onShiftListener.splice(index, 1);
+				}
+				break;
 		}
 	}
 }

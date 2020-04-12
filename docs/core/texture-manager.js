@@ -36,13 +36,16 @@ class TextureManager {
 		gl.generateMipmap(gl.TEXTURE_2D);
 	}
 
+	getVideoTextureIndex() {
+		return this.glTextures.length - 1;		
+	}
+
 	getVideoTexture(src) {
 		if (!this.videoTextures[src]) {
 			this.videoTextures[src] = {
-				offset: [0, 0],
-				size: [640, 640],
+				rect: [0, 0, 640, 640],
 				grid: [1, 1],
-				index: this.glTextures.length - 1,
+				index: this.getVideoTextureIndex(),
 			};
 		}
 		return this.videoTextures[src];

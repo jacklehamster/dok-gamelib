@@ -345,7 +345,10 @@ SceneManager.add({
 					return (definition.zPos.get(index) + zShift) * 3;
 				},
 			],
-			scale: [3, 3],
+			scale: [
+				({game}, index) => index % 2 === 0 ? -3 : 3,
+				3,
+			],
 			count: ({game, definition}, index) => game.sceneData.cells.length * 4,
 		},	
 	],

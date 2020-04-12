@@ -148,7 +148,7 @@ class Chunk {
 		bufferInfo.gravity.chunkUpdateTimes[index] = now;
 	}
 
-	setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, crop, now) {
+	setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, crop, circleRadius, now) {
 		const { bufferInfo, index } = this;
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
@@ -160,8 +160,10 @@ class Chunk {
 		const cropWidth = crop[2] / TEXTURE_SIZE;
 		const cropHeight = crop[3] / TEXTURE_SIZE;
 
-		let left = horizontalShift + texX + (padding * texWidth / 100) + cropX, right = horizontalShift + texX + cropX + (cropWidth || texWidth) - (padding * texWidth / 100);
-		let up = verticalShift + texY + (padding * texHeight / 100) + cropY, down = verticalShift + texY + cropY + (cropHeight || texHeight) - (padding * texHeight / 100);
+		let left = horizontalShift + texX + (padding * texWidth / 100) + cropX,
+			right = horizontalShift + texX + cropX + (cropWidth || texWidth) - (padding * texWidth / 100);
+		let up = verticalShift + texY + (padding * texHeight / 100) + cropY,
+			down = verticalShift + texY + cropY + (cropHeight || texHeight) - (padding * texHeight / 100);
 
 		if (scaleH < 0) {
 			const temp = left;
@@ -173,6 +175,15 @@ class Chunk {
 			up = down;
 			down = temp;
 		}
+
+		this.assignValues(bufferInfo.texCenter,
+			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+		);
+
+		bufferInfo.texCenter.chunkUpdateTimes[index] = now;
 
 		this.assignValues(bufferInfo.texCoord,
 			left,	up,		texWidth,	texHeight,

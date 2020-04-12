@@ -10,10 +10,10 @@ class VideoManager {
 
 	getVideo(name) {
 		const { config, videos } = this;
-		if (config.video[name]) {
+		if (config.videos[name]) {
 			if (!videos[name]) {
 				const video = videos[name] = document.createElement("video");
-				video.src = config.video[name].path;
+				video.src = config.videos[name].path;
 				video.crossOrigin = '';
 				video.preload = 'auto';
 				video.addEventListener('canplay', function(e) {
