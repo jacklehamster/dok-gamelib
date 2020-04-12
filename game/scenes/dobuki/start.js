@@ -12,14 +12,14 @@ SceneManager.add({Game: class extends Game {
 		const { sceneData, keys } = this;
 		//	turn camera
 		let dTurn = 0;
-		const turnSpeed = .15;
+		const turnSpeed = .1;
 		if (keys.controls.turnLeft > 0) {
 			dTurn -= turnSpeed;
 		}
 		if (keys.controls.turnRight > 0) {
 			dTurn += turnSpeed;
 		}
-		const turnStep = Math.PI / 2;
+		const turnStep = Math.PI / 8;
 		if (dTurn) {
 			sceneData.turn += dTurn;
 			sceneData.turnGoal = Math.floor(sceneData.turn / turnStep) * turnStep + (dTurn>0 ? turnStep : 0);
@@ -70,39 +70,22 @@ SceneManager.add({Game: class extends Game {
 	},
 	refresh: ({game}) => game.loop(),
 	sprites: [
-		{
+		SpriteUtils.makeSprite({
 			src: "dok",
-			scale: [292 / 150, 362 / 150],
-			spriteSize: [292, 362],
-			grid: [14, 8],
-			padding: 1,
-			animation: {
-				range: 109,
-			},
-			pos: [
+			position: [
 				({game}) => game.sceneData.dok[0],
 				0,
 				({game}) => game.sceneData.dok[1],				
 			],
-		},
-		{
-			src: "dok",
-			type: SpriteType.Shadow,
-			tintColor: 0xFF333333,
-			scale: [292 / 150, 362 / 150],
+			scale: [2.4, 2.4],
+			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],
 			grid: [14, 8],
 			padding: 1,
 			animation: {
 				range: 109,
 			},
-			hotspot: [0, .34],
-			pos: [
-				({game}) => game.sceneData.dok[0],
-				-1.15 + .01,
-				({game}) => game.sceneData.dok[1],				
-			],
-		},
+		}),
 		{
 			src: "home-floor",
 			type: SpriteType.Floor,

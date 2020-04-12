@@ -92,11 +92,18 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		const { src, grid, crop, spriteSize, scale, brightness, padding, circleRadius } = this;
 
 		if (!src) {
-			chunk.setTexture(0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
+			chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
 		} else {
 			const spriteData = renderer.imagedata.sprites[src] || renderer.textureManager.getVideoTexture(src);
 			if (!spriteData) {
-				console.error(`Invalid image ${src}.`);
+				const error = `Invalid image ${src}.`;
+				if (game.lastError !== error) {
+					game.lastError = error;
+					console.error(game.lastError);
+				}
+				chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
+				this.src = null;
+				return;
 			}
 			const { rect, index } = spriteData;
 			const [ x, y, sheetWidth, sheetHeight ] = rect;

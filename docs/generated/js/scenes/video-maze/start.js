@@ -113,7 +113,7 @@ SceneManager.add({
 		},
 		background: ({game}) => {
 			const hitTime = game.now - game.sceneData.hit;
-			return hitTime < 300 ? 0xaa0000 : 0x080523;
+			return hitTime < 300 ? 0xaa0000 : 0;
 		},
 		curvature: 5,
 	},
@@ -273,18 +273,18 @@ SceneManager.add({
 			count: ({game, definition},index) => game.sceneData.cells.length,
 		},
 		{
-			src: "double-king",
+			src: "bunny",
 			init: ({game}) => {
-				game.getVideo("double-king").play();
-				game.getVideo("double-king").volume = 0;
+				game.getVideo("bunny").play();
+				game.getVideo("bunny").volume = 0;
 			},
 			destroy: ({game}) => {
-				game.getVideo("double-king").pause();
+				game.getVideo("bunny").pause();
  			},
 			refresh: ({game}) => {
-				game.engine.glRenderer.textureManager.updateVideoTexture(game.getVideo("double-king"), 15, 0, 140);
+				game.engine.glRenderer.textureManager.updateVideoTexture(game.getVideo("bunny"), 0, 0);
 			},
-			refreshRate: ({game}) => Math.min(24, game.getFrameRate()),
+			refreshRate: ({game}) => Math.min(30, game.getFrameRate()),
 			cell: ({game, definition},index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
 			},

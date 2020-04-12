@@ -3,10 +3,12 @@
  */
 
 class TextureManager {
-	constructor(gl, shader) {
+	constructor(gl, shader, videoManager) {
 		this.gl = gl;
 		this.glTextures = [];
 		this.videoTextures = {};
+		this.videoManager = videoManager;
+		this.videoTextureIndex = this.glTextures.length - 1;
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 
@@ -36,29 +38,31 @@ class TextureManager {
 		gl.generateMipmap(gl.TEXTURE_2D);
 	}
 
-	getVideoTextureIndex() {
-		return this.glTextures.length - 1;		
-	}
-
 	getVideoTexture(src) {
-		if (!this.videoTextures[src]) {
-			this.videoTextures[src] = {
-				rect: [0, 0, 640, 640],
-				grid: [1, 1],
-				index: this.getVideoTextureIndex(),
-			};
+		if (!this.videoTextures[src] && this.videoManager.getVideo(src)) {
+			const { videoWidth, videoHeight } = this.videoManager.getVideo(src);
+			if (videoWidth && videoHeight) {
+				this.videoTextures[src] = {
+					rect: [0, 0, videoWidth, videoHeight],
+				};
+			}
+		}
+		if (this.videoTextures[src]) {
+			this.videoTextures[src].index = this.videoTextureIndex;
 		}
 		return this.videoTextures[src];
 	}
 
-	updateVideoTexture(videoFrame, index, x, y) {
+	updateVideoTexture(videoFrame, x, y) {
 		const { gl, glTextures } = this;
+		const index = this.videoTextureIndex = this.videoTextureIndex === this.glTextures.length - 1 ? this.glTextures.length - 2 : this.glTextures.length - 1;
 		const { glTexture, isVideo, width, height } = glTextures[index];
+
 		gl.activeTexture(gl[`TEXTURE${index}`]);
 		gl.bindTexture(gl.TEXTURE_2D, glTexture);
 		if (width < TEXTURE_SIZE || height < TEXTURE_SIZE) {
 			glTextures[index].width = glTextures[index].height = TEXTURE_SIZE;
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, glTextures[index].width, glTextures[index].height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, glTextures[index].width, glTextures[index].height, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
 		}
 		if (!isVideo) {
 			glTextures[index].isVideo = true;
@@ -67,7 +71,7 @@ class TextureManager {
 		}
 
 		if (videoFrame.videoWidth && videoFrame.videoHeight && videoFrame.ready) {
-			gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGBA, gl.UNSIGNED_BYTE, videoFrame);
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGB, gl.UNSIGNED_BYTE, videoFrame);
 		}
 	}
 }

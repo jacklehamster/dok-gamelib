@@ -1013,79 +1013,84 @@ function getData() {
         ],
         "sprites": {
           "dok": {"scenes": ["dobuki"], "rect": [0, 0, 4096, 4096], "index": 0},
-          "tp-boy": {"scenes": ["tp-boy"], "rect": [0, 0, 384, 512], "index": 1},
-          "tp": {"scenes": ["tp-boy"], "rect": [392, 0, 384, 512], "index": 1},
+          "water.jpg": {"scenes": ["stup"], "rect": [0, 0, 728, 472], "index": 1},
+          "tp-boy": {
+            "scenes": ["tp-boy"],
+            "rect": [736, 0, 384, 512],
+            "index": 1
+          },
+          "tp": {"scenes": ["tp-boy"], "rect": [1128, 0, 384, 512], "index": 1},
           "home-floor": {
             "scenes": ["dobuki"],
-            "rect": [784, 0, 330, 350],
+            "rect": [1520, 0, 330, 350],
             "index": 1
           },
           "penguin": {
             "scenes": ["penguin"],
-            "rect": [1122, 0, 256, 320],
+            "rect": [1858, 0, 256, 320],
             "index": 1
           },
-          "tree": {"scenes": ["dobuki"], "rect": [1386, 0, 286, 312], "index": 1},
+          "tree": {"scenes": ["dobuki"], "rect": [2122, 0, 286, 312], "index": 1},
           "creep-font": {
             "scenes": [null],
-            "rect": [1680, 0, 320, 288],
+            "rect": [2416, 0, 320, 288],
             "index": 1
           },
           "primary-font": {
             "scenes": [null],
-            "rect": [2008, 0, 320, 288],
+            "rect": [2744, 0, 320, 288],
             "index": 1
           },
           "artic": {
             "scenes": ["penguin"],
-            "rect": [2336, 0, 256, 256],
+            "rect": [3072, 0, 256, 256],
             "index": 1
           },
           "zombie": {
             "scenes": ["rogue-zombie"],
-            "rect": [2600, 0, 128, 192],
+            "rect": [3336, 0, 128, 192],
             "index": 1
           },
           "blue-wall": {
             "scenes": ["penguin", "rogue-zombie", "video-maze"],
-            "rect": [2736, 0, 64, 128],
+            "rect": [3472, 0, 64, 128],
             "index": 1
           },
           "gun": {
             "scenes": ["rogue-zombie"],
-            "rect": [2808, 0, 128, 128],
+            "rect": [3544, 0, 128, 128],
             "index": 1
           },
           "grass-tile": {
             "scenes": ["tp-boy"],
-            "rect": [2944, 0, 64, 96],
+            "rect": [3680, 0, 64, 96],
             "index": 1
           },
           "water": {
             "scenes": ["penguin", "tp-boy"],
-            "rect": [3016, 0, 64, 64],
+            "rect": [3752, 0, 64, 64],
             "index": 1
           },
           "color-blocks": {
             "scenes": ["rogue-zombie"],
-            "rect": [3088, 0, 2, 2],
+            "rect": [3824, 0, 2, 2],
             "index": 1
           }
         },
         "freeCells": [
-          {"rect": [3098, 0, 998, 10], "index": 1},
-          {"rect": [3088, 10, 1008, 62], "index": 1},
-          {"rect": [3016, 72, 1080, 32], "index": 1},
-          {"rect": [2944, 104, 1152, 32], "index": 1},
-          {"rect": [2736, 136, 1360, 64], "index": 1},
-          {"rect": [2600, 200, 1496, 64], "index": 1},
-          {"rect": [2336, 264, 1760, 32], "index": 1},
-          {"rect": [1680, 296, 2416, 24], "index": 1},
-          {"rect": [1386, 320, 2710, 8], "index": 1},
-          {"rect": [1122, 328, 2974, 30], "index": 1},
-          {"rect": [784, 358, 3312, 162], "index": 1},
-          {"rect": [392, 520, 3704, 3576], "index": 1},
-          {"rect": [0, 520, 392, 3576], "index": 1}
+          {"rect": [3834, 0, 262, 10], "index": 1},
+          {"rect": [3824, 10, 272, 62], "index": 1},
+          {"rect": [3752, 72, 344, 32], "index": 1},
+          {"rect": [3680, 104, 416, 32], "index": 1},
+          {"rect": [3472, 136, 624, 64], "index": 1},
+          {"rect": [3336, 200, 760, 64], "index": 1},
+          {"rect": [3072, 264, 1024, 32], "index": 1},
+          {"rect": [2416, 296, 1680, 24], "index": 1},
+          {"rect": [2122, 320, 1974, 8], "index": 1},
+          {"rect": [1858, 328, 2238, 30], "index": 1},
+          {"rect": [1520, 358, 2576, 162], "index": 1},
+          {"rect": [736, 520, 3360, 3576], "index": 1},
+          {"rect": [0, 480, 736, 3616], "index": 1}
         ]
       },
       "sha": [
@@ -1104,15 +1109,16 @@ function getData() {
         "tp-boy@4x=33e8cfc18e19a439cae09e340ffb5fbdfc53db5790cc1d9d19c425fdd9ed49cf",
         "tp@4x=58560e5173712d77920de86824d3a0ecf46238d909af4df15593c1479be6b906",
         "tree=e795b999ff8cad5c251a1e14fb9ca70f1b4397cf38833519205b4ae1c2987107",
+        "water.jpg=123d52d6a5853ea2175fcd62dc69f7b6f5d0118772f684f9564d1811c9bdcdbc",
         "water=cfaa1a1ad365ec6e3b6dea3d06104d80d2eb75e9f36b9e66b4e6f8f169343724",
         "water=cfaa1a1ad365ec6e3b6dea3d06104d80d2eb75e9f36b9e66b4e6f8f169343724",
         "zombie=9b90d03bea08ca90684529ac1ea3c6d2d10e2c985725e2081b0fcb031372ed42"
       ],
       "videos": {
-        "double-king": {
-          "id": "double-king",
+        "bunny": {
+          "id": "bunny",
           "scenes": ["video-maze"],
-          "path": "generated/videos/double-king.mp4"
+          "path": "generated/videos/bunny.mp4"
         }
       }
     },

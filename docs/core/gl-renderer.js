@@ -5,7 +5,7 @@ GLRenderer Engine
 */
 
 class GLRenderer {
-	constructor(canvas, webgl, {imagedata, game}) {
+	constructor(canvas, webgl, videoManager, {imagedata, game}) {
 		const resolution = devicePixelRatio;
 		canvas.width = game.width * resolution;
 		canvas.height = game.height * resolution;
@@ -62,7 +62,7 @@ class GLRenderer {
 		};
 
 		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
-		this.textureManager = new TextureManager(gl, this.shader);
+		this.textureManager = new TextureManager(gl, this.shader, videoManager);
 
 		const { shader, textureManager } = this;
 

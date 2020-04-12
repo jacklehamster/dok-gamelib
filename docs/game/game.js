@@ -46,8 +46,8 @@ class Game {
 		return this.settings.frameRate.get();
 	}
 
-	getVideo(name) {
-		return this.videoManager.getVideo(name);
+	getVideo(name, url) {
+		return this.videoManager.getVideo(name, url);
 	}
 
 	getFirstFontName() {

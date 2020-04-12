@@ -8,11 +8,11 @@ class Engine {
 		this.canvas = canvas;
 		this.data = getData();
 		this.dataStore = new DataStore();
-		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.data.generated);
+		this.videoManager = new VideoManager(this.data.generated);
+		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.videoManager, this.data.generated);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer);
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
-		this.videoManager = new VideoManager(this.data.generated);
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard({
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),

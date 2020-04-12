@@ -1,14 +1,14 @@
 class TextUtils {
-	static makeSprites(param) {
-		const {position, tintColor, fontId, scale, text, letterDistance, lineDistance, faceUser} = param;
+	static makeSprite(params) {
+		const {position, tintColor, fontId, scale, text, letterDistance, lineDistance, faceUser} = params;
 		let cachedText = null;
 		let cachedFontId = null;
 		let font = null;
 		const letterPositions = [];
 		const linePositions = [];
 		const indices = [];
-		return [{
-			toSourceCode: editor => `... TextUtils.makeSprites(${editor.formatCode(param)})`,
+		return {
+			toSourceCode: editor => `TextUtils.makeSprite(${editor.formatCode(params)})`,
 			src: fontId || (() => game.getFirstFontName()),
 			tintColor,
 			scale,
@@ -40,7 +40,7 @@ class TextUtils {
 							} else {
 								const { width, height, index } = font.letterInfo[letter];
 								maxHeight = Math.max(maxHeight, height);
-								letterPositions[i+1] = letterPositions[i] + width;
+								letterPositions[i+1] = letterPositions[i] + Math.max(.1, width);
 								linePositions[i] = y;
 								indices[i] = index;
 							}
@@ -70,6 +70,6 @@ class TextUtils {
 				({definition}) => Math.ceil(font.characters.length / definition.grid[0].get()),
 			],
 			count: ({definition}) => indices.length,			
-		}];
+		};
 	}
 }

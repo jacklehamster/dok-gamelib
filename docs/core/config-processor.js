@@ -27,7 +27,7 @@ class ConfigProcessor {
  			obj.forEach((value, index) => result[index] = this.process(value, sceneObj, schema ? schema[0] : null, `${path}[${index}]`));
  		} else {
 	 		for (let o in obj) {
-	 			if (obj.hasOwnProperty(o)) {
+	 			if (obj.hasOwnProperty(o) && typeof(obj[o]) !== 'undefined') {
 		 			if (!schema || typeof(schema[o]) === 'undefined') {
 //		 				console.warn(`Unknown config property: ${path}.${o}`);
 		 			}
