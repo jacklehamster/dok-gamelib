@@ -7,6 +7,8 @@ class Game {
 		this.now = 0;
 		this.startTime = 0;
 		this.lastRefresh = 0;
+		this.lastKeys = 0;
+		this.keysCache = null;
 		this.classes = { Game, SpriteDefinition };
 		this.config = {};
 	}
@@ -29,7 +31,11 @@ class Game {
 	}
 
 	get keys() {
-		return this.engine.keyboard.getKeyboard(this.now);		
+		if (this.lastKeys !== this.now) {
+			this.lastKeys = this.now;
+			this.keysCache = this.engine.keyboard.getKeyboard(this.now);
+		}
+		return this.keysCache;
 	}
 
 	gotoScene(name) {

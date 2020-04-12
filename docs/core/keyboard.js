@@ -24,8 +24,8 @@ class Keyboard {
 			down: 0,
 			left: 0,
 			right: 0,
-			leftTurn: 0,
-			rightTurn: 0,
+			turnLeft: 0,
+			turnRight: 0,
 			action: 0,
 		};
 
@@ -59,21 +59,21 @@ class Keyboard {
 		const { controls, listener } = this;
 		switch(key) {
 			case KEY_TURN_LEFT_Q:
-				if (down && controls.leftTurn <= 0) {
-					controls.leftTurn = now;
-					listener.onLeftTurnPress();
-				} else if (!down && controls.leftTurn >= 0) {
-					controls.leftTurn = -now;
-					listener.onLeftTurnRelease();
+				if (down && controls.turnLeft <= 0) {
+					controls.turnLeft = now;
+					listener.onTurnLeftPress();
+				} else if (!down && controls.turnLeft >= 0) {
+					controls.turnLeft = -now;
+					listener.onTurnLeftRelease();
 				}
 				break;
 			case KEY_TURN_RIGHT_E:
-				if (down && controls.rightTurn <= 0) {
-					controls.rightTurn = now;
-					listener.onRightTurnPress();
-				} else if (!down && controls.rightTurn >= 0) {
-					controls.rightTurn = -now;
-					listener.onRightTurnRelease();
+				if (down && controls.turnRight <= 0) {
+					controls.turnRight = now;
+					listener.onTurnRightPress();
+				} else if (!down && controls.turnRight >= 0) {
+					controls.turnRight = -now;
+					listener.onTurnRightRelease();
 				}
 				break;
 				break;

@@ -1136,10 +1136,10 @@ function getData() {
           "onUpRelease": null,
           "onActionPress": null,
           "onActionRelease": null,
-          "onLeftTurnPress": null,
-          "onLeftTurnRelease": null,
-          "onRightTurnPress": null,
-          "onRightTurnRelease": null
+          "onTurnLeftPress": null,
+          "onTurnLeftRelease": null,
+          "onTurnRightPress": null,
+          "onTurnRightRelease": null
         },
         "settings": {
           "docBackground": 0,

@@ -27,10 +27,10 @@ class Engine {
 			onRightRelease: () => this.currentScene.keyboard.onRightRelease.run(),
 			onActionPress: () => this.currentScene.keyboard.onActionPress.run(),
 			onActionRelease: () => this.currentScene.keyboard.onActionRelease.run(),
-			onLeftTurnPress: () => this.currentScene.keyboard.onLeftTurnPress.run(),
-			onLeftTurnRelease: () => this.currentScene.keyboard.onLeftTurnRelease.run(),
-			onRightTurnPress: () => this.currentScene.keyboard.onRightTurnPress.run(),
-			onRightTurnRelease: () => this.currentScene.keyboard.onRightRelease.run(),
+			onTurnLeftPress: () => this.currentScene.keyboard.onTurnLeftPress.run(),
+			onTurnLeftRelease: () => this.currentScene.keyboard.onTurnLeftRelease.run(),
+			onTurnRightPress: () => this.currentScene.keyboard.onTurnRightPress.run(),
+			onTurnRightRelease: () => this.currentScene.keyboard.onTurnRightRelease.run(),
 		});
 		this.currentScene = null;
 		this.spritesToRemove = [];
