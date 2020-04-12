@@ -24,6 +24,8 @@ config: The config will get processed and assigned to the class. For the schema 
 Documentation in progress. Meanwhile, check out the sample projects:
 https://jacklehamster.github.io/dok-gamelib
 
+![Demo Image](https://github.com/jacklehamster/dok-gamelib/raw/master/img/demo.png)
+
 - For each scene, you can see the code by clicking EDITOR
 - The code shown is all the code needed to produce a scene (excluding the code for the engine itself).
 
