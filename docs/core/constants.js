@@ -1,3 +1,13 @@
+/**
+	Dok-gamelib engine
+
+	Description: Game engine for producing web games easily using JavaScript and WebGL
+	Author: jacklehamster
+	Sourcode: https://github.com/jacklehamster/dok-gamelib
+	Year: 2020
+ */
+
+
 const FLOAT_PER_VERTEX 				= 3;	//	x,y,z
 const NORMAL_FLOAT_PER_VERTEX 		= 3;	//	3 normal
 const MOVE_FLOAT_PER_VERTEX 		= 4;	//	x,y,z,time
