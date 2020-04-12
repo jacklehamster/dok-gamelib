@@ -29,6 +29,7 @@ https://jacklehamster.github.io/dok-gamelib
 
 ## Scene file structure
 
+```
 game
 ├── game.json
 │   scenes
@@ -37,3 +38,4 @@ game
 │   │   ├── assets
 │   |   │   ├── *.png
 │   |   │   ├── *.jpg
+```
