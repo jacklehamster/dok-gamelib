@@ -20,3 +20,20 @@ Class: Pass a javascript class as the first parameter, extending the Game class.
 config: The config will get processed and assigned to the class. For the schema of config, see schema.json
 
 ``` 
+
+Documentation in progress. Meanwhile, check out the sample projects:
+https://jacklehamster.github.io/dok-gamelib
+
+- For each scene, you can see the code by clicking EDITOR
+- The code shown is all the code needed to produce a scene (excluding the code for the engine itself).
+
+## Scene file structure
+
+game
+├── game.json
+│   scenes
+│   ├── <scene-name>
+│   |   ├── start.js
+│   │   ├── assets
+│   |   │   ├── *.png
+│   |   │   ├── *.jpg
