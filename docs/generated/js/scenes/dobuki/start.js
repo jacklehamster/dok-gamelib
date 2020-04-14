@@ -69,6 +69,31 @@ SceneManager.add({Game: class extends Game {
 		turn: ({game}) => game.sceneData.turn,
 	},
 	refresh: ({game}) => game.loop(),
+	spriteData: [
+		{
+			src: "dok",
+			spriteSize: [292, 362],
+			grid: [14, 8],
+			padding: 1,
+			animations: [
+				[ "idle", "2" ],
+				[ "blink", "0-2" ],
+				[ "talk", "2-5" ],
+				[ "talk-mad", "6-7" ],
+				[ "talk-surprised", "8-9" ],
+				[ "talk-sad", "10-11" ],
+				[ "talk-4th-wall", "12-15" ],
+				[ "walk", "16-25" ],
+				[ "walk-up", "26-36" ],
+				[ "knocked-up", "37-52" ],
+				[ "birds", "53-57" ],
+				[ "cast-spell", "58-67" ],
+				[ "pick-up", "68-78" ],
+				[ "fly", "79-86" ],
+				[ "dancing", "87-94" ],
+			],
+		},
+	],
 	sprites: [
 		SpriteUtils.makeSprite({
 			src: "dok",

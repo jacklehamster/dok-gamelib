@@ -51,6 +51,20 @@
 		"specularStrength": 0.5,
 		"diffusionStrength": 0.5
 	},
+	"spriteData": [
+		{
+			"src": null,
+			"spriteSize": [0, 0],
+			"grid": [1, 1],
+			"padding": 0,			
+			"animations": [
+				[
+					null,
+					null
+				]
+			]
+		}
+	],
 	"sprites": [
 		{
 			"src": null,

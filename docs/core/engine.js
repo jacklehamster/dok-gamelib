@@ -23,6 +23,7 @@ class Engine {
 		this.sceneRenderer = new SceneRenderer(this.glRenderer);
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
+		this.animationProcessor = new AnimationProcessor();
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard({
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
@@ -57,7 +58,8 @@ class Engine {
 	}
 
 	static beginLooping(engine) {
-		const { glRenderer, sceneRenderer, spriteDefinitionProcessor, spriteProvider, keyboard, spritesToRemove, onLoopListener } = engine;
+		const { glRenderer, sceneRenderer, spriteDefinitionProcessor, spriteProvider,
+				keyboard, spritesToRemove, onLoopListener, animationProcessor } = engine;
 		function animationFrame(now) {
 			requestAnimationFrame(animationFrame);
 			const { currentScene } = engine;
@@ -73,6 +75,8 @@ class Engine {
 				glRenderer.setTime(now - currentScene.startTime);
 				glRenderer.clearScreen();
 				sceneRenderer.render(currentScene);
+
+				animationProcessor.process(currentScene);
 
 				//	show sprites to process
 				const sprites = spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);

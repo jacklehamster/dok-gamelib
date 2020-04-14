@@ -38,7 +38,7 @@ html, body {
 
 .tab {
   background-color: #555555;
-  padding: 5px;
+  padding:  3px 8px;
   margin: 1px;
   font-size: 8pt;
   border-top-left-radius: 10px;
@@ -85,10 +85,11 @@ html, body {
   white-space: nowrap;
   display: inline-flex;
   align-items: flex-end;
+  margin-left: 6px;
 }
 
 .panel-button:hover {
-  color: #6380FF
+  color: #FFFFFF;
 }
 
 .source-code {

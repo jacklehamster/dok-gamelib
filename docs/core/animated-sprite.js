@@ -106,10 +106,10 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		} else {
 			const spriteData = renderer.imagedata.sprites[src] || renderer.textureManager.getVideoTexture(src);
 			if (!spriteData) {
-				const error = `Invalid image ${src}.`;
+				const error = `Unknown sprite ${src}.`;
 				if (game.lastError !== error) {
 					game.lastError = error;
-					console.error(game.lastError);
+					console.warn(game.lastError);
 				}
 				chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
 				this.src = null;

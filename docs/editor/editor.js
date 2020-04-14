@@ -15,16 +15,23 @@ class SourceCode {
 			this.refreshView();
 		});
 
+		const TABS = [
+			"scene-code",
+			"config",
+			"assets",
+
+			"design-tab",
+			"code-tab",
+		];
+
+
 		engine.addEventListener("start", engine => {
-			document.getElementById("scene-code").addEventListener("click", () => {
-				this.selectTab("scene-code");
+			TABS.forEach(tab => {
+				document.getElementById(tab).addEventListener("mousedown", () => {
+					this.selectTab(tab);
+				});
 			});
-			document.getElementById("config").addEventListener("click", () => {
-				this.selectTab("config");
-			});
-			document.getElementById("assets").addEventListener("click", () => {
-				this.selectTab("assets");
-			});
+
 
 			SceneThumbnail.instance.addEventListener("shift", shifted => {
 				if (!shifted) {
@@ -43,20 +50,50 @@ class SourceCode {
 	}
 
 	selectTab(id) {
-		const tabs = document.querySelectorAll("#editor-tabs > .tab");
-		for (let i = 0; i < tabs.length; i++) {
-			const tab = tabs[i];
-			if (tab.id === id) {
-				tab.classList.add("selected");
-			} else {
-				tab.classList.remove("selected");
+		{
+			const tabs = document.querySelectorAll("#editor-tabs > .tab");
+			const selectedTab = document.querySelector(`#editor-tabs > .tab#${id}`)
+			if (selectedTab) {
+				for (let i = 0; i < tabs.length; i++) {
+					const tab = tabs[i];
+					if (tab.id === id) {
+						tab.classList.add("selected");
+					} else {
+						tab.classList.remove("selected");
+					}
+				}
+			}
+		}
+		{
+			const tabs = document.querySelectorAll("#code-tabs > .tab");
+			const selectedTab = document.querySelector(`#code-tabs > .tab#${id}`)
+			if (selectedTab) {
+				for (let i = 0; i < tabs.length; i++) {
+					const tab = tabs[i];
+					if (tab.id === id) {
+						tab.classList.add("selected");
+					} else {
+						tab.classList.remove("selected");
+					}
+				}
 			}
 		}
 		this.refreshView();
 	}
 
-	selectedTab() {
+	selectedEditorTab() {
 		const tabs = document.querySelectorAll("#editor-tabs > .tab");
+		for (let i = 0; i < tabs.length; i++) {
+			const tab = tabs[i];
+			if (tab.classList.contains("selected")) {
+				return tab.id;
+			}
+		}
+		return null;
+	}
+
+	selectedCoderTab() {
+		const tabs = document.querySelectorAll("#code-tabs > .tab");
 		for (let i = 0; i < tabs.length; i++) {
 			const tab = tabs[i];
 			if (tab.classList.contains("selected")) {
@@ -74,31 +111,36 @@ class SourceCode {
 		document.getElementById("source-code").style.display = "none";
 		document.getElementById("assets-container").style.display = "none";
 
-		switch (this.selectedTab()) {
-			case "scene-code":
-				SourceCode.instance.render(this.engine.currentScene);
-				break;
-			case "config":
-				SourceCode.instance.render(getData().generated.game);
-				break;
-			case "assets":
-				const { imagedata, videos, } = this.engine.data.generated;
-				const sceneName = this.engine.currentScene.name;
-				const  assets = [], videoArray = [];
-				for (let id in imagedata.sprites) {
-					if (imagedata.sprites[id].scenes.indexOf(sceneName) >= 0) {
-						assets.push(id);
+		if (this.selectedCoderTab() === "code-tab") {
+			switch (this.selectedEditorTab()) {
+				case "scene-code":
+					SourceCode.instance.render(this.engine.currentScene);
+					break;
+				case "config":
+					SourceCode.instance.render(getData().generated.game);
+					break;
+				case "assets":
+					const { imagedata, videos, } = this.engine.data.generated;
+					const sceneName = this.engine.currentScene.name;
+					const  assets = [], videoArray = [];
+					for (let id in imagedata.sprites) {
+						if (imagedata.sprites[id].scenes.indexOf(sceneName) >= 0) {
+							assets.push(id);
+						}
 					}
-				}
 
-				for (let id in videos) {
-					if  (videos[id].scenes.indexOf(sceneName) >= 0) {
-						videoArray.push(id);
+					for (let id in videos) {
+						if  (videos[id].scenes.indexOf(sceneName) >= 0) {
+							videoArray.push(id);
+						}
 					}
-				}
-				this.renderAssets(assets, videoArray);
-				break;
+					this.renderAssets(assets, videoArray);
+					break;
+			}
+		} else if (this.selectedCoderTab().id === "design-tab") {
+
 		}
+
 		document.querySelector('#scene-code').innerText = `scenes/${this.engine.currentScene.name}/start.js`;
 		document.querySelector('#assets').innerText = `scenes/${this.engine.currentScene.name}/assets`;
 	}

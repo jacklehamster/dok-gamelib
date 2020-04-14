@@ -15,6 +15,7 @@ const assets = require('./lib/assets');
 const zip = require('./lib/zip');
 const template = require('./lib/template');
 const stringify = require("json-stringify-pretty-compact");
+const colors = require('colors');
 
 const app = express();
 const port = 8000;
@@ -124,7 +125,12 @@ function copyScenes() {
 					).catch(e => {
 						console.error(e.messsage);
 					});
-				}).concat([
+				}).concat(scenes.filter(file => path.extname(file)===".json").map(pathname => {
+					const scene = pathname.split("/")[0];
+					console.log(pathname);
+					return fs.promises.mkdir(`${__dirname}/data/generated/scenes/${scene}`, {recursive: true})
+						.then(() => fs.promises.copyFile(`${__dirname}/game/scenes/${pathname}`, `${__dirname}/data/generated/scenes/${scene}/sprites.json`))
+				})).concat([
 					fs.promises.copyFile(`${__dirname}/game/game.json`, `${__dirname}/data/generated/game.json`),
 				])).then(resolve);
 			});
@@ -282,6 +288,7 @@ app.get('/', function (req, res) {
 	})
 	.then(() => {
 		console.log(`Done game processing: ${Date.now() - startTime}ms`);
+		console.log(`Game rendered on localhost:${port}`.green);
 	});
 });
 
@@ -348,4 +355,4 @@ app.get('/fonts', (req, res) => {
 
 app.use(express.static(`${__dirname}/${webDir}`));
 
-app.listen(port, () => console.log(`Listening on port ${port}!`));
+app.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));

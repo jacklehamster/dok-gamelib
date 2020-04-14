@@ -347,7 +347,17 @@ SceneManager.add({
 			],
 			scale: [
 				({game}, index) => index % 2 === 0 ? -3 : 3,
-				3,
+				({game}, index) => {
+					const video = game.getVideo("bunny");
+					if (!video) {
+						return 3;
+					}
+					const { videoWidth, videoHeight } = video;
+					if (!videoWidth || !videoHeight) {
+						return 3;
+					}
+					return 3 * videoHeight / Math.max(videoWidth, videoHeight);
+				},
 			],
 			count: ({game, definition}, index) => game.sceneData.cells.length * 4,
 		},	
