@@ -84,7 +84,7 @@ void main(void) {
 	float start = aAnimationData[1];
 	float total = aAnimationData[2];
 	float fps = aAnimationData[3];
-	float index = start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, total);
+	float index = max(0.0, start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, abs(total)) * sign(total));
 	float texRow = floor(index / cols);
 	float texCol = floor(mod(index + .4, cols));
 	vTexturePoint = aVertexTextureCoord.xy;

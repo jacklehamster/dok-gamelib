@@ -19,12 +19,15 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			frame: 0,
 			start: 0,
 			range: 0,
+		};
+
+		this.animationData = {
+			spriteSize: [ 0, 0 ],
+			grid: [ 0, 0 ],
+			padding: 0,
 			frameRate: 0,
 		};
-		this.grid = [0, 0];
-		this.spriteSize = [0, 0];
 		this.crop = [0, 0];
-		this.padding = 0;
 		this.circleRadius = 0;
 	}
 
@@ -35,7 +38,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		}
 
 		const { animation, grid, brightness, padding, spriteSize, crop, circleRadius } = definition;
-		const { instanceIndex, updateTimes } = this;
+		const { instanceIndex, updateTimes, animationData } = this;
 		const { now } = game;
 
 		const animFrame = animation.frame.get(instanceIndex);
@@ -44,21 +47,13 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		const animFrameRate = animation.frameRate.get(instanceIndex);
 
 		const spriteAnim = this.animation;
-		if (spriteAnim.frame !== animFrame || spriteAnim.start !== animStart || spriteAnim.range !== animRange || spriteAnim.frameRate !== animFrameRate) {
+		if (spriteAnim.frame !== animFrame || spriteAnim.start !== animStart || spriteAnim.range !== animRange || animationData.frameRate !== animFrameRate) {
 			spriteAnim.frame = animFrame;
 			spriteAnim.start = animStart;
 			spriteAnim.range = animRange;
-			spriteAnim.frameRate = animFrameRate;
+			animationData.frameRate = animFrameRate;
 			updateTimes.animation = now;
 		}
-		const spriteWidth = spriteSize[0].get(instanceIndex);
-		const spriteHeight = spriteSize[1].get(instanceIndex);
-		if (this.spriteSize[0] !== spriteWidth || this.spriteSize[1] !== spriteHeight) {
-			this.spriteSize[0] = spriteWidth;
-			this.spriteSize[1] = spriteHeight;
-			updateTimes.spriteSize = now;
-		}
-
 		const cropX = crop[0].get(instanceIndex);
 		const cropY = crop[1].get(instanceIndex);
 		const cropWidth = crop[2].get(instanceIndex);
@@ -68,38 +63,72 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			updateTimes.crop = now;
 		}		
 
-		const animCols = grid[0].get(instanceIndex);
-		const animRows = grid[1].get(instanceIndex);
-		if (this.grid[0] !== animCols || this.grid[1] !== animRows) {
-			this.grid[0] = animCols;
-			this.grid[1] = animRows;
-			updateTimes.grid = now;
-		}
 		const newBrightness = brightness.get(instanceIndex);
 		if (newBrightness !== this.brightness) {
 			this.brightness = newBrightness;
 			updateTimes.brightness = now;
 		}
-		const newPadding = padding.get(instanceIndex);
-		if (newPadding !== this.padding) {
-			this.padding = newPadding;
-			updateTimes.padding = now;
-		}
+
 		const newCircleRadius = circleRadius.get(instanceIndex);
 		if (newCircleRadius !== this.circleRadius) {
 			this.circleRadius = newCircleRadius;
 			updateTimes.circleRadius = now;
 		}
+
+		const animationProcessorData = game.engine.animationProcessor.data[this.src];
+		if (animationProcessorData) {
+			const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = animationProcessorData;
+			const newPadding = padding;
+			if (newPadding !== this.padding) {
+				this.padding = newPadding;
+				updateTimes.padding = now;
+			}
+
+			if (this.animationData.spriteSize[0] !== spriteWidth || this.animationData.spriteSize[1] !== spriteHeight) {
+				this.animationData.spriteSize[0] = spriteWidth;
+				this.animationData.spriteSize[1] = spriteHeight;
+				updateTimes.spriteSize = now;
+			}
+
+			const animCols = grid[0].get(instanceIndex);
+			const animRows = grid[1].get(instanceIndex);
+			if (this.animationData.grid[0] !== animCols || this.animationData.grid[1] !== animRows) {
+				this.animationData.grid[0] = animCols;
+				this.animationData.grid[1] = animRows;
+				updateTimes.grid = now;
+			}
+		} else {
+			const spriteWidth = spriteSize[0].get(instanceIndex);
+			const spriteHeight = spriteSize[1].get(instanceIndex);
+			if (this.animationData.spriteSize[0] !== spriteWidth || this.animationData.spriteSize[1] !== spriteHeight) {
+				this.animationData.spriteSize[0] = spriteWidth;
+				this.animationData.spriteSize[1] = spriteHeight;
+				updateTimes.spriteSize = now;
+			}
+
+			const animCols = grid[0].get(instanceIndex);
+			const animRows = grid[1].get(instanceIndex);
+			if (this.animationData.grid[0] !== animCols || this.animationData.grid[1] !== animRows) {
+				this.animationData.grid[0] = animCols;
+				this.animationData.grid[1] = animRows;
+				updateTimes.grid = now;
+			}
+			
+			const newPadding = padding.get(instanceIndex);
+			if (newPadding !== this.animationData.padding) {
+				this.animationData.padding = newPadding;
+				updateTimes.padding = now;
+			}
+		}
 	}
 
 	updateChunkGrid(chunk, now) {
-		const { grid } = this;
-		const [ cols, rows ] = grid;
+		const { grid: [ cols, rows ] } = this.animationData;
 		chunk.setGrid(cols, rows, now);
 	}
 
 	updateChunkTexture(renderer, chunk, now) {
-		const { src, grid, crop, spriteSize, scale, brightness, padding, circleRadius } = this;
+		const { src, animationData: { spriteSize, grid, padding }, crop, scale, brightness, circleRadius } = this;
 
 		if (!src) {
 			chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
@@ -115,20 +144,24 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 				this.src = null;
 				return;
 			}
-			const { rect, index } = spriteData;
-			const [ x, y, sheetWidth, sheetHeight ] = rect;
-			const [ cols, rows ] = grid;
-			const [ spriteWidth, spriteHeight ] = spriteSize;
 
-			chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
+			const { rect: [ x, y, sheetWidth, sheetHeight ], index } = spriteData;
+
+			const animationData = game.engine.animationProcessor.data[src];
+			if (animationData) {
+				const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = animationData;
+				chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
+			} else {
+				const [ cols, rows ] = grid;
+				const [ spriteWidth, spriteHeight ] = spriteSize;
+				chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
+			}
 		}
 	}
 
 	updateChunkAnimation(chunk, now) {
-		const { animation, grid } = this;
-
-		const { start, range, frameRate } = animation;
-		const [ cols, rows ] = grid;
+		const { animation, animationData: { grid: [ cols, rows ], frameRate } } = this;
+		const { start, range } = animation;
 		chunk.setAnimation(start, range, frameRate, now);
 	}
 
@@ -138,10 +171,12 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		if (updateTimes.grid === now) {
 			this.updateChunkGrid(chunk, now);
 		}
+
 		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
 			|| updateTimes.spriteSize === now || updateTimes.crop === now || updateTimes.circleRadius) {
 			this.updateChunkTexture(renderer, chunk, now);
 		}
+
 		if (updateTimes.grid === now || updateTimes.animation === now) {
 			this.updateChunkAnimation(chunk, now);
 		}

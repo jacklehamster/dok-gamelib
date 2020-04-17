@@ -56,7 +56,8 @@
 			"src": null,
 			"spriteSize": [0, 0],
 			"grid": [1, 1],
-			"padding": 0,			
+			"padding": 0,
+			"frameRate": 24,		
 			"animations": [
 				[
 					null,

@@ -76,7 +76,8 @@ SceneManager.add({Game: class extends Game {
 			grid: [14, 8],
 			padding: 1,
 			animations: [
-				[ "idle", "2" ],
+				[ "idle", "still*20,blink" ],
+				[ "still", "2" ],
 				[ "blink", "0-2" ],
 				[ "talk", "2-5" ],
 				[ "talk-mad", "6-7" ],
