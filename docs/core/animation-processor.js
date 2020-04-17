@@ -86,7 +86,7 @@ class AnimationProcessor {
 				}
 
 				let changedAnimations = false;
-				animations.forEach(([name, frames]) => {
+				animations.forEach(([name, frames], index) => {
 					const n = name.get(), f = frames.get();
 					const tag = anim.animations[n] ? anim.animations[n].tag : null;
 					if (f !== tag) {
@@ -97,6 +97,11 @@ class AnimationProcessor {
 						anim.timeUpdated = now;
 						changedAnimations = true;
 					}
+					if (index === 0 && anim.first !== n) {
+						anim.first = n;
+						anim.timeUpdated = now;
+					}
+
 				});
 				if (changedAnimations) {
 					for (let i = 0; i < 10; i++) {
