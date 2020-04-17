@@ -18,7 +18,7 @@ class AnimationProcessor {
 							}
 						}
 					} else {
-						result.push([ frames.join("-"), 1 ]);
+						result.push([ frames.length === 1 ? frames[0] : frames.join("-"), 1 ]);
 					}
 				}
 			}
@@ -26,19 +26,39 @@ class AnimationProcessor {
 		return result;
 	}
 
-	static postProcess(animations) {
-		console.log(animations);
+	static postProcess(animationData) {
+		let didProcess = false;
+		for (let id in animationData) {
+			const { animations } = animationData[id];
+			const a = [];
+			let updateAnimation = false;
+			animations.forEach(([frame, count]) => {
+				if (isNaN(frame)) {
+					const data = animationData[frame];
+					a.push(...data.animations);
+					didProcess = true;
+					updateAnimation = true;
+				} else {
+					a.push([frame, count]);
+				}
+			});
+			if (updateAnimation) {
+				animationData[id].animations = a;
+			}
+		}
+		return didProcess;
 	}
 
 	process(scene) {
 		const { spriteData, now } = scene;
-		spriteData.forEach(({src, spriteSize, grid, padding, animations }) => {
+		spriteData.forEach(({src, spriteSize, grid, padding, frameRate, animations }) => {
 			const s = src.get();
 			if (s) {
 				const anim = this.data[s] || (this.data[s] = {
 					spriteSize: [0, 0],
 					grid: [1, 1],
 					padding: 0,
+					frameRate: 24,
 					animations: {},
 					timeUpdated: now,
 				});
@@ -59,21 +79,32 @@ class AnimationProcessor {
 					anim.timeUpdated = now;
 				}
 
+				const newFrame = frameRate.get();
+				if (newFrame !== anim.frameRate) {
+					anim.frameRate = newFrame;
+					anim.timeUpdated = now;
+				}
+
 				let changedAnimations = false;
 				animations.forEach(([name, frames]) => {
 					const n = name.get(), f = frames.get();
 					const tag = anim.animations[n] ? anim.animations[n].tag : null;
 					if (f !== tag) {
 						anim.animations[n] = {
-							tag: f,
 							animations: AnimationProcessor.produceAnimationChunks(f),
+							tag: f,
 						};
 						anim.timeUpdated = now;
 						changedAnimations = true;
 					}
 				});
 				if (changedAnimations) {
-					AnimationProcessor.postProcess(anim.animations);
+					for (let i = 0; i < 10; i++) {
+						if (!AnimationProcessor.postProcess(anim.animations)) {
+							break;
+						}
+					}
+					console.log(anim);
 				}
 			}
 		});
