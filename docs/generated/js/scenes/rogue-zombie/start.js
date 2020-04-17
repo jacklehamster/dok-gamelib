@@ -340,7 +340,7 @@ SceneManager.add({
 			src: "gun",
 			hidden: ({game}) => game.sceneData.gameOver,
 			animation: {
-				frame: ({game}) => {
+				start: ({game}) => {
 					const { now, sceneData } = game;
 					if (sceneData.lastShot) {
 						const shootTime = now - sceneData.lastShot;
@@ -390,8 +390,8 @@ SceneManager.add({
 				}
 			],
 			animation: {
-				frame: ({definition}, index) => definition.charIndexes[index],
-				range: ({definition}) => definition.characters.get().length,
+				start: ({definition}, index) => definition.charIndexes[index],
+				range: 1,//({definition}) => definition.characters.get().length,
 				frameRate: 0,
 			},
 			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
@@ -428,8 +428,8 @@ SceneManager.add({
 				}
 			],
 			animation: {
-				frame: ({definition}, index) => definition.charIndexes[index],
-				range: ({definition}) => definition.characters.get().length,
+				start: ({definition}, index) => definition.charIndexes[index],
+				//range: ({definition}) => definition.characters.get().length,
 				frameRate: 0,
 			},
 			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
@@ -442,7 +442,7 @@ SceneManager.add({
 		{
 			src: "zombie",
 			animation: {
-				frame: ({game, definition}, index) => {
+				start: ({game, definition}, index) => {
 					const {dead} = game.sceneData.zombies[index];
 					if (dead) {
 						const deathTime = game.now - dead;
@@ -502,8 +502,7 @@ SceneManager.add({
 			],
 			grid: [1, 2],
 			animation: {
-				frame: ({game, definition},index) => index % 2,
-				range: 2,
+				start: ({game, definition},index) => index % 2,
 				frameRate: 0,
 			},
 			scale: [3.1, 3.1],
@@ -573,8 +572,7 @@ SceneManager.add({
 				},
 			],
 			animation: {
-				frame: ({game, definition}, index) => index % 2,
-				range: 2,
+				start: ({game, definition}, index) => index % 2,
 				frameRate: 0,
 			},
 			scale: [3, 3],
@@ -584,7 +582,6 @@ SceneManager.add({
 			src: "primary-font",
 			tintColor: 0xFFFFFFFF,
 			animation: {
-				frame: 0,
 				range: ({definition}) => definition.characters.get().length,
 				frameRate: 24,
 			},

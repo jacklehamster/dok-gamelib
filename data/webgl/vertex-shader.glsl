@@ -80,11 +80,11 @@ void main(void) {
 
 	float cols = aGrid[0];
 	float rows = aGrid[1];
-	float frame = aAnimationData[0];
+	float animTime = aAnimationData[0];
 	float start = aAnimationData[1];
 	float total = aAnimationData[2];
 	float fps = aAnimationData[3];
-	float index = start + mod(floor(frame + uNow * fps / 1000.0) + .4, total);
+	float index = start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, total);
 	float texRow = floor(index / cols);
 	float texCol = floor(mod(index + .4, cols));
 	vTexturePoint = aVertexTextureCoord.xy;

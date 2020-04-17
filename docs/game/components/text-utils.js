@@ -71,8 +71,7 @@ class TextUtils {
 			],
 			hidden: (dummy, index) => indices[index] < 0,
 			animation: {
-				frame: (dummy, index) => Math.max(0, indices[index]),
-				range: () => font ? font.characters.length : 0,
+				start: (dummy, index) => Math.max(0, indices[index]),
 				frameRate: 0,
 			},
 			grid: [

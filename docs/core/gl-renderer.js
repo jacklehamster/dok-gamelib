@@ -81,11 +81,24 @@ class GLRenderer {
 		this.usedChunks = 0;
 
 		//	load texture
-		imagedata.spritesheets.forEach((src, index) => {
-			Utils.load(src).then(image => textureManager.setImage(index, image));
+		Utils.load(imagedata.spritesheets, {
+			error: errors => {
+				console.errors(errors);
+			},
+			progress: progress => {
+				console.log(progress.toFixed(2) + "%");
+				this.progress = progress;
+			},
+			complete: images => {
+				images.forEach((image, index) => textureManager.setImage(index, image));
+				this.progress = 1;
+				this.loaded = true;
+			},
 		});
 
 		this.lastRefresh = 0;
+		this.loaded = false;
+		this.progress = 0;
 	}
 
 	checkSupport() {

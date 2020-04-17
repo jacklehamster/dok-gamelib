@@ -127,9 +127,9 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 	updateChunkAnimation(chunk, now) {
 		const { animation, grid } = this;
 
-		const { frame, start, range, frameRate } = animation;
+		const { start, range, frameRate } = animation;
 		const [ cols, rows ] = grid;
-		chunk.setAnimation(frame, start, range, frameRate, now);
+		chunk.setAnimation(start, range, frameRate, now);
 	}
 
 	updateChunk(renderer, chunk, now) {

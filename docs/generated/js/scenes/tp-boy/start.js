@@ -87,7 +87,6 @@ SceneManager.add({
 			],
 			grid: [3, 4],
 			animation: {
-				frame: 0,
 				start: ({game, definition}, index) => game.tpBoy.walking ? 7 : 0,
 				range: 4,
 				frameRate: ({game}) => game.tpBoy.walking ? 15 : 5,
@@ -160,8 +159,7 @@ SceneManager.add({
 			grid: [2, 3],
 			hotspot: [0, -.1],
 			animation: {
-				frame: ({game, definition}, index) => game.platforms[index].index,
-				range: 6,
+				start: ({game, definition}, index) => game.platforms[index].index,
 				frameRate: 0,
 			},
 			pos: [

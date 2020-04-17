@@ -27,8 +27,8 @@ SceneManager.add({Game: class extends Game {
 			grid: [10, 10],
 			padding: 1,
 			animation: {
-				frame: ({game, definition}, index) => index,
-				range: 100,
+				start: ({game, definition}, index) => index,
+				range: 1,
 				frameRate: 0,
 			},
 			pos: [

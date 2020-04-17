@@ -228,13 +228,13 @@ class Chunk {
 		bufferInfo.grid.chunkUpdateTimes[index] = now;
 	}
 
-	setAnimation(frame, start, range, frameRate, now) {
+	setAnimation(start, range, frameRate, now) {
 		const { bufferInfo, index } = this;
 		this.assignValues(bufferInfo.animation,
-			frame, start, range, frameRate,
-			frame, start, range, frameRate,
-			frame, start, range, frameRate,
-			frame, start, range, frameRate,
+			now, start, range, frameRate,
+			now, start, range, frameRate,
+			now, start, range, frameRate,
+			now, start, range, frameRate,
 		);
 		bufferInfo.animation.chunkUpdateTimes[index] = now;
 	}

@@ -427,7 +427,6 @@ SceneManager.add({
 			],
 			grid: [2, 2],
 			animation: {
-				frame: ({game, definition}, index) => index % 4,
 				range: 4,
 				frameRate: ({definition}, index) => {
 					const { type } = definition.cell.get(index);
@@ -446,8 +445,8 @@ SceneManager.add({
 			padding: 1,
 			grid: [1, 2],
 			animation: {
-				frame: ({game, definition}, index) => index % 2,
-				range: 2,
+				start: ({game, definition}, index) => index % 2,
+				range: 1,
 				frameRate: 0,
 			},
 			cell: ({game, definition},index) => {

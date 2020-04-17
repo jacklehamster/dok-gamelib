@@ -44,60 +44,75 @@ class Utils {
 		return `#${(0x1000000 | color).toString(16).substr(1)}`;		
 	}
 	
-	static load(... urls) {
-		return urls.length > 1 ? Promise.all(urls.map(Utils.load)) : new Promise((resolve, reject) => {
-			const url = urls[0];
-			if (cache[url] && cache[url].result) {
-				if (cache[url].result) {
-					resolve(cache[url].result);
-				} else {
-					reject(cache[url].error);
-				}
+	static load(urls, {progress, complete, error}) {
+		const progresses = urls.map(() => 0);
+		const images = urls.map(() => null);
+		const errors = urls.map(() => null);
+		let imageLoading = 0;
+
+		const checkCompletion = () => {
+			if (imageLoading) {
 				return;
 			}
-
-			const shouldLoad = !cache[url];
-			if (url.match(/.(jpg|jpeg|png|gif)$/i)) {
-				const img = cache[url] ? cache[url].img : new Image();
-				img.crossOrigin = "anonymous";
-				if (!cache[url]) {
-					cache[url] = { img };					
+			for (let i = 0; i < images.length; i++) {
+				if (!images[i] && !errors[i]) {
+					return;
 				}
-				img.addEventListener('load', e => {
-					cache[url].result = e.currentTarget;
-					resolve(cache[url].result);
-				});
-			    img.addEventListener('error', e => {
-			    	cache[url].error = Error("Image Error");
-			      	reject(cache[url].error);
-			    });
-			    if (shouldLoad) {
-					img.src = url;
-			    }
-			} else {
-			    const req = cache[url] ? cache[url].req : new XMLHttpRequest();
-			    if (!cache[url]) {
-			    	cache[url] = { req };
-			    }
-			    req.open('GET', url);
-			    req.addEventListener('load', e => {
-			      if (req.status === 200) {
-			      	cache[url].result = req.response;
-			        resolve(cache[url].result);
-			      }
-			      else {
-			      	cache[url].error = Error(req.statusText);
-			        reject(cache[url].error);
-			      }
-			    });
-			    req.addEventListener('error', e => {
-			    	cache[url].error = Error("Network Error");
-			    	reject(cache[url].error);
-			    });
-			    if (shouldLoad) {
-				    req.send();
-			    }
 			}
+			if (errors.filter(a => a).length > 0) {
+				error(errors.filter(a => a));
+			} else {
+				complete(images);
+			}
+		};
+
+		urls.forEach((url, index) => {
+			const shouldLoad = !cache[url];
+		    const req = cache[url] ? cache[url].req : new XMLHttpRequest();
+		    if (!cache[url]) {
+		    	cache[url] = { req };
+		    }
+		    req.open('GET', url);
+	        req.responseType = 'blob';
+
+		    req.addEventListener('load', e => {
+				if (req.status === 200) {
+					if (url.match(/.(jpg|jpeg|png|gif)$/i)) {
+						const imageURL = URL.createObjectURL(req.response);
+						const image = new Image();
+						imageLoading++;
+						image.addEventListener("load", e => {
+							imageLoading --;
+							checkCompletion();
+						});
+						cache[url].result = image;
+						image.src = imageURL;
+						images[index] = image;
+					} else {
+						cache[url].result = req.response;
+						images[index] = cache[url].result;
+						checkCompletion();
+					}
+				}
+				else {
+					cache[url].error = Error(req.statusText);
+					errors[index] = cache[url].error;
+					checkCompletion();
+				}
+		    });
+		    req.addEventListener('error', e => {
+		    	cache[url].error = Error("Network Error");
+		    	errors[index] = cache[url].error;
+				checkCompletion();
+		    });
+		    req.addEventListener('progress', e => {
+		    	progresses[index] = e.loaded / e.total;
+		    	progress(progresses.reduce((avg, num, _, {length}) => avg + 100 * num / length, 0));
+		    });
+
+		    if (shouldLoad) {
+			    req.send();
+		    }
 		});
 	}
 }
