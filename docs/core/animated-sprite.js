@@ -16,7 +16,6 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 	constructor() {
 		super();
 		this.animation = {
-			frame: 0,
 			start: 0,
 			range: 0,
 		};
@@ -41,14 +40,12 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		const { instanceIndex, updateTimes, animationData } = this;
 		const { now } = game;
 
-		const animFrame = animation.frame.get(instanceIndex);
 		const animStart = animation.start.get(instanceIndex);
 		const animRange = animation.range.get(instanceIndex);
 		const animFrameRate = animation.frameRate.get(instanceIndex);
 
 		const spriteAnim = this.animation;
-		if (spriteAnim.frame !== animFrame || spriteAnim.start !== animStart || spriteAnim.range !== animRange || animationData.frameRate !== animFrameRate) {
-			spriteAnim.frame = animFrame;
+		if (spriteAnim.start !== animStart || spriteAnim.range !== animRange || animationData.frameRate !== animFrameRate) {
 			spriteAnim.start = animStart;
 			spriteAnim.range = animRange;
 			animationData.frameRate = animFrameRate;

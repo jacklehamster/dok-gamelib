@@ -1189,7 +1189,7 @@ function getData() {
             "grid": [1, 1],
             "spriteSize": [0, 0],
             "crop": [0, 0, 0, 0],
-            "animation": {"start": 0, "frame": 0, "range": 1, "frameRate": 24},
+            "animation": {"start": 0, "range": 1, "frameRate": 24},
             "scale": [1, 1],
             "hotspot": [0, 0],
             "corners": [0, 0, 0, 0],

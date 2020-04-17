@@ -102,7 +102,6 @@
 			],
 			"animation": {
 				"start": 0,
-				"frame": 0,
 				"range": 1,
 				"frameRate": 24
 			},
