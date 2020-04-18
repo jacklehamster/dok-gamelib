@@ -19,7 +19,7 @@ attribute float aType;					//	wall/floor=0, sprite=1, water=2, ...
 
 attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
 attribute vec4 aVertexTextureCenter;	//	[ x, y, texWidth, texHeight ]
-attribute vec4 aAnimationData; 			//	[ cols, start, total, frameRate ]
+attribute vec4 aAnimationData; 			//	[ time, start, total, frameRate ]
 attribute vec2 aGrid;					//	[ cols, rows ]
 attribute vec2 aTintColor;				//	[ tint color, mix ]
 
@@ -68,12 +68,12 @@ void main(void) {
 
 	worldPos.xyz += aOffset;
 
-	if (aType == 7.0) {	//	water wave
-		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .05;
-	}
-
 	worldPos.xyz += aVertexMove.xyz * time;
 	worldPos.xyz += aVertexGravity.xyz * time * time / 2.0;
+
+	if (aType == 7.0) {	//	water wave
+		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .1;
+	}
 
 	vec4 position = uProjectionMatrix * uViewMatrix * worldPos;
 	position.y -= uCurvature * (position.z * position.z + position.x * position.x) / 500.0;
@@ -84,7 +84,7 @@ void main(void) {
 	float start = aAnimationData[1];
 	float total = aAnimationData[2];
 	float fps = aAnimationData[3];
-	float index = max(0.0, start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, abs(total)) * sign(total));
+	float index = mod(max(0.0, start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, abs(total)) * sign(total)), cols * rows);
 	float texRow = floor(index / cols);
 	float texCol = floor(mod(index + .4, cols));
 	vTexturePoint = aVertexTextureCoord.xy;
@@ -101,7 +101,7 @@ void main(void) {
 	vBrightness = floor(aVertexTextureCoord.y / 2.0);
 	vTintColor = makeColorFromRGB(aTintColor[0], aTintColor[1]);
 
-	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.y / 10.0)) * .2);
+	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 40.0)) * .2);
 	gl_Position = position;
 	vFragPos = worldPos.xyz;
 	vNormal = aNormal;

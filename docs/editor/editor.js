@@ -203,10 +203,7 @@ class SourceCode {
 		assetsContainer.style.display = "flex";
 		assetsContainer.style.flexWrap = "wrap";
 		assets.forEach(id => {
-			const { rect, index } = this.engine.data.generated.imagedata.sprites[id];
-			const [ x, y, width, height ] = rect;
 			const size = 160;
-			const scale = Math.min(size / width, size / height);
 
 			const container = assetsContainer.appendChild(document.createElement("div"));
 			container.style.margin = "5px";
@@ -220,12 +217,7 @@ class SourceCode {
 			canvas.style.width = "100%"; canvas.style.height = "100%";
 			canvas.width = size; canvas.height = size;
 
-			const context = canvas.getContext("2d");
-			const image = new Image();
-			image.src = `generated/spritesheets/sheet${index}.png`;
-			image.addEventListener("load", e => {
-				context.drawImage(image, x, y, width, height, 0, 0, width * scale, height * scale);
-			});
+			this.engine.glRenderer.drawToCanvas2d(id, 0, 0, size, canvas);
 
 			const label = container.appendChild(document.createElement("div"));
 			label.style.fontSize = "8pt";

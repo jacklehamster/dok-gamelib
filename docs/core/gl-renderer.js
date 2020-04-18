@@ -270,4 +270,21 @@ class GLRenderer {
 		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
 		this.lastRefresh = now;
 	}
+
+	drawToCanvas2d(id, px, py, size, canvas) {
+		const { rect, index } = this.imagedata.sprites[id];
+		const [ x, y, width, height ] = rect;
+		const scale = Math.min(size / width, size / height);
+
+		const context = canvas.getContext("2d");
+		//	load texture
+		Utils.load([ this.imagedata.spritesheets[index] ], {
+			error: errors => {
+				console.errors(errors);
+			},
+			complete: ([image]) => {
+				context.drawImage(image, x, y, width, height, px, py, width * scale, height * scale);
+			},
+		});			
+	}
 }

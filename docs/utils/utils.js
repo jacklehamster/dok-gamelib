@@ -68,6 +68,11 @@ class Utils {
 
 		urls.forEach((url, index) => {
 			const shouldLoad = !cache[url];
+			if (cache[url] && cache[url].result) {
+				images[index] = cache[url].result;
+				checkCompletion();
+				return;
+			}
 		    const req = cache[url] ? cache[url].req : new XMLHttpRequest();
 		    if (!cache[url]) {
 		    	cache[url] = { req };

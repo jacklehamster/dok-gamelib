@@ -25,7 +25,7 @@ const KEY_TURN_RIGHT_E = 'KeyE';
 const KEY_TURN_LEFT_Q = 'KeyQ';
 
 class Keyboard {
-	constructor(listener) {
+	constructor(engine, listener) {
 		const keysDown = {};
 		const keysUp = {};
 		const keys = {};
@@ -43,6 +43,7 @@ class Keyboard {
 			if (this.active) {
 				keysDown[e.code] = true;
 				delete keysUp[e.code];
+				this.dirty = true;
 				e.preventDefault();
 			}
 		});
@@ -50,9 +51,11 @@ class Keyboard {
 			if (this.active) {
 				keysUp[e.code] = true;
 				delete keysDown[e.code];
+				this.dirty = true;
 				e.preventDefault();
 			}
 		});
+		this.dirty = false;
 		this.keysDown = keysDown;
 		this.keysUp = keysUp;
 		this.keys = keys;
@@ -65,7 +68,7 @@ class Keyboard {
 		this.active = true;
 	}
 
-	handlerDirection(key, down, now) {
+	handleDirection(key, down, now) {
 		const { controls, listener } = this;
 		switch(key) {
 			case KEY_TURN_LEFT_Q:
@@ -148,7 +151,7 @@ class Keyboard {
 				listener.onKeyPress(key);
 			}
 			delete keysDown[key];
-			this.handlerDirection(key, true, now);
+			this.handleDirection(key, true, now);
 		}
 		for (let key in keysUp) {
 			if (!keys[key] || keys[key] > 0) {
@@ -156,8 +159,9 @@ class Keyboard {
 				listener.onKeyRelease(key);
 			}
 			delete keysUp[key];
-			this.handlerDirection(key, false, now);
+			this.handleDirection(key, false, now);
 		}
+		this.dirty = false;
 		return keyboard;
 	}
 }

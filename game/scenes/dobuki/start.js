@@ -60,7 +60,6 @@ SceneManager.add({Game: class extends Game {
 	}
 
 }}, {
-	firstScene: true,
 	settings: {
 		background: 0x000000,
 	},
@@ -107,8 +106,6 @@ SceneManager.add({Game: class extends Game {
 			scale: [2.4, 2.4],
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],
-			grid: [14, 8],
-			padding: 1,
 		}),
 		{
 			src: "home-floor",
@@ -118,7 +115,6 @@ SceneManager.add({Game: class extends Game {
 			pos: [0, -1.15, 0],
 			scale: [10, 10],
 			brightness: 80,
-			padding: 2,
 		},
 	],
 });

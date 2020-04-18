@@ -25,7 +25,7 @@ class Engine {
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.animationProcessor = new AnimationProcessor();
 		this.sceneManager = sceneManager;
-		this.keyboard = new Keyboard({
+		this.keyboard = new Keyboard(this, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
 			onKeyRelease: key => this.currentScene.keyboard.onKeyRelease.run(key),
 			onDownPress: () => this.currentScene.keyboard.onDownPress.run(),
@@ -42,6 +42,11 @@ class Engine {
 			onTurnLeftRelease: () => this.currentScene.keyboard.onTurnLeftRelease.run(),
 			onTurnRightPress: () => this.currentScene.keyboard.onTurnRightPress.run(),
 			onTurnRightRelease: () => this.currentScene.keyboard.onTurnRightRelease.run(),
+		});
+		this.mouse = new Mouse(this, {
+			onMouseDown: mouseStatus => this.currentScene.mouse.onMouseDown.run(mouseStatus),
+			onMouseUp: mouseStatus => this.currentScene.mouse.onMouseUp.run(mouseStatus),
+			onMouseMove: mousePosition => this.currentScene.mouse.onMouseMove.run(mousePosition),			
 		});
 		this.currentScene = null;
 		this.spritesToRemove = [];
@@ -64,7 +69,7 @@ class Engine {
 
 	static beginLooping(engine) {
 		const { glRenderer, sceneRenderer, spriteDefinitionProcessor, spriteProvider,
-				keyboard, spritesToRemove, onLoopListener, animationProcessor } = engine;
+				keyboard, mouse, spritesToRemove, onLoopListener, animationProcessor } = engine;
 		function animationFrame(now) {
 			requestAnimationFrame(animationFrame);
 			const { currentScene } = engine;
@@ -73,6 +78,13 @@ class Engine {
 				currentScene.startTime = now;
 			}
 			currentScene.now = now;
+
+			if (keyboard.dirty) {
+				currentScene.keys;
+			}
+			if (mouse.dirty) {
+				currentScene.mouseStatus;
+			}
 
 			sceneRenderer.refresh(currentScene);
 			animationProcessor.refresh(currentScene);

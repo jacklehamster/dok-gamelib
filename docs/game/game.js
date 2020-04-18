@@ -18,7 +18,9 @@ class Game {
 		this.startTime = 0;
 		this.lastRefresh = 0;
 		this.lastKeys = 0;
+		this.lastMouse = 0;
 		this.keysCache = null;
+		this.mouseCache = null;
 		this.classes = { Game, SpriteDefinition };
 		this.config = {};
 	}
@@ -46,6 +48,14 @@ class Game {
 			this.keysCache = this.engine.keyboard.getKeyboard(this.now);
 		}
 		return this.keysCache;
+	}
+
+	get mouseStatus() {
+		if (this.lastMouse !== this.now) {
+			this.lastMouse = this.now;
+			this.mouseCache = this.engine.mouse.getMouse(this.now);
+		}
+		return this.mouseCache;
 	}
 
 	gotoScene(name) {

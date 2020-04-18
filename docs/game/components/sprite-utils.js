@@ -10,7 +10,7 @@
 
 class SpriteUtils {
 	static makeSprite(params) {
-		const { position, shadowColor, scale, spriteSize, grid, padding, src, animation } = params;
+		const { position, shadowColor, scale, spriteSize, src, animation } = params;
 
 		const zoomValue = ({definition}) => {
 			const spriteWidth = definition.spriteSize[0].get(),
@@ -36,8 +36,6 @@ class SpriteUtils {
 				scale: realScale,
 				zoomValue,
 				spriteSize,
-				grid,
-				padding,
 				animation,
 				hotspot: [
 					0,

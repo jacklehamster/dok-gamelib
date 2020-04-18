@@ -22,6 +22,11 @@
 		"onTurnRightPress": null,
 		"onTurnRightRelease": null
 	},
+	"mouse": {
+		"onMouseDown": null,
+		"onMouseUp": null,
+		"onMouseMove": null
+	},
 	"settings": {
 		"docBackground": 0,
 		"background": 0,

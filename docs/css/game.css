@@ -96,6 +96,7 @@ html, body {
   font-family: "Courier New", monospace;
   font-size: 8pt;
   color: white;
+  background-color: black;
   white-space: pre;
   border: 1px solid #ccc;
   margin: 2px;

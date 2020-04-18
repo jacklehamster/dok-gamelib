@@ -234,7 +234,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 
 		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
 			|| updateTimes.spriteSize === now || updateTimes.crop === now || updateTimes.circleRadius
-			|| updateTimes.grid === now) {
+			|| updateTimes.grid === now || updateTimes.padding) {
 			this.updateChunkTexture(renderer, chunk, now);
 		}
 

@@ -25,6 +25,7 @@
 		<script src="lib/gl-matrix.js"></script>
 		<script src="generated/js/lib/json-compact.js"></script>
 		<script src="generated/js/data.js"></script>
+		<script src="game/components/shape-utils.js"></script>
 		<script src="game/components/sprite-utils.js"></script>
 		<script src="game/components/text-utils.js"></script>
 		<script src="game/game.js"></script>
@@ -40,6 +41,7 @@
 		<script src="core/scene-renderer.js"></script>
 		<script src="core/data-store.js"></script>
 		<script src="core/keyboard.js"></script>
+		<script src="core/mouse.js"></script>
 		<script src="core/engine-buffer.js"></script>
 		<script src="core/engine-chunk.js"></script>
 		<script src="core/gl-renderer.js"></script>
@@ -56,6 +58,8 @@
 		<script src="core/scene-manager.js"></script>
 		<script>SceneManager.loadingSceneName = "dobuki";</script>
 		<script src="generated/js/scenes/dobuki/start.js"></script>
+		<script>SceneManager.loadingSceneName = "keep-alive";</script>
+		<script src="generated/js/scenes/keep-alive/start.js"></script>
 		<script>SceneManager.loadingSceneName = "penguin";</script>
 		<script src="generated/js/scenes/penguin/start.js"></script>
 		<script>SceneManager.loadingSceneName = "rogue-zombie";</script>
@@ -91,7 +95,7 @@
 			</div>
 		</div>
 		<div id="panel" class="panel">
-			<canvas id="canvas" width=800 height=500></canvas>
+			<canvas id="canvas" width=800 height=600></canvas>
 		</div>
 		<script>
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);

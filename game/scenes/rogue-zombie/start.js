@@ -376,7 +376,6 @@ SceneManager.add({
 				0,
 				({game}) => game.sceneData.cam[2],
 			],
-			hotspot: [0, 0],
 			scale: [3, 3],
 		},
 		{
