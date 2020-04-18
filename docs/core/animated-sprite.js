@@ -37,20 +37,9 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		}
 
 		const { animation, grid, brightness, padding, spriteSize, crop, circleRadius } = definition;
-		const { instanceIndex, updateTimes, animationData } = this;
+		const { instanceIndex, updateTimes, animationData, src } = this;
 		const { now } = game;
 
-		const animStart = animation.start.get(instanceIndex);
-		const animRange = animation.range.get(instanceIndex);
-		const animFrameRate = animation.frameRate.get(instanceIndex);
-
-		const spriteAnim = this.animation;
-		if (spriteAnim.start !== animStart || spriteAnim.range !== animRange || animationData.frameRate !== animFrameRate) {
-			spriteAnim.start = animStart;
-			spriteAnim.range = animRange;
-			animationData.frameRate = animFrameRate;
-			updateTimes.animation = now;
-		}
 		const cropX = crop[0].get(instanceIndex);
 		const cropY = crop[1].get(instanceIndex);
 		const cropWidth = crop[2].get(instanceIndex);
@@ -72,27 +61,33 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			updateTimes.circleRadius = now;
 		}
 
-		const animationProcessorData = game.engine.animationProcessor.data[this.src];
+		const animationProcessorData = game.engine.animationProcessor.data[src];
 		if (animationProcessorData) {
-			const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = animationProcessorData;
+			const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, frameRate, animations } = animationProcessorData;
 			const newPadding = padding;
-			if (newPadding !== this.padding) {
-				this.padding = newPadding;
+			if (newPadding !== animationData.padding) {
+				animationData.padding = newPadding;
 				updateTimes.padding = now;
 			}
 
-			if (this.animationData.spriteSize[0] !== spriteWidth || this.animationData.spriteSize[1] !== spriteHeight) {
-				this.animationData.spriteSize[0] = spriteWidth;
-				this.animationData.spriteSize[1] = spriteHeight;
+			if (animationData.spriteSize[0] !== spriteWidth || animationData.spriteSize[1] !== spriteHeight) {
+				animationData.spriteSize[0] = spriteWidth;
+				animationData.spriteSize[1] = spriteHeight;
 				updateTimes.spriteSize = now;
 			}
 
-			const animCols = grid[0].get(instanceIndex);
-			const animRows = grid[1].get(instanceIndex);
-			if (this.animationData.grid[0] !== animCols || this.animationData.grid[1] !== animRows) {
-				this.animationData.grid[0] = animCols;
-				this.animationData.grid[1] = animRows;
+			const animCols = cols;
+			const animRows = rows;
+			if (animationData.grid[0] !== animCols || animationData.grid[1] !== animRows) {
+				animationData.grid[0] = animCols;
+				animationData.grid[1] = animRows;
 				updateTimes.grid = now;
+			}
+
+			const animFrameRate = frameRate;
+			if (animationData.frameRate !== animFrameRate) {
+				animationData.frameRate = animFrameRate;
+				updateTimes.frameRate = now;
 			}
 		} else {
 			const spriteWidth = spriteSize[0].get(instanceIndex);
@@ -116,6 +111,21 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 				this.animationData.padding = newPadding;
 				updateTimes.padding = now;
 			}
+
+			const animFrameRate = animation.frameRate.get(instanceIndex);
+			if (animationData.frameRate !== animFrameRate) {
+				animationData.frameRate = animFrameRate;
+				updateTimes.frameRate = now;
+			}
+		}
+
+		const animStart = animation.start.get(instanceIndex);
+		const animRange = animation.range.get(instanceIndex);
+		const spriteAnim = this.animation;
+		if (spriteAnim.start !== animStart || spriteAnim.range !== animRange) {
+			spriteAnim.start = animStart;
+			spriteAnim.range = animRange;
+			updateTimes.animation = now;
 		}
 	}
 
@@ -157,7 +167,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 	}
 
 	updateChunkAnimation(chunk, now) {
-		const { animation, animationData: { grid: [ cols, rows ], frameRate } } = this;
+		const { animation, animationData: { frameRate } } = this;
 		const { start, range } = animation;
 		chunk.setAnimation(start, range, frameRate, now);
 	}
@@ -170,11 +180,12 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		}
 
 		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
-			|| updateTimes.spriteSize === now || updateTimes.crop === now || updateTimes.circleRadius) {
+			|| updateTimes.spriteSize === now || updateTimes.crop === now || updateTimes.circleRadius
+			|| updateTimes.grid === now) {
 			this.updateChunkTexture(renderer, chunk, now);
 		}
 
-		if (updateTimes.grid === now || updateTimes.animation === now) {
+		if (updateTimes.animation === now || updateTimes.frameRate === now) {
 			this.updateChunkAnimation(chunk, now);
 		}
 	}
