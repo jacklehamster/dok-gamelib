@@ -17,6 +17,13 @@ SceneManager.add({Game: class extends Game {
 		],
 	},
 	refresh: ({game}) => game.loop(),
+	spriteData: [
+		{
+			src: "water.jpg",
+			grid: [10, 10],
+			padding: 1,
+		},
+	],	
 	sprites: [
 		{
 			src: "water.jpg",
@@ -24,13 +31,7 @@ SceneManager.add({Game: class extends Game {
 			tintColor: 0x889999FF,
 			scale: [2, 2],
 			brightness: 80,
-			grid: [10, 10],
-			padding: 1,
-			animation: {
-				start: ({game, definition}, index) => index,
-				range: 1,
-				frameRate: 0,
-			},
+			animation: ({game, definition}, index) => index,
 			pos: [
 				({game, definition}, index) => (index % 10 - 5) * 2,
 				0,

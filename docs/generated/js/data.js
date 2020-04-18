@@ -1175,7 +1175,11 @@ function getData() {
             "grid": [1, 1],
             "padding": 0,
             "frameRate": 24,
-            "animations": [[null, null]]
+            "animations": [[null, null]],
+            "init": null,
+            "destroy": null,
+            "refresh": null,
+            "refreshRate": 0
           }
         ],
         "sprites": [
@@ -1189,7 +1193,13 @@ function getData() {
             "grid": [1, 1],
             "spriteSize": [0, 0],
             "crop": [0, 0, 0, 0],
-            "animation": {"start": 0, "range": 1, "frameRate": 24},
+            "animation": null,
+            "animationOverride": {
+              "active": false,
+              "start": 0,
+              "range": 0,
+              "frameRate": 0
+            },
             "scale": [1, 1],
             "hotspot": [0, 0],
             "corners": [0, 0, 0, 0],

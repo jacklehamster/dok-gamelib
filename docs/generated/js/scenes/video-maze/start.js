@@ -242,6 +242,13 @@ SceneManager.add({
 			}
 		}
 	},
+	spriteData: [
+		{
+			src: "blue-wall",
+			grid: [1, 2],
+			padding: 1,
+		},		
+	],
 	sprites: [
 		{
 			src: "blue-wall",
@@ -263,8 +270,8 @@ SceneManager.add({
 				({game, definition},index) => (definition.grounded.get(index) ? -.5 : .5) * 3,
 				({game, definition},index) => definition.zPos.get(index) * 3,
 			],
-			grid: [1, 2],
-			animation: {
+			animationOverride: {
+				active: true,
 				frame: ({game, definition},index) => index % 2,
 				range: 2,
 				frameRate: 0,

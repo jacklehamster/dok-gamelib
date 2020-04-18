@@ -9,15 +9,16 @@
 
 
 class SceneManager {
-	constructor({Game, SpriteDefinition}) {
+	constructor({Game, SpriteDefinition, AnimationDefinition}) {
 		this.DefaultGameClass = Game;
 		this.DefaultSpriteDefinitionClass = SpriteDefinition;
+		this.DefaultAnimationDefinitionClass = AnimationDefinition;
 		this.scenes = {};
 		this.sceneNames = [];
 		this.configProcessor = new ConfigProcessor();
 	}
 
-	add(name, {Game, SpriteDefinition}, config) {
+	add(name, {Game, SpriteDefinition, AnimationDefinition}, config) {
 		if (this.scenes[name]) {
 			return;
 		}
@@ -27,10 +28,14 @@ class SceneManager {
 		if (!SpriteDefinition) {
 			SpriteDefinition = this.DefaultSpriteDefinitionClass;
 		}
+		if (!AnimationDefinition) {
+			AnimationDefinition = this.DefaultAnimationDefinitionClass;
+		}
 		this.sceneNames.push(name);
 		this.scenes[name] = {
 			Game,
 			SpriteDefinition,
+			AnimationDefinition,
 			config,
 		};
 	}
@@ -43,17 +48,21 @@ class SceneManager {
 		const { scenes, configProcessor } = this;
 		const gameScene = scenes[name];
 		if (gameScene) {
-			const { Game, SpriteDefinition, config } = gameScene;
+			const { Game, SpriteDefinition, AnimationDefinition, config } = gameScene;
 			const sceneObj = new Game();
 			sceneObj.dataStore = dataStore;
 			sceneObj.name = name;
 			sceneObj.config = config;
-			sceneObj.classes = { Game, SpriteDefinition };
+			sceneObj.classes = { Game, SpriteDefinition, AnimationDefinition };
 
 	 		Object.assign(sceneObj, configProcessor.processScene(config, sceneObj));
 
 	 		for (let i = 0; i < sceneObj.sprites.length; i++) {
 	 			sceneObj.sprites[i] = new SpriteDefinition(sceneObj.sprites[i], sceneObj);
+	 		}
+
+	 		for (let i = 0; i < sceneObj.spriteData.length; i++) {
+	 			sceneObj.spriteData[i] = new AnimationDefinition(sceneObj.spriteData[i], sceneObj);
 	 		}
 
 			return sceneObj;
@@ -90,4 +99,4 @@ class SceneManager {
 		SceneManager.instance.add(SceneManager.loadingSceneName, classes, scene);
 	}
 }
-SceneManager.instance = new SceneManager({Game, SpriteDefinition});
+SceneManager.instance = new SceneManager({Game, SpriteDefinition, AnimationDefinition});

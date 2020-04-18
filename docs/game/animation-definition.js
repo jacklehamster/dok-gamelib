@@ -9,10 +9,10 @@
 
 
 /**
- *	SpriteDefinition
+ *	AnimationDefinition
  */
 
-class SpriteDefinition {
+class AnimationDefinition {
 	constructor(config, game) {
 		this.game = game;
 		this.propagateDefinition(config);

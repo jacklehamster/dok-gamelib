@@ -9,6 +9,23 @@
 
 
 class TextUtils {
+	static makeSpriteData(fontId) {
+		let font = null;
+
+		return {
+			toSource: editor => `TextUtils.makeSpriteData(${editor.formatCode(fontId)})`,
+			fontId : fontId || (({game}) => game.getFirstFontName()),
+			src: ({definition}) => definition.fontId.get(),
+			grid: [
+				() => Math.ceil(Math.sqrt(font.characters.length)),
+				({definition}) => Math.ceil(font.characters.length / definition.grid[0].get()),
+			],
+			refresh: ({game, definition}) => {
+				font = game.getFont(fontId);
+			},
+		};
+	}
+
 	static makeSprite(params) {
 		const {position, tintColor, fontId, scale, text, letterDistance, lineDistance, faceUser} = params;
 		let cachedText = null;
@@ -19,7 +36,8 @@ class TextUtils {
 		const indices = [];
 		return {
 			toSourceCode: editor => `TextUtils.makeSprite(${editor.formatCode(params)})`,
-			src: fontId || (() => game.getFirstFontName()),
+			fontId : fontId || (({game}) => game.getFirstFontName()),
+			src: ({definition}) => definition.fontId.get(),
 			tintColor,
 			scale,
 			text,
@@ -70,14 +88,11 @@ class TextUtils {
 				}
 			],
 			hidden: (dummy, index) => indices[index] < 0,
-			animation: {
+			animationOverride: {
+				active: true,
 				start: (dummy, index) => Math.max(0, indices[index]),
-				frameRate: 0,
+				range: 1,
 			},
-			grid: [
-				() => Math.ceil(Math.sqrt(font.characters.length)),
-				({definition}) => Math.ceil(font.characters.length / definition.grid[0].get()),
-			],
 			count: ({definition}) => indices.length,			
 		};
 	}

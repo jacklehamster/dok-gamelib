@@ -334,12 +334,29 @@ SceneManager.add({
 				game.onShot();
 			}
 		},
-	},	
+	},
+	spriteData: [
+		{
+			src: "gun",
+			grid: [2, 2],
+		},
+		{
+			src: "zombie",
+			grid: [2, 3],
+		},
+		{
+			src: "blue-wall",
+			grid: [1, 2],			
+		},
+		TextUtils.makeSpriteData("primary-font"),
+		TextUtils.makeSpriteData("creep-font"),
+	],
 	sprites: [
 		{
 			src: "gun",
 			hidden: ({game}) => game.sceneData.gameOver,
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({game}) => {
 					const { now, sceneData } = game;
 					if (sceneData.lastShot) {
@@ -360,7 +377,6 @@ SceneManager.add({
 				({game}) => game.sceneData.cam[2],
 			],
 			hotspot: [0, 0],
-			grid: [2, 2],
 			scale: [3, 3],
 		},
 		{
@@ -389,7 +405,8 @@ SceneManager.add({
 					return game.sceneData.cam[2] + dz * ((index - 10) * .12);
 				}
 			],
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({definition}, index) => definition.charIndexes[index],
 				range: 1,//({definition}) => definition.characters.get().length,
 				frameRate: 0,
@@ -427,7 +444,8 @@ SceneManager.add({
 					return game.sceneData.cam[2] + dz * ((index - 3) * .25) - dx * (.01);
 				}
 			],
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({definition}, index) => definition.charIndexes[index],
 				//range: ({definition}) => definition.characters.get().length,
 				frameRate: 0,
@@ -441,7 +459,8 @@ SceneManager.add({
 		},
 		{
 			src: "zombie",
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({game, definition}, index) => {
 					const {dead} = game.sceneData.zombies[index];
 					if (dead) {
@@ -476,7 +495,6 @@ SceneManager.add({
 				},
 			],
 			hotspot: [0, -.4],
-			grid: [2, 3],
 			scale: [3, 3],
 			count: ({game}) => game.sceneData.zombies.length,
 		},
@@ -500,8 +518,8 @@ SceneManager.add({
 				({game, definition},index) => (definition.grounded.get(index) ? -.5 : .5) * 3,
 				({game, definition},index) => definition.zPos.get(index) * 3,
 			],
-			grid: [1, 2],
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({game, definition},index) => index % 2,
 				frameRate: 0,
 			},
@@ -510,7 +528,6 @@ SceneManager.add({
 		},
 		{
 			src: "blue-wall",
-			grid: [1, 2],
 			cell: ({game, definition},index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
 			},
@@ -571,7 +588,8 @@ SceneManager.add({
 					return (definition.zPos.get(index) + zShift) * 3;
 				},
 			],
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({game, definition}, index) => index % 2,
 				frameRate: 0,
 			},
@@ -581,15 +599,12 @@ SceneManager.add({
 		{
 			src: "primary-font",
 			tintColor: 0xFFFFFFFF,
-			animation: {
+			animationOverride: {
+				active: true,
 				range: ({definition}) => definition.characters.get().length,
 				frameRate: 24,
 			},
 			characters: ({game, definition}) => game.getFont(definition.src.get()).characters,
-			grid: [
-				({definition}) => Math.ceil(Math.sqrt(definition.characters.get().length)),
-				({definition}) => Math.ceil(definition.characters.get().length / definition.grid[0].get()),
-			],
 			grounded: ({game, definition},index) => {
 				return definition.cell.get(index).grounded;
 			},

@@ -68,7 +68,9 @@ class Engine {
 				currentScene.startTime = now;
 			}
 			currentScene.now = now;
+
 			sceneRenderer.refresh(currentScene);
+			animationProcessor.refresh(currentScene);
 			spriteDefinitionProcessor.refresh(currentScene);
 
 			if (now - glRenderer.lastRefresh >= frameDuration) {
@@ -126,8 +128,9 @@ class Engine {
 
 	clearScene() {
 		if (this.currentScene) {
+			this.spriteDefinitionProcessor.destroy(this.currentScene);
+			this.animationProcessor.destroy(this.currentScene);
 			this.currentScene.destroy.run();
-			this.currentScene.sprites.forEach(sprite => sprite.destroy.run());
 		}
 		this.spriteProvider.clear();
 	}
@@ -143,7 +146,8 @@ class Engine {
 			this.currentScene.now = 0;
 			this.currentScene.setEngine(this);
 			this.sceneRenderer.init(scene);
-			this.spriteDefinitionProcessor.init(scene.sprites, scene);
+			this.animationProcessor.init(scene);
+			this.spriteDefinitionProcessor.init(scene);
 			this.onSceneChangeListener.forEach(callback => callback({name:sceneName, scene, config: scene.config}));
 			window.game = scene;
 		}

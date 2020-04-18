@@ -72,11 +72,6 @@ class Game {
 		return this.engine.data.generated.fonts[fontName || this.getFirstFontName()];
 	}
 
-	getLetterInfo(letter, fontName) {
-		const font = this.getFont(fontName);
-		return font ? font.letterInfo[letter] : null;
-	}
-
 	toSourceCode(editor) {
 		const { classes, config } = this;
 		const classesParam = {

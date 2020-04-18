@@ -20,9 +20,10 @@ class SpriteDefinitionProcessor {
 		this.spriteCollector = [];
 	}
 
-	init(spriteDefinitions, scene) {
-		for (let i = 0; i < spriteDefinitions.length; i++) {
-			spriteDefinitions[i].init.run();
+	init(scene) {
+		const { sprites } = scene;
+		for (let i = 0; i < sprites.length; i++) {
+			sprites[i].init.run();
 		}
 	}
 
@@ -58,5 +59,9 @@ class SpriteDefinitionProcessor {
 			sprite.getEvaluated(scene, definition);
 			spriteCollector.push(sprite);
 		}
+	}
+
+	destroy(scene) {
+		scene.sprites.forEach(sprite => sprite.destroy.run());
 	}
 }

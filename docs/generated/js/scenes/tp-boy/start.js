@@ -56,7 +56,6 @@ SceneManager.add({
 		}
 	},
 }, {
-	firstScene: true,
 	settings: {
 		docBackground: 0x000000,
 		background: 0xAACCFF,
@@ -72,6 +71,17 @@ SceneManager.add({
 		angle: 45,
 		cameraDistance: 10,
 	},
+	spriteData: [
+		{
+			src: "tp-boy",
+			grid: [3, 4],
+		},
+		{
+			src: "grass-tile",
+			padding: 1,
+			grid: [2, 3],
+		},
+	],
 	sprites: [
 		{
 			src: "tp-boy",
@@ -85,8 +95,8 @@ SceneManager.add({
 				({game}) => game.tpBoy.direction,
 				1,
 			],
-			grid: [3, 4],
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({game, definition}, index) => game.tpBoy.walking ? 7 : 0,
 				range: 4,
 				frameRate: ({game}) => game.tpBoy.walking ? 15 : 5,
@@ -149,19 +159,13 @@ SceneManager.add({
 		},
 		{
 			src: "grass-tile",
-			padding: 1,
 			hidden: ({game}, index) => {
 				const px = Math.floor(game.tpBoy.x);
 				const py = Math.floor(game.tpBoy.y);
 				return Math.random() > .5 && px === Math.floor(game.platforms[index].x) && py === Math.floor(game.platforms[index].y);
 			},
-			size: [1, 1],
-			grid: [2, 3],
 			hotspot: [0, -.1],
-			animation: {
-				start: ({game, definition}, index) => game.platforms[index].index,
-				frameRate: 0,
-			},
+			animation: ({game, definition}, index) => game.platforms[index].index,
 			pos: [
 				({game, definition}, index) => game.platforms[index].x,
 				({game, definition}, index) => game.platforms[index].y,

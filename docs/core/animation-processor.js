@@ -49,6 +49,28 @@ class AnimationProcessor {
 		return didProcess;
 	}
 
+	init(scene) {
+		const { spriteData } = scene;
+		for (let i = 0; i < spriteData.length; i++) {
+			spriteData[i].init.run();
+		}
+	}
+
+	refresh(scene) {
+		const { spriteData } = scene;
+		for (let i = 0; i < spriteData.length; i++) {
+			const definition = spriteData[i];
+			const refreshRate = definition.refreshRate.get();
+			if (refreshRate && scene.now - definition.lastRefresh < 1000 / refreshRate) {
+				continue;
+			}
+			definition.refresh.run();
+			definition.lastRefresh = scene.now;
+		}
+	}
+
+
+
 	process(scene) {
 		const { spriteData, now } = scene;
 		spriteData.forEach(({src, spriteSize, grid, padding, frameRate, animations }) => {
@@ -113,5 +135,9 @@ class AnimationProcessor {
 				}
 			}
 		});
+	}
+
+	destroy(scene) {
+		scene.spriteData.forEach(data => data.destroy.run());
 	}
 }

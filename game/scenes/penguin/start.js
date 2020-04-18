@@ -283,6 +283,28 @@ SceneManager.add({
 			}
 		}
 	},
+	spriteData: [
+		{
+			src: "water",
+			grid: [2, 2],
+			padding: 1,
+		},
+		{
+			src: "artic",
+			grid: [2, 2],
+			padding: 1,
+		},
+		{
+			src: "blue-wall",
+			grid: [1, 2],
+			padding: 1,
+		},
+		{
+			src: "penguin",
+			grid: [4, 5],
+		},
+		TextUtils.makeSpriteData("primary-font"),
+	],
 	sprites: [
 		TextUtils.makeSprite({
 			text: "Mr. Penguin",
@@ -366,13 +388,13 @@ SceneManager.add({
 				camShift[0] += (camShiftGoalX - camShift[0]) / 5;
 				camShift[2] += (camShiftGoalY - camShift[2]) / 5;
 			},
-			grid: [4, 5],
 			pos: [
 				({game}) => game.sceneData.penguin.pos[0],
 				({game}) => game.sceneData.penguin.pos[1],
 				({game}) => game.sceneData.penguin.pos[2],
 			],
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({game, definition}) => definition.angledFrame.get().startFrame,
 				range: 4,
 				frameRate: ({game}) => game.sceneData.penguin.moving ? 10 : 0,
@@ -400,7 +422,6 @@ SceneManager.add({
 			},
 			tintColor: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 0x6600ccFF : 0,
 			brightness: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 80 : 70,
-			padding: 1,
 			cell: ({game, definition},index) => game.sceneData.cells[index],
 			grounded: ({game, definition},index) => {
 				return definition.cell.get(index).grounded;
@@ -425,8 +446,8 @@ SceneManager.add({
 				({game, definition},index) => definition.grounded.get(index) ? -1.5 : 2.5,
 				({game, definition},index) => definition.zPos.get(index) * 3,
 			],
-			grid: [2, 2],
-			animation: {
+			animationOverride: {
+				active: true,
 				range: 4,
 				frameRate: ({definition}, index) => {
 					const { type } = definition.cell.get(index);
@@ -442,9 +463,8 @@ SceneManager.add({
 		{	//	walls
 			src: "blue-wall",
 			brightness: 200,
-			padding: 1,
-			grid: [1, 2],
-			animation: {
+			animationOverride: {
+				active: true,
 				start: ({game, definition}, index) => index % 2,
 				range: 1,
 				frameRate: 0,

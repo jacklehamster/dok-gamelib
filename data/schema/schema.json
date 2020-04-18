@@ -63,7 +63,11 @@
 					null,
 					null
 				]
-			]
+			],
+			"init": null,
+			"destroy": null,
+			"refresh": null,
+			"refreshRate": 0			
 		}
 	],
 	"sprites": [
@@ -100,10 +104,12 @@
 				0,
 				0
 			],
-			"animation": {
+			"animation": null,
+			"animationOverride": {
+				"active": false,
 				"start": 0,
-				"range": 1,
-				"frameRate": 24
+				"range": 0,
+				"frameRate": 0
 			},
 			"scale": [
 				1,
