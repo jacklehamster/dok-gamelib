@@ -11,42 +11,44 @@
 class SourceCode {
 	constructor(engine) {
 		this.engine = engine;
-		engine.addEventListener("sceneChange", ({config}) => {
-			this.refreshView();
-		});
+		this.videos = {};
+		if (engine.isEditor()) {
+			engine.addEventListener("start", engine => {
+				document.getElementById('editor').classList.remove("hidden");
 
-		const TABS = [
-			"scene-code",
-			"config",
-			"assets",
+				engine.addEventListener("sceneChange", ({config}) => {
+					this.refreshView();
+				});
 
-			"design-tab",
-			"code-tab",
-		];
+				const TABS = [
+					"scene-code",
+					"config",
+					"assets",
+
+					"design-tab",
+					"code-tab",
+				];
+
+				TABS.forEach(tab => {
+					document.getElementById(tab).addEventListener("mousedown", () => {
+						this.selectTab(tab);
+					});
+				});
 
 
-		engine.addEventListener("start", engine => {
-			TABS.forEach(tab => {
-				document.getElementById(tab).addEventListener("mousedown", () => {
-					this.selectTab(tab);
+				SceneThumbnail.instance.addEventListener("shift", shifted => {
+					if (!shifted) {
+						for (let v in this.videos) {
+							this.videos[v].pause();
+						}
+						this.engine.keyboard.active = true;
+					} else {
+						this.refreshView();
+						this.engine.keyboard.active = false;
+					}
 				});
 			});
-
-
-			SceneThumbnail.instance.addEventListener("shift", shifted => {
-				if (!shifted) {
-					for (let v in this.videos) {
-						this.videos[v].pause();
-					}
-					this.engine.keyboard.active = true;
-				} else {
-					this.refreshView();
-					this.engine.keyboard.active = false;
-				}
-			});
-		});
-
-		this.videos = {};
+		}
 	}
 
 	selectTab(id) {

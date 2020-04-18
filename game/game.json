@@ -18,5 +18,6 @@
 			"cellSize": 256,
 			"finalCellSize": 32
 		}
-	}
+	},
+	"editor": true
 }

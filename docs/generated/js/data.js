@@ -1003,7 +1003,8 @@ function getData() {
             "cellSize": 256,
             "finalCellSize": 32
           }
-        }
+        },
+        "editor": true
       },
       "imagedata": {
         "size": [4096, 4096],

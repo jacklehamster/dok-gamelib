@@ -131,7 +131,6 @@ class AnimationProcessor {
 							break;
 						}
 					}
-					console.log(anim);
 				}
 			}
 		});
