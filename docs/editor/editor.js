@@ -159,7 +159,7 @@ class SourceCode {
 				return JSON.stringify(obj);
 			case "object":
 				if (obj.toSourceCode) {
-					return obj.toSourceCode(this);
+					return obj.toSourceCode(null, this);
 				}
 				break;
 			case "number":

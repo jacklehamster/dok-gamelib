@@ -51,7 +51,7 @@
 		<script src="core/animated-sprite.js"></script>
 		<script src="core/sprite.js"></script>
 		<script src="core/sprite-definition-processor.js"></script>
-		<script src="core/video-manager.js"></script>
+		<script src="core/media-manager.js"></script>
 		<script src="core/engine.js"></script>
 		<script src="core/game-property.js"></script>
 		<script src="core/config-processor.js"></script>
@@ -60,6 +60,8 @@
 		<script src="generated/js/scenes/dobuki/start.js"></script>
 		<script>SceneManager.loadingSceneName = "keep-alive";</script>
 		<script src="generated/js/scenes/keep-alive/start.js"></script>
+		<script>SceneManager.loadingSceneName = "keep-alive-intro";</script>
+		<script src="generated/js/scenes/keep-alive-intro/start.js"></script>
 		<script>SceneManager.loadingSceneName = "penguin";</script>
 		<script src="generated/js/scenes/penguin/start.js"></script>
 		<script>SceneManager.loadingSceneName = "rogue-zombie";</script>
@@ -95,7 +97,7 @@
 			</div>
 		</div>
 		<div id="panel" class="panel">
-			<canvas id="canvas" width=800 height=600></canvas>
+			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);

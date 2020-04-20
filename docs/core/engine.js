@@ -18,8 +18,8 @@ class Engine {
 		this.canvas = canvas;
 		this.data = getData();
 		this.dataStore = new DataStore();
-		this.videoManager = new VideoManager(this.data.generated);
-		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.videoManager, this.data.generated);
+		this.mediaManager = new MediaManager(this.data.generated);
+		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.data.generated);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer);
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
@@ -90,6 +90,11 @@ class Engine {
 			animationProcessor.refresh(currentScene);
 			spriteDefinitionProcessor.refresh(currentScene);
 
+			if (engine.nextScene) {
+				engine.resetScene(engine.nextScene);
+				return;
+			}
+
 			if (now - glRenderer.lastRefresh >= frameDuration) {
 				glRenderer.setTime(now - currentScene.startTime);
 				glRenderer.clearScreen();
@@ -152,7 +157,12 @@ class Engine {
 		this.spriteProvider.clear();
 	}
 
+	gotoScene(sceneName) {
+		this.nextScene = sceneName;
+	}
+
 	resetScene(sceneName) {
+		this.nextScene = null;
 		const { sceneManager, dataStore } = this;
 		if (sceneManager.hasScene(sceneName)) {
 			this.clearScene();

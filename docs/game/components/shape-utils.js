@@ -21,7 +21,7 @@ class ShapeUtils {
 		];
 
 		return {
-			toSourceCode: editor => `SpriteUtils.cube(${editor.formatCode(params)})`,
+			toSourceCode: (_,editor) => `SpriteUtils.cube(${editor.formatCode(params)})`,
 			topSrc,
 			sideSrc,
 			src: ({definition}, index) => SpriteType.Floor === definition.type.get(index) ? definition.topSrc.get(Math.floor(index / SPRITE_TYPES.length)) : definition.sideSrc.get(Math.floor(index / SPRITE_TYPES.length)),

@@ -27,7 +27,7 @@ class Game {
 
 	setEngine(value) {
 		this.engine = value;
-		this.videoManager = this.engine.videoManager;
+		this.mediaManager = this.engine.mediaManager;
 	}
 
 	get data() {
@@ -67,7 +67,11 @@ class Game {
 	}
 
 	getVideo(name, url) {
-		return this.videoManager.getVideo(name, url);
+		return this.mediaManager.getVideo(name, url);
+	}
+
+	getMusic(name, url) {
+		return this.mediaManager.getMusic(name, url);
 	}
 
 	getFirstFontName() {
@@ -82,7 +86,7 @@ class Game {
 		return this.engine.data.generated.fonts[fontName || this.getFirstFontName()];
 	}
 
-	toSourceCode(editor) {
+	toSourceCode(_, editor) {
 		const { classes, config } = this;
 		const classesParam = {
 			... classes,

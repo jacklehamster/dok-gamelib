@@ -13,7 +13,7 @@ class TextUtils {
 		let font = null;
 
 		return {
-			toSource: editor => `TextUtils.makeSpriteData(${editor.formatCode(fontId)})`,
+			toSource: (_,editor) => `TextUtils.makeSpriteData(${editor.formatCode(fontId)})`,
 			fontId : fontId || (({game}) => game.getFirstFontName()),
 			src: ({definition}) => definition.fontId.get(),
 			grid: [
@@ -27,7 +27,7 @@ class TextUtils {
 	}
 
 	static makeSprite(params) {
-		const {position, tintColor, fontId, scale, text, letterDistance, lineDistance, faceUser} = params;
+		const {position, tintColor, fontId, scale, text, letterDistance, lineDistance, faceUser, hidden, brightness} = params;
 		let cachedText = null;
 		let cachedFontId = null;
 		let font = null;
@@ -35,7 +35,7 @@ class TextUtils {
 		const linePositions = [];
 		const indices = [];
 		return {
-			toSourceCode: editor => `TextUtils.makeSprite(${editor.formatCode(params)})`,
+			toSourceCode: (_,editor) => `TextUtils.makeSprite(${editor.formatCode(params)})`,
 			fontId : fontId || (({game}) => game.getFirstFontName()),
 			src: ({definition}) => definition.fontId.get(),
 			tintColor,
@@ -45,6 +45,7 @@ class TextUtils {
 			position: position || [0, 0, 0],
 			letterDistance: letterDistance || .2,
 			lineDistance: lineDistance || .3,
+			brightness: brightness || 100,
 			refresh: ({game, definition}) => {
 				const text = definition.text.get().trim(), src = definition.src.get();
 				if (cachedText !== text || cachedFontId !== src) {
@@ -87,7 +88,10 @@ class TextUtils {
 					return definition.position[2].get() + dz * definition.letterDistance.get() * (letterPositions[index] - .5);
 				}
 			],
-			hidden: (dummy, index) => indices[index] < 0,
+			textHidden: hidden || false,
+			hidden: ({game, definition}, index) => {
+				return indices[index] < 0 || definition.textHidden.get();
+			},
 			animationOverride: {
 				active: true,
 				start: (dummy, index) => Math.max(0, indices[index]),

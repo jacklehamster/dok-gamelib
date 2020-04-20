@@ -72,7 +72,7 @@ void main(void) {
 	worldPos.xyz += aVertexGravity.xyz * time * time / 2.0;
 
 	if (aType == 7.0) {	//	water wave
-		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .1;
+		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .5;
 	}
 
 	vec4 position = uProjectionMatrix * uViewMatrix * worldPos;

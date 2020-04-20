@@ -21,6 +21,7 @@ class SceneRenderer {
 			tilt: 0,
 			turn: 0,
 			cameraDistance: 0,
+			range: [0, 0],
 		};
 		this.settings = {
 			docBackground : 0x000000,
@@ -95,13 +96,17 @@ class SceneRenderer {
 			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newTilt, newTurn, -newCameraDistance);
 			this.view.turn = newTurn;
 		}
-		const newViewAngle = view.viewAngle.get();
+
 		const newNear = view.range[0].get();
 		const newFar = view.range[1].get();
-		if (this.view.viewAngle !== newViewAngle) {
-			glRenderer.setViewAngle(newViewAngle, newNear, newFar);
+		const newViewAngle = view.viewAngle.get();
+		if (this.view.viewAngle !== newViewAngle || this.view.range[0] !== newNear || this.view.range[1] !== newFar) {
+			this.view.range[0] = newNear;
+			this.view.range[1] = newFar;
 			this.view.viewAngle = newViewAngle;
+			glRenderer.setViewAngle(newViewAngle, newNear, newFar);
 		}
+
 		const newCurvature = settings.curvature.get();
 		if (this.view.curvature !== newCurvature) {
 			glRenderer.setCurvature(newCurvature);

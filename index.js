@@ -69,6 +69,46 @@ function generateDataCode(outputPath) {
 	);
 }
 
+function copySounds() {
+	return fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/sounds`), { recursive: true }).then(() => {
+	}).then(() => {
+		return template.getFolderAsData(path.join(__dirname, 'game'));
+	}).then(files => files.filter(filename => path.extname(filename).toLowerCase()===".mp3"))
+	.then(videopaths => {
+		return Promise.all(
+			videopaths.map(musicPath => {
+				return fs.promises.copyFile(
+					path.join(__dirname, 'game', musicPath),
+					path.join(__dirname, webDir, 'generated', 'sounds', path.basename(musicPath))
+				);
+			})
+		).then(() => {
+			const sounds = {};
+			const regexScene = /(?<scene>[\w\d-]+)\/sounds\/[\w\d-@]+.[\w]+$/;
+			videopaths.forEach(musicPath => {
+				const match = musicPath ? musicPath.match(regexScene) : null;
+				const scene = match && match.groups.scene !== "generated" ? match.groups.scene : null;
+
+				const id = path.basename(musicPath, ".mp3");
+				if (sounds[id]) {
+					sounds[id].scenes.push(scene);
+				}
+				sounds[id] = {
+					id,
+					scenes: [scene],
+					path: `generated/sounds/${path.basename(musicPath)}`,
+				};
+			});
+			return sounds;
+		});		
+	}).then(data => {
+        const generatedDataDir = `${__dirname}/data/generated`;
+		return fs.promises.mkdir(`${generatedDataDir}`, { recursive: true })
+			.then(() => fs.promises.writeFile(`${generatedDataDir}/sounds.json`, JSON.stringify(data, null, '\t'))
+		).then(() => data);
+	});
+}
+
 function copyVideos() {
 	return fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/videos`), { recursive: true }).then(() => {
 	}).then(() => {
@@ -263,6 +303,7 @@ app.get('/', function (req, res) {
 	getSpritesheets()
 	.then(() => Promise.all([
 		copyVideos(),
+		copySounds(),
 		copyScenes(),
 		copyLibs(),
 	]))

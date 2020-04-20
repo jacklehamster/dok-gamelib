@@ -13,11 +13,11 @@
  */
 
 class TextureManager {
-	constructor(gl, shader, videoManager) {
+	constructor(gl, shader, mediaManager) {
 		this.gl = gl;
 		this.glTextures = [];
 		this.videoTextures = {};
-		this.videoManager = videoManager;
+		this.mediaManager = mediaManager;
 		this.videoTextureIndex = this.glTextures.length - 1;
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
@@ -49,8 +49,8 @@ class TextureManager {
 	}
 
 	getVideoTexture(src) {
-		if (!this.videoTextures[src] && this.videoManager.getVideo(src)) {
-			const { videoWidth, videoHeight } = this.videoManager.getVideo(src);
+		if (!this.videoTextures[src] && this.mediaManager.getVideo(src)) {
+			const { videoWidth, videoHeight } = this.mediaManager.getVideo(src);
 			if (videoWidth && videoHeight) {
 				this.videoTextures[src] = {
 					rect: [0, 0, videoWidth, videoHeight],

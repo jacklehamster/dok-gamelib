@@ -15,7 +15,7 @@ GLRenderer Engine
 */
 
 class GLRenderer {
-	constructor(canvas, webgl, videoManager, {imagedata, game}) {
+	constructor(canvas, webgl, mediaManager, {imagedata, game}) {
 		const resolution = devicePixelRatio;
 		canvas.width = game.width * resolution;
 		canvas.height = game.height * resolution;
@@ -72,7 +72,7 @@ class GLRenderer {
 		};
 
 		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
-		this.textureManager = new TextureManager(gl, this.shader, videoManager);
+		this.textureManager = new TextureManager(gl, this.shader, mediaManager);
 
 		const { shader, textureManager } = this;
 
@@ -271,10 +271,9 @@ class GLRenderer {
 		this.lastRefresh = now;
 	}
 
-	drawToCanvas2d(id, px, py, size, canvas) {
+	drawToCanvas2d(id, px, py, size, canvas, grid, animationIndex) {
 		const { rect, index } = this.imagedata.sprites[id];
 		const [ x, y, width, height ] = rect;
-		const scale = Math.min(size / width, size / height);
 
 		const context = canvas.getContext("2d");
 		//	load texture
@@ -283,7 +282,15 @@ class GLRenderer {
 				console.errors(errors);
 			},
 			complete: ([image]) => {
-				context.drawImage(image, x, y, width, height, px, py, width * scale, height * scale);
+				const cols = grid ? grid[0] : 1;
+				const rows = grid ? grid[1] : 1;
+				const spriteWidth = width / (cols || 1);
+				const spriteHeight = height / (rows || 1);
+				const col = typeof(animationIndex) !== "undefined" ? animationIndex % cols : 0;
+				const row = typeof(animationIndex) !== "undefined" ? Math.floor(animationIndex / cols) : 0;
+				const scale = Math.min(size / spriteWidth, size / spriteHeight);
+
+				context.drawImage(image, x + col * spriteWidth, y + row * spriteHeight, spriteWidth, spriteHeight, px, py, spriteWidth * scale, spriteHeight * scale);
 			},
 		});			
 	}
