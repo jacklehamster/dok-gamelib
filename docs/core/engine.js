@@ -14,7 +14,6 @@
 
 class Engine {
 	constructor(canvas, sceneManager) {
-		canvas.focus();
 		this.canvas = canvas;
 		this.data = getData();
 		this.dataStore = new DataStore();

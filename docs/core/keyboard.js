@@ -17,6 +17,8 @@ const KEY_UP_W = 'KeyW';
 const KEY_DOWN_S = 'KeyS';
 const KEY_DOWN_X = 'KeyX';
 const KEY_ACTION_SPACE = 'Space';
+const KEY_ACTION_SHIFTR = "ShiftRight";
+const KEY_ACTION_SHIFTL = "ShiftLeft";
 const KEY_LEFT = "ArrowLeft";
 const KEY_RIGHT = "ArrowRight";
 const KEY_UP = "ArrowUp";
@@ -39,7 +41,7 @@ class Keyboard {
 			action: 0,
 		};
 
-		document.addEventListener("keydown", e => {
+		window.addEventListener("keydown", e => {
 			if (this.active) {
 				keysDown[e.code] = true;
 				delete keysUp[e.code];
@@ -47,7 +49,7 @@ class Keyboard {
 				e.preventDefault();
 			}
 		});
-		document.addEventListener("keyup", e => {
+		window.addEventListener("keyup", e => {
 			if (this.active) {
 				keysUp[e.code] = true;
 				delete keysDown[e.code];
@@ -131,6 +133,8 @@ class Keyboard {
 					listener.onDownRelease();
 				}
 				break;
+			case KEY_ACTION_SHIFTL:
+			case KEY_ACTION_SHIFTR:
 			case KEY_ACTION_SPACE:
 				if (down && controls.action <= 0) {
 					controls.action = now;

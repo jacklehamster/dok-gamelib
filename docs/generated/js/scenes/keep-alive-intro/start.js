@@ -64,7 +64,7 @@ SceneManager.add({Game: class extends Game {
 			hidden: ({game}) => game.sceneData.step > 0,
 		}),
 		TextUtils.makeSprite({
-			text: "Press [space] to continue       ",
+			text: "Press [space/shift] to continue       ",
 			fontId: "primary-font",
 			tintColor: 0xFF777777,
 			scale: [.5, .5],
@@ -82,7 +82,7 @@ SceneManager.add({Game: class extends Game {
 				Don't let Bruti jump into the water and drown.
 				Help Bruti get food. Reach the food goals on the top right.
 				[A,S,W,D] to move. [Q, E] to rotate.
-				[SPACE] to RAISE / LOWER blocks (or REMOVE).
+				[SPACE/SHIFT] to RAISE / LOWER blocks (or REMOVE).
 				[TAB] to switch block.
 			`.split("\n").map(a => a.trim()).join("\n"),
 			fontId: "primary-font",
@@ -98,7 +98,7 @@ SceneManager.add({Game: class extends Game {
 		}),
 
 		TextUtils.makeSprite({
-			text: `Press [SPACE] to continue`,
+			text: `Press [SPACE/SHIFT] to continue`,
 			fontId: "primary-font",
 			tintColor: 0xFFcc6677,
 			scale: [.4, .4],

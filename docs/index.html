@@ -58,22 +58,10 @@
 		<script src="core/game-property.js"></script>
 		<script src="core/config-processor.js"></script>
 		<script src="core/scene-manager.js"></script>
-		<script>SceneManager.loadingSceneName = "dobuki";</script>
-		<script src="generated/js/scenes/dobuki/start.js"></script>
 		<script>SceneManager.loadingSceneName = "keep-alive";</script>
 		<script src="generated/js/scenes/keep-alive/start.js"></script>
 		<script>SceneManager.loadingSceneName = "keep-alive-intro";</script>
 		<script src="generated/js/scenes/keep-alive-intro/start.js"></script>
-		<script>SceneManager.loadingSceneName = "penguin";</script>
-		<script src="generated/js/scenes/penguin/start.js"></script>
-		<script>SceneManager.loadingSceneName = "rogue-zombie";</script>
-		<script src="generated/js/scenes/rogue-zombie/start.js"></script>
-		<script>SceneManager.loadingSceneName = "stup";</script>
-		<script src="generated/js/scenes/stup/start.js"></script>
-		<script>SceneManager.loadingSceneName = "tp-boy";</script>
-		<script src="generated/js/scenes/tp-boy/start.js"></script>
-		<script>SceneManager.loadingSceneName = "video-maze";</script>
-		<script src="generated/js/scenes/video-maze/start.js"></script>
 	</head>
 
 	<body class="container">
@@ -107,5 +95,9 @@
 		</script>
 		<script src="editor/scene-thumbnail.js"></script>
 		<script src="editor/editor.js"></script>
+		<input id="focus-input" style="border: none; background: transparent; outline: none; text-shadow: 0 0 0 gray;">
+		<script>
+			document.getElementById("focus-input").focus();
+		</script>
 	</body>
 </html>

@@ -1004,183 +1004,93 @@ function getData() {
             "finalCellSize": 32
           }
         },
-        "editor": true,
+        "editor": false,
         "newgrounds": {"id": "50263:05FmQQ7M", "key": "nN2kZpn0Hk1nQCqSRsXILw=="}
       },
       "imagedata": {
         "size": [4096, 4096],
-        "spritesheets": [
-          "generated/spritesheets/sheet0.png",
-          "generated/spritesheets/sheet1.png"
-        ],
+        "spritesheets": ["generated/spritesheets/sheet0.png"],
         "sprites": {
-          "dok": {"scenes": ["dobuki"], "rect": [0, 0, 4096, 4096], "index": 0},
           "bear": {
             "scenes": ["keep-alive"],
             "rect": [0, 0, 1024, 1024],
-            "index": 1
+            "index": 0
           },
-          "tp-boy": {
-            "scenes": ["tp-boy"],
-            "rect": [1032, 0, 384, 512],
-            "index": 1
-          },
-          "tp": {"scenes": ["tp-boy"], "rect": [1424, 0, 384, 512], "index": 1},
-          "water.jpg": {
-            "scenes": ["stup"],
-            "rect": [1816, 0, 728, 472],
-            "index": 1
-          },
-          "penguin": {
-            "scenes": ["penguin"],
-            "rect": [2552, 0, 256, 320],
-            "index": 1
-          },
-          "tree": {"scenes": ["dobuki"], "rect": [2816, 0, 286, 312], "index": 1},
           "creep-font": {
             "scenes": [null],
-            "rect": [3110, 0, 320, 288],
-            "index": 1
+            "rect": [1032, 0, 320, 288],
+            "index": 0
           },
           "primary-font": {
             "scenes": [null],
-            "rect": [3438, 0, 320, 288],
-            "index": 1
-          },
-          "artic": {
-            "scenes": ["penguin"],
-            "rect": [3766, 0, 256, 256],
-            "index": 1
-          },
-          "blue-ground": {
-            "scenes": ["keep-alive"],
-            "rect": [4030, 0, 32, 32],
-            "index": 1
-          },
-          "color-blocks": {
-            "scenes": ["rogue-zombie"],
-            "rect": [4070, 0, 2, 2],
-            "index": 1
-          },
-          "dirt-ground": {
-            "scenes": ["keep-alive"],
-            "rect": [4030, 40, 32, 32],
-            "index": 1
-          },
-          "grass-ground": {
-            "scenes": ["keep-alive"],
-            "rect": [4030, 80, 32, 32],
-            "index": 1
-          },
-          "sand-ground": {
-            "scenes": ["keep-alive", "keep-alive-intro"],
-            "rect": [4030, 120, 32, 32],
-            "index": 1
-          },
-          "gun": {
-            "scenes": ["rogue-zombie"],
-            "rect": [2552, 328, 128, 128],
-            "index": 1
-          },
-          "blue-wall": {
-            "scenes": ["penguin", "rogue-zombie", "video-maze"],
-            "rect": [2688, 328, 64, 128],
-            "index": 1
-          },
-          "grass-tile": {
-            "scenes": ["tp-boy"],
-            "rect": [2760, 328, 64, 96],
-            "index": 1
-          },
-          "water-mix": {
-            "scenes": ["keep-alive", "keep-alive-intro"],
-            "rect": [2832, 328, 64, 64],
-            "index": 1
-          },
-          "water": {
-            "scenes": ["penguin", "tp-boy"],
-            "rect": [2904, 328, 64, 64],
-            "index": 1
+            "rect": [1360, 0, 320, 288],
+            "index": 0
           },
           "fruits": {
             "scenes": ["keep-alive"],
-            "rect": [1032, 520, 512, 256],
-            "index": 1
+            "rect": [1688, 0, 512, 256],
+            "index": 0
           },
           "slime": {
             "scenes": ["keep-alive"],
-            "rect": [1552, 520, 512, 256],
-            "index": 1
+            "rect": [2208, 0, 512, 256],
+            "index": 0
           },
           "selector": {
             "scenes": ["keep-alive"],
-            "rect": [2072, 520, 192, 192],
-            "index": 1
+            "rect": [2728, 0, 192, 192],
+            "index": 0
           },
-          "zombie": {
-            "scenes": ["rogue-zombie"],
-            "rect": [2272, 520, 128, 192],
-            "index": 1
+          "water-mix": {
+            "scenes": ["keep-alive", "keep-alive-intro"],
+            "rect": [2928, 0, 64, 64],
+            "index": 0
           },
-          "home-floor": {
-            "scenes": ["dobuki"],
-            "rect": [2408, 520, 165, 175],
-            "index": 1
+          "blue-ground": {
+            "scenes": ["keep-alive"],
+            "rect": [3000, 0, 32, 32],
+            "index": 0
+          },
+          "dirt-ground": {
+            "scenes": ["keep-alive"],
+            "rect": [3040, 0, 32, 32],
+            "index": 0
+          },
+          "grass-ground": {
+            "scenes": ["keep-alive"],
+            "rect": [3080, 0, 32, 32],
+            "index": 0
+          },
+          "sand-ground": {
+            "scenes": ["keep-alive", "keep-alive-intro"],
+            "rect": [3120, 0, 32, 32],
+            "index": 0
           }
         },
         "freeCells": [
-          {"rect": [4080, 0, 16, 10], "index": 1},
-          {"rect": [4070, 10, 26, 30], "index": 1},
-          {"rect": [4070, 40, 26, 224], "index": 1},
-          {"rect": [4030, 160, 40, 104], "index": 1},
-          {"rect": [3766, 264, 330, 32], "index": 1},
-          {"rect": [3110, 296, 986, 24], "index": 1},
-          {"rect": [2816, 320, 1280, 8], "index": 1},
-          {"rect": [2976, 328, 1120, 72], "index": 1},
-          {"rect": [2832, 400, 1264, 32], "index": 1},
-          {"rect": [2760, 432, 1336, 32], "index": 1},
-          {"rect": [2688, 464, 1408, 16], "index": 1},
-          {"rect": [2552, 464, 136, 16], "index": 1},
-          {"rect": [1816, 480, 2280, 40], "index": 1},
-          {"rect": [2581, 520, 1515, 183], "index": 1},
-          {"rect": [2408, 703, 1688, 17], "index": 1},
-          {"rect": [2072, 720, 2024, 64], "index": 1},
-          {"rect": [1552, 784, 2544, 3312], "index": 1},
-          {"rect": [1032, 784, 520, 3312], "index": 1},
-          {"rect": [0, 1032, 1032, 3064], "index": 1}
+          {"rect": [3160, 0, 936, 40], "index": 0},
+          {"rect": [3000, 40, 1096, 32], "index": 0},
+          {"rect": [2928, 72, 1168, 128], "index": 0},
+          {"rect": [2728, 200, 1368, 64], "index": 0},
+          {"rect": [1688, 264, 2408, 32], "index": 0},
+          {"rect": [1032, 296, 3064, 3800], "index": 0},
+          {"rect": [0, 1032, 1032, 3064], "index": 0}
         ]
       },
       "sha": [
-        "artic=bd39173160f9c80c55e2510a722334c3fe87916bf33c8f7490c8318143214486",
         "bear=d7f681e462f3b54243107d2a1aae4e0900eea049237a4f7981a8d0b4b1987b26",
         "blue-ground=de22e65b162132ac90aae0b99067aa15893f0686ab9cc32885bdb469fac7f06a",
-        "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
-        "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
-        "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
-        "color-blocks=afee4762dd872c26c4efdc0c3e8d02c3e8ac72ae88864221f1efebc0ad8829a9",
         "creep-font=5af9449a97bc51694273ad4e0f9803d69daa815ba32fdfd84557fc9af0a9c58e",
         "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
-        "dok=cf9659728872ec2be3fbb4cb13705970706a4ef51cd35a32a524afc01b483ab2",
         "fruits=4a1341065fc6eca737babd36a4ed2ffd6eb8dd2e7cd070d53744d87353b29e1f",
         "grass-ground=7dbd71f6d728b7e8daddb5a06de61b1d707ae77f4a22322371dca4f5bbcf92e4",
-        "grass-tile@16x=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
-        "gun@8x=7d3022ea52208a926b49ef7adf2517fec0dc069fbe77676c98809bd0f1d1313d",
-        "home-floor@2x=670a8e1fad53b113865fec6e0fc6d146114678bebd8d1ae779cf7e453864e886",
-        "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "primary-font=cbb74cc1df24376e64a5022da636272cfde8a499d7297f9cdeb666dc1bd7eb4f",
         "sand-ground=195dbf2503d4cf4733ac04e566644b08cf8dfb83ce93b2238d21405ec05625b3",
         "sand-ground=195dbf2503d4cf4733ac04e566644b08cf8dfb83ce93b2238d21405ec05625b3",
         "selector=81e92c790618a40bdb64bf376475e8b574cd4a9f2d44c758cbdcc2ac2907e375",
         "slime=b02799277c2f66318c5957dbb3f6419caafebecf4b05320cc7c5926b390d4f77",
-        "tp-boy@4x=33e8cfc18e19a439cae09e340ffb5fbdfc53db5790cc1d9d19c425fdd9ed49cf",
-        "tp@4x=58560e5173712d77920de86824d3a0ecf46238d909af4df15593c1479be6b906",
-        "tree=e795b999ff8cad5c251a1e14fb9ca70f1b4397cf38833519205b4ae1c2987107",
         "water-mix=1f292a21ef149d5eb8b57997db57c0dda8962495569fe377549219ca223f1c3d",
-        "water-mix=1f292a21ef149d5eb8b57997db57c0dda8962495569fe377549219ca223f1c3d",
-        "water.jpg=123d52d6a5853ea2175fcd62dc69f7b6f5d0118772f684f9564d1811c9bdcdbc",
-        "water=cfaa1a1ad365ec6e3b6dea3d06104d80d2eb75e9f36b9e66b4e6f8f169343724",
-        "water=cfaa1a1ad365ec6e3b6dea3d06104d80d2eb75e9f36b9e66b4e6f8f169343724",
-        "zombie=9b90d03bea08ca90684529ac1ea3c6d2d10e2c985725e2081b0fcb031372ed42"
+        "water-mix=1f292a21ef149d5eb8b57997db57c0dda8962495569fe377549219ca223f1c3d"
       ],
       "sounds": {
         "guita": {
@@ -1194,13 +1104,7 @@ function getData() {
           "path": "generated/sounds/isle.mp3"
         }
       },
-      "videos": {
-        "bunny": {
-          "id": "bunny",
-          "scenes": ["video-maze"],
-          "path": "generated/videos/bunny.mp4"
-        }
-      }
+      "videos": {}
     },
     "schema": {
       "schema": {

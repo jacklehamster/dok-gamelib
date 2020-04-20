@@ -716,7 +716,7 @@ SceneManager.add({Game: class extends Game {
 				instruct.style.margin = "4px";
 				instruct.style.fontSize = "8pt";
 				instruct.style.color = "#666666";
-				instruct.innerText = "[SPACE]\nRAISE/\nLOWER\n\n[A,S,D,W]\nMove\n\n[Q,E]\nRotate";
+				instruct.innerText = "[SPACE/SHIFT]\nRAISE/\nLOWER\n\n[A,S,D,W]\nMove\n\n[Q,E]\nRotate";
 
 
 
