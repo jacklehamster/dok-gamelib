@@ -3,6 +3,7 @@ SceneManager.add({Game: class extends Game {
 		super();
 		this.sceneData = {
 			turn: 0,
+			step: 0,
 		};
 	}
 }}, {
@@ -16,8 +17,11 @@ SceneManager.add({Game: class extends Game {
 		turn: ({game}) => game.now / 10000,
 	},
 	keyboard: {
-		onActionPress: () => {
-			engine.gotoScene("keep-alive");			
+		onActionRelease: ({game}) => {
+			game.sceneData.step ++;
+			if (game.sceneData.step > 1) {
+				engine.gotoScene("keep-alive");
+			}
 		},
 	},
 	spriteData: [
@@ -43,6 +47,7 @@ SceneManager.add({Game: class extends Game {
 			position: [
 				-2, 3, 0,
 			],
+			hidden: ({game}) => game.sceneData.step > 0,
 		}),		
 		TextUtils.makeSprite({
 			text: "Bruti   the   bear                   ",
@@ -56,6 +61,7 @@ SceneManager.add({Game: class extends Game {
 				2,
 				0,
 			],
+			hidden: ({game}) => game.sceneData.step > 0,
 		}),
 		TextUtils.makeSprite({
 			text: "Press [space] to continue       ",
@@ -67,7 +73,44 @@ SceneManager.add({Game: class extends Game {
 			position: [
 				0.2, .8, 0,
 			],
-		}),		
+			hidden: ({game}) => game.sceneData.step > 0,
+		}),
+
+		TextUtils.makeSprite({
+			text: `Bruti the stupid bear is on an island.
+				He never listens to you, but try to keep him alive.
+				Don't let Bruti jump into the water and drown.
+				Help Bruti get food. Reach the food goals on the top right.
+				[A,S,W,D] to move. [Q, E] to rotate.
+				[SPACE] to RAISE / LOWER blocks (or REMOVE).
+				[TAB] to switch block.
+			`.split("\n").map(a => a.trim()).join("\n"),
+			fontId: "primary-font",
+			tintColor: 0xFF777777,
+			scale: [.4, .4],
+			letterDistance: .4,
+			lineDistance: .6,
+			faceUser: true,
+			position: [
+				0.2, 3.5, 0,
+			],
+			hidden: ({game}) => game.sceneData.step !== 1,
+		}),
+
+		TextUtils.makeSprite({
+			text: `Press [SPACE] to continue`,
+			fontId: "primary-font",
+			tintColor: 0xFFcc6677,
+			scale: [.4, .4],
+			letterDistance: .4,
+			lineDistance: .6,
+			faceUser: true,
+			position: [
+				0.2, 1, 0,
+			],
+			hidden: ({game}) => game.sceneData.step !== 1,
+		}),
+
 		{
 			init: ({game}) => {
 				game.getMusic("isle").play();

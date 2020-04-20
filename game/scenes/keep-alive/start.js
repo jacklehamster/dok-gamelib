@@ -32,16 +32,16 @@ SceneManager.add({Game: class extends Game {
 					bearAI: {},
 					tint: 0x00000000,
 					size: 1,
-					speed: .03,
+					speed: .04,
 					type: "bear",
 				},
 			],
-			slimes: [
-			],
+			slimes: [],
 			apple: 0,
 			banana: 0,
 			score: 0,
 			goodies: [],
+			bonuses: [],
 		};
 
 		this.achievements = [
@@ -49,24 +49,24 @@ SceneManager.add({Game: class extends Game {
 				banana: 10,
 			},
 			{
-				apple: 10,
+				apple: 5,
 				banana: 10,
 			},
 			{
-				apple: 20,
-				banan: 20,
+				apple: 10,
+				banana: 20,
+			},
+			{
+				apple: 30,
+				banana: 50,
 			},
 			{
 				apple: 50,
-				banan: 50,
-			},
-			{
-				apple: 75,
-				banan: 75,
+				banana: 75,
 			},
 			{
 				apple: 100,
-				banan: 100,
+				banana: 100,
 			},
 		];
 
@@ -111,6 +111,7 @@ SceneManager.add({Game: class extends Game {
 				size: .8,
 				speed: .05,
 				needRescue: true,
+				type: "bear",
 			},
 			{
 				bear: [20, 0],
@@ -120,6 +121,7 @@ SceneManager.add({Game: class extends Game {
 				size: 1.2,
 				speed: .07,
 				needRescue: true,
+				type: "bear",
 			},
 			{
 				bear: [20, 0],
@@ -129,6 +131,7 @@ SceneManager.add({Game: class extends Game {
 				size: 1.1,
 				speed: .1,
 				needRescue: true,
+				type: "bear",
 			},
 			{
 				bear: [20, 0],
@@ -138,6 +141,7 @@ SceneManager.add({Game: class extends Game {
 				size: 1.5,
 				speed: .1,
 				needRescue: true,
+				type: "bear",
 			},
 		];
 	}
@@ -160,6 +164,10 @@ SceneManager.add({Game: class extends Game {
 		}
 		this.sceneData.banana = 0;
 		this.sceneData.apple = 0;
+		this.sceneData.goodies.forEach(({x, y}) => {
+			this.getCell(x, y).item = null;
+		});
+
 		this.sceneData.goodies.length = 0;
 		const bear = this.availableBears.shift() || {
 			bear: [20, 0],
@@ -199,6 +207,7 @@ SceneManager.add({Game: class extends Game {
 	getEmptyCell(x,y) {
 		this.emptyCell.x = x;
 		this.emptyCell.y = y;
+		this.emptyCell.raised = 0;
 		this.emptyCell.active = false;
 		this.emptyCell.tile = null;
 		this.emptyCell.locked = false;
@@ -445,7 +454,7 @@ SceneManager.add({Game: class extends Game {
 		},
 		{
 			src: "fruits",
-			grid: [2,2],
+			grid: [5,2],
 			padding: 6,
 			spriteSize: [86, 107],		
 			animations: [
@@ -453,6 +462,12 @@ SceneManager.add({Game: class extends Game {
 				["banana", "1"],
 				["virus", "2"],
 				["spike", "3"],
+				["treasure", "4"],
+				["bonzai", "5"],
+				["jewelry", "6"],
+				["statue", "7"],
+				["painting", "8"],
+				["sandwich", "9"],
 			],
 		},
 		{
@@ -460,10 +475,24 @@ SceneManager.add({Game: class extends Game {
 			grid: [6,3],
 			padding: 8,
 			spriteSize: [82, 82],		
-			frameRate: 15,
+			frameRate: 20,
 			animations: [
 				["idle", "0,1,1,2,2,2,2,1,1,1,0,0,0,0"],
 				["jump", "3-14"],
+			],
+		},
+		{
+			src: "treasure",
+			spriteSize: [171, 186],
+			padding: 5,
+			grid: [5, 2],
+			animation: [
+				["treasure", "0"],
+				["bonzai", "1"],
+				["jewelry", "2"],
+				["statue", "3"],
+				["painting", "4"],
+				["sandwich", "5"],
 			],
 		},
 		TextUtils.makeSpriteData("primary-font"),
@@ -543,6 +572,22 @@ SceneManager.add({Game: class extends Game {
 		},
 	},
 	sprites: [
+// 		TextUtils.makeSprite({
+// 			text: ({game}, index) => {
+// 				return game.sceneData.bonuses.length ? `+${game.sceneData.bonuses[0].score}` : "";
+// 			},
+// 			fontId: "primary-font",
+// 			tintColor: 0xFFFFFF00,
+// 			faceUser: true,
+// 			letterDistance: 2.1,
+// 			position: [
+// 				({game}, index) => game.sceneData.bonuses[0].x,
+// 				({game}) => 2,
+// 				({game}, index) => game.sceneData.bonuses[0].y,
+// 			],
+// //			count: ({game}) => game.sceneData.bonuses.length,
+// 		}),
+
 		TextUtils.makeSprite({
 			text: "Game Over",
 			fontId: "primary-font",
@@ -591,6 +636,7 @@ SceneManager.add({Game: class extends Game {
 				game.ui = game.engine.canvas.parentElement.appendChild(document.createElement("div"));
 				game.ui.style.position = "absolute";
 				game.ui.style.display = "none";
+				game.ui.classList.add("unselectable");
 				setTimeout(() => {
 					game.ui.style.top = `${game.engine.canvas.offsetTop}px`;
 					game.ui.style.left = `${game.engine.canvas.offsetLeft}px`;
@@ -608,6 +654,14 @@ SceneManager.add({Game: class extends Game {
 				controlBox.style.backgroundColor = "#cccccc";
 				controlBox.style.display = "flex";
 				controlBox.style.flexDirection = "column";
+
+				const help = controlBox.appendChild(document.createElement("div"));
+				help.style.textAlign = "center";
+				help.style.margin = "4px";
+				help.style.fontSize = "8pt";
+				help.style.color = "#666666";
+				help.innerText = "[TAB]\nswitch";
+
 				game.controlBox = controlBox;
 
 				game.ui.appendChild(document.createElement("div")).style.width = "640px";
@@ -623,7 +677,7 @@ SceneManager.add({Game: class extends Game {
 
 				const toolbox = controlBox.appendChild(document.createElement("canvas"));		
 				toolbox.width = 50;
-				toolbox.height = 400;
+				toolbox.height = 280;
 				definition.toolbox = toolbox;
 				definition.grounds = [
 					"grass-ground",
@@ -637,6 +691,17 @@ SceneManager.add({Game: class extends Game {
 					"#FFFFFF",
 					"#000000",
 				];
+
+
+				const instruct = controlBox.appendChild(document.createElement("div"));
+				instruct.style.textAlign = "center";
+				instruct.style.margin = "4px";
+				instruct.style.fontSize = "8pt";
+				instruct.style.color = "#666666";
+				instruct.innerText = "[SPACE]\nRAISE/\nLOWER\n\n[A,S,D,W]\nMove\n\n[Q,E]\nRotate";
+
+
+
 
 				const soundControl = controlBox.appendChild(document.createElement("button"));
 				soundControl.id = "soundControl";
@@ -705,7 +770,7 @@ SceneManager.add({Game: class extends Game {
 					}
 				}
 			},
-			refreshRate: 10,
+			refreshRate: 20,
 		},
 		{
 			src: "fruits",
@@ -739,6 +804,14 @@ SceneManager.add({Game: class extends Game {
 					bag.push(...new Array(appleChance).fill("apple"));
 					bag.push(...new Array(virusChance).fill("virus"));
 					bag.push(...new Array(spikeChance).fill("spike"));
+					if (level > 2) {
+						bag.push("treasure");
+						bag.push("bonzai");
+						bag.push("jewelry");
+						bag.push("statue");
+						bag.push("painting");
+						bag.push("sandwich");
+					}
 					definition.bag = bag;
 				}
 				return definition.bag[Math.floor(Math.random() * definition.bag.length)];
@@ -746,7 +819,7 @@ SceneManager.add({Game: class extends Game {
 			refresh: ({game, definition}) => {
 				const { sceneData: { goodies, bears, slimes }, now } = game;
 
-				const slimeGoal =4;// game.level < 4 ? 0 : game.level < 5 ? 3 : game.level + 4;
+				const slimeGoal = game.level < 4 ? 0 : game.level < 5 ? 3 : game.level + 4;
 				if (slimes.length < slimeGoal) {
 					const [bearX, bearY] = bears[Math.floor(Math.random() * bears.length)].bear;
 
@@ -866,12 +939,9 @@ SceneManager.add({Game: class extends Game {
 								newCell.person = slime;
 							}
 						}
+					}
 
-						if (Math.random() < .2) {
-							slime.dx = 0;
-							slime.dy = 0;
-						}					
-					} else {
+					if (!slime.dx && !slime.dy || Math.random() < .05) {
 						if (Math.random() < .5) {
 							slime.dx = 0;
 							slime.dy = Math.random() < .5 ? -1 : 1;
@@ -991,6 +1061,8 @@ SceneManager.add({Game: class extends Game {
 					["walk-downleft", -1],
 				];
 
+				definition.directions = ['S','N','E','W'];
+
 				definition.updateDirection = (bearData, bearAI) => {
 					switch(bearAI.direction) {
 						case 'S':
@@ -1027,12 +1099,35 @@ SceneManager.add({Game: class extends Game {
 					}
 					return [goalX, goalY];
 				};
+
+
+				definition.lookForDirection = (game, index) => {
+					const { sceneData } = game;
+					const directions = definition.directions;
+					const { bear, bearAI } = sceneData.bears[index];
+
+					const [ x, y ] = bear;
+					const cell = game.getCell(x + 4 * (Math.random()-.5), y + 4 * (Math.random()-.5));
+					if (cell.item === "apple" || cell.item === "banana") {
+						const dx = cell.x - x;
+						const dy = cell.y - y;
+
+						bearAI.foundTarget = game.now;
+						if (Math.abs(dx) > Math.abs(dy)) {
+							return dx < 0 ? 'W' : 'E';
+						} else {
+							return dy < 0 ? 'N' : 'S';
+						}
+					}
+
+					return directions[Math.floor(Math.random() * directions.length)];
+				};
 			},
 			refresh: ({game, definition}) => {
 				const { sceneData, now } = game;
 
 				const floatSpeed = .02;
-				sceneData.bears.forEach(bearData => {
+				sceneData.bears.forEach((bearData, index) => {
 					const {bearAI, bear, bearDirection, speed, needRescue} = bearData;
 					if (needRescue) {
 						const [ x, y ] = bear;
@@ -1119,24 +1214,21 @@ SceneManager.add({Game: class extends Game {
 								bearAI.action = "walk";
 							} else {
 								//	look at random direction
-								const directions = ['S','N','E','W'];
-								bearAI.direction = directions[Math.floor(Math.random() * directions.length)];
-								bearAI.waitUntil = now + 100;
+								bearAI.direction = definition.lookForDirection(game, index);
+								bearAI.waitUntil = now + 50;
 							}
 						} else if (bearAI.action === "walk") {
 							if (bearAI.didChangeCell) {
 								bearAI.didChangeCell = false;
 								//	give option to change direction
-								if (Math.random() < .5) {
-									const directions = ['S','N','E','W'];
-									bearAI.direction = directions[Math.floor(Math.random() * directions.length)];
+								if (Math.random() < .5 && (!bearAI.foundTarget || now - bearAI.foundTarget > 3000)) {
+									bearAI.direction = definition.lookForDirection(game, index);
 								}
 							}
 						} else if (bearAI.action === "center") {
 							//	give option to change direction
-							if (Math.random() < .5) {
-								const directions = ['S','N','E','W'];
-								bearAI.direction = directions[Math.floor(Math.random() * directions.length)];
+							if (Math.random() < .5 && (!bearAI.foundTarget || now - bearAI.foundTarget > 3000)) {
+								bearAI.direction = definition.lookForDirection(game, index);
 							}
 						}
 					}
@@ -1164,6 +1256,15 @@ SceneManager.add({Game: class extends Game {
 						const toCell = game.getCell(bear[0] + goalX, bear[1] + goalY);
 
 						if (game.canGo(fromCell, toCell, 'person')) {
+
+							if (bearAI.previousCell === toCell) {
+								bearAI.action = "idle";
+								if (now - bearAI.lastBore > 5000) {
+									bearAI.previousCell = null;
+								}
+								return;
+							}
+
 							bear[0] += goalX * speed * (fromCell.active <= 0 ? 2 : 1);
 							bear[1] += goalY * speed * (fromCell.active <= 0 ? 2 : 1);
 							if (!goalX) {
@@ -1196,19 +1297,91 @@ SceneManager.add({Game: class extends Game {
 									if (newCell.item.type === "banana") {
 										game.sceneData.banana ++;
 										game.sceneData.score += 5;
+										// game.sceneData.bonuses.push({
+										// 	x: newCell.x,
+										// 	y: newCell.y,
+										// 	score: 5,
+										// 	time: now,
+										// });
 									} else if (newCell.item.type === "apple") {
 										game.sceneData.apple ++;
 										game.sceneData.score += 20;
+										// game.sceneData.bonuses.push({
+										// 	x: newCell.x,
+										// 	y: newCell.y,
+										// 	score: 20,
+										// 	time: now,
+										// });
 									} else if (newCell.item.type === "virus" || newCell.item.type === "spike") {
 										eatable = false;
+									} else {
+										switch(newCell.item.type) {
+											case "treasure":
+												game.sceneData.score += 300;
+												// game.sceneData.bonuses.push({
+												// 	x: newCell.x,
+												// 	y: newCell.y,
+												// 	score: 300,
+												// 	time: now,
+												// });
+												break;
+											case "bonzai":
+												game.sceneData.score += 500;
+												// game.sceneData.bonuses.push({
+												// 	x: newCell.x,
+												// 	y: newCell.y,
+												// 	score: 500,
+												// 	time: now,
+												// });
+												break;
+											case "jewelry":
+												game.sceneData.score += 750;
+												// game.sceneData.bonuses.push({
+												// 	x: newCell.x,
+												// 	y: newCell.y,
+												// 	score: 750,
+												// 	time: now,
+												// });
+												break;
+											case "statue":
+												game.sceneData.score += 1000;
+												// game.sceneData.bonuses.push({
+												// 	x: newCell.x,
+												// 	y: newCell.y,
+												// 	score: 1000,
+												// 	time: now,
+												// });
+												break;
+											case "painting":
+												game.sceneData.score += 1500;
+												// game.sceneData.bonuses.push({
+												// 	x: newCell.x,
+												// 	y: newCell.y,
+												// 	score: 1500,
+												// 	time: now,
+												// });
+												break;
+											case "sandwich":
+												game.sceneData.score += 2000;
+												// game.sceneData.bonuses.push({
+												// 	x: newCell.x,
+												// 	y: newCell.y,
+												// 	score: 2000,
+												// 	time: now,
+												// });
+												break;
+										}
 									}
-									game.checkAchievement();
-									game.updateInfoBox();
 									newCell.item.eaten = now;
 									newCell.item = null;
 									bearAI.action = eatable ? "eating" : "sick";
 									bearAI.waitUntil = now + 3000;
+									game.checkAchievement();
+									game.updateInfoBox();
 								}
+
+								bearAI.previousCell = fromCell;
+								bearAI.lastBore = now;
 							}
 						} else {
 							bearAI.action = "center";

@@ -1046,8 +1046,8 @@ function getData() {
             "rect": [3438, 0, 320, 288],
             "index": 1
           },
-          "fruits": {
-            "scenes": ["keep-alive"],
+          "artic": {
+            "scenes": ["penguin"],
             "rect": [3766, 0, 256, 256],
             "index": 1
           },
@@ -1101,29 +1101,29 @@ function getData() {
             "rect": [2904, 328, 64, 64],
             "index": 1
           },
-          "slime": {
+          "fruits": {
             "scenes": ["keep-alive"],
             "rect": [1032, 520, 512, 256],
             "index": 1
           },
-          "artic": {
-            "scenes": ["penguin"],
-            "rect": [1552, 520, 256, 256],
+          "slime": {
+            "scenes": ["keep-alive"],
+            "rect": [1552, 520, 512, 256],
             "index": 1
           },
           "selector": {
             "scenes": ["keep-alive"],
-            "rect": [1816, 520, 192, 192],
+            "rect": [2072, 520, 192, 192],
             "index": 1
           },
           "zombie": {
             "scenes": ["rogue-zombie"],
-            "rect": [2016, 520, 128, 192],
+            "rect": [2272, 520, 128, 192],
             "index": 1
           },
           "home-floor": {
             "scenes": ["dobuki"],
-            "rect": [2152, 520, 165, 175],
+            "rect": [2408, 520, 165, 175],
             "index": 1
           }
         },
@@ -1141,9 +1141,9 @@ function getData() {
           {"rect": [2688, 464, 1408, 16], "index": 1},
           {"rect": [2552, 464, 136, 16], "index": 1},
           {"rect": [1816, 480, 2280, 40], "index": 1},
-          {"rect": [2325, 520, 1771, 183], "index": 1},
-          {"rect": [2152, 703, 1944, 17], "index": 1},
-          {"rect": [1816, 720, 2280, 64], "index": 1},
+          {"rect": [2581, 520, 1515, 183], "index": 1},
+          {"rect": [2408, 703, 1688, 17], "index": 1},
+          {"rect": [2072, 720, 2024, 64], "index": 1},
           {"rect": [1552, 784, 2544, 3312], "index": 1},
           {"rect": [1032, 784, 520, 3312], "index": 1},
           {"rect": [0, 1032, 1032, 3064], "index": 1}
@@ -1160,7 +1160,7 @@ function getData() {
         "creep-font=5af9449a97bc51694273ad4e0f9803d69daa815ba32fdfd84557fc9af0a9c58e",
         "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
         "dok=cf9659728872ec2be3fbb4cb13705970706a4ef51cd35a32a524afc01b483ab2",
-        "fruits=3aa966821750c98da3cca890b80c0eed846a18d94a9ea85e6354ee25d8e3054f",
+        "fruits=4a1341065fc6eca737babd36a4ed2ffd6eb8dd2e7cd070d53744d87353b29e1f",
         "grass-ground=7dbd71f6d728b7e8daddb5a06de61b1d707ae77f4a22322371dca4f5bbcf92e4",
         "grass-tile@16x=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
         "gun@8x=7d3022ea52208a926b49ef7adf2517fec0dc069fbe77676c98809bd0f1d1313d",
