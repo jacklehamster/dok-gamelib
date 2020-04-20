@@ -1004,7 +1004,8 @@ function getData() {
             "finalCellSize": 32
           }
         },
-        "editor": true
+        "editor": true,
+        "newgrounds": {"id": "50263:05FmQQ7M", "key": "nN2kZpn0Hk1nQCqSRsXILw=="}
       },
       "imagedata": {
         "size": [4096, 4096],

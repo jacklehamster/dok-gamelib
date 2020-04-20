@@ -24,6 +24,8 @@ class Engine {
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.animationProcessor = new AnimationProcessor();
+
+		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard(this, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
@@ -178,5 +180,13 @@ class Engine {
 			this.onSceneChangeListener.forEach(callback => callback({name:sceneName, scene, config: scene.config}));
 			window.game = scene;
 		}
+	}
+
+	sendScore(score) {
+		this.newgrounds.postScore(score);
+	}
+
+	unlockMedal(medalName) {
+		this.newgrounds.unlockMedal(medalName);
 	}
 }

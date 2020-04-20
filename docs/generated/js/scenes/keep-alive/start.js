@@ -181,6 +181,16 @@ SceneManager.add({Game: class extends Game {
 		bear.type = "bear";
 		this.sceneData.bears.push(bear);
 		this.sceneData.lastLevelUp = this.now;
+
+		if (this.sceneData.bears.length === 2) {
+			this.engine.unlockMedal("Second Bear");
+		}
+
+		if (this.sceneData.bears.length === 3) {
+			this.engine.unlockMedal("Third Bear");
+		}
+
+
 		this.updateInfoBox();
 	}
 
@@ -301,6 +311,14 @@ SceneManager.add({Game: class extends Game {
 		//	camera follow
 		sceneData.cam[0] += (sceneData.position[0] - sceneData.cam[0]) / 20;
 		sceneData.cam[1] += (sceneData.position[1] - sceneData.cam[1]) / 20;			
+
+		//	check gameOver
+		if (!this.sceneData.gameOver) {
+			if (this.sceneData.bears.every(({bearAI}) => bearAI.KO)) {
+				this.sceneData.gameOver = this.now;
+				this.engine.newgrounds.sendScore(this.sceneData.score);
+			}
+		}
 
 		this.cleanup();
 	}
@@ -1297,78 +1315,30 @@ SceneManager.add({Game: class extends Game {
 									if (newCell.item.type === "banana") {
 										game.sceneData.banana ++;
 										game.sceneData.score += 5;
-										// game.sceneData.bonuses.push({
-										// 	x: newCell.x,
-										// 	y: newCell.y,
-										// 	score: 5,
-										// 	time: now,
-										// });
 									} else if (newCell.item.type === "apple") {
 										game.sceneData.apple ++;
 										game.sceneData.score += 20;
-										// game.sceneData.bonuses.push({
-										// 	x: newCell.x,
-										// 	y: newCell.y,
-										// 	score: 20,
-										// 	time: now,
-										// });
 									} else if (newCell.item.type === "virus" || newCell.item.type === "spike") {
 										eatable = false;
 									} else {
 										switch(newCell.item.type) {
 											case "treasure":
 												game.sceneData.score += 300;
-												// game.sceneData.bonuses.push({
-												// 	x: newCell.x,
-												// 	y: newCell.y,
-												// 	score: 300,
-												// 	time: now,
-												// });
 												break;
 											case "bonzai":
 												game.sceneData.score += 500;
-												// game.sceneData.bonuses.push({
-												// 	x: newCell.x,
-												// 	y: newCell.y,
-												// 	score: 500,
-												// 	time: now,
-												// });
 												break;
 											case "jewelry":
 												game.sceneData.score += 750;
-												// game.sceneData.bonuses.push({
-												// 	x: newCell.x,
-												// 	y: newCell.y,
-												// 	score: 750,
-												// 	time: now,
-												// });
 												break;
 											case "statue":
 												game.sceneData.score += 1000;
-												// game.sceneData.bonuses.push({
-												// 	x: newCell.x,
-												// 	y: newCell.y,
-												// 	score: 1000,
-												// 	time: now,
-												// });
 												break;
 											case "painting":
 												game.sceneData.score += 1500;
-												// game.sceneData.bonuses.push({
-												// 	x: newCell.x,
-												// 	y: newCell.y,
-												// 	score: 1500,
-												// 	time: now,
-												// });
 												break;
 											case "sandwich":
 												game.sceneData.score += 2000;
-												// game.sceneData.bonuses.push({
-												// 	x: newCell.x,
-												// 	y: newCell.y,
-												// 	score: 2000,
-												// 	time: now,
-												// });
 												break;
 										}
 									}
