@@ -316,7 +316,7 @@ SceneManager.add({Game: class extends Game {
 		if (!this.sceneData.gameOver) {
 			if (this.sceneData.bears.every(({bearAI}) => bearAI.KO)) {
 				this.sceneData.gameOver = this.now;
-				this.engine.newgrounds.sendScore(this.sceneData.score);
+				this.engine.sendScore(this.sceneData.score);
 			}
 		}
 
