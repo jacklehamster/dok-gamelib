@@ -1,4 +1,4 @@
-/**
+/*
 	Dok-gamelib engine
 
 	Description: Game engine for producing web games easily using JavaScript and WebGL
