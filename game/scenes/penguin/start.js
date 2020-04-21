@@ -176,7 +176,7 @@ SceneManager.add({
 			const distGoal = sceneData.viewTop > sceneData.viewZoom ? 15 : 5;
 			return progress * distGoal + (1 - progress) * distFrom;
 		},
-		range: [0, 60]
+		range: [1, 60]
 	},
 	refresh: ({game}) => {
 		const { sceneData, keys } = game;
