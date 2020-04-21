@@ -115,7 +115,6 @@ SceneManager.add({
 			const hitTime = game.now - game.sceneData.hit;
 			return hitTime < 300 ? 0xaa0000 : 0;
 		},
-		curvature: 5,
 	},
 	light: {
 		pos: [
@@ -138,6 +137,7 @@ SceneManager.add({
 		height: .4,
 		turn: ({game}) => game.sceneData.turn,
 		cameraDistance: 3,
+		curvature: 5,
 	},
 	refresh: ({game}) => {
 		const { sceneData, keys } = game;

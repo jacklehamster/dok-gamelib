@@ -30,7 +30,6 @@
 	"settings": {
 		"docBackground": 0,
 		"background": 0,
-		"curvature": 0,
 		"frameRate": 60
 	},
 	"view": {
@@ -43,6 +42,7 @@
 		"range": [1, 60],
 		"tilt": 0,
 		"turn": 0,
+		"curvature": 0,
 		"cameraDistance": 7
 	},
 	"light": {

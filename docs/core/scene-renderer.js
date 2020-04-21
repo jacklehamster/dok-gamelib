@@ -22,11 +22,11 @@ class SceneRenderer {
 			turn: 0,
 			cameraDistance: 0,
 			range: [0, 0],
+			curvature: 0,
 		};
 		this.settings = {
 			docBackground : 0x000000,
 			background : 0x000000,
-			curvature: 0,
 		};
 		this.light = {
 			pos: [0, 0, 0],
@@ -107,7 +107,7 @@ class SceneRenderer {
 			glRenderer.setViewAngle(newViewAngle, newNear, newFar);
 		}
 
-		const newCurvature = settings.curvature.get();
+		const newCurvature = view.curvature.get();
 		if (this.view.curvature !== newCurvature) {
 			glRenderer.setCurvature(newCurvature);
 			this.view.curvature = newCurvature;

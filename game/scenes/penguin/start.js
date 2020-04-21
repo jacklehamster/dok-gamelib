@@ -125,7 +125,6 @@ SceneManager.add({
 }, {
 	settings: {
 		background: 0xE8E5E3,
-		curvature: 2,
 	},
 	light: {
 		pos: [
@@ -176,6 +175,7 @@ SceneManager.add({
 			const distGoal = sceneData.viewTop > sceneData.viewZoom ? 15 : 5;
 			return progress * distGoal + (1 - progress) * distFrom;
 		},
+		curvature: 2,
 	},
 	refresh: ({game}) => {
 		const { sceneData, keys } = game;

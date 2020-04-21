@@ -1228,18 +1228,14 @@ function getData() {
           "onTurnRightRelease": null
         },
         "mouse": {"onMouseDown": null, "onMouseUp": null, "onMouseMove": null},
-        "settings": {
-          "docBackground": 0,
-          "background": 0,
-          "curvature": 0,
-          "frameRate": 60
-        },
+        "settings": {"docBackground": 0, "background": 0, "frameRate": 60},
         "view": {
           "pos": [0, 0, 0],
           "viewAngle": 45,
           "range": [1, 60],
           "tilt": 0,
           "turn": 0,
+          "curvature": 0,
           "cameraDistance": 7
         },
         "light": {

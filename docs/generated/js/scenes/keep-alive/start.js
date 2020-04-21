@@ -382,7 +382,6 @@ SceneManager.add({Game: class extends Game {
 	settings: {
 		background: 0xaacc88,
 		docBackground: 0xFFFFFF,
-		curvature: .5,
 	},
 	light: {
 		pos: [
@@ -393,7 +392,8 @@ SceneManager.add({Game: class extends Game {
 		ambient: .7,
 		shininess: 1,
 		specularStrength: 0.1,
-		diffusionStrength: 0.5
+		diffusionStrength: 0.5,
+		curvature: .5,
 	},
 	view: {
 		pos: [
