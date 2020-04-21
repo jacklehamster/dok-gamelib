@@ -176,7 +176,6 @@ SceneManager.add({
 			const distGoal = sceneData.viewTop > sceneData.viewZoom ? 15 : 5;
 			return progress * distGoal + (1 - progress) * distFrom;
 		},
-		range: [1, 60]
 	},
 	refresh: ({game}) => {
 		const { sceneData, keys } = game;
@@ -249,11 +248,11 @@ SceneManager.add({
 
 		let turning = false;
 		if (keys.controls.left <= 0 || keys.controls.right <= 0) {
-			if (keys.controls.left > 0) {
+			if (keys.controls.left > 0 || keys.controls.turnLeft > 0) {
 				sceneData.turnDirection = -1;
 				turning = true;
 			}
-			if (keys.controls.right > 0) {
+			if (keys.controls.right > 0 || keys.controls.turnRight > 0) {
 				sceneData.turnDirection = 1;
 				turning = true;
 			}

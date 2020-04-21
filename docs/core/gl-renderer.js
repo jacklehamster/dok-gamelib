@@ -136,6 +136,9 @@ class GLRenderer {
 	}
 
 	setViewAngle(viewAngle, near, far) {
+		if (near <= 0) {
+			console.error(`Invalid range [near, far]. Near needs to be higher than 0.`);
+		}
 		const { gl, shader, projectionMatrix } = this;
 		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
