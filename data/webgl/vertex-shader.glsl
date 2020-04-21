@@ -101,7 +101,7 @@ void main(void) {
 	vBrightness = floor(aVertexTextureCoord.y / 2.0);
 	vTintColor = makeColorFromRGB(aTintColor[0], aTintColor[1]);
 
-	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 40.0)) * .2);
+	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 10.0)) * .2);
 	gl_Position = position;
 	vFragPos = worldPos.xyz;
 	vNormal = aNormal;
