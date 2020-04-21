@@ -30,7 +30,11 @@
 	"settings": {
 		"docBackground": 0,
 		"background": 0,
-		"frameRate": 60
+		"frameRate": 60,
+		"music": {
+			"src": null,
+			"volume": 0.5
+		}
 	},
 	"view": {
 		"pos": [

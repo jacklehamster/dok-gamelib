@@ -17,6 +17,29 @@ class MediaManager {
 		this.videos = {};
 		this.sounds = {};
 		this.config = config;
+		this.theme = null;
+	}
+
+	setTheme(name, volume) {
+		if (this.theme !== name) {
+			const previousMusic = this.theme ? this.getMusic(this.theme) : null;
+			if (previousMusic) {
+				previousMusic.pause();
+			}
+			this.theme = name;
+			if (this.theme) {
+				const music = this.getMusic(this.theme);
+				if (previousMusic) {
+					music.currentTime = 0;
+				}
+				music.play();
+			}
+		}
+
+		if (this.theme) {
+			const music = this.getMusic(this.theme);
+			music.volume = volume;			
+		}
 	}
 
 	getMusic(name, url) {

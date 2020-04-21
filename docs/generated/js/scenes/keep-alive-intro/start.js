@@ -9,6 +9,10 @@ SceneManager.add({Game: class extends Game {
 }}, {
 	settings: {
 		background: 0xFFFFFF,
+		music: {
+			src: "isle",
+			volume: .3,
+		},
 	},
 	view: {
 		tilt: .4,
@@ -110,15 +114,6 @@ SceneManager.add({Game: class extends Game {
 			hidden: ({game}) => game.sceneData.step !== 1,
 		}),
 
-		{
-			init: ({game}) => {
-				game.getMusic("isle").play();
-				game.getMusic("isle").volume = 0.3;
-			},
-			destroy: ({game}) => {
-				game.getMusic("isle").pause();
- 			},			
-		},
 		{
 			src: "sand-ground",
 			type: SpriteType.Floor,

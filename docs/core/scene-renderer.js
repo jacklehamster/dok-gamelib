@@ -13,7 +13,8 @@
   */
 
 class SceneRenderer {
-	constructor(glRenderer) {
+	constructor(glRenderer, mediaManager) {
+		this.mediaManager = mediaManager;
 		this.glRenderer = glRenderer;
 		this.view = {
 			pos: [0, 0, 0],
@@ -27,6 +28,10 @@ class SceneRenderer {
 		this.settings = {
 			docBackground : 0x000000,
 			background : 0x000000,
+			music: {
+				src: null,
+				volume: .5,
+			},
 		};
 		this.light = {
 			pos: [0, 0, 0],
@@ -63,6 +68,13 @@ class SceneRenderer {
 		if (docBackground !== this.docBackground) {
 			document.body.style.backgroundColor = Utils.getDOMColor(docBackground);
 			this.docBackground = docBackground;
+		}
+		const newMusicSrc = settings.music.src.get();
+		const newVolume = settings.music.volume.get();
+		if (newMusicSrc !== this.settings.music.src || newVolume !== this.settings.music.volume) {
+			this.settings.music.src = newMusicSrc;
+			this.settings.music.volume = newVolume;
+			this.mediaManager.setTheme(this.settings.music.src, this.settings.music.volume);
 		}
 
 		const newLightPosX = light.pos[0].get();

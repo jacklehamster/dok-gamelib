@@ -20,7 +20,7 @@ class Engine {
 		this.dataStore = new DataStore();
 		this.mediaManager = new MediaManager(this.data.generated);
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.data.generated);
-		this.sceneRenderer = new SceneRenderer(this.glRenderer);
+		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager);
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.animationProcessor = new AnimationProcessor();

@@ -382,6 +382,10 @@ SceneManager.add({Game: class extends Game {
 	settings: {
 		background: 0xaacc88,
 		docBackground: 0xFFFFFF,
+		music: {
+			src: ({game}) => game.sceneData.muted ? null : "guita",
+			volume: .5,
+		},
 	},
 	light: {
 		pos: [
@@ -745,13 +749,9 @@ SceneManager.add({Game: class extends Game {
 				game.sceneData.muted = value;
 				const soundControl = document.getElementById("soundControl");
 				soundControl.innerText = game.sceneData.muted ? '🔇' : '🔉';
-				game.getMusic("guita").volume = game.sceneData.muted ? 0 : .5;
-				game.getMusic("guita").play();
 				localStorage.setItem("mute", value?"mute":"");
 			},
 			destroy: ({game}) => {
-				game.getMusic("guita").pause();
-				game.getMusic("guita").currentTime = 0;
 				game.ui.parentElement.removeChild(game.ui);
  			},
 			refresh: ({game, definition}) => {

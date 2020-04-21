@@ -1228,7 +1228,12 @@ function getData() {
           "onTurnRightRelease": null
         },
         "mouse": {"onMouseDown": null, "onMouseUp": null, "onMouseMove": null},
-        "settings": {"docBackground": 0, "background": 0, "frameRate": 60},
+        "settings": {
+          "docBackground": 0,
+          "background": 0,
+          "frameRate": 60,
+          "music": {"src": null, "volume": 0.5}
+        },
         "view": {
           "pos": [0, 0, 0],
           "viewAngle": 45,
