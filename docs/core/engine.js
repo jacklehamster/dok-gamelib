@@ -65,8 +65,8 @@ class Engine {
 	}
 
 	isEditor() {
-		const match = location.search.match(/\beditor=(?<value>[a-zA-Z0-9_]+)\b/);
-		return match && match.groups ? match.groups.value == 1 || match.groups.value == "true" : this.data.generated.game.editor;
+		const match = location.search.match(/\beditor=([a-zA-Z0-9_]+)\b/);
+		return match && match[1] ? match[1] === 1 || match[1] === "true" : this.data.generated.game.editor;
 	}
 
 	static beginLooping(engine) {
