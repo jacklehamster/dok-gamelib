@@ -8,6 +8,7 @@ SceneManager.add({Game: class extends Game {
 				pos: [0, 0, 0],
 				mov: [0, 0, 0],
 				speed: 0,
+				lastMov: [0, 0, 0],
 			},
 			cam: [ 0, 0, 0 ],
 		};
@@ -56,7 +57,13 @@ SceneManager.add({Game: class extends Game {
 		if (ddist > 0) {
 			sceneData.dok.mov[0] = dx;
 			sceneData.dok.mov[2] = dz;
-			sceneData.dok.speed += .015;
+			sceneData.dok.speed += .02;
+			if (sceneData.dok.mov[0]) {
+				sceneData.dok.lastMov[0] = sceneData.dok.mov[0];
+			}
+			if (sceneData.dok.mov[2]) {
+				sceneData.dok.lastMov[2] = sceneData.dok.mov[2];				
+			}
 		}
 		sceneData.dok.speed *= .8;
 
@@ -105,22 +112,23 @@ SceneManager.add({Game: class extends Game {
 			padding: 1,
 			frameRate: 24,
 			animations: [
-				[ "idle", "still*20,blink" ],
+				[ "idle", "still*100,blink" ],
 				[ "still", "2" ],
-				[ "blink", "0-2" ],
+				[ "blink", "0*3,0-2,2*3" ],
 				[ "talk", "2-5" ],
 				[ "talk-mad", "6-7" ],
 				[ "talk-surprised", "8-9" ],
 				[ "talk-sad", "10-11" ],
 				[ "talk-4th-wall", "12-15" ],
 				[ "walk", "16-25" ],
-				[ "walk-up", "26-36" ],
-				[ "knocked-up", "37-52" ],
-				[ "birds", "53-57" ],
-				[ "cast-spell", "58-67" ],
-				[ "pick-up", "68-78" ],
-				[ "fly", "79-86" ],
-				[ "dancing", "87-94" ],
+				[ "idle-up", "26"],
+				[ "walk-up", "27-37" ],
+				[ "knocked-up", "38-53" ],
+				[ "birds", "54-58" ],
+				[ "cast-spell", "59-68" ],
+				[ "pick-up", "69-79" ],
+				[ "fly", "80-87" ],
+				[ "dancing", "88-95" ],
 			],
 		},
 	],
@@ -133,11 +141,11 @@ SceneManager.add({Game: class extends Game {
 				({game: { sceneData: { dok }}}) => game.sceneData.dok.pos[2],
 			],
 			scale: [
-				({game: {sceneData: { dok }}}) => (dok.mov[0] || 1) * 2.4,
+				({game: {sceneData: { dok }}}) => (dok.lastMov[0] || 1) * 2.4,
 				2.4,
 			],
 			animation: ({game: { sceneData: { dok }}}) => {
-				return dok.speed > .01 ? (dok.mov[1] < 0 ? "walk-up" : "walk") : "idle";
+				return dok.speed > .01 ? (dok.lastMov[2] < 0 ? "walk-up" : "walk") : (dok.lastMov[2] < 0 ? "idle-up" : "idle");
 			},
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],

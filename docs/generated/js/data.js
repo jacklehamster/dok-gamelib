@@ -1160,7 +1160,7 @@ function getData() {
         "color-blocks=afee4762dd872c26c4efdc0c3e8d02c3e8ac72ae88864221f1efebc0ad8829a9",
         "creep-font=5af9449a97bc51694273ad4e0f9803d69daa815ba32fdfd84557fc9af0a9c58e",
         "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
-        "dok=cf9659728872ec2be3fbb4cb13705970706a4ef51cd35a32a524afc01b483ab2",
+        "dok=028fc1f4466fa995e15d9060e146cc159674d3d49e0f01c5fe15f1b366500b92",
         "fruits=4a1341065fc6eca737babd36a4ed2ffd6eb8dd2e7cd070d53744d87353b29e1f",
         "grass-ground=7dbd71f6d728b7e8daddb5a06de61b1d707ae77f4a22322371dca4f5bbcf92e4",
         "grass-tile@16x=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
