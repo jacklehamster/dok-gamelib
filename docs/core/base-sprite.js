@@ -47,12 +47,4 @@ class BaseSpriteInstance {
 			this.updateTimes.hidden = now;
 		}		
 	}
-
-	updateChunk(renderer, chunk, now) {
-		const { type, updateTimes } = this;
-		this.updated = now;
-		if (updateTimes.type === now) {
-			chunk.setType(type, now);
-		}
-	}
 }

@@ -4,23 +4,31 @@ class NewgroundsWrapper {
         this.ngio = new Newgrounds.io.core(id, key);
         this.medals = null;
         this.medalCallbacks = null;
+        this.username = null;
+        this.loginListeners = [];
+        this.logoutListeners = [];
         this.initSession();
     }
 
+    addEventListener(type, callback) {
+        switch(type) {
+            case "login":
+                if (this.loginListeners.indexOf(callback) < 0) {
+                    this.loginListeners.push(callback);
+                }
+                break;
+            case "logout":
+                if (this.logoutListeners.indexOf(callback) < 0) {
+                    this.logoutListeners.push(callback);
+                }
+                break;
+        }
+    }
+
     onLoggedIn() {
-        console.log("Welcome " + this.ngio.user.name + "!");
-        // const button = document.body.appendChild(document.createElement('button'));
-        // button.classList.add('button');
-        // button.innerText = "lock medals";
-        // button.addEventListener('click', e => {
-        //  fetchMedals(ngio, medals => {
-        //      medals.forEach(medal => medal.unlocked = false);
-        //      console.log(medals);
-        //  })
-        // });
-        // Game.onTrigger(action => {
-        //  unlockMedal(ngio, action.medal, medal => console.log(medal.name, 'unlocked'));
-        // });
+        this.username = this.ngio.user.name;
+        console.log(`Logged in newgrounds as ${this.username}`);
+        this.loginListeners.forEach(callback => callback(this.username));
         this.fetchMedals(() => {});
     }
 
@@ -42,12 +50,7 @@ class NewgroundsWrapper {
             if (this.ngio.user) {
                 this.onLoggedIn();
             } else {
-                 const button = document.body.appendChild(document.createElement('button'));
-                 button.classList.add('button');
-                 button.innerText = "login";
-                 button.addEventListener('click', e => {
-                    this.requestLogin();
-                 });
+                console.log(`To login, call game.engine.newgrounds.requestLogin()`);
             }
 
         });
@@ -58,7 +61,7 @@ class NewgroundsWrapper {
      * a mouse-click event or pop-up blockers will prevent the Newgrounds Passport page from loading.
      */
     requestLogin() {
-        this.ngio.requestLogin(this.onLoggedIn, this.onLoginFailed, this.onLoginCancelled);
+        this.ngio.requestLogin(() => this.onLoggedIn, () => this.onLoginFailed, () => this.onLoginCancelled);
         /* you should also draw a 'cancel login' buton here */
     }
 
@@ -78,12 +81,9 @@ class NewgroundsWrapper {
      * and have it call this.
      */
     logOut() {
-        this.ngio.logOut(function() {
-            /*
-             * Because we have to log the player out on the server, you will want
-             * to handle any post-logout stuff in this function, wich fires after
-             * the server has responded.
-             */
+        this.ngio.logOut(() => {
+            this.username = null;
+            this.logoutListeners.forEach(callback => callback());
         });
     }
 

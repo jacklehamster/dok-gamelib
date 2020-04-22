@@ -19,11 +19,12 @@ class Engine {
 		this.data = getData();
 		this.dataStore = new DataStore();
 		this.mediaManager = new MediaManager(this.data.generated);
-		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.data.generated);
+		this.chunkProcessor = new ChunkProcessor(this);
+		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.chunkProcessor, this.data.generated);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager);
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
-		this.animationProcessor = new AnimationProcessor();
+		this.spriteDataProcessor = new SpriteDataProcessor();
 
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.sceneManager = sceneManager;
@@ -71,7 +72,7 @@ class Engine {
 
 	static beginLooping(engine) {
 		const { glRenderer, sceneRenderer, spriteDefinitionProcessor, spriteProvider,
-				keyboard, mouse, spritesToRemove, onLoopListener, animationProcessor } = engine;
+				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
 		function animationFrame(now) {
 			requestAnimationFrame(animationFrame);
 			const { currentScene } = engine;
@@ -89,7 +90,7 @@ class Engine {
 			}
 
 			sceneRenderer.refresh(currentScene);
-			animationProcessor.refresh(currentScene);
+			spriteDataProcessor.refresh(currentScene);
 			spriteDefinitionProcessor.refresh(currentScene);
 
 			if (engine.nextScene) {
@@ -102,7 +103,7 @@ class Engine {
 				glRenderer.clearScreen();
 				sceneRenderer.render(currentScene);
 
-				animationProcessor.process(currentScene);
+				spriteDataProcessor.process(currentScene);
 
 				//	show sprites to process
 				const sprites = spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);
@@ -153,7 +154,7 @@ class Engine {
 	clearScene() {
 		if (this.currentScene) {
 			this.spriteDefinitionProcessor.destroy(this.currentScene);
-			this.animationProcessor.destroy(this.currentScene);
+			this.spriteDataProcessor.destroy(this.currentScene);
 			this.currentScene.destroy.run();
 		}
 		this.spriteProvider.clear();
@@ -175,7 +176,7 @@ class Engine {
 			this.currentScene.now = 0;
 			this.currentScene.setEngine(this);
 			this.sceneRenderer.init(scene);
-			this.animationProcessor.init(scene);
+			this.spriteDataProcessor.init(scene);
 			this.spriteDefinitionProcessor.init(scene);
 			this.onSceneChangeListener.forEach(callback => callback({name:sceneName, scene, config: scene.config}));
 			window.game = scene;

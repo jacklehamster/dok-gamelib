@@ -16,7 +16,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 	constructor() {
 		super();
 		this.animation = null;
-		this.animationData = {
+		this.spriteData = {
 			spriteSize: [ 0, 0 ],
 			grid: [ 0, 0 ],
 			padding: 0,
@@ -38,7 +38,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		}
 
 		const { animation, grid, brightness, padding, spriteSize, crop, circleRadius, animationOverride } = definition;
-		const { instanceIndex, updateTimes, animationData, src } = this;
+		const { instanceIndex, updateTimes, spriteData, src } = this;
 		const { now } = game;
 
 		const cropX = crop[0].get(instanceIndex);
@@ -64,83 +64,83 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 
 		const animationOverrideActive = animationOverride.active.get();
 
-		const animationProcessorData = game.engine.animationProcessor.data[src];
-		if (animationProcessorData) {
-			const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, frameRate, animations, first } = animationProcessorData;
+		const spriteDataProcessorInfo = game.engine.spriteDataProcessor.data[src];
+		if (spriteDataProcessorInfo) {
+			const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, frameRate, animations, first } = spriteDataProcessorInfo;
 			const newPadding = padding;
-			if (newPadding !== animationData.padding) {
-				animationData.padding = newPadding;
+			if (newPadding !== spriteData.padding) {
+				spriteData.padding = newPadding;
 				updateTimes.padding = now;
 			}
 
-			if (animationData.spriteSize[0] !== spriteWidth || animationData.spriteSize[1] !== spriteHeight) {
-				animationData.spriteSize[0] = spriteWidth;
-				animationData.spriteSize[1] = spriteHeight;
+			if (spriteData.spriteSize[0] !== spriteWidth || spriteData.spriteSize[1] !== spriteHeight) {
+				spriteData.spriteSize[0] = spriteWidth;
+				spriteData.spriteSize[1] = spriteHeight;
 				updateTimes.spriteSize = now;
 			}
 
-			if (animationData.grid[0] !== cols || animationData.grid[1] !== rows) {
-				animationData.grid[0] = cols;
-				animationData.grid[1] = rows;
+			if (spriteData.grid[0] !== cols || spriteData.grid[1] !== rows) {
+				spriteData.grid[0] = cols;
+				spriteData.grid[1] = rows;
 				updateTimes.grid = now;
 			}
 
 			const newFrameRate = animationOverrideActive ? animationOverride.frameRate.get(instanceIndex) : frameRate;
-			if (animationData.frameRate !== newFrameRate) {
-				animationData.frameRate = newFrameRate;
+			if (spriteData.frameRate !== newFrameRate) {
+				spriteData.frameRate = newFrameRate;
 				updateTimes.frameRate = now;
 				this.animationUpdateTime = now;
 			}
 
 			for (let a in animations) {
-				if (!animationData.animations[a] || animations[a].timeUpdated === now) {
-					animationData.animations[a] = animations[a];
+				if (!spriteData.animations[a] || animations[a].timeUpdated === now) {
+					spriteData.animations[a] = animations[a];
 					updateTimes.animations = now;
 				}
 			}
 
-			for (let a in animationData.animations) {
+			for (let a in spriteData.animations) {
 				if (!animations[a]) {
-					delete animationData.animations[a];
+					delete spriteData.animations[a];
 					updateTimes.animations = now;
 				}
 			}
 
-			if (animationData.first !== first) {
-				animationData.first = first;
+			if (spriteData.first !== first) {
+				spriteData.first = first;
 				updateTimes.first = now;
 			}
 		} else {
 			const newPadding = 0;
-			if (newPadding !== animationData.padding) {
-				animationData.padding = newPadding;
+			if (newPadding !== spriteData.padding) {
+				spriteData.padding = newPadding;
 				updateTimes.padding = now;
 			}
 
 			const spriteWidth = 0, spriteHeight = 0;
-			if (animationData.spriteSize[0] !== spriteWidth || animationData.spriteSize[1] !== spriteHeight) {
-				animationData.spriteSize[0] = spriteWidth;
-				animationData.spriteSize[1] = spriteHeight;
+			if (spriteData.spriteSize[0] !== spriteWidth || spriteData.spriteSize[1] !== spriteHeight) {
+				spriteData.spriteSize[0] = spriteWidth;
+				spriteData.spriteSize[1] = spriteHeight;
 				updateTimes.spriteSize = now;
 			}
 
 			const animCols = 1;
 			const animRows = 1;
-			if (animationData.grid[0] !== animCols || animationData.grid[1] !== animRows) {
-				animationData.grid[0] = animCols;
-				animationData.grid[1] = animRows;
+			if (spriteData.grid[0] !== animCols || spriteData.grid[1] !== animRows) {
+				spriteData.grid[0] = animCols;
+				spriteData.grid[1] = animRows;
 				updateTimes.grid = now;
 			}
 
 			const newFrameRate = animationOverrideActive ? animationOverride.frameRate.get(instanceIndex) : 0;
-			if (animationData.frameRate !== newFrameRate) {
-				animationData.frameRate = newFrameRate;
+			if (spriteData.frameRate !== newFrameRate) {
+				spriteData.frameRate = newFrameRate;
 				updateTimes.frameRate = now;
 				this.animationUpdateTime = now;
 			}
 
-			if (animationData.first !== null) {
-				animationData.first = null;
+			if (spriteData.first !== null) {
+				spriteData.first = null;
 			}			
 		}
 
@@ -153,7 +153,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 				updateTimes.animationRange = now;
 			}
 		} else {
-			const newAnimation = animation.get(instanceIndex) || this.animationData.first;
+			const newAnimation = animation.get(instanceIndex) || this.spriteData.first;
 			if (newAnimation !== this.animation) {
 				this.singleFrameAnimation = !isNaN(newAnimation);
 				this.animation = this.singleFrameAnimation ? parseInt(newAnimation) : newAnimation;
@@ -169,8 +169,8 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 					updateTimes.animationRange = now;
 				}
 			} else {
-				const animationFrame = Math.floor((now - this.animationUpdateTime) * animationData.frameRate / 1000);
-				const animationList = animationData.animations[this.animation] ? animationData.animations[this.animation].animations : null;
+				const animationFrame = Math.floor((now - this.animationUpdateTime) * spriteData.frameRate / 1000);
+				const animationList = spriteData.animations[this.animation] ? spriteData.animations[this.animation].animations : null;
 				const range = animationList ? animationList[animationFrame % animationList.length] : null;
 				const newAnimationStart = range ? range[0] : 0;
 				const newAnimationLength = range ? range[1] : 1;
@@ -180,66 +180,6 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 					updateTimes.animationRange = now;
 				}
 			}
-		}
-	}
-
-	updateChunkGrid(chunk, now) {
-		const { grid: [ cols, rows ] } = this.animationData;
-		chunk.setGrid(cols, rows, now);
-	}
-
-	updateChunkTexture(renderer, chunk, now) {
-		const { src, animationData: { spriteSize, grid, padding }, crop, scale, brightness, circleRadius } = this;
-
-		if (!src) {
-			chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
-		} else {
-			const spriteData = renderer.imagedata.sprites[src] || renderer.textureManager.getVideoTexture(src);
-			if (!spriteData) {
-				const error = `Unknown sprite ${src}.`;
-				if (game.lastError !== error) {
-					game.lastError = error;
-					console.warn(game.lastError);
-				}
-				chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
-				this.src = null;
-				return;
-			}
-
-			const { rect: [ x, y, sheetWidth, sheetHeight ], index } = spriteData;
-
-			const animationData = game.engine.animationProcessor.data[src];
-			if (animationData) {
-				const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = animationData;
-				chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
-			} else {
-				const [ cols, rows ] = grid;
-				const [ spriteWidth, spriteHeight ] = spriteSize;
-				chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
-			}
-		}
-	}
-
-	updateChunkAnimation(chunk, now) {
-		const { animationRange: [ start, length ], animationData: { frameRate } } = this;
-		chunk.setAnimation(start, length, frameRate, now);
-	}
-
-	updateChunk(renderer, chunk, now) {
-		super.updateChunk(renderer, chunk, now);
-		const { updateTimes } = this;
-		if (updateTimes.grid === now) {
-			this.updateChunkGrid(chunk, now);
-		}
-
-		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
-			|| updateTimes.spriteSize === now || updateTimes.crop === now || updateTimes.circleRadius
-			|| updateTimes.grid === now || updateTimes.padding) {
-			this.updateChunkTexture(renderer, chunk, now);
-		}
-
-		if (updateTimes.frameRate === now || updateTimes.animationRange === now) {
-			this.updateChunkAnimation(chunk, now);
 		}
 	}
 }

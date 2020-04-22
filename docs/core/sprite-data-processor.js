@@ -1,4 +1,4 @@
-class AnimationProcessor {
+class SpriteDataProcessor {
 	constructor() {
 		this.data = {};
 	}
@@ -113,7 +113,7 @@ class AnimationProcessor {
 					const tag = anim.animations[n] ? anim.animations[n].tag : null;
 					if (f !== tag) {
 						anim.animations[n] = {
-							animations: AnimationProcessor.produceAnimationChunks(f),
+							animations: SpriteDataProcessor.produceAnimationChunks(f),
 							tag: f,
 						};
 						anim.timeUpdated = now;
@@ -127,7 +127,7 @@ class AnimationProcessor {
 				});
 				if (changedAnimations) {
 					for (let i = 0; i < 10; i++) {
-						if (!AnimationProcessor.postProcess(anim.animations)) {
+						if (!SpriteDataProcessor.postProcess(anim.animations)) {
 							break;
 						}
 					}

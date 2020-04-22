@@ -41,18 +41,4 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			updateTimes.tintColor = now;
 		}
 	}
-
-	updateChunkTint(chunk, now) {
-		const { tintColor, padding } = this;
-		chunk.setTint(tintColor, now);
-	}
-
-	updateChunk(renderer, chunk, now) {
-		super.updateChunk(renderer, chunk, now);
-		const { updateTimes } = this;
-
-		if (updateTimes.tintColor === now) {
-			this.updateChunkTint(chunk, now);
-		}
-	}
 }
