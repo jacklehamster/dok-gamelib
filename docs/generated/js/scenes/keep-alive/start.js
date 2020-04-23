@@ -737,13 +737,6 @@ SceneManager.add({Game: class extends Game {
 					definition.setMute.run(!game.sceneData.muted);
 				});
 				definition.setMute.run(localStorage.getItem("mute") === "mute");
-
-				// game.checkAchievement(true);
-				// game.checkAchievement(true);
-				// game.checkAchievement(true);
-				// game.checkAchievement(true);
-				// game.checkAchievement(true);
-
 			},
 			setMute: ({game}, value) => {
 				game.sceneData.muted = value;
@@ -782,9 +775,9 @@ SceneManager.add({Game: class extends Game {
 						context.rect(5, 5 + 48 * idx, 40, 40);
 						context.stroke();
 					} else if (sceneData.mode === "RAISE") {
-						canvasRenderer.drawToCanvas("selector", 5, 4 + 48 * idx, 40, toolbox, [3, 3], 4);
+						canvasRenderer.drawToCanvas("selector", 5, 4 + 48 * idx, 40, toolbox, 4);
 					} else if (sceneData.mode === "LOWER") {
-						canvasRenderer.drawToCanvas("selector", 5, 4 + 48 * idx, 40, toolbox, [3, 3], 5);						
+						canvasRenderer.drawToCanvas("selector", 5, 4 + 48 * idx, 40, toolbox, 5);						
 					}
 				}
 			},

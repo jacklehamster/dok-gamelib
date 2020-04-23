@@ -69,7 +69,9 @@ class SpriteDataProcessor {
 		}
 	}
 
-
+	getData(id) {
+		return this.data[id];
+	}
 
 	process(scene) {
 		const { spriteData, now } = scene;

@@ -26,7 +26,7 @@ class Engine {
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
-		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.data.generated);
+		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard(this, {
