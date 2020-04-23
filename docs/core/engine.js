@@ -20,12 +20,13 @@ class Engine {
 		this.dataStore = new DataStore();
 		this.mediaManager = new MediaManager(this.data.generated);
 		this.chunkProcessor = new ChunkProcessor(this);
-		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.chunkProcessor, this.data.generated);
+		this.spritesheetManager = new SpritesheetManager(this.data.generated);
+		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.chunkProcessor, this.spritesheetManager, this.data.generated);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager);
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
-
+		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.data.generated);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard(this, {

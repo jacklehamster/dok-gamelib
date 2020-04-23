@@ -17,9 +17,76 @@ class ChunkProcessor {
 		this.engine = engine;
 	}
 
+	processTexture(sprite, chunk, now) {
+		const { glRenderer: { imagedata, textureManager } } = this.engine;
+		const { src, spriteData: { spriteSize, grid, padding }, crop, scale, brightness, circleRadius } = sprite;
+
+		if (!src) {
+			chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
+		} else {
+			const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src);
+			if (!spriteInfo) {
+				const error = `Unknown sprite ${src}.`;
+				if (this.lastError !== error) {
+					this.lastError = error;
+					console.warn(this.lastError);
+				}
+				chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
+				sprite.src = null;
+				return;
+			}
+
+			const { rect: [ x, y, sheetWidth, sheetHeight ], index } = spriteInfo;
+
+			const spriteDataProcessorInfo = this.engine.spriteDataProcessor.data[src];
+			if (spriteDataProcessorInfo) {
+				const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;
+				chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
+			} else {
+				const [ cols, rows ] = grid;
+				const [ spriteWidth, spriteHeight ] = spriteSize;
+				chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
+			}
+		}
+	}
+
+	processWall(sprite, chunk, now) {
+		const { scale, hotspot, hidden, corners, type } = sprite;
+		if (hidden) {
+			chunk.setHidden(now);
+		} else {
+			const spriteWidth = Math.abs(scale[0]);
+			const spriteHeight = Math.abs(scale[1]);
+			switch (type) {
+				case SpriteType.Ceiling:
+					chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				case SpriteType.Water:		
+				case SpriteType.Floor:
+				case SpriteType.Shadow:
+					chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				case SpriteType.LeftWall:
+					chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				case SpriteType.RightWall:
+					chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				case SpriteType.Sprite:
+				case SpriteType.Front:
+					chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, now);			
+					break;
+				case SpriteType.Back:
+					chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, now);
+					break;
+				default:
+					console.error("invalid type");
+			}
+		}
+	}
+
 	process(sprite, chunk, now) {
 		const { updateTimes } = sprite;
-		const { glRenderer } = this.engine;
 
 		sprite.updated = now;
 
@@ -44,35 +111,7 @@ class ChunkProcessor {
 		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
 			|| updateTimes.spriteSize === now || updateTimes.crop === now || updateTimes.circleRadius
 			|| updateTimes.grid === now || updateTimes.padding) {
-			const { src, spriteData: { spriteSize, grid, padding }, crop, scale, brightness, circleRadius } = sprite;
-
-			if (!src) {
-				chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
-			} else {
-				const spriteInfo = glRenderer.imagedata.sprites[src] || glRenderer.textureManager.getVideoTexture(src);
-				if (!spriteInfo) {
-					const error = `Unknown sprite ${src}.`;
-					if (this.lastError !== error) {
-						this.lastError = error;
-						console.warn(this.lastError);
-					}
-					chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, crop, circleRadius, now);
-					sprite.src = null;
-					return;
-				}
-
-				const { rect: [ x, y, sheetWidth, sheetHeight ], index } = spriteInfo;
-
-				const spriteDataProcessorInfo = this.engine.spriteDataProcessor.data[src];
-				if (spriteDataProcessorInfo) {
-					const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;
-					chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
-				} else {
-					const [ cols, rows ] = grid;
-					const [ spriteWidth, spriteHeight ] = spriteSize;
-					chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, crop, circleRadius, now);
-				}
-			}			
+			this.processTexture(sprite, chunk, now);
 		}
 
 		if (updateTimes.pos === now) {
@@ -80,38 +119,7 @@ class ChunkProcessor {
 		}
 
 		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.hidden === now || updateTimes.corners === now) {
-			const { scale, hotspot, hidden, corners, type } = sprite;
-			if (hidden) {
-				chunk.setHidden(now);
-			} else {
-				const spriteWidth = Math.abs(scale[0]);
-				const spriteHeight = Math.abs(scale[1]);
-				switch (type) {
-					case SpriteType.Ceiling:
-						chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					case SpriteType.Water:		
-					case SpriteType.Floor:
-					case SpriteType.Shadow:
-						chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					case SpriteType.LeftWall:
-						chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					case SpriteType.RightWall:
-						chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					case SpriteType.Sprite:
-					case SpriteType.Front:
-						chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, now);			
-						break;
-					case SpriteType.Back:
-						chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, now);
-						break;
-					default:
-						console.error("invalid type");
-				}
-			}
+			this.processWall(sprite, chunk, now);
 		}
 
 		if (updateTimes.mov === now) {

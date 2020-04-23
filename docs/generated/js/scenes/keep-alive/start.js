@@ -762,14 +762,14 @@ SceneManager.add({Game: class extends Game {
 					return;
 				}
 
-				const { engine: { glRenderer }, sceneData } = game;
-				if (glRenderer.loaded) {
+				const { engine: { glRenderer: { spritesheetManager }, canvasRenderer }, sceneData } = game;
+				if (spritesheetManager.loaded) {
 					const { toolbox } = definition;
 					const context = toolbox.getContext("2d");
 					context.clearRect(0, 0, toolbox.width, toolbox.height);
 
 					definition.grounds.forEach((src, index) => {
-						glRenderer.drawToCanvas2d(src, 5, 5 + 48 * index, 40, toolbox);
+						canvasRenderer.drawToCanvas(src, 5, 5 + 48 * index, 40, toolbox);
 					});
 
 					const tile = sceneData.tile || definition.grounds[0];
@@ -782,9 +782,9 @@ SceneManager.add({Game: class extends Game {
 						context.rect(5, 5 + 48 * idx, 40, 40);
 						context.stroke();
 					} else if (sceneData.mode === "RAISE") {
-						glRenderer.drawToCanvas2d("selector", 5, 4 + 48 * idx, 40, toolbox, [3, 3], 4);
+						canvasRenderer.drawToCanvas("selector", 5, 4 + 48 * idx, 40, toolbox, [3, 3], 4);
 					} else if (sceneData.mode === "LOWER") {
-						glRenderer.drawToCanvas2d("selector", 5, 4 + 48 * idx, 40, toolbox, [3, 3], 5);						
+						canvasRenderer.drawToCanvas("selector", 5, 4 + 48 * idx, 40, toolbox, [3, 3], 5);						
 					}
 				}
 			},

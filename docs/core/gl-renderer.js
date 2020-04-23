@@ -15,7 +15,7 @@ GLRenderer Engine
 */
 
 class GLRenderer {
-	constructor(canvas, webgl, mediaManager, chunkProcessor, {imagedata, game}) {
+	constructor(canvas, webgl, mediaManager, chunkProcessor, spritesheetManager, {imagedata, game}) {
 		const resolution = devicePixelRatio;
 		canvas.width = game.width * resolution;
 		canvas.height = game.height * resolution;
@@ -36,6 +36,7 @@ class GLRenderer {
 			premultipliedAlpha: true,
 		};
 		this.gl = canvas.getContext("webgl", this.webGLOptions);
+		this.spritesheetManager = spritesheetManager;
 
 		this.checkSupport();
 
@@ -83,23 +84,11 @@ class GLRenderer {
 		this.usedChunks = 0;
 
 		//	load texture
-		Utils.load(imagedata.spritesheets, {
-			error: errors => {
-				console.errors(errors);
-			},
-			progress: progress => {
-				console.log(progress.toFixed(2) + "%");
-				this.progress = progress;
-			},
-			complete: images => {
-				images.forEach((image, index) => textureManager.setImage(index, image));
-				this.progress = 1;
-				this.loaded = true;
-			},
-		});
+		this.spritesheetManager.fetchImages()
+			.then(images => images.forEach((image, index) => this.textureManager.setImage(index, image)))
+			.catch(errors => console.error(errors));
 
 		this.lastRefresh = 0;
-		this.loaded = false;
 		this.progress = 0;
 	}
 
@@ -266,7 +255,6 @@ class GLRenderer {
 			if (chunk) {
 				pool.vec3forChunk.reset();
 				chunkProcessor.process(sprite, chunk, now);
-//				sprite.updateChunk(this, chunk, now);
 			}
 		}
 	}
@@ -275,29 +263,5 @@ class GLRenderer {
 		const { gl } = this;
 		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
 		this.lastRefresh = now;
-	}
-
-	drawToCanvas2d(id, px, py, size, canvas, grid, animationIndex) {
-		const { rect, index } = this.imagedata.sprites[id];
-		const [ x, y, width, height ] = rect;
-
-		const context = canvas.getContext("2d");
-		//	load texture
-		Utils.load([ this.imagedata.spritesheets[index] ], {
-			error: errors => {
-				console.errors(errors);
-			},
-			complete: ([image]) => {
-				const cols = grid ? grid[0] : 1;
-				const rows = grid ? grid[1] : 1;
-				const spriteWidth = width / (cols || 1);
-				const spriteHeight = height / (rows || 1);
-				const col = typeof(animationIndex) !== "undefined" ? animationIndex % cols : 0;
-				const row = typeof(animationIndex) !== "undefined" ? Math.floor(animationIndex / cols) : 0;
-				const scale = Math.min(size / spriteWidth, size / spriteHeight);
-
-				context.drawImage(image, x + col * spriteWidth, y + row * spriteHeight, spriteWidth, spriteHeight, px, py, spriteWidth * scale, spriteHeight * scale);
-			},
-		});			
 	}
 }

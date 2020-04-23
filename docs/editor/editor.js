@@ -195,6 +195,8 @@ class SourceCode {
 		sourceCode.style.display = "";
 	}
 
+//	display
+
 	renderAssets(assets, videos) {
 		const { sprites } = this.engine.data.generated.imagedata;
 		const assetsContainer = document.querySelector("#assets-container");
@@ -217,7 +219,7 @@ class SourceCode {
 			canvas.style.width = "100%"; canvas.style.height = "100%";
 			canvas.width = size; canvas.height = size;
 
-			this.engine.glRenderer.drawToCanvas2d(id, 0, 0, size, canvas);
+			this.engine.canvasRenderer.drawToCanvas(id, 0, 0, size, canvas);
 
 			const label = container.appendChild(document.createElement("div"));
 			label.style.fontSize = "8pt";
