@@ -15,20 +15,13 @@ SceneManager.add({Game: class extends Game {
 	}
 
 	loop() {
-		const { sceneData, keys: { controls : { up, down, left, right, turnLeft, turnRight } } } = this;
+		const { sceneData, keys: { controls : { turn, up, down, left, right, turnLeft, turnRight } } } = this;
 		//	turn camera
-		let dTurn = 0;
 		const turnSpeed = .03;
-		if (turnLeft > 0) {
-			dTurn -= turnSpeed;
-		}
-		if (turnRight > 0) {
-			dTurn += turnSpeed;
-		}
 		const turnStep = Math.PI / 8;
-		if (dTurn) {
-			sceneData.turn += dTurn;
-			sceneData.turnGoal = Math.floor(sceneData.turn / turnStep) * turnStep + (dTurn>0 ? turnStep : 0);
+		if (turn) {
+			sceneData.turn += turn * turnSpeed;
+			sceneData.turnGoal = Math.floor(sceneData.turn / turnStep) * turnStep + (turn>0 ? turnStep : 0);
 		} else {
 			const turnDiff = sceneData.turnGoal - sceneData.turn;
 			if (Math.abs(turnDiff) >= 0.01) {
@@ -83,9 +76,7 @@ SceneManager.add({Game: class extends Game {
 		}
 
 		//	camera follow
-		sceneData.cam[0] += (sceneData.dok.pos[0] - sceneData.cam[0]) / 20;
-		sceneData.cam[1] += (sceneData.dok.pos[1] - sceneData.cam[1]) / 20;
-		sceneData.cam[2] += (sceneData.dok.pos[2] - sceneData.cam[2]) / 20;			
+		FollowUtils.follow(sceneData.cam, sceneData.dok.pos, 1/20, 0);
 	}
 
 }}, {

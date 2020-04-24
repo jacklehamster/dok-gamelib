@@ -25,7 +25,7 @@
     "highlight.js": "^9.18.1",
     "image-size": "^0.8.3",
     "is-var-name": "^2.0.0",
-    "js-beautify": "^1.10.3",
+    "js-beautify": "^1.11.0",
     "json-stringify-pretty-compact": "^2.0.0",
     "mustache": "^4.0.1",
     "rimraf": "^3.0.2",
@@ -33,7 +33,7 @@
     "spritesheet-js": "^1.2.6"
   },
   "devDependencies": {
-    "compress-images": "^1.6.3",
+    "compress-images": "^1.7.8",
     "forever": "^2.0.0"
   }
 }

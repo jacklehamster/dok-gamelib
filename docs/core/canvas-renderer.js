@@ -45,9 +45,16 @@ class CanvasRenderer {
 				const col = typeof(animationIndex) !== "undefined" ? animationIndex % cols : 0;
 				const row = typeof(animationIndex) !== "undefined" ? Math.floor(animationIndex / cols) : 0;
 				const scale = Math.min(size / spriteWidth, size / spriteHeight);
-		console.log(id, spriteSize, scale);
 
-				context.drawImage(image, x + col * spriteWidth, y + row * spriteHeight, spriteWidth, spriteHeight, px, py, spriteWidth * scale, spriteHeight * scale);
+				context.drawImage(image,
+					x + col * spriteWidth,
+					y + row * spriteHeight,
+					spriteWidth,
+					spriteHeight,
+					px,
+					py,
+					spriteWidth * scale,
+					spriteHeight * scale);
 			})
 			.catch(errors => console.error(errors));
 	}

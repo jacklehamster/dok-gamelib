@@ -68,6 +68,18 @@ class Keyboard {
 		this.active = true;
 	}
 
+	handleTurnChanged() {
+		const { controls } = this;
+		let dTurn = 0;
+		if (controls.turnLeft > 0) {
+			dTurn --;
+		}
+		if (controls.turnRight > 0) {
+			dTurn ++;
+		}
+		controls.turn = dTurn;
+	}
+
 	handleDirection(key, down, now) {
 		const { controls, listener } = this;
 		switch(key) {
@@ -75,20 +87,23 @@ class Keyboard {
 				if (down && controls.turnLeft <= 0) {
 					controls.turnLeft = now;
 					listener.onTurnLeftPress();
+					this.handleTurnChanged();
 				} else if (!down && controls.turnLeft >= 0) {
 					controls.turnLeft = -now;
 					listener.onTurnLeftRelease();
+					this.handleTurnChanged();
 				}
 				break;
 			case KEY_TURN_RIGHT_E:
 				if (down && controls.turnRight <= 0) {
 					controls.turnRight = now;
 					listener.onTurnRightPress();
+					this.handleTurnChanged();
 				} else if (!down && controls.turnRight >= 0) {
 					controls.turnRight = -now;
 					listener.onTurnRightRelease();
+					this.handleTurnChanged();
 				}
-				break;
 				break;
 			case KEY_LEFT_A:
 			case KEY_LEFT:
