@@ -38,6 +38,14 @@ class Keyboard {
 			turnRight: 0,
 			action: 0,
 		};
+		const actions = {
+			turn: 0,
+			mov: {
+				x: 0,
+				y: 0,
+				dist: 0,
+			},
+		};
 
 		document.addEventListener("keydown", e => {
 			if (this.active) {
@@ -60,16 +68,16 @@ class Keyboard {
 		this.keysUp = keysUp;
 		this.keys = keys;
 		this.listener = listener;
-		this.controls = controls;
 		this.keyboard = {
 			keys,
 			controls,
+			actions,
 		};
 		this.active = true;
 	}
 
 	handleTurnChanged() {
-		const { controls } = this;
+		const { actions, controls } = this.keyboard;
 		let dTurn = 0;
 		if (controls.turnLeft > 0) {
 			dTurn --;
@@ -77,11 +85,38 @@ class Keyboard {
 		if (controls.turnRight > 0) {
 			dTurn ++;
 		}
-		controls.turn = dTurn;
+		actions.turn = dTurn;
+	}
+
+	handleMoveChanged() {
+		const { actions, controls } = this.keyboard;
+		let dx = 0, dy = 0;
+		const moveSpeed = .05;
+		if (controls.up > 0) {
+			dy --;
+		}
+		if (controls.down > 0) {
+			dy ++;
+		}
+		if (controls.left > 0) {
+			dx --;
+		}
+		if (controls.right > 0) {
+			dx ++;
+		}
+		const dist = Math.sqrt(dx*dx + dy*dy);
+		actions.mov.dist = dist;
+		if (dist) {
+			actions.mov.x = dx / dist;
+			actions.mov.y = dy / dist;
+		} else {
+			actions.mov.x = 0;
+			actions.mov.y = 0;
+		}
 	}
 
 	handleDirection(key, down, now) {
-		const { controls, listener } = this;
+		const { keyboard: { controls }, listener } = this;
 		switch(key) {
 			case KEY_TURN_LEFT_Q:
 				if (down && controls.turnLeft <= 0) {
@@ -110,9 +145,11 @@ class Keyboard {
 				if (down && controls.left <= 0) {
 					controls.left = now;
 					listener.onLeftPress();
+					this.handleMoveChanged();
 				} else if (!down && controls.left >= 0) {
 					controls.left = -now;
 					listener.onLeftRelease();
+					this.handleMoveChanged();
 				}
 				break;
 			case KEY_UP_W:
@@ -120,9 +157,11 @@ class Keyboard {
 				if (down && controls.up <= 0) {
 					controls.up = now;
 					listener.onUpPress();
+					this.handleMoveChanged();
 				} else if (!down && controls.up >= 0) {
 					controls.up = -now;
 					listener.onUpRelease();
+					this.handleMoveChanged();
 				}
 				break;
 			case KEY_RIGHT_D:
@@ -130,9 +169,11 @@ class Keyboard {
 				if (down && controls.right <= 0) {
 					controls.right = now;
 					listener.onRightPress();
+					this.handleMoveChanged();
 				} else if (!down && controls.right >= 0) {
 					controls.right = -now;
 					listener.onRightRelease();
+					this.handleMoveChanged();
 				}
 				break;
 			case KEY_DOWN_X:
@@ -141,18 +182,22 @@ class Keyboard {
 				if (down && controls.down <= 0) {
 					controls.down = now;
 					listener.onDownPress();
+					this.handleMoveChanged();
 				} else if (!down && controls.down >= 0) {
 					controls.down = -now;
 					listener.onDownRelease();
+					this.handleMoveChanged();
 				}
 				break;
 			case KEY_ACTION_SPACE:
 				if (down && controls.action <= 0) {
 					controls.action = now;
 					listener.onActionPress();
+					this.handleMoveChanged();
 				} else if (!down && controls.action >= 0) {
 					controls.action = -now;
 					listener.onActionRelease();
+					this.handleMoveChanged();
 				}
 				break;
 		}

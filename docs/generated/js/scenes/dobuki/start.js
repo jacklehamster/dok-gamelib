@@ -6,22 +6,22 @@ SceneManager.add({Game: class extends Game {
 			turnGoal: 0,
 			dok: {
 				pos: [0, 0, 0],
-				mov: [0, 0, 0],
+				mov: { x: 0, z: 0 },
 				speed: 0,
-				lastMov: [0, 0, 0],
 			},
 			cam: [ 0, 0, 0 ],
 		};
 	}
 
 	loop() {
-		const { sceneData, keys: { controls : { turn, up, down, left, right, turnLeft, turnRight } } } = this;
+		const { sceneData, keys: { actions: { mov, turn }, controls : { up, down, left, right, turnLeft, turnRight } } } = this;
+		const { dok } = sceneData;
 		//	turn camera
 		const turnSpeed = .03;
 		const turnStep = Math.PI / 8;
 		if (turn) {
 			sceneData.turn += turn * turnSpeed;
-			sceneData.turnGoal = Math.floor(sceneData.turn / turnStep) * turnStep + (turn>0 ? turnStep : 0);
+			sceneData.turnGoal = (Math.floor(sceneData.turn / turnStep) + (turn > 0 ? 1 : 0)) * turnStep;
 		} else {
 			const turnDiff = sceneData.turnGoal - sceneData.turn;
 			if (Math.abs(turnDiff) >= 0.01) {
@@ -32,51 +32,23 @@ SceneManager.add({Game: class extends Game {
 		}
 
 		//	move dobuki
-		let dx = 0, dz = 0;
-		const moveSpeed = .05;
-		if (up > 0) {
-			dz --;
+		if (mov.dist > 0) {
+			dok.speed += .02;
+			dok.mov.x = mov.x;
+			dok.mov.z = mov.y;
 		}
-		if (down > 0) {
-			dz ++;
-		}
-		if (left > 0) {
-			dx --;
-		}
-		if (right > 0) {
-			dx ++;
-		}
-		const ddist = Math.sqrt(dx*dx + dz*dz);
-		if (ddist > 0) {
-			sceneData.dok.mov[0] = dx;
-			sceneData.dok.mov[2] = dz;
-			sceneData.dok.speed += .02;
-			if (sceneData.dok.mov[0]) {
-				sceneData.dok.lastMov[0] = sceneData.dok.mov[0];
-			}
-			if (sceneData.dok.mov[2]) {
-				sceneData.dok.lastMov[2] = sceneData.dok.mov[2];				
-			}
-		}
-		sceneData.dok.speed *= .8;
+		dok.speed *= .8;
 
-		if (sceneData.dok.speed > .0001) {
-		    const sin = Math.sin(sceneData.turn);
-		    const cos = Math.cos(sceneData.turn);
-		    const [ dx, dy, dz ] = sceneData.dok.mov;
-			const ddist = Math.sqrt(dx*dx + dz*dz);
-		    const vx = cos * dx / ddist - sin * dz / ddist;
-		    const vy = sin * dx / ddist + cos * dz / ddist;
-
-			sceneData.dok.pos[0] += vx * sceneData.dok.speed;
-			sceneData.dok.pos[1] += dy * sceneData.dok.speed;
-			sceneData.dok.pos[2] += vy * sceneData.dok.speed;
+		if (dok.speed > .0001) {
+			const [ dx, dz ] = MotionUtils.getNormalDirection(sceneData.turn, dok.mov.x, dok.mov.z);
+			dok.pos[0] += dx * dok.speed;
+			dok.pos[2] += dz * dok.speed;
 		} else {
 			sceneData.dok.speed = 0;
 		}
 
 		//	camera follow
-		FollowUtils.follow(sceneData.cam, sceneData.dok.pos, 1/20, 0);
+		MotionUtils.follow(sceneData.cam, sceneData.dok.pos, .05, 0);
 	}
 
 }}, {
@@ -127,16 +99,16 @@ SceneManager.add({Game: class extends Game {
 		SpriteUtils.makeSprite({
 			src: "dok",
 			position: [
-				({game: { sceneData: { dok }}}) => game.sceneData.dok.pos[0],
-				({game: { sceneData: { dok }}}) => game.sceneData.dok.pos[1],
-				({game: { sceneData: { dok }}}) => game.sceneData.dok.pos[2],
+				({game: { sceneData: { dok: { pos } }}}) => pos[0],
+				({game: { sceneData: { dok: { pos } }}}) => pos[1],
+				({game: { sceneData: { dok: { pos } }}}) => pos[2],
 			],
 			scale: [
-				({game: {sceneData: { dok }}}) => (dok.lastMov[0] || 1) * 2.4,
+				({game: {sceneData: { dok: { mov } }}}) => (mov.x || 1) * 2.4,
 				2.4,
 			],
-			animation: ({game: { sceneData: { dok }}}) => {
-				return dok.speed > .01 ? (dok.lastMov[2] < 0 ? "walk-up" : "walk") : (dok.lastMov[2] < 0 ? "idle-up" : "idle");
+			animation: ({game: { sceneData: { dok: { speed, mov } }}}) => {
+				return speed > .01 ? (mov.z < 0 ? "walk-up" : "walk") : (mov.z < 0 ? "idle-up" : "idle");
 			},
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],

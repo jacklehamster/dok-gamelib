@@ -6,8 +6,7 @@
 	Sourcode: https://github.com/jacklehamster/dok-gamelib
 	Year: 2020
  */
-
-class FollowUtils {
+class MotionUtils {
 	static follow(follower, target, strength, distance) {
 		const dx = target[0] - follower[0];
 		const dy = target[1] - follower[1];
@@ -20,4 +19,20 @@ class FollowUtils {
 			follower[2] += dz * strength;
 		}
 	}
+
+	static getNormalDirection(turn, dx, dz) {
+		const array = MotionUtils.tempArray;
+	    const dist = Math.sqrt(dx*dx + dz*dz);
+		if (dist > 0) {
+		    const sin = Math.sin(turn);
+		    const cos = Math.cos(turn);
+		    array[0] = cos * dx / dist - sin * dz / dist;
+		    array[1] = sin * dx / dist + cos * dz / dist;
+		} else {
+			array[0] = 0;
+			array[1] = 0;
+		}
+		return array;
+	}
 }
+MotionUtils.tempArray = [ 0, 0 ];
