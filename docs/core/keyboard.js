@@ -23,6 +23,8 @@ const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
 const KEY_TURN_RIGHT_E = 'KeyE';
 const KEY_TURN_LEFT_Q = 'KeyQ';
+const KEY_TURN_RIGHT_PERIOD = 'Period';
+const KEY_TURN_LEFT_COMMA = 'Comma';
 
 class Keyboard {
 	constructor(engine, listener) {
@@ -107,8 +109,8 @@ class Keyboard {
 		const dist = Math.sqrt(dx*dx + dy*dy);
 		actions.mov.dist = dist;
 		if (dist) {
-			actions.mov.x = dx / dist;
-			actions.mov.y = dy / dist;
+			actions.mov.x = dx;
+			actions.mov.y = dy;
 		} else {
 			actions.mov.x = 0;
 			actions.mov.y = 0;
@@ -119,6 +121,7 @@ class Keyboard {
 		const { keyboard: { controls }, listener } = this;
 		switch(key) {
 			case KEY_TURN_LEFT_Q:
+			case KEY_TURN_LEFT_COMMA:
 				if (down && controls.turnLeft <= 0) {
 					controls.turnLeft = now;
 					listener.onTurnLeftPress();
@@ -130,6 +133,7 @@ class Keyboard {
 				}
 				break;
 			case KEY_TURN_RIGHT_E:
+			case KEY_TURN_RIGHT_PERIOD:
 				if (down && controls.turnRight <= 0) {
 					controls.turnRight = now;
 					listener.onTurnRightPress();

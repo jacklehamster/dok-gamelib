@@ -10,7 +10,7 @@
 
 class SpriteUtils {
 	static makeSprite(params) {
-		const { position, shadowColor, spriteTint, scale, spriteSize, src, animation, init, refresh, refreshRate, hidden, spriteCount } = params;
+		const { position, heightAboveGround, shadowColor, spriteTint, scale, spriteSize, src, animation, init, refresh, refreshRate, hidden, spriteCount } = params;
 
 		const zoomValue = ({definition}) => {
 			const spriteWidth = definition.spriteSize[0].get(),
@@ -23,8 +23,12 @@ class SpriteUtils {
 		};
 
 		const realScale = [
-			({definition: { spriteSize, zoomValue, upperScale }}, index) => upperScale[0].get(Math.floor(index / 2)) * spriteSize[0].get(Math.floor(index / 2)) * zoomValue.get(Math.floor(index / 2)),
-			({definition: { spriteSize, zoomValue, upperScale }}, index) => upperScale[1].get(Math.floor(index / 2)) * spriteSize[1].get(Math.floor(index / 2)) * zoomValue.get(Math.floor(index / 2)),
+			({definition: { spriteSize, zoomValue, upperScale, heightAboveGround }}, index) =>
+				upperScale[0].get(Math.floor(index / 2)) * (spriteSize[0].get(Math.floor(index / 2)) || 1) * zoomValue.get(Math.floor(index / 2))
+				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 5)),
+			({definition: { spriteSize, zoomValue, upperScale, heightAboveGround }}, index) =>
+				upperScale[1].get(Math.floor(index / 2)) * (spriteSize[1].get(Math.floor(index / 2)) || 1) * zoomValue.get(Math.floor(index / 2))
+				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 5)),
 		];
 
 		return {
@@ -40,7 +44,7 @@ class SpriteUtils {
 			upperScale: scale || [1, 1],
 			scale: realScale,
 			zoomValue,
-			spriteSize,
+			spriteSize: spriteSize || [0, 0],
 			spriteAnimation: animation || (() => null),
 			animation: ({definition}, index) => definition.spriteAnimation.get(Math.floor(index / 2)),
 			hotspot: [
@@ -48,9 +52,11 @@ class SpriteUtils {
 				(_, index) => index % 2 === 0 ? 0 : .35,
 			],
 			position,
+			heightAboveGround: heightAboveGround || (() => 0),
 			pos: [
 				({definition}, index) => definition.position[0].get(Math.floor(index / 2)),
-				({definition}, index) => definition.position[1].get(Math.floor(index / 2)) + (index % 2 === 0 ? 0 : -1.15+.01),
+				({definition}, index) => definition.position[1].get(Math.floor(index / 2))
+				+ (index % 2 === 0 ? 0 : -1.15+.01) + (index % 2 === 0 ? (definition.heightAboveGround.get(Math.floor(index / 2)) || 0 ) : 0),
 				({definition}, index) => definition.position[2].get(Math.floor(index / 2)),				
 			],
 			spriteCount: spriteCount || 1,

@@ -49,17 +49,15 @@ class SpritesheetManager {
 		return this.images !== null;
 	}
 
-	fetchImages(progressListener) {
-		return new Promise((resolve, reject) => {
-			if (this.images) {
-				resolve(this.images);
-			} else {
-				if (typeof(progressListener) === "function") {
-					this.onProgressListeners.push(progressListener);
-				}
-				this.onLoadListeners.push(images => resolve(images));
-				this.onErrorListeners.push(errors => reject(errors));
+	fetchImages(progressListener, callbackListener, errorListener) {
+		if (this.images) {
+			callbackListener(this.images);
+		} else {
+			if (progressListener && typeof(progressListener) === "function") {
+				this.onProgressListeners.push(progressListener);
 			}
-		});
+			this.onLoadListeners.push(images => callbackListener(images));
+			this.onErrorListeners.push(errors => errorListener(errors));
+		}
 	}
 }

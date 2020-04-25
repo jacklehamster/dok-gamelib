@@ -28,7 +28,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		this.circleRadius = 0;
 		this.animationRange = [0, 0];
 		this.animationUpdateTime = 0;
-		this.singleFrameAnimation = false;
+		this.singleFrameAnimation = true;
 	}
 
 	getEvaluated(game, definition) {
@@ -156,12 +156,12 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			const newAnimation = animation.get(instanceIndex) || this.spriteData.first;
 			if (newAnimation !== this.animation) {
 				this.singleFrameAnimation = !isNaN(newAnimation);
-				this.animation = this.singleFrameAnimation ? parseInt(newAnimation) : newAnimation;
+				this.animation = newAnimation;
 				this.animationUpdateTime = now;
 			}
 
 			if (this.singleFrameAnimation) {
-				const newAnimationStart = this.animation;
+				const newAnimationStart = parseInt(this.animation || 0);
 				const newAnimationLength = 1;
 				if (newAnimationStart !== this.animationRange[0] || newAnimationLength !== this.animationRange[1]) {
 					this.animationRange[0] = newAnimationStart;

@@ -84,9 +84,11 @@ class GLRenderer {
 		this.usedChunks = 0;
 
 		//	load texture
-		this.spritesheetManager.fetchImages()
-			.then(images => images.forEach((image, index) => this.textureManager.setImage(index, image)))
-			.catch(errors => console.error(errors));
+		this.spritesheetManager.fetchImages(
+			progress => console.log(progress),
+			images => images.forEach((image, index) => this.textureManager.setImage(index, image)),
+			errors => console.error(errors)
+		);
 
 		this.lastRefresh = 0;
 		this.progress = 0;

@@ -38,9 +38,7 @@ class SourceCode {
 
 				SceneThumbnail.instance.addEventListener("shift", shifted => {
 					if (!shifted) {
-						for (let v in this.videos) {
-							this.videos[v].pause();
-						}
+						this.pause();
 						this.engine.keyboard.active = true;
 					} else {
 						this.refreshView();
@@ -105,10 +103,14 @@ class SourceCode {
 		return null;
 	}
 
-	refreshView() {
+	pause() {
 		for (let v in this.videos) {
 			this.videos[v].pause();
 		}
+	}
+
+	refreshView() {
+		this.pause();
 
 		document.getElementById("source-code").style.display = "none";
 		document.getElementById("assets-container").style.display = "none";
@@ -122,7 +124,7 @@ class SourceCode {
 					SourceCode.instance.render(getData().generated.game);
 					break;
 				case "assets":
-					const { imagedata, videos, } = this.engine.data.generated;
+					const { imagedata, videos } = this.engine.data.generated;
 					const sceneName = this.engine.currentScene.name;
 					const  assets = [], videoArray = [];
 					for (let id in imagedata.sprites) {
@@ -194,8 +196,6 @@ class SourceCode {
 		sourceCode.innerHTML = Tools.highlight("javascript", Tools.beautify(this.formatCode(config), {"wrap_line_length": 100}), true).value;
 		sourceCode.style.display = "";
 	}
-
-//	display
 
 	renderAssets(assets, videos) {
 		const { sprites } = this.engine.data.generated.imagedata;
