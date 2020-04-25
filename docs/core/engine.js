@@ -62,7 +62,7 @@ class Engine {
 	start() {
 		Engine.beginLooping(this);
 		this.onStartListener.forEach(listener => listener(this));
-		this.resetScene(this.sceneManager.getFirstSceneName());
+		this.resetScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
 //		console.log("start scene:", this.currentScene.name);
 	}
 

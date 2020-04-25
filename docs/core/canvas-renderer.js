@@ -9,9 +9,7 @@
 
 
 /*
-CanvasRenderer 
-
-
+	CanvasRenderer 
 */
 
 class CanvasRenderer {

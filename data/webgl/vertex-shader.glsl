@@ -69,10 +69,10 @@ void main(void) {
 	worldPos.xyz += aOffset;
 
 	worldPos.xyz += aVertexMove.xyz * time;
-	worldPos.xyz += aVertexGravity.xyz * time * time / 2.0;
+	worldPos.xyz += aVertexGravity.xyz * time * time * 0.5;
 
 	if (aType == 7.0) {	//	water wave
-		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .5;
+		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .3;
 	}
 
 	vec4 position = uProjectionMatrix * uViewMatrix * worldPos;
@@ -97,8 +97,8 @@ void main(void) {
 	vTextureCenter.y += texRow * aVertexTextureCoord[3];
 	vTextureSize = aVertexTextureCenter.zw;
 
-	vTextureSlot = floor(aVertexTextureCoord.x / 2.0);
-	vBrightness = floor(aVertexTextureCoord.y / 2.0);
+	vTextureSlot = floor(aVertexTextureCoord.x * .5);
+	vBrightness = floor(aVertexTextureCoord.y * .5);
 	vTintColor = makeColorFromRGB(aTintColor[0], aTintColor[1]);
 
 	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 10.0)) * .2);

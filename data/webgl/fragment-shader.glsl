@@ -76,14 +76,22 @@ void main(void) {
 	float diffLight = diffusion * max(dot(normal, lightDir), 0.0);
 	float spec = specular * pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
-	vec4 color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);
+	vec4 color;
 
 	//	texture as circle
 	if (vTextureSize[0] > 0.0 && vTextureSize[1] > 0.0) {
-		float dx = (vTexturePoint.x - vTextureCenter.x) / vTextureSize[0];
-		float dy = (vTexturePoint.y - vTextureCenter.y) / vTextureSize[1];
+		vec2 ux = vTexturePoint;
+		float dx = (ux.x - vTextureCenter.x) / vTextureSize[0];
+		float dy = (ux.y - vTextureCenter.y) / vTextureSize[1];
 		float textureDist = sqrt(dx * dx + dy * dy);
+
+		// ux.x = 1.6 * dx * pow(abs(dx), .4) * vTextureSize[0] + vTextureCenter.x;
+		// ux.y = 1.6 * dy * pow(abs(dy), .4) * vTextureSize[1] + vTextureCenter.y;
+
+		color = getTextureColor(uTextures, vTextureSlot, ux);		
 		color.a *= (.995 - textureDist);
+	} else {
+		color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);		
 	}
 
 	//	SDF handling, mostly for text font

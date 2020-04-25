@@ -43,6 +43,10 @@ class Utils {
 	static getDOMColor(color) {
 		return `#${(0x1000000 | color).toString(16).substr(1)}`;		
 	}
+
+	static getFromArray(array, index) {
+		return array[(index % array.length + array.length) % array.length];
+	}
 	
 	static load(urls, {progress, complete, error}) {
 		const progresses = urls.map(() => 0);

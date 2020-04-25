@@ -663,7 +663,7 @@ SceneManager.add({Game: class extends Game {
 					game.ui.style.top = `${game.engine.canvas.offsetTop}px`;
 					game.ui.style.left = `${game.engine.canvas.offsetLeft}px`;
 					game.ui.style.display = "flex";
-				}, 200);
+				}, 100);
 
 				window.addEventListener("resize", () => {
 					game.ui.style.top = `${game.engine.canvas.offsetTop}px`;

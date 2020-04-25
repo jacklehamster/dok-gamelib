@@ -50,9 +50,20 @@ class Chunk {
 	applyNormal(vertices, engineBuffer, i) {
 		const { vec3pool } = this;
  		const { buffer, floatPerVertex, verticesPerSprite } = engineBuffer;
-		const vectorA = vec3.sub(vec3pool.get(), vertices[i], vertices[(i + 1) % vertices.length]);
-		const vectorB = vec3.sub(vec3pool.get(), vertices[i], vertices[(i - 1 + vertices.length) % vertices.length]);
-		const cross = vec3.normalize(vec3pool.get(), vec3.cross(vec3pool.get(), vectorA, vectorB));
+		const vectorA = vec3.sub(vec3pool.get(), vertices[i], Utils.getFromArray(vertices, i + 1));
+		const vectorB = vec3.sub(vec3pool.get(), vertices[i], Utils.getFromArray(vertices, i - 1));
+		const cross = vec3.cross(vec3pool.get(), vectorA, vectorB);
+		vec3.normalize(cross, cross);
+
+		// {
+		// 	const crossValue = vec3.scale(vec3pool.get(), cross, 2);	
+		// 	const vectorA = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i + 1));
+		// 	const vectorB = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i - 1));
+		// 	const newCross = vec3.cross(vec3pool.get(), vectorA, vectorB);
+		// 	vec3.normalize(newCross, newCross);
+		// 	buffer.set(newCross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
+		// }
+
 		buffer.set(cross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 	}
 

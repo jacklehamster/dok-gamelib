@@ -70,19 +70,13 @@ class SceneManager {
 		return null;
 	}
 
-	getFirstSceneName() {
-		const firstScenes = [];
+	getFirstSceneName({firstScene}) {
 		const scenes = [];
 		for (let s in this.scenes) {
-			const { config } = this.scenes[s];
-			if (config.firstScene && (typeof(config.firstScene)==='function' ? config.firstScene() : config.firstScene)) {
-				firstScenes.push(s);
+			if (s === firstScene) {
+				return firstScene;
 			}
 			scenes.push(s);
-		}
-
-		if (firstScenes.length) {
-			return firstScenes[Math.floor(Math.random() * firstScenes.length)];		
 		}
 
 		if (scenes.length) {

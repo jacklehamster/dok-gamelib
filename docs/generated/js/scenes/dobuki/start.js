@@ -73,7 +73,6 @@ SceneManager.add({Game: class extends Game {
 	}
 
 }}, {
-	firstScene: true,
 	settings: {
 		background: 0x000000,
 	},
