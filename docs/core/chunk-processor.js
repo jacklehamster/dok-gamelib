@@ -19,7 +19,7 @@ class ChunkProcessor {
 
 	processTexture(sprite, chunk, now) {
 		const { glRenderer: { imagedata, textureManager } } = this.engine;
-		const { src, spriteData: { spriteSize, grid, padding }, scale, brightness, circleRadius } = sprite;
+		const { src, spriteData: { spriteSize, grid, padding }, scale, effects: { brightness }, circleRadius } = sprite;
 
 		if (!src) {
 			chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, circleRadius, now);
@@ -51,7 +51,7 @@ class ChunkProcessor {
 	}
 
 	processWall(sprite, chunk, now) {
-		const { scale, hotspot, hidden, corners, rotation, type } = sprite;
+		const { scale, hotspot, hidden, corners, rotation, effects, type } = sprite;
 		if (hidden) {
 			chunk.setHidden(now);
 		} else {
@@ -59,25 +59,25 @@ class ChunkProcessor {
 			const spriteHeight = Math.abs(scale[1]);
 			switch (type) {
 				case SpriteType.Ceiling:
-					chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, rotation, now);
+					chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
 					break;
 				case SpriteType.Water:		
 				case SpriteType.Floor:
 				case SpriteType.Shadow:
-					chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, rotation, now);
+					chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
 					break;
 				case SpriteType.LeftWall:
-					chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, rotation, now);
+					chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
 					break;
 				case SpriteType.RightWall:
-					chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, rotation, now);
+					chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
 					break;
 				case SpriteType.Sprite:
 				case SpriteType.Front:
-					chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, rotation, now);			
+					chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);			
 					break;
 				case SpriteType.Back:
-					chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, rotation, now);
+					chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
 					break;
 				default:
 					console.error("invalid type");
@@ -95,7 +95,7 @@ class ChunkProcessor {
 		}
 
 		if (updateTimes.tintColor === now) {
-			chunk.setTint(sprite.tintColor, now);
+			chunk.setTint(sprite.effects.tintColor, now);
 		}
 
 		if (updateTimes.grid === now) {
@@ -117,7 +117,8 @@ class ChunkProcessor {
 			chunk.setOffset(sprite.pos, now);			
 		}
 
-		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now) {
+		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.curvature === now
+			|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now) {
 			this.processWall(sprite, chunk, now);
 		}
 

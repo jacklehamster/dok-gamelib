@@ -308,7 +308,9 @@ SceneManager.add({
 		TextUtils.makeSprite({
 			text: "Mr. Penguin",
 			fontId: "primary-font",
-			tintColor: 0xFF00ccFF,
+			effects: {
+				tintColor: 0xFF00ccFF,
+			},
 			scale: [.2, .2],
 			letterDistance: .2,
 			faceUser: true,
@@ -320,7 +322,9 @@ SceneManager.add({
 		}),
 		{
 			src: "penguin",
-			brightness: 150,
+			effects: {
+				brightness: 150,
+			},
 			init: ({game}) => {
 				const penguinFrames = [
 					{ orientation: 'E', startFrame: 8, flip: true, },
@@ -419,8 +423,10 @@ SceneManager.add({
 				}
 				return "artic";
 			},
-			tintColor: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 0x6600ccFF : 0,
-			brightness: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 80 : 70,
+			effects: {
+				tintColor: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 0x6600ccFF : 0,
+				brightness: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 80 : 70,
+			},
 			cell: ({game, definition},index) => game.sceneData.cells[index],
 			grounded: ({game, definition},index) => {
 				return definition.cell.get(index).grounded;
@@ -461,7 +467,9 @@ SceneManager.add({
 		},
 		{	//	walls
 			src: "blue-wall",
-			brightness: 200,
+			effects: {
+				brightness: 200,
+			},
 			animationOverride: {
 				active: true,
 				start: ({game, definition}, index) => index % 2,

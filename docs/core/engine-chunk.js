@@ -47,7 +47,7 @@ class Chunk {
 		bufferInfo.vertex.chunkUpdateTimes[index] = now;
 	}
 
-	applyNormal(vertices, engineBuffer, i) {
+	applyNormal(vertices, engineBuffer, curvature, i) {
 		const { vec3pool } = this;
  		const { buffer, floatPerVertex, verticesPerSprite } = engineBuffer;
 		const vectorA = vec3.sub(vec3pool.get(), vertices[i], Utils.getFromArray(vertices, i + 1));
@@ -55,19 +55,19 @@ class Chunk {
 		const cross = vec3.cross(vec3pool.get(), vectorA, vectorB);
 		vec3.normalize(cross, cross);
 
-		// {
-		// 	const crossValue = vec3.scale(vec3pool.get(), cross, 2);	
-		// 	const vectorA = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i + 1));
-		// 	const vectorB = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i - 1));
-		// 	const newCross = vec3.cross(vec3pool.get(), vectorA, vectorB);
-		// 	vec3.normalize(newCross, newCross);
-		// 	buffer.set(newCross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
-		// }
-
-		buffer.set(cross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
+		if (curvature !== 0) {
+			const crossValue = vec3.scale(vec3pool.get(), cross, curvature);	
+			const vectorA = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i + 1));
+			const vectorB = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i - 1));
+			const newCross = vec3.cross(vec3pool.get(), vectorA, vectorB);
+			vec3.normalize(newCross, newCross);
+			buffer.set(newCross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
+		} else {
+			buffer.set(cross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
+		}
 	}
 
-	assignVertices(now, { quaternion, center }, ... vertices) {
+	assignVertices(now, { quaternion, center }, { curvature }, ... vertices) {
 		const { bufferInfo, index, vec3pool } = this;
  		const { buffer, floatPerVertex, verticesPerSprite } = bufferInfo.vertex;
 
@@ -84,15 +84,15 @@ class Chunk {
 		bufferInfo.vertex.chunkUpdateTimes[index] = now;
 
 		for (let i = 0; i < vertices.length; i++) {
-			this.applyNormal(vertices, bufferInfo.normal, i);
+			this.applyNormal(vertices, bufferInfo.normal, curvature, i);
 		}
 		bufferInfo.normal.chunkUpdateTimes[index] = now;
 	}
 
-	setWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
+	setWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		this.assignVertices(now, rotation,
+		this.assignVertices(now, rotation, effects,
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
@@ -100,10 +100,10 @@ class Chunk {
 		);
 	}
 
-	setBackWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
+	setBackWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		this.assignVertices(now, rotation,
+		this.assignVertices(now, rotation, effects,
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
@@ -111,10 +111,10 @@ class Chunk {
 		);
 	}
 
-	setFloor(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
+	setFloor(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		this.assignVertices(now, rotation,
+		this.assignVertices(now, rotation, effects,
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, A, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, B, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, + halfHeight - hotspotY * height),
@@ -122,10 +122,10 @@ class Chunk {
 		);
 	}
 
-	setCeiling(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
+	setCeiling(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		this.assignVertices(now, rotation,
+		this.assignVertices(now, rotation, effects,
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, A, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, B, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, - halfHeight - hotspotY * height),
@@ -133,10 +133,10 @@ class Chunk {
 		);
 	}
 
-	setLeftWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
+	setLeftWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = height/2, halfHeight = width/2;
-		this.assignVertices(now, rotation,
+		this.assignVertices(now, rotation, effects,
 			Utils.set3(vec3pool.get(), A, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), B, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
@@ -144,10 +144,10 @@ class Chunk {
 		);
 	}
 
-	setRightWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
+	setRightWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = height/2, halfHeight = width/2;
-		this.assignVertices(now, rotation,
+		this.assignVertices(now, rotation, effects,
 			Utils.set3(vec3pool.get(), A, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), B, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),

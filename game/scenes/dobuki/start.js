@@ -146,10 +146,12 @@ SceneManager.add({Game: class extends Game {
 			src: "home-floor",
 			type: SpriteType.Floor,
 			circleRadius: 1,
-			tintColor: 0x88995555,
 			pos: [0, -1.15, 0],
 			scale: [10, 10],
-			brightness: 80,
+			effects: {
+				tintColor: 0x88995555,
+				brightness: 80,
+			},
 		},
 	],
 });

@@ -1285,12 +1285,11 @@ function getData() {
             "scale": [1, 1],
             "hotspot": [0, 0],
             "corners": [0, 0, 0, 0],
+            "effects": {"brightness": 100, "tintColor": 0, "curvature": 0},
             "count": 1,
             "init": null,
             "destroy": null,
             "refresh": null,
-            "brightness": 100,
-            "tintColor": 0,
             "circleRadius": 0,
             "padding": 0,
             "refreshRate": 0

@@ -43,7 +43,9 @@ SceneManager.add({Game: class extends Game {
 		TextUtils.makeSprite({
 			text: "Jack Le Hamster presents",
 			fontId: "primary-font",
-			tintColor: 0xFF888888,
+			effects: {
+				tintColor: 0xFF888888,
+			},
 			scale: [.5, .5],
 			letterDistance: .5,
 			faceUser: true,
@@ -55,7 +57,9 @@ SceneManager.add({Game: class extends Game {
 		TextUtils.makeSprite({
 			text: "Bruti   the   bear                   ",
 			fontId: "primary-font",
-			tintColor: 0xFF333333,
+			effects: {
+				tintColor: 0xFF333333,
+			},
 			scale: [1.5, 1.5],
 			letterDistance: 1.7,
 			faceUser: true,
@@ -69,7 +73,9 @@ SceneManager.add({Game: class extends Game {
 		TextUtils.makeSprite({
 			text: "Press [space] to continue       ",
 			fontId: "primary-font",
-			tintColor: 0xFF777777,
+			effects: {
+				tintColor: 0xFF777777,
+			},
 			scale: [.5, .5],
 			letterDistance: .5,
 			faceUser: true,
@@ -89,7 +95,9 @@ SceneManager.add({Game: class extends Game {
 				[TAB] to switch block.
 			`.split("\n").map(a => a.trim()).join("\n"),
 			fontId: "primary-font",
-			tintColor: 0xFF777777,
+			effects: {
+				tintColor: 0xFF777777,
+			},
 			scale: [.4, .4],
 			letterDistance: .4,
 			lineDistance: .6,
@@ -103,7 +111,9 @@ SceneManager.add({Game: class extends Game {
 		TextUtils.makeSprite({
 			text: `Press [SPACE] to continue`,
 			fontId: "primary-font",
-			tintColor: 0xFFcc6677,
+			effects: {
+				tintColor: 0xFFcc6677,
+			},
 			scale: [.4, .4],
 			letterDistance: .4,
 			lineDistance: .6,
@@ -118,16 +128,20 @@ SceneManager.add({Game: class extends Game {
 			src: "sand-ground",
 			type: SpriteType.Floor,
 			circleRadius: 1,
-			tintColor: 0x88CCCC99,
+			effects: {
+				tintColor: 0x88CCCC99,
+				brightness: 80,
+			},
 			pos: [0, .5, 0],
 			scale: [9, 9],
-			brightness: 100,
 		},
 		{
 			src: "water-mix",
 			type: SpriteType.Water,
 			scale: [2, 2],
-			brightness: 80,
+			effects: {
+				brightness: 50,
+			},
 			pos: [
 				({game, definition}, index) => (index % 20 - 10) * definition.scale[0].get(),
 				0,

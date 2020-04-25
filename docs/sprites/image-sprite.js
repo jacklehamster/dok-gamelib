@@ -16,8 +16,11 @@ class ImageSpriteInstance extends BaseSpriteInstance {
  	constructor() {
  		super();
 		this.src = null;
-		this.tintColor = 0;
-		this.brightness = 0;
+		this.effects = {
+			tintColor: 0,
+			brightness: 0,
+			curvature: 0,
+		};
  	}
 
 	getEvaluated(game, definition) {
@@ -26,7 +29,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			return;
 		}
 		
-		const { src, tintColor } = definition;
+		const { src, effects: { brightness, tintColor, curvature } } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 		const spriteSrc = src.get(instanceIndex);
@@ -35,10 +38,22 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			updateTimes.src = now;
 		}
 
+		const newBrightness = brightness.get(instanceIndex);
+		if (newBrightness !== this.effects.brightness) {
+			this.effects.brightness = newBrightness;
+			updateTimes.brightness = now;
+		}
+
 		const newTintColor = tintColor.get(instanceIndex);
-		if (newTintColor !== this.tintColor) {
-			this.tintColor = newTintColor;
+		if (newTintColor !== this.effects.tintColor) {
+			this.effects.tintColor = newTintColor;
 			updateTimes.tintColor = now;
+		}
+
+		const newCurvature = curvature.get(instanceIndex);
+		if (newCurvature !== this.effects.curvature) {
+			this.effects.curvature = newCurvature;
+			updateTimes.curvature = now;
 		}
 	}
 }

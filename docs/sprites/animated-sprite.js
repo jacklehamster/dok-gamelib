@@ -36,15 +36,9 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			return;
 		}
 
-		const { animation, grid, brightness, padding, spriteSize, circleRadius, animationOverride } = definition;
+		const { animation, grid, padding, spriteSize, circleRadius, animationOverride } = definition;
 		const { instanceIndex, updateTimes, spriteData, src } = this;
 		const { now } = game;
-
-		const newBrightness = brightness.get(instanceIndex);
-		if (newBrightness !== this.brightness) {
-			this.brightness = newBrightness;
-			updateTimes.brightness = now;
-		}
 
 		const newCircleRadius = circleRadius.get(instanceIndex);
 		if (newCircleRadius !== this.circleRadius) {

@@ -27,7 +27,7 @@ class TextUtils {
 	}
 
 	static makeSprite(params) {
-		const {position, tintColor, fontId, scale, text, letterDistance, lineDistance, faceUser, hidden, brightness} = params;
+		const {position, effects, fontId, scale, text, letterDistance, lineDistance, faceUser, hidden, brightness} = params;
 		let cachedText = null;
 		let cachedFontId = null;
 		let font = null;
@@ -38,7 +38,7 @@ class TextUtils {
 			toSourceCode: (_,editor) => `TextUtils.makeSprite(${editor.formatCode(params)})`,
 			fontId : fontId || (({game}) => game.getFirstFontName()),
 			src: ({definition}) => definition.fontId.get(),
-			tintColor,
+			effects,
 			scale,
 			text,
 			faceUser,

@@ -380,7 +380,9 @@ SceneManager.add({
 		},
 		{
 			src: "primary-font",
-			tintColor: 0xFFcccccc,
+			effects: {
+				tintColor: 0xFFcccccc,
+			},
 			scale: [.2, .2],
 			text: ({game}) => game.sceneData.score.toString(),
 			hidden: ({game}) => !game.sceneData.score,
@@ -419,7 +421,9 @@ SceneManager.add({
 		},
 		{
 			src: "creep-font",
-			tintColor: 0xFFaa0066,
+			effects: {
+				tintColor: 0xFFaa0066,
+			},
 			scale: [1, 1],
 			text: "Game Over",
 			hidden: ({game: { sceneData }}) => !sceneData.gameOver,
@@ -597,7 +601,9 @@ SceneManager.add({
 		},
 		{
 			src: "primary-font",
-			tintColor: 0xFFFFFFFF,
+			effects: {
+				tintColor: 0xFFFFFFFF,
+			},
 			animationOverride: {
 				active: true,
 				range: ({definition}) => definition.characters.get().length,

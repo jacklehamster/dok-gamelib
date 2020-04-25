@@ -28,9 +28,11 @@ SceneManager.add({Game: class extends Game {
 		{
 			src: "water.jpg",
 			type: SpriteType.Water,
-			tintColor: 0x889999FF,
+			effects: {
+				tintColor: 0x889999FF,
+				brightness: 80,
+			},
 			scale: [2, 2],
-			brightness: 80,
 			animation: ({game, definition}, index) => index,
 			pos: [
 				({game, definition}, index) => (index % 10 - 5) * 2,

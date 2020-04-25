@@ -659,11 +659,9 @@ SceneManager.add({Game: class extends Game {
 				game.ui.style.position = "absolute";
 				game.ui.style.display = "none";
 				game.ui.classList.add("unselectable");
-				setTimeout(() => {
-					game.ui.style.top = `${game.engine.canvas.offsetTop}px`;
-					game.ui.style.left = `${game.engine.canvas.offsetLeft}px`;
-					game.ui.style.display = "flex";
-				}, 100);
+				game.ui.style.top = `${game.engine.canvas.offsetTop}px`;
+				game.ui.style.left = `${game.engine.canvas.offsetLeft}px`;
+				game.ui.style.display = "flex";
 
 				window.addEventListener("resize", () => {
 					game.ui.style.top = `${game.engine.canvas.offsetTop}px`;
@@ -1422,9 +1420,11 @@ SceneManager.add({Game: class extends Game {
 		{
 			src: "water-mix",
 			type: SpriteType.Water,
-			tintColor: 0x88ccaa,
 			scale: [4, 4],
-			brightness: 70,
+			effects: {
+				tintColor: 0x88ccaa,
+				brightness: 70,
+			},
 			size: 50,
 			animation: ({game, definition}, index) => {
 				const px = game.sceneData.position[0], py = game.sceneData.position[1];

@@ -40,7 +40,9 @@ class SpriteUtils {
 			spriteTint: spriteTint || 0,
 			hidden: ({definition}, index) => definition.spriteHidden.get(Math.floor(index / 2)),
 			type: (_, index) => index % 2 === 0 ? SpriteType.Sprite: SpriteType.Shadow,
-			tintColor: ({definition}, index) => index % 2 === 0 ? definition.spriteTint.get(Math.floor(index/2)) : (shadowColor || 0xFF000000),
+			effects: {
+				tintColor: ({definition}, index) => index % 2 === 0 ? definition.spriteTint.get(Math.floor(index/2)) : (shadowColor || 0xFF000000),
+			},
 			upperScale: scale || [1, 1],
 			scale: realScale,
 			zoomValue,
