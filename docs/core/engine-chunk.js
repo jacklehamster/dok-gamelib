@@ -56,9 +56,17 @@ class Chunk {
 		buffer.set(cross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 	}
 
-	assignVertices(now, ... vertices) {
-		const { bufferInfo, index } = this;
+	assignVertices(now, { quaternion, center }, ... vertices) {
+		const { bufferInfo, index, vec3pool } = this;
  		const { buffer, floatPerVertex, verticesPerSprite } = bufferInfo.vertex;
+
+ 		for (let i = 0; i < vertices.length; i++) {
+ 			const newVec3 = vec3pool.get();
+ 			vec3.sub(newVec3, vertices[i], center);
+			vec3.transformQuat(newVec3, newVec3, quaternion);
+ 			vec3.add(newVec3, newVec3, center);
+ 			vertices[i] = newVec3;
+ 		}
 		for (let i = 0; i < vertices.length; i++) {
 			buffer.set(vertices[i], index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 		}
@@ -70,10 +78,10 @@ class Chunk {
 		bufferInfo.normal.chunkUpdateTimes[index] = now;
 	}
 
-	setWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
+	setWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		this.assignVertices(now,
+		this.assignVertices(now, rotation,
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
@@ -81,10 +89,10 @@ class Chunk {
 		);
 	}
 
-	setBackWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
+	setBackWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		this.assignVertices(now,
+		this.assignVertices(now, rotation,
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
@@ -92,10 +100,10 @@ class Chunk {
 		);
 	}
 
-	setFloor(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
+	setFloor(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		this.assignVertices(now,
+		this.assignVertices(now, rotation,
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, A, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, B, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, + halfHeight - hotspotY * height),
@@ -103,10 +111,10 @@ class Chunk {
 		);
 	}
 
-	setCeiling(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
+	setCeiling(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = width/2, halfHeight = height/2;
-		this.assignVertices(now,
+		this.assignVertices(now, rotation,
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, A, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, B, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, - halfHeight - hotspotY * height),
@@ -114,10 +122,10 @@ class Chunk {
 		);
 	}
 
-	setLeftWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
+	setLeftWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = height/2, halfHeight = width/2;
-		this.assignVertices(now,
+		this.assignVertices(now, rotation,
 			Utils.set3(vec3pool.get(), A, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), B, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
@@ -125,10 +133,10 @@ class Chunk {
 		);
 	}
 
-	setRightWall(width, height, [hotspotX, hotspotY], [A,B,C,D], now) {
+	setRightWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, now) {
 		const { vec3pool, index } = this;
 		const halfWidth = height/2, halfHeight = width/2;
-		this.assignVertices(now,
+		this.assignVertices(now, rotation,
 			Utils.set3(vec3pool.get(), A, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), B, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
@@ -158,22 +166,18 @@ class Chunk {
 		bufferInfo.gravity.chunkUpdateTimes[index] = now;
 	}
 
-	setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, crop, circleRadius, now) {
+	setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, circleRadius, now) {
 		const { bufferInfo, index } = this;
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
 		const [ scaleH, scaleV ] = scale;
 		const horizontalShift = texIndex * 2;
 		const verticalShift = Math.round(brightness) * 2;
-		const cropX = crop[0] / TEXTURE_SIZE;
-		const cropY = crop[1] / TEXTURE_SIZE;
-		const cropWidth = crop[2] / TEXTURE_SIZE;
-		const cropHeight = crop[3] / TEXTURE_SIZE;
 
-		let left = horizontalShift + texX + (padding * texWidth / 100) + cropX,
-			right = horizontalShift + texX + cropX + (cropWidth || texWidth) - (padding * texWidth / 100);
-		let up = verticalShift + texY + (padding * texHeight / 100) + cropY,
-			down = verticalShift + texY + cropY + (cropHeight || texHeight) - (padding * texHeight / 100);
+		let left = horizontalShift + texX + (padding * texWidth / 100),
+			right = horizontalShift + texX + texWidth - (padding * texWidth / 100);
+		let up = verticalShift + texY + (padding * texHeight / 100),
+			down = verticalShift + texY + texHeight - (padding * texHeight / 100);
 
 		if (scaleH < 0) {
 			const temp = left;

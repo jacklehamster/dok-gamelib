@@ -24,7 +24,6 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			animations: {},
 			first: null,
 		};
-		this.crop = [0, 0];
 		this.circleRadius = 0;
 		this.animationRange = [0, 0];
 		this.animationUpdateTime = 0;
@@ -37,18 +36,9 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			return;
 		}
 
-		const { animation, grid, brightness, padding, spriteSize, crop, circleRadius, animationOverride } = definition;
+		const { animation, grid, brightness, padding, spriteSize, circleRadius, animationOverride } = definition;
 		const { instanceIndex, updateTimes, spriteData, src } = this;
 		const { now } = game;
-
-		const cropX = crop[0].get(instanceIndex);
-		const cropY = crop[1].get(instanceIndex);
-		const cropWidth = crop[2].get(instanceIndex);
-		const cropHeight = crop[3].get(instanceIndex);
-		if (!Utils.equal4(this.crop, cropX, cropY, cropWidth, cropHeight)) {
-			Utils.set4(this.crop, cropX, cropY, cropWidth, cropHeight);
-			updateTimes.crop = now;
-		}		
 
 		const newBrightness = brightness.get(instanceIndex);
 		if (newBrightness !== this.brightness) {

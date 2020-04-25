@@ -21,6 +21,10 @@ class SpriteInstance extends AnimatedSpriteInstance {
 		this.mov = 		[0, 0, 0];
 		this.corners = 	[0, 0, 0, 0];
 		this.gravity = 	[0, 0, 0];
+		this.rotation = {
+			center: [0, 0, 0],
+			quaternion: quat.create(),
+		};
 	}
 
 	getEvaluated(game, definition) {
@@ -29,7 +33,7 @@ class SpriteInstance extends AnimatedSpriteInstance {
 			return;
 		}
 
-		const { src, animation, scale, pos, mov, gravity, hotspot, corners, refresh } = definition;
+		const { src, animation, scale, pos, mov, gravity, hotspot, corners, rotation: { quaternion, center }, refresh } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
@@ -84,6 +88,21 @@ class SpriteInstance extends AnimatedSpriteInstance {
 		if (!Utils.equal3(this.gravity, newGravityX, newGravityY, newGravityZ)) {
 			Utils.set3(this.gravity, newGravityX, newGravityY, newGravityZ);
 			updateTimes.gravity = now;
+		}
+
+		const quatX = quaternion[0].get(instanceIndex);
+		const quatY = quaternion[1].get(instanceIndex);
+		const quatZ = quaternion[2].get(instanceIndex);
+		const quatW = quaternion[3].get(instanceIndex);
+
+		const centerX = center[0].get(instanceIndex);
+		const centerY = center[1].get(instanceIndex);
+		const centerZ = center[2].get(instanceIndex);
+
+		if (!Utils.equal4(this.rotation.quaternion, quatX, quatY, quatZ, quatW) || !Utils.equal3(this.rotation.center, centerX, centerY, centerZ)) {
+			Utils.set4(this.rotation.quaternion, quatX, quatY, quatZ, quatW);
+			Utils.set3(this.rotation.center, centerX, centerY, centerZ);
+			updateTimes.rotation = now;
 		}
 	}
 }

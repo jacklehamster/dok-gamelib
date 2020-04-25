@@ -1272,9 +1272,9 @@ function getData() {
             "pos": [0, 0, 0],
             "mov": [0, 0, 0],
             "gravity": [0, 0, 0],
+            "rotation": {"center": [0, 0, 0], "quaternion": [0, 0, 0, 1]},
             "grid": [1, 1],
             "spriteSize": [0, 0],
-            "crop": [0, 0, 0, 0],
             "animation": null,
             "animationOverride": {
               "active": false,
