@@ -24,7 +24,6 @@ class SpritesheetManager {
 				this.onProgressListeners.length = 0;
 			},
 			progress: progress => {
-				console.log(progress.toFixed(2) + "%");
 				this.progress = progress;
 				this.onProgressListeners.forEach(callback => callback(this.progress));
 			},

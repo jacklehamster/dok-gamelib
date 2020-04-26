@@ -85,7 +85,7 @@ class GLRenderer {
 
 		//	load texture
 		this.spritesheetManager.fetchImages(
-			progress => console.log(progress),
+			progress => console.log(progress.toFixed(2) + "%"),
 			images => images.forEach((image, index) => this.textureManager.setImage(index, image)),
 			errors => console.error(errors)
 		);
