@@ -170,6 +170,11 @@ class GLRenderer {
 		gl.uniform3fv(shader.programInfo.lightPosition, position);
 	}
 
+	setDepthEffect(fading, closeSaturation, farSaturation) {
+		const { gl, shader } = this;
+		gl.uniform4f(shader.programInfo.depthEffect, fading, 0, closeSaturation, farSaturation);
+	}
+
 	setTime(now) {
 		const { gl, shader } = this;
 		gl.uniform1f(shader.programInfo.now, now);

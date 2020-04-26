@@ -18,12 +18,15 @@ SceneManager.add({Game: class extends Game {
 		tilt: .4,
 		cameraDistance: 10,
 		turn: ({game}) => game.now / 10000,
+		depthEffect: {
+			fading: 1,
+		},
 	},
 	keyboard: {
 		onActionRelease: ({game}) => {
 			game.sceneData.step ++;
 			if (game.sceneData.step > 1) {
-				engine.gotoScene("keep-alive");
+				game.gotoScene("keep-alive");
 			}
 		},
 	},
@@ -129,7 +132,7 @@ SceneManager.add({Game: class extends Game {
 			type: SpriteType.Floor,
 			circleRadius: 1,
 			effects: {
-				tintColor: 0x88CCCC99,
+//				tintColor: 0x77CCCC99,
 				brightness: 80,
 			},
 			pos: [0, .5, 0],

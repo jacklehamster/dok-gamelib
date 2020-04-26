@@ -15,12 +15,15 @@ SceneManager.add({Game: class extends Game {
 		pos: [
 			0, 3, 0,
 		],
+		depthEffect: {
+			fading: 1,
+		},
 	},
 	refresh: ({game}) => game.loop(),
 	spriteData: [
 		{
 			src: "water.jpg",
-			grid: [10, 10],
+			grid: [20, 20],
 			padding: 1,
 		},
 	],	
@@ -35,11 +38,11 @@ SceneManager.add({Game: class extends Game {
 			scale: [2, 2],
 			animation: ({game, definition}, index) => index,
 			pos: [
-				({game, definition}, index) => (index % 10 - 5) * 2,
+				({game, definition}, index) => (index % 20 - 10) * 2,
 				0,
-				({game, definition}, index) => (Math.floor(index / 10) - 5) * 2,
+				({game, definition}, index) => (Math.floor(index / 20) - 10) * 2,
 			],
-			count: 100,
+			count: 400,
 		},
 	],
 });

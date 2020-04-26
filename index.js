@@ -167,7 +167,6 @@ function copyScenes() {
 					});
 				}).concat(scenes.filter(file => path.extname(file)===".json").map(pathname => {
 					const scene = pathname.split("/")[0];
-					console.log(pathname);
 					return fs.promises.mkdir(`${__dirname}/data/generated/scenes/${scene}`, {recursive: true})
 						.then(() => fs.promises.copyFile(`${__dirname}/game/scenes/${pathname}`, `${__dirname}/data/generated/scenes/${scene}/sprites.json`))
 				})).concat([

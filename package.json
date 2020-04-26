@@ -28,6 +28,7 @@
     "js-beautify": "^1.11.0",
     "json-stringify-pretty-compact": "^2.0.0",
     "mustache": "^4.0.1",
+    "pngquant-bin": "^5.0.2",
     "rimraf": "^3.0.2",
     "sha256-file": "^1.0.0",
     "spritesheet-js": "^1.2.6"

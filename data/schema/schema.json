@@ -46,7 +46,14 @@
 		"tilt": 0,
 		"turn": 0,
 		"curvature": 0,
-		"cameraDistance": 7
+		"cameraDistance": 7,
+		"depthEffect": {
+			"fading": 0.3,
+			"saturation": [
+				1.0,
+				0.8
+			]
+		}
 	},
 	"light": {
 		"pos": [

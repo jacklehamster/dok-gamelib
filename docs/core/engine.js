@@ -57,6 +57,11 @@ class Engine {
 		this.onSceneChangeListener = [];
 		this.onLoopListener = [];
 		this.onStartListener = [];
+		this.running = false;
+
+		window.addEventListener("load", () => {
+			this.running = true;
+		});
 	}
 
 	start() {
@@ -76,6 +81,9 @@ class Engine {
 				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
 		function animationFrame(now) {
 			requestAnimationFrame(animationFrame);
+			if (!engine.running) {
+				return;
+			}
 			const { currentScene } = engine;
 			const frameDuration = 1000 / currentScene.getFrameRate();
 			if (!currentScene.startTime) {

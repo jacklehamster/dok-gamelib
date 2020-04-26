@@ -223,6 +223,9 @@ SceneManager.add({
 		turn: ({game}) => game.sceneData.turn,
 		cameraDistance: 3,
 		curvature: -3,
+		depthEffect: {
+			fading: 1,
+		},
 	},
 	refresh: ({game}) => {
 		const { sceneData, keys } = game;

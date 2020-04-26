@@ -24,13 +24,17 @@ class SceneRenderer {
 			cameraDistance: 0,
 			range: [0, 0],
 			curvature: 0,
+			depthEffect: {
+				fading: 0,
+				saturation: [0, 0],
+			},
 		};
 		this.settings = {
 			docBackground : 0x000000,
 			background : 0x000000,
 			music: {
 				src: null,
-				volume: .5,
+				volume: 1,
 			},
 		};
 		this.light = {
@@ -58,6 +62,7 @@ class SceneRenderer {
 	render(scene) {
 		const { glRenderer, background } = this;
 		const { settings, view, light } = scene;
+		const { depthEffect } = view;
 
 		const newBackground = settings.background.get();
 		if (newBackground !== background) {
@@ -94,6 +99,16 @@ class SceneRenderer {
 			this.light.specularStrength = newSpecularStrength;
 			this.light.shininess = newShininess;
 			glRenderer.setLight(this.light.pos, newAmbient, newDiffusionStrength, newSpecularStrength, newShininess);
+		}
+
+		const newDepthFading = depthEffect.fading.get();
+		const closeStaturation = depthEffect.saturation[0].get();
+		const farSaturation = depthEffect.saturation[1].get();
+		if (newDepthFading !== this.view.depthEffect.fading) {
+			this.view.depthEffect.fading = newDepthFading;
+			this.view.depthEffect.saturation[0] = closeStaturation;
+			this.view.depthEffect.saturation[1] = farSaturation;
+			glRenderer.setDepthEffect(newDepthFading, closeStaturation, farSaturation);
 		}
 
 		const newViewPosX = view.pos[0].get();

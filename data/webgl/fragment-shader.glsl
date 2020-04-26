@@ -26,6 +26,7 @@ uniform vec4 uBackground;
 uniform vec3 uLightPos;
 uniform vec4 uLightIntensity;
 uniform vec3 uCamPosition;
+uniform vec4 uDepthEffect;
 
 vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {
 	int textureInt = int(textureSlot);
@@ -89,22 +90,28 @@ void main(void) {
 		// ux.y = 1.6 * dy * pow(abs(dy), .4) * vTextureSize[1] + vTextureCenter.y;
 
 		color = getTextureColor(uTextures, vTextureSlot, ux);		
-		color.a *= (.995 - textureDist);
+		color.a *= (.992 - textureDist);
 	} else {
 		color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);		
 	}
 
 	//	SDF handling, mostly for text font
     color.a = smoothstep(.5 - .01, .5 + .01, color.a);
-	if (color.a <= 0.1) {
+	if (color.a <= 0.01) {
 		discard;
 	}
+
+	float depthFading = uDepthEffect[0];
+	float closeSaturation = uDepthEffect[2];
+	float farSaturation = uDepthEffect[3];
 
 	//	tint
 	color = mix(color, vec4(vTintColor.rgb, color.a), vTintColor.a);
 	//	desaturate / blend with background with distance
-	color = alterHueSatLum(color, vec3(1.0, 1.0, min(1.2, max(0.0, .8 + zDist * .8))));
-	color = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, zDist * .3);
+	float distance = zDist;
+	float dValue = smoothstep(0.0, 1.5, distance) / 1.5;
+	color = alterHueSatLum(color, vec3(1.0, (1.0 - dValue) * closeSaturation + dValue * farSaturation, min(1.2, max(0.0, .8 + distance * .8))));
+	color = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, distance * depthFading);
 
 	gl_FragColor = color;
 }

@@ -39,6 +39,7 @@ class Shader {
 				curvature: "uCurvature",
 				background: "uBackground",
 				textures: "uTextures",
+				depthEffect: "uDepthEffect",
 			},
 		};
 

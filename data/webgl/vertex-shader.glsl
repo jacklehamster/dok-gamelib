@@ -76,7 +76,7 @@ void main(void) {
 	}
 
 	vec4 position = uProjectionMatrix * uViewMatrix * worldPos;
-	position.y -= uCurvature * (position.z * position.z + position.x * position.x) / 500.0;
+	position.y -= (position.z * position.z + position.x * position.x) * uCurvature / 500.0;
 
 	float cols = aGrid[0];
 	float rows = aGrid[1];

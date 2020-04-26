@@ -176,6 +176,10 @@ SceneManager.add({
 			return progress * distGoal + (1 - progress) * distFrom;
 		},
 		curvature: 2,
+		depthEffect: {
+			fading: .8,
+			saturation: [2, .5],
+		},
 	},
 	refresh: ({game}) => {
 		const { sceneData, keys } = game;
@@ -319,7 +323,7 @@ SceneManager.add({
 				-.1,
 				({game}) => game.sceneData.cam[2],
 			],
-		}),
+			}),
 		{
 			src: "penguin",
 			effects: {
