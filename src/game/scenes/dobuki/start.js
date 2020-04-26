@@ -118,6 +118,24 @@ SceneManager.add({Game: class extends Game {
 		},
 	],
 	sprites: [
+		{
+			src: "home-floor",
+			type: SpriteType.Front,
+			rotation: {
+				center: [
+					({definition}, index) => definition.pos[0].get(index),
+					-1.15,
+					({definition}, index) => definition.pos[2].get(index),
+				],
+			},
+			pos: [
+				(_, index) => Math.sin((index - 10) * Math.PI / 20) * 5,
+				-1.15,
+				(_, index) => -Math.cos((index - 10) * Math.PI / 20) * 5,
+			],
+			scale: [1, 5],
+			count: 20,
+		},
 		SpriteUtils.makeSprite({
 			src: "dok",
 			position: [

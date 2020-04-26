@@ -16,6 +16,8 @@
   },
   "license": "ISC",
   "dependencies": {
+    "@node-minify/core": "^5.3.0",
+    "@node-minify/uglify-es": "^5.3.0",
     "archiver": "^3.1.1",
     "canvas": "^2.6.1",
     "color": "^3.1.2",
@@ -32,6 +34,7 @@
     "js-beautify": "^1.11.0",
     "json-stringify-pretty-compact": "^2.0.0",
     "mustache": "^4.0.1",
+    "node-minify": "^3.6.0",
     "pngquant-bin": "^5.0.2",
     "rimraf": "^3.0.2",
     "sha256-file": "^1.0.0",

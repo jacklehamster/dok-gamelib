@@ -15,6 +15,10 @@ class SourceCode {
 		if (engine.isEditor()) {
 			engine.addEventListener("start", engine => {
 				document.getElementById('editor').classList.remove("hidden");
+				document.getElementById('editor').style.display = "none";
+				setTimeout(() => {
+					document.getElementById('editor').style.display = "";
+				}, 1000);
 
 				engine.addEventListener("sceneChange", ({config}) => {
 					this.refreshView();
@@ -275,5 +279,4 @@ class SourceCode {
 		});
 	}
 }
-
-SourceCode.instance = new SourceCode(engine);
+document.addEventListener("DOMContentLoaded", () => SourceCode.instance = new SourceCode(engine));

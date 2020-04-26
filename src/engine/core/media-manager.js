@@ -27,20 +27,22 @@ class MediaManager {
 				previousMusic.pause();
 			}
 			if (name) {
+				this.theme = name;
 				const music = this.getMusic(this.theme);
 				if (music) {
 					if (previousMusic) {
 						music.currentTime = 0;
 					}
 					music.play();
-					this.theme = name;
 				}
 			}
 		}
 
 		if (this.theme) {
 			const music = this.getMusic(this.theme);
-			music.volume = volume;
+			if (music) {
+				music.volume = volume;
+			}
 		}
 	}
 

@@ -34,9 +34,14 @@ class SceneThumbnail {
 		const sceneThumbnails = canvas.parentElement.insertBefore(document.createElement("div"), canvas);
 		sceneThumbnails.id = "scene-thumbnails";
 		sceneThumbnails.classList.add("tab-container");
+		sceneThumbnails.style.display = "none";
+		setTimeout(() => {
+			sceneThumbnails.style.display = "";
+		}, 1000);
 
 		const tabs = sceneThumbnails.appendChild(document.createElement("div"));
 		tabs.classList.add("tab-container");
+
 		for (let s in engine.sceneManager.scenes) {
 			const tab = tabs.appendChild(document.createElement("div"));
 			tab.id = `tab-${s}`;
@@ -104,4 +109,4 @@ class SceneThumbnail {
 	}
 }
 
-SceneThumbnail.instance = new SceneThumbnail(engine);
+document.addEventListener("DOMContentLoaded", () => SceneThumbnail.instance = new SceneThumbnail(engine));

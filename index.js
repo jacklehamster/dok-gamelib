@@ -16,12 +16,33 @@ const zip = require('./lib/zip');
 const template = require('./lib/template');
 const stringify = require("json-stringify-pretty-compact");
 const colors = require('colors');
+const minify = require('@node-minify/core');
+const uglifyES = require('@node-minify/uglify-es');
 
 const app = express();
 const port = 8000;
 const TEXTURE_SIZE = 4096;
 
 const webDir = "docs";
+
+const sourceFolders = [
+	'generated/lib/*.js',
+	'src/engine/lib/*.js',
+	'src/engine/common/*.js',
+	'src/engine/utils/*.js',
+	'src/engine/sprites/base-sprite.js',
+	'src/engine/sprites/image-sprite.js',
+	'src/engine/sprites/animated-sprite.js',
+	'src/engine/sprites/sprite.js',
+	'src/engine/core/*.js',
+	'src/engine/game/components/*.js',
+	'src/engine/game/*.js',
+	'src/engine/scene-manager/*.js',
+];
+
+const editorFolders = [
+	'src/editor/**/*.js',
+];
 
 function indented(string, indentation) {
 	return string.split("\n").map(a => `${indentation}${a}`).join("\n");
@@ -72,13 +93,13 @@ function generateDataCode(outputPath) {
 function copySounds() {
 	return fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/sounds`), { recursive: true }).then(() => {
 	}).then(() => {
-		return template.getFolderAsData(path.join(__dirname, 'game'));
+		return template.getFolderAsData(path.join(__dirname, 'src/game'));
 	}).then(files => files.filter(filename => path.extname(filename).toLowerCase()===".mp3"))
 	.then(videopaths => {
 		return Promise.all(
 			videopaths.map(musicPath => {
 				return fs.promises.copyFile(
-					path.join(__dirname, 'game', musicPath),
+					path.join(__dirname, 'src/game', musicPath),
 					path.join(__dirname, webDir, 'generated', 'sounds', path.basename(musicPath))
 				);
 			})
@@ -112,13 +133,13 @@ function copySounds() {
 function copyVideos() {
 	return fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/videos`), { recursive: true }).then(() => {
 	}).then(() => {
-		return template.getFolderAsData(path.join(__dirname, 'game'));
+		return template.getFolderAsData(path.join(__dirname, 'src/game'));
 	}).then(files => files.filter(filename => path.extname(filename).toLowerCase()===".mp4"))
 	.then(videopaths => {
 		return Promise.all(
 			videopaths.map(videopath => {
 				return fs.promises.copyFile(
-					path.join(__dirname, 'game', videopath),
+					path.join(__dirname, 'src/game', videopath),
 					path.join(__dirname, webDir, 'generated', 'videos', path.basename(videopath))
 				);
 			})
@@ -152,7 +173,7 @@ function copyVideos() {
 function copyScenes() {
 	return new Promise((resolve, reject) =>
 		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/scenes`), { recursive: true }).then(() => {
-			template.getFolderAsData(path.join(__dirname, 'game', 'scenes')).then(scenes => {
+			template.getFolderAsData(path.join(__dirname, 'src/game', 'scenes')).then(scenes => {
 				Promise.all(scenes.filter(file => path.extname(file)===".js").map(scene => {
 					//check if folder needs to be created
 				    const targetFolder = path.join(__dirname, webDir, 'generated', 'js', 'scenes', path.dirname(scene));
@@ -160,7 +181,7 @@ function copyScenes() {
 				        fs.mkdirSync( targetFolder );
 				    }
 					return fs.promises.copyFile(
-						path.join(__dirname, 'game', 'scenes', scene),
+						path.join(__dirname, 'src/game', 'scenes', scene),
 						path.join(__dirname, webDir, 'generated', 'js', 'scenes', scene)
 					).catch(e => {
 						console.error(e.messsage);
@@ -168,28 +189,54 @@ function copyScenes() {
 				}).concat(scenes.filter(file => path.extname(file)===".json").map(pathname => {
 					const scene = pathname.split("/")[0];
 					return fs.promises.mkdir(`${__dirname}/data/generated/scenes/${scene}`, {recursive: true})
-						.then(() => fs.promises.copyFile(`${__dirname}/game/scenes/${pathname}`, `${__dirname}/data/generated/scenes/${scene}/sprites.json`))
+						.then(() => fs.promises.copyFile(`${__dirname}/src/game/scenes/${pathname}`, `${__dirname}/data/generated/scenes/${scene}/sprites.json`))
 				})).concat([
-					fs.promises.copyFile(`${__dirname}/game/game.json`, `${__dirname}/data/generated/game.json`),
+					fs.promises.copyFile(`${__dirname}/src/game/game.json`, `${__dirname}/data/generated/game.json`),
 				])).then(resolve);
 			});
 		})
 	);
 }
 
-function copyLibs() {
-	return new Promise((resolve, reject) =>
-		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/lib`), { recursive: true }).then(() => {
-			template.getFolderAsData(path.join(__dirname, 'generated/lib')).then(libs => {
-				Promise.all(libs.filter(file => path.extname(file)===".js").map(lib => {
-					return fs.promises.copyFile(
-						path.join(__dirname, 'generated/lib', lib),
-						path.join(__dirname, webDir, 'generated', 'js', 'lib', lib)
-					);
-				})).then(resolve);
-			});
-		})
-	);	
+function copySource() {
+	return template.getFolderAsData(path.join(__dirname, 'src'))
+		.then(files => Promise.all(files.filter(file => path.extname(file)===".js")
+			.map(file => fs.promises.mkdir(path.dirname(`${webDir}/generated/js/source/${file}`), { recursive: true})
+				.then(() => fs.promises.copyFile(`src/${file}`, `${webDir}/generated/js/source/${file}`))
+			)
+		))
+		.then(() => fs.promises.mkdir(`${webDir}/generated/js/source/lib`, { recursive: true}))
+		.then(() => fs.promises.copyFile(`generated/lib/json-compact.js`, `${webDir}/generated/js/source/lib/json-compact.js`));
+}
+
+function minifyEngine() {
+	console.log("Start minifying.");
+	const startTime = Date.now();
+	return Promise.all([
+		fs.promises.mkdir(`docs/generated/js/engine`, { recursive: true }),
+		fs.promises.mkdir(`docs/generated/js/editor`, { recursive: true }),
+	])
+	.then(Promise.all([
+		minify({
+			compressor: uglifyES,
+			input: sourceFolders,
+			output: 'docs/generated/js/engine/engine.min.js',
+			options: {
+				sourceMap: true,
+			},
+	  	}),
+		minify({
+			compressor: uglifyES,
+			input: editorFolders,
+			output: 'docs/generated/js/editor/editor.min.js',
+			options: {
+				sourceMap: true,
+			},
+	  	}),
+	]))
+	.then(() => {
+		console.log("Done minifying. Time:", Date.now() - startTime);
+	});
 }
 
 function assignData(root, path, value) {
@@ -221,7 +268,7 @@ function zipGame() {
 }
 
 function getSpritesheets() {
-	const gamesDirectory = `${__dirname}/game/scenes`;
+	const gamesDirectory = `${__dirname}/src/game/scenes`;
 	const generatedAssetDir = `${__dirname}/generated/assets`;
     const generatedDataDir = `${__dirname}/data/generated`;
 
@@ -257,7 +304,7 @@ function getSpritesheets() {
 }
 
 function saveFontMap() {
-	return fs.promises.readFile(`${__dirname}/game/game.json`, 'utf8').then(result => {
+	return fs.promises.readFile(`${__dirname}/src/game/game.json`, 'utf8').then(result => {
 		const { fonts } = JSON.parse(result);
 		return fs.promises.mkdir(`generated/assets/fonts`, { recursive: true }).then(() => {
 			if (!fs.existsSync(`generated/assets/fonts.json`)) {
@@ -297,6 +344,7 @@ function saveFontMap() {
 }
 
 app.get('/', function (req, res) {
+	const release = req.query.release;
 	console.log(`Processing game: ${new Date()}`);
 	const startTime = Date.now();
 	getSpritesheets()
@@ -304,21 +352,41 @@ app.get('/', function (req, res) {
 		copyVideos(),
 		copySounds(),
 		copyScenes(),
-		copyLibs(),
+		copySource(),
+		release ? minifyEngine() : Promise.resolve(),
 	]))
 	.then(() => console.log(`Done processing assets: ${Date.now() - startTime}ms`))
 	.then(() => Promise.all([
-		template.getFolderAsData(path.join(__dirname, 'game', 'scenes')),
-		template.getFolderAsData(path.join(__dirname, 'docs/generated/js/lib')),
+		template.getFolderAsData(path.join(__dirname, 'src/game/scenes')),
+		template.getFolderAsData(path.join(__dirname, 'docs/generated/js/source')),
 	]))
-	.then(([sceneItems, libs]) => {
+	.then(([sceneItems, allSource]) => {
+		//	filter out game scenes and editor scenes
+		const source = allSource.filter(src => !src.startsWith("game/scenes") && !src.startsWith("editor/editor"));
+		const editor = allSource.filter(src => src.startsWith("editor/editor"));
+		//	sort source
+		const trimmedSourceFolders = sourceFolders.map(src => src.split("*")[0]).map(src => src.split("/").slice(1).join("/"));
+		function getIndex(file) {
+			for (let i = 0; i < trimmedSourceFolders.length; i++) {
+				if (file.startsWith(trimmedSourceFolders[i])) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		source.sort((a, b) => getIndex(a) - getIndex(b));
+		console.log(source);
+		console.log(editor);
+
 		const scenes = sceneItems.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
-		return template.renderTemplateFromFile('index', path.join(__dirname, 'game', 'game.json'), {
+		return template.renderTemplateFromFile('index', path.join(__dirname, 'src/game/game.json'), {
 			scenes: scenes.map(fileName => path.parse(fileName).name),
-			libs,
+			source,
+			editor,
+			release,
 		});
 	})
-	.then(html => generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(() => html))
+	.then(html => generateDataCode(path.join(webDir, 'generated/js/data.js')).then(() => html))
 	.then(html => {
 		res.send(html);
 		return fs.promises.writeFile(`${webDir}/index.html`, html).then(() => {

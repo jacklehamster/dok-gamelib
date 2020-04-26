@@ -7,7 +7,7 @@
 	Sourcode: https://github.com/jacklehamster/dok-gamelib
 	Year: 2020
  -->
-<html lang="en" style="background-color: black">
+<html lang="en">
 	<head>
         <title>{{obj.title}}</title>
 		<meta charset="utf-8"/>
@@ -22,56 +22,23 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-title" content="{{obj.title}}">
 
-		<script src="lib/gl-matrix.js"></script>
-		<script src="lib/newgroundsio.min.js"></script>
-		<script src="lib/ng.js"></script>
- 		{{#obj.libs}}
-		<script src="generated/js/lib/{{.}}"></script>
-		{{/obj.libs}}
 		<script src="generated/js/data.js"></script>
-		<script src="game/components/shape-utils.js"></script>
-		<script src="game/components/sprite-utils.js"></script>
-		<script src="game/components/text-utils.js"></script>
-		<script src="game/components/motion-utils.js"></script>
-		<script src="game/game.js"></script>
-		<script src="game/animation-definition.js"></script>
-		<script src="game/sprite-definition.js"></script>
-		<script src="utils/log.js"></script>
-		<script src="utils/utils.js"></script>
-		<script src="core/constants.js"></script>
-		<script src="core/pool.js"></script>
-		<script src="core/texture-manager.js"></script>
-		<script src="core/shader.js"></script>
-		<script src="core/chunk-processor.js"></script>
-		<script src="core/sprite-data-processor.js"></script>
-		<script src="core/scene-renderer.js"></script>
-		<script src="core/data-store.js"></script>
-		<script src="core/keyboard.js"></script>
-		<script src="core/mouse.js"></script>
-		<script src="core/engine-buffer.js"></script>
-		<script src="core/engine-chunk.js"></script>
-		<script src="core/canvas-renderer.js"></script>
-		<script src="core/gl-renderer.js"></script>
-		<script src="core/sprite-provider.js"></script>
-		<script src="core/sprite-definition-processor.js"></script>
-		<script src="core/spritesheet-manager.js"></script>
-		<script src="core/media-manager.js"></script>
-		<script src="core/engine.js"></script>
-		<script src="core/game-property.js"></script>
-		<script src="core/config-processor.js"></script>
-		<script src="core/scene-manager.js"></script>
-		<script src="sprites/base-sprite.js"></script>
-		<script src="sprites/image-sprite.js"></script>
-		<script src="sprites/animated-sprite.js"></script>
-		<script src="sprites/sprite.js"></script>
- 		{{#obj.scenes}}
+{{#obj.release}}
+		<script src="generated/js/engine/engine.min.js"></script>
+{{/obj.release}}
+{{^obj.release}}
+		{{#obj.source}}
+			<script src="generated/js/source/{{{.}}}"></script>
+		{{/obj.source}}
+{{/obj.release}}
+{{#obj.scenes}}
 		<script>SceneManager.loadingSceneName = "{{.}}";</script>
 		<script src="generated/js/scenes/{{.}}/start.js"></script>
-		{{/obj.scenes}}		
+{{/obj.scenes}}		
 	</head>
 
 	<body class="container">
-		<div id="editor" class="editor hidden">
+		<div id="editor" style="display: none" class="editor hidden">
 			<div class="tab-container">
 				<div id="editor-tabs" class="tab-container">
 					<div id="config" class="tab">game.json</div>
@@ -99,7 +66,13 @@
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 			window.addEventListener("DOMContentLoaded", () => engine.start());
 		</script>
-		<script src="editor/scene-thumbnail.js"></script>
-		<script src="editor/editor.js"></script>
+{{#obj.release}}
+		<script src="generated/js/editor/editor.min.js"></script>
+{{/obj.release}}
+{{^obj.release}}
+		{{#obj.editor}}
+			<script src="generated/js/source/{{{.}}}"></script>
+		{{/obj.editor}}
+{{/obj.release}}
 	</body>
 </html>
