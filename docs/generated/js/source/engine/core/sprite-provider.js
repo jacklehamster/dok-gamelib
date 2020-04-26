@@ -29,26 +29,26 @@ class SpriteProvider {
 		return this.sprites;
 	}
 
-	getSprite(definitionIndex, instanceIndex) {
+	getSprite(definitionIndex, instanceIndex, now) {
 		const { definitionMapper } = this;
 		while (definitionIndex >= definitionMapper.length) {
 			definitionMapper.push([]);
 		}
 		const instanceList = definitionMapper[definitionIndex];
 		if (!instanceList[instanceIndex]) {
-			instanceList[instanceIndex] = this.newSprite(definitionIndex, instanceIndex);
+			instanceList[instanceIndex] = this.newSprite(definitionIndex, instanceIndex, now);
 		}
 		return instanceList[instanceIndex];
 	}
 
-	newSprite(definitionIndex, instanceIndex) {
+	newSprite(definitionIndex, instanceIndex, now) {
 		const { spriteCreator } = this;
 		if (!spriteCreator) {
 			return null;
 		}
 		while (this.count >= this.sprites.length) {
 			const providerIndex = this.sprites.length;
-			const sprite = spriteCreator();
+			const sprite = spriteCreator(now);
 			sprite.providerIndex = providerIndex;
 			this.sprites.push(sprite);
 		}

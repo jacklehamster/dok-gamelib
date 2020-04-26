@@ -18,7 +18,6 @@ SceneManager.add({
 			sceneData.npcs = [
 			];
 
-			sceneData.quat = quat.create();
 			this.resetMap(0, 0);
 		}
 
@@ -247,8 +246,6 @@ SceneManager.add({
 				game.onChangeCell(newCellX, newCellZ);
 			}
 		}
-
-		quat.rotateY(sceneData.quat, sceneData.quat, Math.PI / 256);
 	},
 	spriteData: [
 		{
@@ -290,11 +287,10 @@ SceneManager.add({
 		{
 			src: "bunny",
 			rotation: {
-				quaternion: [
-					({game}) => game.sceneData.quat[0],
-					({game}) => game.sceneData.quat[1],
-					({game}) => game.sceneData.quat[2],
-					({game}) => game.sceneData.quat[3],
+				angle: [
+					0,
+					({game: { now }}) => now / 1000,
+					0,
 				],
 				center: [
 					({definition},index) => -definition.xShift.get(index) * 3,

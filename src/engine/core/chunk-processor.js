@@ -24,7 +24,8 @@ class ChunkProcessor {
 		if (!src) {
 			chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, circleRadius, now);
 		} else {
-			const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src);
+			const spriteDataProcessorInfo = this.engine.spriteDataProcessor.data[src];
+			const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src) || spriteDataProcessorInfo && imagedata.sprites[spriteDataProcessorInfo.src];
 			if (!spriteInfo) {
 				if (!videos[src]) {
 					const error = `Unknown sprite '${src}'.`;
@@ -39,7 +40,6 @@ class ChunkProcessor {
 			}
 
 			const { rect: [ x, y, sheetWidth, sheetHeight ], index } = spriteInfo;
-			const spriteDataProcessorInfo = this.engine.spriteDataProcessor.data[src];
 			if (spriteDataProcessorInfo) {
 				const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;
 				chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, circleRadius, now);
@@ -95,8 +95,8 @@ class ChunkProcessor {
 			chunk.setType(sprite.type, now);
 		}
 
-		if (updateTimes.tintColor === now) {
-			chunk.setTint(sprite.effects.tintColor, now);
+		if (updateTimes.tintColor === now || updateTimes.hue === now) {
+			chunk.setTintAndHue(sprite.effects.tintColor, sprite.effects.hue, now);
 		}
 
 		if (updateTimes.grid === now) {
@@ -131,6 +131,6 @@ class ChunkProcessor {
 		if (updateTimes.gravity === now) {
 			const [ gx, gy, gz ] = sprite.gravity;
 			chunk.setGravity(gx, gy, gz, now);
-		}		
+		}	
 	}
 }

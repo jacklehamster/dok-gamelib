@@ -13,8 +13,8 @@
   */
 
 class AnimatedSpriteInstance extends ImageSpriteInstance {
-	constructor() {
-		super();
+	constructor(now) {
+		super(now);
 		this.animation = null;
 		this.spriteData = {
 			spriteSize: [ 0, 0 ],
@@ -36,7 +36,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			return;
 		}
 
-		const { animation, grid, padding, spriteSize, circleRadius, animationOverride } = definition;
+		const { animation, grid, padding, spriteSize, circleRadius, animationOverride, frame } = definition;
 		const { instanceIndex, updateTimes, spriteData, src } = this;
 		const { now } = game;
 
@@ -145,7 +145,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			}
 
 			if (this.singleFrameAnimation) {
-				const newAnimationStart = parseInt(this.animation || 0);
+				const newAnimationStart = parseInt(this.animation || frame.get(instanceIndex));
 				const newAnimationLength = 1;
 				if (newAnimationStart !== this.animationRange[0] || newAnimationLength !== this.animationRange[1]) {
 					this.animationRange[0] = newAnimationStart;

@@ -21,7 +21,7 @@ attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
 attribute vec4 aVertexTextureCenter;	//	[ x, y, texWidth, texHeight ]
 attribute vec4 aAnimationData; 			//	[ time, start, total, frameRate ]
 attribute vec2 aGrid;					//	[ cols, rows ]
-attribute vec2 aTintColor;				//	[ tint color, mix ]
+attribute vec4 aTintColor;				//	[ tint color, mix, hue change ]
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
@@ -30,8 +30,7 @@ uniform float uCurvature;
 uniform float uNow;
 uniform vec3 uLightPos;  
 
-varying vec2 vTexturePoint;
-varying vec2 vTextureCenter;
+varying vec4 vTextureData;
 varying vec2 vTextureSize;
 varying float zDist;
 varying vec3 vNormal;
@@ -52,18 +51,11 @@ void main(void) {
 	float timeStart = aVertexMove.w;
 	float time = uNow - timeStart;
 	vec4 worldPos = vec4(aVertexPosition, 1.0);
+	vNormal = aNormal;
+
 	if (aType == 0.0) {	//	sprite face camera
 		worldPos = uCameraRotation * worldPos;
-	}
-	if (aType == 8.0) {	//	shadow face camera except for tilt
-		mat4 M = uCameraRotation;
-		float xLen = sqrt(M[0][0]*M[0][0] + M[2][0]*M[2][0]); // Singularity if either of these
-		float zLen = sqrt(M[0][2]*M[0][2] + M[2][2]*M[2][2]); //  is equal to zero.
-
-		M[0][0]/=xLen; 	M[1][0]=0.0; 	M[2][0]/=xLen; 	// Set the x column
-		M[0][1]=0.0;    M[1][1]=1.0;	M[2][1]=0.0;	// Set the y column
-		M[0][2]/zLen;	M[1][2]=0.0; 	M[2][2]/=zLen; 	// Set the z column
-		worldPos = M * worldPos;
+		vNormal = (uCameraRotation * vec4(vNormal, 1.0)).xyz;
 	}
 
 	worldPos.xyz += aOffset;
@@ -87,22 +79,21 @@ void main(void) {
 	float index = mod(max(0.0, start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, abs(total)) * sign(total)), cols * rows);
 	float texRow = floor(index / cols);
 	float texCol = floor(mod(index + .4, cols));
-	vTexturePoint = aVertexTextureCoord.xy;
-	vTexturePoint.x = mod(vTexturePoint.x, 2.0);
-	vTexturePoint.y = mod(vTexturePoint.y, 2.0);
-	vTexturePoint.x += texCol * aVertexTextureCoord[2];
-	vTexturePoint.y += texRow * aVertexTextureCoord[3];
-	vTextureCenter = aVertexTextureCenter.xy;
-	vTextureCenter.x += texCol * aVertexTextureCoord[2];
-	vTextureCenter.y += texRow * aVertexTextureCoord[3];
+	vTextureData.xy = aVertexTextureCoord.xy;
+	vTextureData.x = mod(vTextureData.x, 2.0);
+	vTextureData.y = mod(vTextureData.y, 2.0);
+	vTextureData.x += texCol * aVertexTextureCoord[2];
+	vTextureData.y += texRow * aVertexTextureCoord[3];
+	vTextureData.zw = aVertexTextureCenter.xy;
+	vTextureData.z += texCol * aVertexTextureCoord[2];
+	vTextureData.w += texRow * aVertexTextureCoord[3];
 	vTextureSize = aVertexTextureCenter.zw;
 
 	vTextureSlot = floor(aVertexTextureCoord.x * .5);
 	vBrightness = floor(aVertexTextureCoord.y * .5);
-	vTintColor = makeColorFromRGB(aTintColor[0], aTintColor[1]);
+	vTintColor = makeColorFromRGB(aTintColor.x, aTintColor.y);
 
 	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 10.0)) * .2);
 	gl_Position = position;
 	vFragPos = worldPos.xyz;
-	vNormal = aNormal;
 }

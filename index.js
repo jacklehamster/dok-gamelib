@@ -344,7 +344,7 @@ function saveFontMap() {
 }
 
 app.get('/', function (req, res) {
-	const release = req.query.release;
+	const release = req.query.release && req.query.release !== 'false';
 	console.log(`Processing game: ${new Date()}`);
 	const startTime = Date.now();
 	getSpritesheets()
@@ -353,7 +353,7 @@ app.get('/', function (req, res) {
 		copySounds(),
 		copyScenes(),
 		copySource(),
-		release ? minifyEngine() : Promise.resolve(),
+		release ? minifyEngine() : assets.deleteFolders(`docs/generated/js/engine`, `docs/generated/js/editor`),
 	]))
 	.then(() => console.log(`Done processing assets: ${Date.now() - startTime}ms`))
 	.then(() => Promise.all([
@@ -375,9 +375,7 @@ app.get('/', function (req, res) {
 			return -1;
 		}
 		source.sort((a, b) => getIndex(a) - getIndex(b));
-		console.log(source);
-		console.log(editor);
-
+		
 		const scenes = sceneItems.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
 		return template.renderTemplateFromFile('index', path.join(__dirname, 'src/game/game.json'), {
 			scenes: scenes.map(fileName => path.parse(fileName).name),
@@ -389,10 +387,10 @@ app.get('/', function (req, res) {
 	.then(html => generateDataCode(path.join(webDir, 'generated/js/data.js')).then(() => html))
 	.then(html => {
 		res.send(html);
-		return fs.promises.writeFile(`${webDir}/index.html`, html).then(() => {
+		return release ? fs.promises.writeFile(`${webDir}/index.html`, html).then(() => {
 			zipGame();
 			return html;
-		});
+		}) : Promise.resolve();
 	})
 	.then(() => {
 		console.log(`Done game processing: ${Date.now() - startTime}ms`);

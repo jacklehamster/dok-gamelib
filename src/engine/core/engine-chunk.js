@@ -67,10 +67,13 @@ class Chunk {
 		}
 	}
 
-	assignVertices(now, { quaternion, center }, { curvature }, ... vertices) {
+	assignVertices(now, { angle, center }, { curvature }, ... vertices) {
 		const { bufferInfo, index, vec3pool } = this;
  		const { buffer, floatPerVertex, verticesPerSprite } = bufferInfo.vertex;
 
+ 		const [ angleX, angleY, angleZ ] = angle;
+ 		const deg2rad = 180 / Math.PI;
+ 		const quaternion = quat.fromEuler(quat.create(), angleX * deg2rad, angleY * deg2rad, angleZ * deg2rad);
  		for (let i = 0; i < vertices.length; i++) {
  			const newVec3 = vec3pool.get();
  			vec3.sub(newVec3, vertices[i], center);
@@ -220,15 +223,16 @@ class Chunk {
 		bufferInfo.texCoord.chunkUpdateTimes[index] = now;
 	}
 
-	setTint(value, now) {
+	setTintAndHue(value, hue, now) {
 		const { bufferInfo, index } = this;
 		const color = value & 0xFFFFFF;
 		const mixRatio = Math.max(0, (value / 0xFFFFFF) / 255);
 		this.assignValues(bufferInfo.tintColor,
-			color, mixRatio,
-			color, mixRatio,
-			color, mixRatio,
-			color, mixRatio);
+			color, mixRatio, hue, 0,
+			color, mixRatio, hue, 0,
+			color, mixRatio, hue, 0,
+			color, mixRatio, hue, 0,
+		);
 		bufferInfo.tintColor.chunkUpdateTimes[index] = now;				
 	}
 

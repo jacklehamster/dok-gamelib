@@ -28,7 +28,7 @@ class SpriteUtils {
 				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 5)),
 			({definition: { spriteSize, zoomValue, upperScale, heightAboveGround }}, index) =>
 				upperScale[1].get(Math.floor(index / 2)) * (spriteSize[1].get(Math.floor(index / 2)) || 1) * zoomValue.get(Math.floor(index / 2))
-				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 5)),
+				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 5) * .7),
 		];
 
 		return {
@@ -51,7 +51,7 @@ class SpriteUtils {
 			animation: ({definition}, index) => definition.spriteAnimation.get(Math.floor(index / 2)),
 			hotspot: [
 				0,
-				(_, index) => index % 2 === 0 ? 0 : .35,
+				(_, index) => index % 2 === 0 ? 0 : .5,
 			],
 			position,
 			heightAboveGround: heightAboveGround || (() => 0),
@@ -59,7 +59,8 @@ class SpriteUtils {
 				({definition}, index) => definition.position[0].get(Math.floor(index / 2)),
 				({definition}, index) => definition.position[1].get(Math.floor(index / 2))
 				+ (index % 2 === 0 ? 0 : -1.15+.01) + (index % 2 === 0 ? (definition.heightAboveGround.get(Math.floor(index / 2)) || 0 ) : 0),
-				({definition}, index) => definition.position[2].get(Math.floor(index / 2)),				
+				({definition}, index) => definition.position[2].get(Math.floor(index / 2)) 
+				- (index % 2 === 1 ? (definition.heightAboveGround.get(Math.floor(index / 2) || 0 ) * .4) : 0),				
 			],
 			spriteCount: spriteCount || 1,
 			count: ({definition}) => definition.spriteCount.get() * 2,

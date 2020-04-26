@@ -12,8 +12,7 @@ precision mediump float;
 const int NUM_TEXTURES = 16;
 
 uniform sampler2D uTextures[NUM_TEXTURES];
-varying vec2 vTexturePoint;
-varying vec2 vTextureCenter;
+varying vec4 vTextureData;
 varying vec2 vTextureSize;
 varying float zDist;
 varying float light;
@@ -74,16 +73,18 @@ void main(void) {
 
 	vec3 reflectDir = reflect(-lightDir, normal);  
 
-	float diffLight = diffusion * max(dot(normal, lightDir), 0.0);
+	float diffLight = diffusion * dot(normal, lightDir);
 	float spec = specular * pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
 	vec4 color;
 
 	//	texture as circle
+	vec2 texturePoint = vTextureData.xy;
+	vec2 textureCenter = vTextureData.zw;
 	if (vTextureSize[0] > 0.0 && vTextureSize[1] > 0.0) {
-		vec2 ux = vTexturePoint;
-		float dx = (ux.x - vTextureCenter.x) / vTextureSize[0];
-		float dy = (ux.y - vTextureCenter.y) / vTextureSize[1];
+		vec2 ux = texturePoint;
+		float dx = (ux.x - textureCenter.x) / vTextureSize[0];
+		float dy = (ux.y - textureCenter.y) / vTextureSize[1];
 		float textureDist = sqrt(dx * dx + dy * dy);
 
 		// ux.x = 1.6 * dx * pow(abs(dx), .4) * vTextureSize[0] + vTextureCenter.x;
@@ -92,7 +93,7 @@ void main(void) {
 		color = getTextureColor(uTextures, vTextureSlot, ux);		
 		color.a *= (.992 - textureDist);
 	} else {
-		color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);		
+		color = getTextureColor(uTextures, vTextureSlot, texturePoint);		
 	}
 
 	//	SDF handling, for text and reduced size sprite

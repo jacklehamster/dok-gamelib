@@ -7,11 +7,18 @@
 	Year: 2020
  */
 
+const EditorMode = {
+	Hidden : 0,
+	Shifted : 1,
+	Split : 2,
+	NumModes : 3,
+};
 
 class SceneThumbnail {
 	constructor(engine) {
 		this.onShiftListener = [];
 		if (engine.isEditor()) {
+			this.mode = EditorMode.Hidden;
 			engine.addEventListener("start", engine => {			
 				this.setupSceneThumbnails(engine);
 			});
@@ -60,30 +67,49 @@ class SceneThumbnail {
 		button.classList.add("panel-button");
 		button.id="panel-button";
 		button.innerText = "⬅️EDITOR";
-		button.addEventListener("click", () => this.shiftPanel(true));
+		button.addEventListener("click", () => this.shiftPanel(EditorMode.Shifted));
+
+		this.shiftPanel(this.mode);
 	}
 
-	shiftPanel(doShift) {
-		if (typeof(doShift) === "undefined") {
-			document.getElementById("panel").classList.toggle("shifted");
-			document.getElementById("editor").classList.toggle("shifted");
-			document.getElementById("panel-button").classList.toggle("hidden");
-			document.getElementById("panel-exit-button").classList.toggle("hidden");
-		} else if (doShift) {
-			document.getElementById("panel").classList.add("shifted");
-			document.getElementById("editor").classList.add("shifted");
-			document.getElementById("panel-button").classList.add("hidden");
-			document.getElementById("panel-exit-button").classList.remove("hidden");
+	shiftPanel(mode) {
+		if (typeof(mode) === "undefined") {
+			this.mode = (this.mode + 1) % EditorMode.NumModes;
 		} else {
-			document.getElementById("panel").classList.remove("shifted");
-			document.getElementById("editor").classList.remove("shifted");
-			document.getElementById("panel-button").classList.remove("hidden");
-			document.getElementById("panel-exit-button").classList.add("hidden");
+			this.mode = mode;
 		}
 
-		const shifted = document.getElementById("panel").classList.contains("shifted");
+		switch (this.mode) {
+			case EditorMode.Hidden:
+				document.getElementById("panel").classList.remove("shifted");
+				document.getElementById("editor").classList.remove("shifted");
+				document.getElementById("panel").classList.remove("split");
+				document.getElementById("editor").classList.remove("split");
+				document.getElementById("panel-button").classList.remove("hidden");
+				document.getElementById("panel-exit-button").classList.add("hidden");
+				break;
+			case EditorMode.Shifted:
+				document.getElementById("panel").classList.add("shifted");
+				document.getElementById("editor").classList.add("shifted");
+				document.getElementById("panel").classList.remove("split");
+				document.getElementById("editor").classList.remove("split");
+				document.getElementById("panel-button").classList.add("hidden");
+				document.getElementById("panel-exit-button").classList.remove("hidden");
+				document.getElementById("panel-exit-button").innerText = "SPLIT ➡️";
+				break;
+			case EditorMode.Split:
+				document.getElementById("panel").classList.remove("shifted");
+				document.getElementById("editor").classList.remove("shifted");
+				document.getElementById("panel").classList.add("split");
+				document.getElementById("editor").classList.add("split");
+				document.getElementById("panel-button").classList.add("hidden");
+				document.getElementById("panel-exit-button").classList.remove("hidden");
+				document.getElementById("panel-exit-button").innerText = "GAME ➡️";
+				break;
+		}
+
 		this.onShiftListener.forEach(callback => {
-			callback(shifted);
+			callback(mode);
 		});
 	}
 

@@ -18,7 +18,7 @@ const TEXTURE_CENTER_PER_VERTEX 	= 4;	//	x,y,w,h
 
 const ANIMATION_FLOAT_PER_VERTEX 	= 4;	//	time,start,count,frameRate
 const GRID_FLOAT_PER_VERTEX 		= 2;	//	cols,rows
-const TINT_FLOAT_PER_VERTEX			= 2;	//	tint color, mix percentage
+const TINT_FLOAT_PER_VERTEX			= 4;	//	tint color, mix percentage
 
 const VERTICES_PER_SPRITE 			= 4;	//	4 corners
 const INDEX_ARRAY_PER_SPRITE = new Uint16Array([

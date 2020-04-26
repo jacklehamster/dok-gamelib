@@ -59,15 +59,16 @@
 		"pos": [
 			0,
 			100,
-			0
+			50
 		],
-		"ambient": 1,
-		"shininess": 3,
-		"specularStrength": 0.5,
-		"diffusionStrength": 0.5
+		"ambient": 1.0,
+		"shininess": 0.1,
+		"specularStrength": 0.0,
+		"diffusionStrength": 0.4
 	},
 	"spriteData": [
 		{
+			"id": null,
 			"src": null,
 			"spriteSize": [0, 0],
 			"grid": [1, 1],
@@ -111,11 +112,10 @@
 					0,
 					0
 				],
-				"quaternion": [
+				"angle": [
 					0,
 					0,
-					0,
-					1
+					0
 				]
 			},
 			"grid": [
@@ -133,6 +133,7 @@
 				"range": 0,
 				"frameRate": 0
 			},
+			"frame": 0,
 			"scale": [
 				1,
 				1
@@ -150,7 +151,8 @@
 			"effects": {
 				"brightness": 100,
 				"tintColor": 0,
-				"curvature": 0
+				"curvature": 0,
+				"hue": 0
 			},
 			"count": 1,
 			"init": null,

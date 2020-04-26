@@ -23,45 +23,7 @@
 		<meta name="apple-mobile-web-app-title" content="Hello World">
 
 		<script src="generated/js/data.js"></script>
-			<script src="generated/js/source/lib/json-compact.js"></script>
-			<script src="generated/js/source/engine/lib/gl-matrix.js"></script>
-			<script src="generated/js/source/engine/lib/newgroundsio.min.js"></script>
-			<script src="generated/js/source/engine/lib/ng.js"></script>
-			<script src="generated/js/source/engine/common/constants.js"></script>
-			<script src="generated/js/source/engine/utils/log.js"></script>
-			<script src="generated/js/source/engine/utils/utils.js"></script>
-			<script src="generated/js/source/engine/sprites/base-sprite.js"></script>
-			<script src="generated/js/source/engine/sprites/image-sprite.js"></script>
-			<script src="generated/js/source/engine/sprites/animated-sprite.js"></script>
-			<script src="generated/js/source/engine/sprites/sprite.js"></script>
-			<script src="generated/js/source/engine/core/canvas-renderer.js"></script>
-			<script src="generated/js/source/engine/core/chunk-processor.js"></script>
-			<script src="generated/js/source/engine/core/config-processor.js"></script>
-			<script src="generated/js/source/engine/core/data-store.js"></script>
-			<script src="generated/js/source/engine/core/engine-buffer.js"></script>
-			<script src="generated/js/source/engine/core/engine-chunk.js"></script>
-			<script src="generated/js/source/engine/core/engine.js"></script>
-			<script src="generated/js/source/engine/core/game-property.js"></script>
-			<script src="generated/js/source/engine/core/gl-renderer.js"></script>
-			<script src="generated/js/source/engine/core/keyboard.js"></script>
-			<script src="generated/js/source/engine/core/media-manager.js"></script>
-			<script src="generated/js/source/engine/core/mouse.js"></script>
-			<script src="generated/js/source/engine/core/pool.js"></script>
-			<script src="generated/js/source/engine/core/scene-renderer.js"></script>
-			<script src="generated/js/source/engine/core/shader.js"></script>
-			<script src="generated/js/source/engine/core/sprite-data-processor.js"></script>
-			<script src="generated/js/source/engine/core/sprite-definition-processor.js"></script>
-			<script src="generated/js/source/engine/core/sprite-provider.js"></script>
-			<script src="generated/js/source/engine/core/spritesheet-manager.js"></script>
-			<script src="generated/js/source/engine/core/texture-manager.js"></script>
-			<script src="generated/js/source/engine/game/components/motion-utils.js"></script>
-			<script src="generated/js/source/engine/game/components/shape-utils.js"></script>
-			<script src="generated/js/source/engine/game/components/sprite-utils.js"></script>
-			<script src="generated/js/source/engine/game/components/text-utils.js"></script>
-			<script src="generated/js/source/engine/game/animation-definition.js"></script>
-			<script src="generated/js/source/engine/game/game.js"></script>
-			<script src="generated/js/source/engine/game/sprite-definition.js"></script>
-			<script src="generated/js/source/engine/scene-manager/scene-manager.js"></script>
+		<script src="generated/js/engine/engine.min.js"></script>
 		<script>SceneManager.loadingSceneName = "dobuki";</script>
 		<script src="generated/js/scenes/dobuki/start.js"></script>
 		<script>SceneManager.loadingSceneName = "keep-alive";</script>
@@ -109,7 +71,6 @@
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
 			window.addEventListener("DOMContentLoaded", () => engine.start());
 		</script>
-			<script src="generated/js/source/editor/editor/editor.js"></script>
-			<script src="generated/js/source/editor/editor/scene-thumbnail.js"></script>
+		<script src="generated/js/editor/editor.min.js"></script>
 	</body>
 </html>

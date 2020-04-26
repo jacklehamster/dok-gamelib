@@ -116,25 +116,48 @@ SceneManager.add({Game: class extends Game {
 				[ "jump-up", "27" ],
 			],
 		},
+		{
+			id: "wall",
+			src: "home-floor",
+			grid: [10, 1],
+		},
 	],
 	sprites: [
 		{
-			src: "home-floor",
+			src: "wall",
 			type: SpriteType.Front,
 			rotation: {
-				center: [
-					({definition}, index) => definition.pos[0].get(index),
-					-1.15,
-					({definition}, index) => definition.pos[2].get(index),
+				angle: [
+					0,
+					({definition}, index) => (index / definition.count.get() - .5) * Math.PI * 2,
+					0,
 				],
 			},
 			pos: [
-				(_, index) => Math.sin((index - 10) * Math.PI / 20) * 5,
-				-1.15,
-				(_, index) => -Math.cos((index - 10) * Math.PI / 20) * 5,
+				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 4.9,
+				-1.5 + 2,
+				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 4.9,
 			],
-			scale: [1, 5],
-			count: 20,
+			scale: [
+				({definition}) => .8 * 40 / definition.count.get(),
+				4,
+			],
+			frame: (_, index) => index,
+			effects: {
+				brightness: 80,
+			},
+			count: 40,
+		},
+		{
+			src: "home-floor",
+			type: SpriteType.Floor,
+			circleRadius: 1,
+			pos: [0, -1.15, 0],
+			scale: [10, 10],
+			effects: {
+				tintColor: 0x88995555,
+				brightness: 110,
+			},
 		},
 		SpriteUtils.makeSprite({
 			src: "dok",
@@ -160,16 +183,5 @@ SceneManager.add({Game: class extends Game {
 			scale: [3, 3],
 			shadowColor: 0xFF333333,
 		}),
-		{
-			src: "home-floor",
-			type: SpriteType.Floor,
-			circleRadius: 1,
-			pos: [0, -1.15, 0],
-			scale: [10, 10],
-			effects: {
-				tintColor: 0x88995555,
-				brightness: 80,
-			},
-		},
 	],
 });

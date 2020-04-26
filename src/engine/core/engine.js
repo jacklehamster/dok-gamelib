@@ -23,7 +23,7 @@ class Engine {
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.chunkProcessor, this.spritesheetManager, this.data.generated);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager);
-		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
+		this.spriteProvider = new SpriteProvider(now => new SpriteInstance(now));
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
@@ -81,10 +81,10 @@ class Engine {
 				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
 		function animationFrame(now) {
 			requestAnimationFrame(animationFrame);
-			if (!engine.running) {
+			const { currentScene, running } = engine;
+			if (!running || !currentScene) {
 				return;
 			}
-			const { currentScene } = engine;
 			const frameDuration = 1000 / currentScene.getFrameRate();
 			if (!currentScene.startTime) {
 				currentScene.startTime = now;

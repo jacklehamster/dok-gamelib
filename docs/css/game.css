@@ -71,6 +71,10 @@ html, body {
   transform: perspective(1000px) translate3d(-350px, 0, -300px) rotate3d(0, 1, 0, 90deg);
 }
 
+.panel.split {
+  transform: perspective(1000px) translate3d(-250px, 0, -200px) rotate3d(0, 1, 0, 60deg);
+}
+
 .editor-container {
   overflow-x: visible;
   overflow-y: auto;
@@ -118,6 +122,12 @@ html, body {
   visibility: visible;
   opacity: 1;
   transform: perspective(1000px) translate3d(110px, 0, 0) rotate3d(0, 1, 0, 0);
+}
+
+.editor.split {
+  visibility: visible;
+  opacity: 1;
+  transform: perspective(1000px) translate3d(200px, 0, -100px) rotate3d(0, 1, 0, -45deg);  
 }
 
 .hidden {

@@ -13,13 +13,14 @@
  */
 
 class ImageSpriteInstance extends BaseSpriteInstance {
- 	constructor() {
- 		super();
+ 	constructor(now) {
+ 		super(now);
 		this.src = null;
 		this.effects = {
 			tintColor: 0,
 			brightness: 0,
 			curvature: 0,
+			hue: 0,
 		};
  	}
 
@@ -29,7 +30,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			return;
 		}
 		
-		const { src, effects: { brightness, tintColor, curvature } } = definition;
+		const { src, effects: { brightness, tintColor, curvature, hue } } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 		const spriteSrc = src.get(instanceIndex);
@@ -54,6 +55,12 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 		if (newCurvature !== this.effects.curvature) {
 			this.effects.curvature = newCurvature;
 			updateTimes.curvature = now;
+		}
+
+		const newHue = hue.get(instanceIndex);
+		if (newHue !== this.effects.hue) {
+			this.effects.hue = newHue;
+			updateTimes.hue = now;
 		}
 	}
 }

@@ -12,7 +12,7 @@
   */
 
 class BaseSpriteInstance {
-	constructor() {
+	constructor(now) {
 		this.providerIndex = -1;
 		this.definitionIndex = -1;
 		this.instanceIndex = -1;
@@ -20,7 +20,8 @@ class BaseSpriteInstance {
 		this.type = -1;
 		this.hidden = false;
 		this.updated = 0;
-		this.updateTimes = {};
+		this.updateTimes = {
+		};
 	}
 
 	getEvaluated(game, definition) {
