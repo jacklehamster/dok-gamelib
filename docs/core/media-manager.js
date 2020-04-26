@@ -26,19 +26,21 @@ class MediaManager {
 			if (previousMusic) {
 				previousMusic.pause();
 			}
-			this.theme = name;
-			if (this.theme) {
+			if (name) {
 				const music = this.getMusic(this.theme);
-				if (previousMusic) {
-					music.currentTime = 0;
+				if (music) {
+					if (previousMusic) {
+						music.currentTime = 0;
+					}
+					music.play();
+					this.theme = name;
 				}
-				music.play();
 			}
 		}
 
 		if (this.theme) {
 			const music = this.getMusic(this.theme);
-			music.volume = volume;			
+			music.volume = volume;
 		}
 	}
 

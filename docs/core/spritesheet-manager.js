@@ -16,7 +16,7 @@ class SpritesheetManager {
 		this.images = null;
 
 		//	load texture
-		Utils.load(imagedata.spritesheets, {
+		Utils.load(imagedata.spritesheets.map(({url}) => url), {
 			error: errors => {
 				this.onErrorListeners.forEach(callback => callback(errors));
 				this.onLoadListeners.length = 0;

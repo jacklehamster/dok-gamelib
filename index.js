@@ -259,7 +259,7 @@ function getSpritesheets() {
 function saveFontMap() {
 	return fs.promises.readFile(`${__dirname}/game/game.json`, 'utf8').then(result => {
 		const { fonts } = JSON.parse(result);
-		return fs.promises.mkdir(`generated/assets`, { recursive: true }).then(() => {
+		return fs.promises.mkdir(`generated/assets/fonts`, { recursive: true }).then(() => {
 			if (!fs.existsSync(`generated/assets/fonts.json`)) {
 				fs.writeFileSync(`generated/assets/fonts.json`, "{}");
 			}
@@ -276,7 +276,7 @@ function saveFontMap() {
 					return { ... savedFonts[id], id };
 				} else {
 					const { buffer, letterInfo } = assets.createFontSheet(font);
-					return fs.promises.writeFile(`generated/assets/${id}.png`, buffer).then(() => {
+					return fs.promises.writeFile(`generated/assets/fonts/${id}.png`, buffer).then(() => {
 						return {
 							name, characters, fontSize, cellSize, letterInfo, id,
 						};
@@ -343,8 +343,8 @@ app.get('/spritesheet', function(req, res) {
 		getSpritesheets().then(({spritesheets}) => {
 			generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(code => {
 				res.writeHeader(200, {"Content-Type": "text/html"}); 
-				spritesheets.forEach(src => {
-			        res.write(`<a href="${src}"><img style='background-color: #ddddee; border: 1px solid black' src="${src}" width=200></a>`);  
+				spritesheets.forEach(({url}) => {
+			        res.write(`<a href="${url}"><img style='background-color: #ddddee; border: 1px solid black' src="${url}" width=200></a>`);  
 				});
 				res.write(`<pre>${code}</pre>`);
 				res.end();
@@ -395,4 +395,5 @@ app.get('/fonts', (req, res) => {
 
 app.use(express.static(`${__dirname}/${webDir}`));
 
-app.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));
+const server = app.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));
+server.timeout = 5 * 60 * 1000;

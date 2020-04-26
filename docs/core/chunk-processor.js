@@ -18,7 +18,7 @@ class ChunkProcessor {
 	}
 
 	processTexture(sprite, chunk, now) {
-		const { glRenderer: { imagedata, textureManager } } = this.engine;
+		const { glRenderer: { imagedata, textureManager }, data: { generated: { videos } } } = this.engine;
 		const { src, spriteData: { spriteSize, grid, padding }, scale, effects: { brightness }, circleRadius } = sprite;
 
 		if (!src) {
@@ -26,10 +26,12 @@ class ChunkProcessor {
 		} else {
 			const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src);
 			if (!spriteInfo) {
-				const error = `Unknown sprite ${src}.`;
-				if (this.lastError !== error) {
-					this.lastError = error;
-					console.warn(this.lastError);
+				if (!videos[src]) {
+					const error = `Unknown sprite '${src}'.`;
+					if (this.lastError !== error) {
+						this.lastError = error;
+						console.warn(this.lastError);
+					}
 				}
 				chunk.setTexture(0, 0, 0, 0, 0, scale, brightness, padding, circleRadius, now);
 				sprite.src = null;
@@ -37,7 +39,6 @@ class ChunkProcessor {
 			}
 
 			const { rect: [ x, y, sheetWidth, sheetHeight ], index } = spriteInfo;
-
 			const spriteDataProcessorInfo = this.engine.spriteDataProcessor.data[src];
 			if (spriteDataProcessorInfo) {
 				const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;

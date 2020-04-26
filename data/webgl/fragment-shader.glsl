@@ -95,9 +95,9 @@ void main(void) {
 		color = getTextureColor(uTextures, vTextureSlot, vTexturePoint);		
 	}
 
-	//	SDF handling, mostly for text font
+	//	SDF handling, for text and reduced size sprite
     color.a = smoothstep(.5 - .01, .5 + .01, color.a);
-	if (color.a <= 0.01) {
+	if (color.a <= 0.001) {
 		discard;
 	}
 
