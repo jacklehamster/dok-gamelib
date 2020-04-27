@@ -83,7 +83,7 @@ class MediaManager {
 	}
 
 	getMusic(name, url) {
-		return getSound(name, url);
+		return this.getSound(name, url);
 	}
 
 	getSound(name, url) {
@@ -103,7 +103,7 @@ class MediaManager {
 	}
 
 	playSound(name, url) {
-		getSound(name, url).play();
+		this.getSound(name, url).play();
 	}
 
 	getVideo(name, url) {
