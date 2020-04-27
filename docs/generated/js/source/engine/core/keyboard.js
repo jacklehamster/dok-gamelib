@@ -53,7 +53,6 @@ class Keyboard {
 
 		document.addEventListener("keydown", e => {
 			if (this.active) {
-				console.log(e.code);
 				keysDown[e.code] = true;
 				delete keysUp[e.code];
 				this.dirty = true;
