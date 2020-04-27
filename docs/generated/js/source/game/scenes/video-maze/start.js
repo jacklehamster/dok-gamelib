@@ -308,7 +308,6 @@ SceneManager.add({
 			refresh: ({game}) => {
 				game.engine.glRenderer.textureManager.updateVideoTexture(game.getVideo("bunny"), 0, 0);
 			},
-			refreshRate: ({game}) => Math.min(30, game.getFrameRate()),
 			cell: ({game, definition},index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
 			},

@@ -21,7 +21,7 @@ attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
 attribute vec4 aVertexTextureCenter;	//	[ x, y, texWidth, texHeight ]
 attribute vec4 aAnimationData; 			//	[ time, start, total, frameRate ]
 attribute vec2 aGrid;					//	[ cols, rows ]
-attribute vec4 aTintColor;				//	[ tint color, mix, hue change ]
+attribute vec4 aColorEffect;			//	[ tint color, mix, hue change ]
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
@@ -38,6 +38,7 @@ varying vec3 vFragPos;
 varying float vTextureSlot;
 varying float vBrightness;
 varying vec4 vTintColor;
+varying float vHue;
 
 vec4 makeColorFromRGB(float rgb, float mixRatio) {
 	return vec4(
@@ -91,7 +92,8 @@ void main(void) {
 
 	vTextureSlot = floor(aVertexTextureCoord.x * .5);
 	vBrightness = floor(aVertexTextureCoord.y * .5);
-	vTintColor = makeColorFromRGB(aTintColor.x, aTintColor.y);
+	vTintColor = makeColorFromRGB(aColorEffect.x, aColorEffect.y);
+	vHue = aColorEffect.z;
 
 	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 10.0)) * .2);
 	gl_Position = position;

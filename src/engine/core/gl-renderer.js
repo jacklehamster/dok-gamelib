@@ -61,17 +61,17 @@ class GLRenderer {
 		};
 
 		this.bufferInfo = {
-			vertex: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			offset: 	new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			normal: 	new EngineBuffer(NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			move: 		new EngineBuffer(MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			gravity: 	new EngineBuffer(GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			spriteType: new EngineBuffer(SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			texCoord: 	new EngineBuffer(TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			texCenter: 	new EngineBuffer(TEXTURE_CENTER_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			animation: 	new EngineBuffer(ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			grid: 		new EngineBuffer(GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			tintColor: 	new EngineBuffer(TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			vertex: 		new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			offset: 		new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			normal: 		new EngineBuffer(NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			move: 			new EngineBuffer(MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			gravity: 		new EngineBuffer(GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			spriteType: 	new EngineBuffer(SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			texCoord: 		new EngineBuffer(TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			texCenter: 		new EngineBuffer(TEXTURE_CENTER_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			animation: 		new EngineBuffer(ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			grid: 			new EngineBuffer(GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			colorEffect: 	new EngineBuffer(TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
 
 		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);

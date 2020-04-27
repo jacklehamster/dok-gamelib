@@ -227,13 +227,13 @@ class Chunk {
 		const { bufferInfo, index } = this;
 		const color = value & 0xFFFFFF;
 		const mixRatio = Math.max(0, (value / 0xFFFFFF) / 255);
-		this.assignValues(bufferInfo.tintColor,
+		this.assignValues(bufferInfo.colorEffect,
 			color, mixRatio, hue, 0,
 			color, mixRatio, hue, 0,
 			color, mixRatio, hue, 0,
 			color, mixRatio, hue, 0,
 		);
-		bufferInfo.tintColor.chunkUpdateTimes[index] = now;				
+		bufferInfo.colorEffect.chunkUpdateTimes[index] = now;				
 	}
 
 	setGrid(cols, rows, now) {

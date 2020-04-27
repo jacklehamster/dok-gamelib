@@ -34,6 +34,7 @@ SceneManager.add({Game: class extends Game {
 			effects: {
 				tintColor: 0x889999FF,
 				brightness: 80,
+				hue: ({game}) => Math.sin(game.now / 5000),
 			},
 			scale: [2, 2],
 			animation: ({game, definition}, index) => index,

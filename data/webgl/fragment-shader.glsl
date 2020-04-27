@@ -21,6 +21,8 @@ varying vec3 vFragPos;
 varying float vTextureSlot;
 varying float vBrightness;
 varying vec4 vTintColor;
+varying float vHue;
+
 uniform vec4 uBackground;
 uniform vec3 uLightPos;
 uniform vec4 uLightIntensity;
@@ -111,7 +113,7 @@ void main(void) {
 	//	desaturate / blend with background with distance
 	float distance = zDist;
 	float dValue = smoothstep(0.0, 1.5, distance) / 1.5;
-	color = alterHueSatLum(color, vec3(1.0, (1.0 - dValue) * closeSaturation + dValue * farSaturation, min(1.2, max(0.0, .8 + distance * .8))));
+	color = alterHueSatLum(color, vec3(1.0 + vHue, (1.0 - dValue) * closeSaturation + dValue * farSaturation, min(1.2, max(0.0, .8 + distance * .8))));
 	color = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, distance * depthFading);
 
 	gl_FragColor = color;

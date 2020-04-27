@@ -26,7 +26,7 @@ class Shader {
 				texCenter: "aVertexTextureCenter",
 				animation: "aAnimationData",
 				grid: "aGrid",
-				tintColor: "aTintColor",
+				colorEffect: "aColorEffect",
 			},
 			uniforms: {
 				projection: "uProjectionMatrix",

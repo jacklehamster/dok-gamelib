@@ -72,7 +72,7 @@ html, body {
 }
 
 .panel.split {
-  transform: perspective(1000px) translate3d(-250px, 0, -200px) rotate3d(0, 1, 0, 60deg);
+  transform: perspective(1000px) translate3d(-240px, 0, -340px) rotate3d(0, 1, 0, 60deg);
 }
 
 .editor-container {
@@ -127,7 +127,7 @@ html, body {
 .editor.split {
   visibility: visible;
   opacity: 1;
-  transform: perspective(1000px) translate3d(200px, 0, -100px) rotate3d(0, 1, 0, -45deg);  
+  transform: perspective(1000px) translate3d(190px, 0, -200px) rotate3d(0, 1, 0, -45deg);  
 }
 
 .hidden {

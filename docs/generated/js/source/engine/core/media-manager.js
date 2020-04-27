@@ -33,6 +33,7 @@ class MediaManager {
 					if (previousMusic) {
 						music.currentTime = 0;
 					}
+					music.loop = "loop";
 					music.play();
 				}
 			}
@@ -47,13 +48,16 @@ class MediaManager {
 	}
 
 	getMusic(name, url) {
+		return getSound(name, url);
+	}
+
+	getSound(name, url) {
 		const { config, sounds } = this;
 		if (sounds[name] || config.sounds[name] || url) {
 			if (!sounds[name]) {
 				const sound = sounds[name] = document.createElement("audio");
 				sound.src = url || config.sounds[name].path;
 				sound.preload = 'auto';
-				sound.loop = "loop";
 				sound.addEventListener('canplay', () => {
 					sound.ready = true;
 				}, true);
@@ -61,6 +65,10 @@ class MediaManager {
 			return sounds[name];
 		}
 		return null;
+	}
+
+	playSound(name, url) {
+		getSound(name, url).play();
 	}
 
 	getVideo(name, url) {

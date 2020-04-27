@@ -448,7 +448,7 @@ app.get('/data', (req, res) => {
 app.get('/fonts', (req, res) => {
 	saveFontMap().then((fonts) => {
 		for (let id in fonts) {
-			return fs.promises.readFile(`${__dirname}/generated/assets/${id}.png`);
+			return fs.promises.readFile(`${__dirname}/generated/assets/fonts/${id}.png`);
 		}
 		return Promise.reject("Font not found");
 	}).then(data => {

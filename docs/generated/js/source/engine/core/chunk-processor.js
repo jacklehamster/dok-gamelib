@@ -132,11 +132,5 @@ class ChunkProcessor {
 			const [ gx, gy, gz ] = sprite.gravity;
 			chunk.setGravity(gx, gy, gz, now);
 		}	
-
-		for (let i in updateTimes) {
-			if (updateTimes[i] === now) {
-				console.log(sprite.src, i);
-			}
-		}	
 	}
 }
