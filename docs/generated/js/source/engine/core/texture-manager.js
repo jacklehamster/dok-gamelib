@@ -63,9 +63,19 @@ class TextureManager {
 		return this.videoTextures[src];
 	}
 
-	updateVideoTexture(videoFrame, x, y) {
+	updateVideoTexture(src) {
+		const videoFrame = game.getVideo("bunny");
+		if (!videoFrame || !videoFrame.videoWidth || !videoFrame.videoHeight) {
+			return;
+		}
 		const { gl, glTextures } = this;
 		const index = this.videoTextureIndex = this.videoTextureIndex === this.glTextures.length - 1 ? this.glTextures.length - 2 : this.glTextures.length - 1;
+		const videoInfo = this.videoTextures[src];
+		if (!videoInfo) {
+			return;
+		}
+		const { rect: [ x, y ] } = videoInfo;
+
 		const { glTexture, isVideo, width, height } = glTextures[index];
 
 		gl.activeTexture(gl[`TEXTURE${index}`]);

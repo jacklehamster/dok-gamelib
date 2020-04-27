@@ -306,7 +306,7 @@ SceneManager.add({
 				game.getVideo("bunny").pause();
  			},
 			refresh: ({game}) => {
-				game.engine.glRenderer.textureManager.updateVideoTexture(game.getVideo("bunny"), 0, 0);
+				game.engine.glRenderer.textureManager.updateVideoTexture("bunny");
 			},
 			cell: ({game, definition},index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
