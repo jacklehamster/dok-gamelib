@@ -75,6 +75,7 @@ class GLRenderer {
 		};
 
 		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
+		this.mediaManager = mediaManager;
 		this.textureManager = new TextureManager(gl, this.shader, mediaManager);
 
 		const { shader, textureManager } = this;
@@ -92,6 +93,7 @@ class GLRenderer {
 
 		this.lastRefresh = 0;
 		this.progress = 0;
+		this.cycle = 0;
 	}
 
 	checkSupport() {
@@ -266,9 +268,19 @@ class GLRenderer {
 		}
 	}
 
+	updatePlayingVideos(sprites, now) {
+		const { mediaManager, textureManager, cycle } = this;
+		const videos = mediaManager.updatePlayingVideos(sprites, now);
+		if (videos.length) {
+			//	only update video once per frame. Cycle through.
+			textureManager.updateVideoTexture(videos[cycle % videos.length]);
+		}
+	}
+
 	draw(now) {
 		const { gl } = this;
 		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
 		this.lastRefresh = now;
+		this.cycle ++;
 	}
 }

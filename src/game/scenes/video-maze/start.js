@@ -298,16 +298,6 @@ SceneManager.add({
 					({definition},index) => -definition.zShift.get(index) * 3,
 				],
 			},
-			init: ({game}) => {
-				game.getVideo("bunny").play();
-				game.getVideo("bunny").volume = 0;
-			},
-			destroy: ({game}) => {
-				game.getVideo("bunny").pause();
- 			},
-			refresh: ({game}) => {
-				game.engine.glRenderer.textureManager.updateVideoTexture("bunny");
-			},
 			cell: ({game, definition},index) => {
 				return game.sceneData.cells[Math.floor(index/4)];
 			},

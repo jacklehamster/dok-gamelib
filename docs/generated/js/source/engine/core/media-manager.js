@@ -18,6 +18,41 @@ class MediaManager {
 		this.sounds = {};
 		this.config = config;
 		this.theme = null;
+		this.videoPlaytimes = {};
+		this.playingVideos = [];
+	}
+
+	updatePlayingVideos(sprites, now) {
+		const { videoPlaytimes, playingVideos } = this;
+		for (let i = 0; i < sprites.length; i++) {
+			const { src } = sprites[i];
+			if (!videoPlaytimes[src]) {
+				const video = this.getVideo(src);
+				if (video) {
+					video.play();
+					console.log("Playing video:", src);
+					playingVideos.push(src);
+				} else {
+					continue;
+				}
+			}
+			videoPlaytimes[src] = now;
+		}
+
+		for (let i = playingVideos.length - 1; i >= 0; i--) {
+			const src = playingVideos[i];
+			if (videoPlaytimes[src] !== now) {
+				delete videoPlaytimes[src];
+				const video = this.getVideo(src);
+				if (video) {
+					video.pause();
+					console.log("Pause video:", src);
+					playingVideos[i] = playingVideos[playingVideos.length-1];
+					playingVideos.pop();
+				}
+			}
+		}
+		return playingVideos;
 	}
 
 	setTheme(name, volume) {
@@ -80,6 +115,7 @@ class MediaManager {
 				video.crossOrigin = '';
 				video.preload = 'auto';
 				video.loop = "loop";
+				video.volume = 0;
 				video.addEventListener('canplay', () => {
 					video.ready = true;
 				}, true);

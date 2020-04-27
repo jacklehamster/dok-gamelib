@@ -48,32 +48,36 @@ class TextureManager {
 		gl.generateMipmap(gl.TEXTURE_2D);
 	}
 
+	getCurrentVideoTextureIndex() {
+		const { glTextures } = this;
+		return glTextures.length - 1;
+	}
+
 	getVideoTexture(src) {
 		if (!this.videoTextures[src] && this.mediaManager.getVideo(src)) {
 			const { videoWidth, videoHeight } = this.mediaManager.getVideo(src);
 			if (videoWidth && videoHeight) {
 				this.videoTextures[src] = {
 					rect: [0, 0, videoWidth, videoHeight],
+					isVideo: true,
 				};
 			}
-		}
-		if (this.videoTextures[src]) {
-			this.videoTextures[src].index = this.videoTextureIndex;
 		}
 		return this.videoTextures[src];
 	}
 
 	updateVideoTexture(src) {
-		const videoFrame = game.getVideo("bunny");
+		const videoFrame = game.getVideo(src);
 		if (!videoFrame || !videoFrame.videoWidth || !videoFrame.videoHeight) {
 			return;
 		}
 		const { gl, glTextures } = this;
-		const index = this.videoTextureIndex = this.videoTextureIndex === this.glTextures.length - 1 ? this.glTextures.length - 2 : this.glTextures.length - 1;
-		const videoInfo = this.videoTextures[src];
+		const videoInfo = this.getVideoTexture(src);
 		if (!videoInfo) {
 			return;
 		}
+		const index = this.getCurrentVideoTextureIndex();
+
 		const { rect: [ x, y ] } = videoInfo;
 
 		const { glTexture, isVideo, width, height } = glTextures[index];

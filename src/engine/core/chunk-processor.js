@@ -39,7 +39,8 @@ class ChunkProcessor {
 				return;
 			}
 
-			const { rect: [ x, y, sheetWidth, sheetHeight ], index } = spriteInfo;
+			const { rect: [ x, y, sheetWidth, sheetHeight ], isVideo } = spriteInfo;
+			const index = isVideo ? textureManager.getCurrentVideoTextureIndex() : spriteInfo.index;
 			if (spriteDataProcessorInfo) {
 				const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;
 				chunk.setTexture(index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, circleRadius, now);

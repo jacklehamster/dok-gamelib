@@ -118,6 +118,9 @@ class Engine {
 				const sprites = spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);
 				glRenderer.sendSprites(sprites, now);
 
+				//	update video textures
+				glRenderer.updatePlayingVideos(sprites, now);
+
 				//	remove unprocessed sprites
 				spritesToRemove.length = 0;
 				const hiddenSprites = spriteProvider.getSprites();
