@@ -183,11 +183,11 @@ SceneManager.add({Game: class extends Game {
 		this.sceneData.lastLevelUp = this.now;
 
 		if (this.sceneData.bears.length === 2) {
-			this.engine.unlockMedal("Second Bear");
+			this.unlockMedal("Second Bear");
 		}
 
 		if (this.sceneData.bears.length === 3) {
-			this.engine.unlockMedal("Third Bear");
+			this.unlockMedal("Third Bear");
 		}
 
 
@@ -316,7 +316,7 @@ SceneManager.add({Game: class extends Game {
 		if (!this.sceneData.gameOver) {
 			if (this.sceneData.bears.every(({bearAI}) => bearAI.KO)) {
 				this.sceneData.gameOver = this.now;
-				this.engine.sendScore(this.sceneData.score);
+				this.sendScore(this.sceneData.score);
 			}
 		}
 
@@ -655,17 +655,18 @@ SceneManager.add({Game: class extends Game {
 		}),
 		{
 			init: ({game, definition}) => {
-				game.ui = game.engine.canvas.parentElement.appendChild(document.createElement("div"));
+				const { canvas } = game.engine;
+				game.ui = canvas.parentElement.appendChild(document.createElement("div"));
 				game.ui.style.position = "absolute";
 				game.ui.style.display = "none";
 				game.ui.classList.add("unselectable");
-				game.ui.style.top = `${game.engine.canvas.offsetTop}px`;
-				game.ui.style.left = `${game.engine.canvas.offsetLeft}px`;
+				game.ui.style.top = `${canvas.offsetTop}px`;
+				game.ui.style.left = `${canvas.offsetLeft}px`;
 				game.ui.style.display = "flex";
 
 				window.addEventListener("resize", () => {
-					game.ui.style.top = `${game.engine.canvas.offsetTop}px`;
-					game.ui.style.left = `${game.engine.canvas.offsetLeft}px`;
+					game.ui.style.top = `${canvas.offsetTop}px`;
+					game.ui.style.left = `${canvas.offsetLeft}px`;
 				});
 
 				const controlBox = game.ui.appendChild(document.createElement("div"));

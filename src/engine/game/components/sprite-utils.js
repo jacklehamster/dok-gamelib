@@ -51,7 +51,7 @@ class SpriteUtils {
 			animation: ({definition}, index) => definition.spriteAnimation.get(Math.floor(index / 2)),
 			hotspot: [
 				0,
-				(_, index) => index % 2 === 0 ? 0 : .5,
+				(_, index) => index % 2 === 0 ? .02 : .5,
 			],
 			position,
 			heightAboveGround: heightAboveGround || (() => 0),

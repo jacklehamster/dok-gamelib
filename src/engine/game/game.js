@@ -86,6 +86,14 @@ class Game {
 		return this.engine.data.generated.fonts[fontName || this.getFirstFontName()];
 	}
 
+	unlockMedal(medal) {
+		this.engine.unlockMedal(medal);
+	}
+
+	sendScore(score) {
+		this.engine.sendScore(score);
+	}
+
 	toSourceCode(_, editor) {
 		const { classes, config } = this;
 		const classesParam = {
