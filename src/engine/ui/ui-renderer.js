@@ -110,6 +110,9 @@ class UIRenderer {
 									const newHeight = height.get(c, instanceIndex);
 									const newType = type.get(c, instanceIndex);
 									switch(newType) {
+										case "clear":
+											context.clearRect(0, 0, element.width, element.height);
+										break;
 										case "image":
 											const newSrc = src.get(c, instanceIndex);
 											const newFrame = frame.get(c, instanceIndex);

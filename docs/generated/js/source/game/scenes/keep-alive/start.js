@@ -662,6 +662,9 @@ SceneManager.add({Game: class extends Game {
 				refreshRate: 20,
 				draw: [
 					{
+						type: "clear",
+					},
+					{
 						src: ({definition}, index) => definition.grounds[index],
 						x: 5,
 						y: (_, index) => 5 + 48 * index,
