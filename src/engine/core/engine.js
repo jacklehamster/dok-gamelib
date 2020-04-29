@@ -19,14 +19,16 @@ class Engine {
 		this.data = getData();
 		this.dataStore = new DataStore();
 		this.mediaManager = new MediaManager(this.data.generated);
-		this.chunkProcessor = new ChunkProcessor(this);
+		this.spriteRenderer = new SpriteRenderer(this);
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
-		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.chunkProcessor, this.spritesheetManager, this.data.generated);
+		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.data.generated);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager);
+		this.uiProvider = new SpriteProvider(now => new UISpriteInstance(now));
 		this.spriteProvider = new SpriteProvider(now => new SpriteInstance(now));
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
+		this.uiRenderer = new UIRenderer(canvas, this.canvasRenderer);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard(this, {
@@ -77,7 +79,7 @@ class Engine {
 	}
 
 	static beginLooping(engine) {
-		const { glRenderer, sceneRenderer, spriteDefinitionProcessor, spriteProvider,
+		const { glRenderer, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
 				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
 		function animationFrame(now) {
 			requestAnimationFrame(animationFrame);
@@ -100,7 +102,8 @@ class Engine {
 
 			sceneRenderer.refresh(currentScene);
 			spriteDataProcessor.refresh(currentScene);
-			spriteDefinitionProcessor.refresh(currentScene);
+			spriteDefinitionProcessor.refresh(currentScene.ui, currentScene.now);
+			spriteDefinitionProcessor.refresh(currentScene.sprites, currentScene.now);
 
 			if (engine.nextScene) {
 				engine.resetScene(engine.nextScene);
@@ -110,9 +113,15 @@ class Engine {
 			if (now - glRenderer.lastRefresh >= frameDuration) {
 				glRenderer.setTime(now - currentScene.startTime);
 				glRenderer.clearScreen();
+
 				sceneRenderer.render(currentScene);
 
 				spriteDataProcessor.process(currentScene);
+
+				//	process UI
+				const uiComponents = spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider);
+				//	render uiComponents
+				uiRenderer.render(uiComponents, now);
 
 				//	show sprites to process
 				const sprites = spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);
@@ -165,10 +174,13 @@ class Engine {
 
 	clearScene() {
 		if (this.currentScene) {
-			this.spriteDefinitionProcessor.destroy(this.currentScene);
+			this.spriteDefinitionProcessor.destroy(this.currentScene.ui);
+			this.spriteDefinitionProcessor.destroy(this.currentScene.sprites);
 			this.spriteDataProcessor.destroy(this.currentScene);
 			this.currentScene.destroy.run();
 		}
+		this.uiRenderer.destroy();
+		this.uiProvider.clear();
 		this.spriteProvider.clear();
 	}
 
@@ -189,7 +201,8 @@ class Engine {
 			this.currentScene.setEngine(this);
 			this.sceneRenderer.init(scene);
 			this.spriteDataProcessor.init(scene);
-			this.spriteDefinitionProcessor.init(scene);
+			this.spriteDefinitionProcessor.init(scene.sprites);
+			this.spriteDefinitionProcessor.init(scene.ui);
 			this.onSceneChangeListener.forEach(callback => callback({name:sceneName, scene, config: scene.config}));
 			window.game = scene;
 		}

@@ -23,7 +23,7 @@ class CanvasRenderer {
 		return this.spriteDataProcessor.data[id];
 	}
 
-	drawToCanvas(id, px, py, size, canvas, animationIndex) {
+	drawToCanvas(id, px, py, rectWidth, rectHeight, canvas, animationIndex) {
 		const { rect, index } = this.imagedata.sprites[id];
 		const [ x, y, width, height ] = rect;
 		const spriteInfo = this.getSpriteInfo(id);
@@ -42,7 +42,7 @@ class CanvasRenderer {
 				const spriteHeight = spriteSize && spriteSize[1] ? spriteSize[1] : height / (rows || 1);
 				const col = typeof(animationIndex) !== "undefined" ? animationIndex % cols : 0;
 				const row = typeof(animationIndex) !== "undefined" ? Math.floor(animationIndex / cols) : 0;
-				const scale = Math.min(size / spriteWidth, size / spriteHeight);
+				const scale = Math.min(rectWidth / spriteWidth, rectHeight / spriteHeight);
 				const paddingWidth = spriteInfo ? spriteWidth * spriteInfo.padding / 100 : 0;
 				const paddingHeight = spriteInfo ? spriteHeight * spriteInfo.padding / 100 : 0;
 

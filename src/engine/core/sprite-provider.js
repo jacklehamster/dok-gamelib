@@ -55,6 +55,7 @@ class SpriteProvider {
 		const sprite = this.sprites[this.count++];
 		sprite.definitionIndex = definitionIndex;
 		sprite.instanceIndex = instanceIndex;
+		sprite.init();
 		return sprite;
 	}
 }

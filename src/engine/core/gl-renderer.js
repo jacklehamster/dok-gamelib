@@ -15,14 +15,14 @@ GLRenderer Engine
 */
 
 class GLRenderer {
-	constructor(canvas, webgl, mediaManager, chunkProcessor, spritesheetManager, {imagedata, game}) {
+	constructor(canvas, webgl, mediaManager, spriteRenderer, spritesheetManager, {imagedata, game}) {
 		const resolution = devicePixelRatio;
 		canvas.width = game.width * resolution;
 		canvas.height = game.height * resolution;
 		canvas.style.width = `${canvas.width / resolution}px`;
 		canvas.style.height = `${canvas.height / resolution}px`;
 
-		this.chunkProcessor = chunkProcessor;
+		this.spriteRenderer = spriteRenderer;
 
 		const { vertexShader, fragmentShader } = webgl;
 		this.canvas = canvas;
@@ -257,13 +257,13 @@ class GLRenderer {
 	}
 
 	sendSprites(sprites, now) {
-		const { gl, pool, chunkProcessor } = this;
+		const { gl, pool, spriteRenderer } = this;
 		for (let i = 0; i < sprites.length; i++) {
 			const sprite = sprites[i];			
 			const chunk = this.getChunkFor(sprite)
 			if (chunk) {
 				pool.vec3forChunk.reset();
-				chunkProcessor.process(sprite, chunk, now);
+				spriteRenderer.render(sprite, chunk, now);
 			}
 		}
 	}

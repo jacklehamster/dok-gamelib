@@ -24,6 +24,9 @@ class BaseSpriteInstance {
 		};
 	}
 
+	init() {
+	}
+
 	getEvaluated(game, definition) {
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;

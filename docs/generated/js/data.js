@@ -1228,7 +1228,7 @@ function getData() {
           "docBackground": 0,
           "background": 0,
           "frameRate": 60,
-          "music": {"src": null, "volume": 0.5}
+          "music": {"src": null, "volume": 0.5, "muted": false}
         },
         "view": {
           "pos": [0, 0, 0],
@@ -1247,6 +1247,43 @@ function getData() {
           "specularStrength": 0,
           "diffusionStrength": 0.4
         },
+        "ui": [
+          {
+            "init": null,
+            "destroy": null,
+            "refresh": null,
+            "refreshRate": 0,
+            "type": "div",
+            "hidden": false,
+            "count": 1,
+            "id": null,
+            "parent": null,
+            "style": {},
+            "innerText": null,
+            "classList": null,
+            "width": 0,
+            "height": 0,
+            "events": {"onClick": null},
+            "canvas": {
+              "refreshRate": 20,
+              "draw": [
+                {
+                  "type": "image",
+                  "src": null,
+                  "hidden": false,
+                  "x": 0,
+                  "y": 0,
+                  "width": 0,
+                  "height": 0,
+                  "frame": 0,
+                  "strokeStyle": "#000000",
+                  "lineWidth": 2,
+                  "count": 1
+                }
+              ]
+            }
+          }
+        ],
         "spriteData": [
           {
             "id": null,
@@ -1290,12 +1327,11 @@ function getData() {
               "curvature": 0,
               "hue": 0
             },
+            "circleRadius": 0,
             "count": 1,
             "init": null,
             "destroy": null,
             "refresh": null,
-            "circleRadius": 0,
-            "padding": 0,
             "refreshRate": 0
           }
         ]

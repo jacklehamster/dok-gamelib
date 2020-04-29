@@ -223,7 +223,7 @@ class SourceCode {
 			canvas.style.width = "100%"; canvas.style.height = "100%";
 			canvas.width = size; canvas.height = size;
 
-			this.engine.canvasRenderer.drawToCanvas(id, 0, 0, size, canvas);
+			this.engine.canvasRenderer.drawToCanvas(id, 0, 0, size, size, canvas);
 
 			const label = container.appendChild(document.createElement("div"));
 			label.style.fontSize = "8pt";

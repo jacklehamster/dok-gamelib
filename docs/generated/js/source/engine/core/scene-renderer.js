@@ -74,7 +74,7 @@ class SceneRenderer {
 			document.body.style.backgroundColor = Utils.getDOMColor(docBackground);
 			this.docBackground = docBackground;
 		}
-		const newMusicSrc = settings.music.src.get();
+		const newMusicSrc = settings.music.muted.get() ? null : settings.music.src.get();
 		const newVolume = settings.music.volume.get();
 		if (newMusicSrc !== this.settings.music.src || newVolume !== this.settings.music.volume) {
 			this.settings.music.src = newMusicSrc;

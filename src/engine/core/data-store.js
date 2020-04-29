@@ -12,15 +12,32 @@
  *	DataStore
  */
 
- class DataStore {
+class DataStore {
  	constructor() {
- 		this.data = {
+ 		this.data = this.loadDataFromLocalStorage() || {
  			situations: {},
  		};
  	}
 
+ 	loadDataFromLocalStorage() {
+		const data = localStorage.getItem("data");
+		if (!data) {
+			return null;
+		}
+		try {
+			return JSON.parse(data);
+		} catch(e) {
+			console.error(e);
+			return null;
+		}
+ 	}
+
  	getData() {
  		return this.data;
+ 	}
+
+ 	save() {
+		localStorage.setItem("data", JSON.stringify(this.data));
  	}
 
  	getSituation(name) {
@@ -30,4 +47,4 @@
  		}
  		return situations[name];
  	}
- }
+}

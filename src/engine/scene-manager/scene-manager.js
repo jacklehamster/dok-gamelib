@@ -61,6 +61,10 @@ class SceneManager {
 	 			sceneObj.sprites[i] = new SpriteDefinition(sceneObj.sprites[i], sceneObj);
 	 		}
 
+	 		for (let i = 0; i < sceneObj.ui.length; i++) {
+	 			sceneObj.ui[i] = new SpriteDefinition(sceneObj.ui[i], sceneObj);
+	 		}
+
 	 		for (let i = 0; i < sceneObj.spriteData.length; i++) {
 	 			sceneObj.spriteData[i] = new AnimationDefinition(sceneObj.spriteData[i], sceneObj);
 	 		}

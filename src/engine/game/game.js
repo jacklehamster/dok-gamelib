@@ -22,6 +22,7 @@ class Game {
 		this.keysCache = null;
 		this.mouseCache = null;
 		this.classes = { Game, SpriteDefinition };
+		this.dataStore = null;
 		this.config = {};
 	}
 
@@ -36,6 +37,10 @@ class Game {
 
 	get situation() {
 		return this.dataStore.getSituation(this.name);
+	}
+
+	saveData() {
+		this.dataStore.save();
 	}
 
 	get scenes() {

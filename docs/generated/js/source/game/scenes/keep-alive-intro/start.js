@@ -12,6 +12,7 @@ SceneManager.add({Game: class extends Game {
 		music: {
 			src: "isle",
 			volume: .3,
+			muted: ({game}) => game.data.muted,
 		},
 	},
 	view: {

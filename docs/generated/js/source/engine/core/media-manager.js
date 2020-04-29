@@ -61,8 +61,8 @@ class MediaManager {
 			if (previousMusic) {
 				previousMusic.pause();
 			}
-			if (name) {
-				this.theme = name;
+			this.theme = name;
+			if (this.theme) {
 				const music = this.getMusic(this.theme);
 				if (music) {
 					if (previousMusic) {

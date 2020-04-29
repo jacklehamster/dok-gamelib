@@ -8,11 +8,11 @@
  */
 
 /*
-	ChunkProcessor
+	SpriteRenderer
 */
 
 
-class ChunkProcessor {
+class SpriteRenderer {
 	constructor(engine) {
 		this.engine = engine;
 	}
@@ -87,7 +87,7 @@ class ChunkProcessor {
 		}
 	}
 
-	process(sprite, chunk, now) {
+	render(sprite, chunk, now) {
 		const { updateTimes } = sprite;
 
 		sprite.updated = now;

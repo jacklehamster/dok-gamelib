@@ -148,6 +148,31 @@ SceneManager.add({Game: class extends Game {
 			},
 			count: 40,
 		},
+		// {
+		// 	src: "wall",
+		// 	type: SpriteType.Front,
+		// 	rotation: {
+		// 		angle: [
+		// 			0,
+		// 			({definition}, index) => (index / definition.count.get() - .5) * Math.PI * 2,
+		// 			0,
+		// 		],
+		// 	},
+		// 	pos: [
+		// 		({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 4.9,
+		// 		-1.5 + 4,
+		// 		({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 4.9,
+		// 	],
+		// 	scale: [
+		// 		({definition}) => .8 * 40 / definition.count.get(),
+		// 		4,
+		// 	],
+		// 	frame: (_, index) => index,
+		// 	effects: {
+		// 		brightness: 80,
+		// 	},
+		// 	count: 40,
+		// },
 		{
 			src: "home-floor",
 			type: SpriteType.Floor,

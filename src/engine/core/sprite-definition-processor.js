@@ -15,27 +15,25 @@
  */
 
 class SpriteDefinitionProcessor {
-	constructor(spriteProvider) {
-		this.spriteProvider = spriteProvider;
+	constructor() {
 		this.spriteCollector = [];
 	}
 
-	init(scene) {
-		const { sprites } = scene;
+	init(sprites) {
 		for (let i = 0; i < sprites.length; i++) {
 			sprites[i].init.run();
 		}
 	}
 
-	refresh(scene) {
-		for (let i = 0; i < scene.sprites.length; i++) {
-			const definition = scene.sprites[i];
+	refresh(sprites, now) {
+		for (let i = 0; i < sprites.length; i++) {
+			const definition = sprites[i];
 			const refreshRate = definition.refreshRate.get();
-			if (refreshRate && scene.now - definition.lastRefresh < 1000 / refreshRate) {
+			if (refreshRate && now - definition.lastRefresh < 1000 / refreshRate) {
 				continue;
 			}
 			definition.refresh.run();
-			definition.lastRefresh = scene.now;
+			definition.lastRefresh = now;
 		}
 	}
 
@@ -61,7 +59,7 @@ class SpriteDefinitionProcessor {
 		}
 	}
 
-	destroy(scene) {
-		scene.sprites.forEach(sprite => sprite.destroy.run());
+	destroy(sprites) {
+		sprites.forEach(sprite => sprite.destroy.run());
 	}
 }

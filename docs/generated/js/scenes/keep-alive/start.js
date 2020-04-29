@@ -383,8 +383,9 @@ SceneManager.add({Game: class extends Game {
 		background: 0xaacc88,
 		docBackground: 0xFFFFFF,
 		music: {
-			src: ({game}) => game.sceneData.muted ? null : "guita",
+			src: "guita",
 			volume: .5,
+			muted: ({game}) => game.data.muted,
 		},
 	},
 	light: {
@@ -593,6 +594,140 @@ SceneManager.add({Game: class extends Game {
 			game.onMove(x, y);
 		},
 	},
+	ui: [
+		{
+			id: "controlBox",
+			tag: "div",
+			style: {
+				margin: "8px",
+				backgroundColor: "#cccccc",
+				display: "flex",
+				flexDirection: "column",
+			},
+		},
+		{
+			id: "help",
+			tag: "div",
+			style: {
+				textAlign: "center",
+				margin: "4px",
+				fontSize: "8pt",
+				backgroundColor: "#666666",
+			},
+			parent: "controlBox",
+			innerText: "[TAB]\nswitch",
+		},
+		{
+			id: "blank-space",
+			style: {
+				width: "640px",
+			},
+		},
+		{
+			id: "infoBox",
+			style: {
+				margin: "8px",
+				color: "black",
+				fontSize: "10pt",
+				fontFamily: "Courier New",
+			},
+			innerText: "",
+		},
+		{
+			id: "toolbox",
+			parent: "controlBox",
+			type: "canvas",
+			width: 50,
+			height: 280,
+			init: ({definition}) => {
+				definition.grounds = [
+					"grass-ground",
+					"dirt-ground",
+					"sand-ground",
+					"blue-ground",
+					"water-mix",
+				];
+				definition.strokes = [
+					"#FF0000",
+					"#FFFFFF",
+					"#000000",
+				];
+			},
+			hidden: ({game}) => game.sceneData.bears.every(({bearAI}) => bearAI.KO),
+			idx: ({definition, game: { sceneData }}) => {
+				const tile = sceneData.tile || definition.grounds[0];
+				return definition.grounds.indexOf(tile);
+			},
+			canvas: {
+				refreshRate: 20,
+				draw: [
+					{
+						src: ({definition}, index) => definition.grounds[index],
+						x: 5,
+						y: (_, index) => 5 + 48 * index,
+						width: 40,
+						height: 40,
+						count: ({definition}) => definition.grounds.length,
+					},
+					{
+						type: "rect",
+						strokeStyle: ({definition, game}) => definition.strokes[Math.floor(game.now / 100) % definition.strokes.length],
+						lineWidth: 2,
+						x: 5,
+						y: ({definition}, index) => 5 + 48 * definition.idx.get(),
+						width: 40,
+						height: 40,
+						hidden: ({game: { sceneData: { mode } }}) => mode,
+					},
+					{
+						src: "selector",
+						x: 5,
+						y: ({definition}, index) => 5 + 48 * definition.idx.get(),
+						width: 40,
+						height: 40,
+						frame: ({game: { sceneData: { mode }}}) => mode === "RAISE" ? 4 : 5,
+						hidden: ({game: { sceneData: { mode }}}) => !mode,
+					}
+				],
+			},
+		},
+		{
+			id: "instruct",
+			parent: "controlBox",
+			style: {
+				textAlign: "center",
+				margin: "4px",
+				fontSize: "8pt",
+				color: "#666666",
+			},
+			innerText: "[SPACE]\nRAISE/\nLOWER\n\n[A,S,D,W]\nMove\n\n[Q,E]\nRotate",
+		},
+		{
+			id: "soundControl",
+			parent: "controlBox",
+			innerText: ({game}) => game.data.muted ? '🔇' : "🔉",
+			style: {
+				textAlign: "center",
+				padding: "4px",
+				margin: "4px",
+				borderRadius: "50%",
+				backgroundColor: "#eeeeee",
+				cursor: "pointer",
+			},
+			init: ({definition}) => {
+				definition.setMute.run(game.data.muted);
+			},
+			setMute: ({game}, value) => {
+				game.data.muted = value;
+				game.saveData();
+			},
+			events: {
+				onClick: ({definition}) => {
+					definition.setMute.run(!game.data.muted);
+				},
+			},
+		},
+	],
 	sprites: [
 // 		TextUtils.makeSprite({
 // 			text: ({game}, index) => {
@@ -653,135 +788,6 @@ SceneManager.add({Game: class extends Game {
 				({game}) => game.view.pos[2].get() - 2.1,
 			],
 		}),
-		{
-			init: ({game, definition}) => {
-				const { canvas } = game.engine;
-				game.ui = canvas.parentElement.appendChild(document.createElement("div"));
-				game.ui.style.position = "absolute";
-				game.ui.style.display = "none";
-				game.ui.classList.add("unselectable");
-				game.ui.style.top = `${canvas.offsetTop}px`;
-				game.ui.style.left = `${canvas.offsetLeft}px`;
-				game.ui.style.display = "flex";
-
-				window.addEventListener("resize", () => {
-					game.ui.style.top = `${canvas.offsetTop}px`;
-					game.ui.style.left = `${canvas.offsetLeft}px`;
-				});
-
-				const controlBox = game.ui.appendChild(document.createElement("div"));
-				controlBox.id = "controlBox";
-				controlBox.style.margin = "8px";
-				controlBox.style.backgroundColor = "#cccccc";
-				controlBox.style.display = "flex";
-				controlBox.style.flexDirection = "column";
-
-				const help = controlBox.appendChild(document.createElement("div"));
-				help.style.textAlign = "center";
-				help.style.margin = "4px";
-				help.style.fontSize = "8pt";
-				help.style.color = "#666666";
-				help.innerText = "[TAB]\nswitch";
-
-				game.controlBox = controlBox;
-
-				game.ui.appendChild(document.createElement("div")).style.width = "640px";
-
-				const infoBox = game.ui.appendChild(document.createElement("div"));
-				infoBox.id = "infoBox";
-				infoBox.style.margin = "8px";
-				infoBox.style.color = "black";
-				infoBox.style.fontSize = "10pt";
-				infoBox.style.fontFamily = "Courier New";
-				infoBox.innerText = ``;
-				game.updateInfoBox();
-
-				const toolbox = controlBox.appendChild(document.createElement("canvas"));		
-				toolbox.width = 50;
-				toolbox.height = 280;
-				definition.toolbox = toolbox;
-				definition.grounds = [
-					"grass-ground",
-					"dirt-ground",
-					"sand-ground",
-					"blue-ground",
-					"water-mix",
-				];
-				definition.strokes = [
-					"#FF0000",
-					"#FFFFFF",
-					"#000000",
-				];
-
-
-				const instruct = controlBox.appendChild(document.createElement("div"));
-				instruct.style.textAlign = "center";
-				instruct.style.margin = "4px";
-				instruct.style.fontSize = "8pt";
-				instruct.style.color = "#666666";
-				instruct.innerText = "[SPACE]\nRAISE/\nLOWER\n\n[A,S,D,W]\nMove\n\n[Q,E]\nRotate";
-
-
-
-
-				const soundControl = controlBox.appendChild(document.createElement("button"));
-				soundControl.id = "soundControl";
-				soundControl.innerText = '🔉';
-				soundControl.style.padding = "4px";
-				soundControl.style.margin = "4px";
-				soundControl.style.borderRadius = "50%";
-				soundControl.style.backgroundColor = "#eeeeee";
-				soundControl.style.cursor = "pointer";
-				soundControl.addEventListener("mousedown", e => {
-					definition.setMute.run(!game.sceneData.muted);
-				});
-				definition.setMute.run(localStorage.getItem("mute") === "mute");
-			},
-			setMute: ({game}, value) => {
-				game.sceneData.muted = value;
-				const soundControl = document.getElementById("soundControl");
-				soundControl.innerText = game.sceneData.muted ? '🔇' : '🔉';
-				localStorage.setItem("mute", value?"mute":"");
-			},
-			destroy: ({game}) => {
-				game.ui.parentElement.removeChild(game.ui);
- 			},
-			refresh: ({game, definition}) => {
-				if (game.sceneData.bears.every(({bearAI}) => bearAI.KO)) {
-					if (game.ui.style.dipslay !== "none") {
-						game.controlBox.style.display = "none";
-					}
-					return;
-				}
-
-				const { engine: { glRenderer: { spritesheetManager }, canvasRenderer }, sceneData } = game;
-				if (spritesheetManager.loaded) {
-					const { toolbox } = definition;
-					const context = toolbox.getContext("2d");
-					context.clearRect(0, 0, toolbox.width, toolbox.height);
-
-					definition.grounds.forEach((src, index) => {
-						canvasRenderer.drawToCanvas(src, 5, 5 + 48 * index, 40, toolbox);
-					});
-
-					const tile = sceneData.tile || definition.grounds[0];
-					const idx = definition.grounds.indexOf(tile);
-					if (!sceneData.mode) {
-						const context = toolbox.getContext("2d");
-						context.beginPath();
-						context.strokeStyle = definition.strokes[Math.floor(game.now / 100) % definition.strokes.length];
-						context.lineWidth = "2";
-						context.rect(5, 5 + 48 * idx, 40, 40);
-						context.stroke();
-					} else if (sceneData.mode === "RAISE") {
-						canvasRenderer.drawToCanvas("selector", 5, 4 + 48 * idx, 40, toolbox, 4);
-					} else if (sceneData.mode === "LOWER") {
-						canvasRenderer.drawToCanvas("selector", 5, 4 + 48 * idx, 40, toolbox, 5);						
-					}
-				}
-			},
-			refreshRate: 20,
-		},
 		{
 			src: "fruits",
 			pos: [
