@@ -33,12 +33,29 @@ SceneManager.add({Game: class extends Game {
 	],	
 	sprites: [
 		{
+			init: ({game, definition}) => {
+				const count = definition.gridSize.get() * definition.gridSize.get();
+				definition.particles = new Array(count).fill(null).map(() => {
+					return {
+						time: game.now + Math.random() * 10000,
+						pos: [ (Math.random()-.5) * 2, 2, (Math.random()-.5) * 2 ],
+						mov: [ (Math.random()-.5) * 2, 0, (Math.random()-.5) * 2 ],
+					};
+				});
+			},
+			refresh: ({game, definition}) => {
+				for (let i = 0; i < definition.particles.length; i++) {
+					if (game.now - definition.particles[i].time > 10000) {
+						definition.particles[i].time += 10000;
+					}
+				}
+			},
 			src: "penguin",
 			gridSize: 120,
 			pos: [
-				({game, definition}, index) => (index % definition.gridSize.get() - definition.gridSize.get()/2) * .1,
-				({game, definition}, index) => 7 + (Math.floor(index / definition.gridSize.get()) - definition.gridSize.get()/2) * .1,
-				-10,
+				({definition}, index) => definition.particles[index].pos[0] * 5,
+				({definition}, index) => definition.particles[index].pos[1] * 5,
+				({definition}, index) => definition.particles[index].pos[2] * 5,
 			],
 			scale: [ .2, .2 ],
 			rotation: {
@@ -49,11 +66,15 @@ SceneManager.add({Game: class extends Game {
 				],
 			},
 			motion: {
-				time: ({game: {now}}, index) => Math.floor(now / 10000) * 10000 + index,
-				mov: [0, .01, .005],
-				gravity: [0, -0.00001, 0],
+				time: ({game: {now}, definition}, index) => definition.particles[index].time,
+				mov: [
+					({definition}, index) => definition.particles[index].mov[0] * .0004,
+					({definition}, index) => definition.particles[index].mov[1] * .0004,
+					({definition}, index) => definition.particles[index].mov[2] * .0004,
+				],
+				gravity: [0, -0.000001, 0],
 			},
-			count: ({definition}) => definition.gridSize.get() * definition.gridSize.get(),
+			count: ({definition}) => definition.particles.length,
 		},
 		{
 			src: "water.jpg",
