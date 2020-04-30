@@ -59,7 +59,7 @@ SceneManager.add({Game: class extends Game {
 				dok.grounded = false;
 			}
 		} else {
-			dok.mov.y -= controls.action > 0 ? .01 : .02;
+			dok.mov.y -= controls.action > 0 ? .01 : .025;
 			dok.heightAboveGround += dok.mov.y;
 			if (dok.heightAboveGround <= 0) {
 				dok.heightAboveGround = 0;

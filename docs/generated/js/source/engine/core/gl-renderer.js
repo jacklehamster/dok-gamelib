@@ -92,9 +92,13 @@ class GLRenderer {
 			errors => console.error(errors)
 		);
 
-		this.lastRefresh = 0;
 		this.progress = 0;
 		this.cycle = 0;
+		this.init();
+	}
+
+	init() {
+		this.visibleChunks = this.usedChunks;		
 	}
 
 	checkSupport() {
@@ -116,7 +120,11 @@ class GLRenderer {
 	}
 
 	newChunk() {
-		return this.usedChunks >= this.chunks.length ? null : this.chunks[this.usedChunks++];
+		if (this.usedChunks < this.chunks.length) {
+			const index = this.usedChunks++;
+			return this.chunks[index];			
+		}
+		return null;
 	}
 
 	setBackground(color) {
@@ -201,6 +209,7 @@ class GLRenderer {
 		} else {
 			chunk = this.chunks[sprite.chunkIndex];
 		}
+		this.visibleChunks = Math.max(this.visibleChunks, chunk.index + 1);
 		return chunk;		
 	}
 
@@ -279,8 +288,10 @@ class GLRenderer {
 
 	draw(now) {
 		const { gl } = this;
-		gl.drawElements(gl.TRIANGLES, this.usedChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
-		this.lastRefresh = now;
+		gl.drawElements(gl.TRIANGLES, this.visibleChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
+		while (this.visibleChunks > 0 && this.chunks[this.visibleChunks-1].hidden) {
+			this.visibleChunks--;
+		}
 		this.cycle ++;
 	}
 }

@@ -17,6 +17,7 @@ class Chunk {
 		this.index = index;
 		this.vec3pool = vec3pool;
 		this.bufferInfo = bufferInfo;
+		this.hidden = false;
 	}
 
 	assignValues(buffer, ... values) {
@@ -45,6 +46,7 @@ class Chunk {
  		const { buffer, floatPerVertex, verticesPerSprite } = bufferInfo.vertex;
 		buffer.fill(0, this.index * verticesPerSprite * floatPerVertex, (this.index+1) * verticesPerSprite * floatPerVertex);
 		bufferInfo.vertex.chunkUpdateTimes[index] = now;
+		this.hidden = true;
 	}
 
 	applyNormal(vertices, engineBuffer, curvature, i) {
@@ -101,6 +103,7 @@ class Chunk {
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
 		);
+		this.hidden = false;
 	}
 
 	setBackWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -112,6 +115,7 @@ class Chunk {
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
 		);
+		this.hidden = false;
 	}
 
 	setFloor(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -123,6 +127,7 @@ class Chunk {
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, D, - halfHeight - hotspotY * height),
 		);
+		this.hidden = false;
 	}
 
 	setCeiling(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -134,6 +139,7 @@ class Chunk {
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, D, + halfHeight - hotspotY * height),
 		);
+		this.hidden = false;
 	}
 
 	setLeftWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -145,6 +151,7 @@ class Chunk {
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 		);
+		this.hidden = false;
 	}
 
 	setRightWall(width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -156,6 +163,7 @@ class Chunk {
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 		);
+		this.hidden = false;
 	}
 
 	setMove(dx, dy, dz, time, now) {

@@ -68,11 +68,11 @@ SceneManager.add({Game: class extends Game {
 			motion: {
 				time: ({game: {now}, definition}, index) => definition.particles[index].time,
 				mov: [
-					({definition}, index) => definition.particles[index].mov[0] * .0004,
-					({definition}, index) => definition.particles[index].mov[1] * .0004,
-					({definition}, index) => definition.particles[index].mov[2] * .0004,
+					({definition}, index) => definition.particles[index].mov[0] * .001,
+					({definition}, index) => definition.particles[index].mov[1] * .001,
+					({definition}, index) => definition.particles[index].mov[2] * .001,
 				],
-				gravity: [0, -0.000001, 0],
+				gravity: [0, -0.00001, 0],
 			},
 			count: ({definition}) => definition.particles.length,
 		},

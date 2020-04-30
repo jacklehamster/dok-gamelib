@@ -111,7 +111,7 @@ class SpriteRenderer {
 		}
 
 		if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
-			|| updateTimes.spriteSize === now || updateTimes.circleRadius || updateTimes.grid === now || updateTimes.padding) {
+			|| updateTimes.spriteSize === now || updateTimes.circleRadius === now || updateTimes.grid === now || updateTimes.padding === now) {
 			this.processTexture(sprite, chunk, now);
 		}
 
@@ -129,6 +129,12 @@ class SpriteRenderer {
 			chunk.setMove(mx, my, mz, sprite.motion.time, now);
 			const [ gx, gy, gz ] = sprite.motion.gravity;
 			chunk.setGravity(gx, gy, gz, now);
-		}	
+		}
+
+		// for (let i in updateTimes) {
+		// 	if (updateTimes[i] === now) {
+		// 		Log.status(i);
+		// 	}
+		// }
 	}
 }
