@@ -10,6 +10,7 @@ SceneManager.add({Game: class extends Game {
 				heightAboveGround: 0,
 				speed: 0,
 				grounded: true,
+				flying: false,
 			},
 			cam: [ 0, 0, 0 ],
 		};
@@ -47,8 +48,8 @@ SceneManager.add({Game: class extends Game {
 
 		if (dok.speed > .0001) {
 			const [ dx, dz ] = MotionUtils.getNormalDirection(sceneData.turn, mov.x, mov.y);
-			dok.pos[0] += dx * dok.speed * (dok.grounded ? 1 : 1.5);
-			dok.pos[2] += dz * dok.speed * (dok.grounded ? 1 : 1.5);
+			dok.pos[0] += dx * dok.speed * (dok.flying ? 1.6 : 1);
+			dok.pos[2] += dz * dok.speed * (dok.flying ? 1.6 : 1);
 		} else {
 			sceneData.dok.speed = 0;
 		}
@@ -57,14 +58,16 @@ SceneManager.add({Game: class extends Game {
 			if (controls.action > 0) {
 				dok.mov.y = .25;
 				dok.grounded = false;
+				dok.flying = true;
 			}
 		} else {
 			dok.mov.y -= controls.action > 0 ? .01 : .025;
 			dok.heightAboveGround += dok.mov.y;
 			if (dok.heightAboveGround <= 0) {
 				dok.heightAboveGround = 0;
+				dok.flying = false;
 				if (dok.mov.y < -.35) {
-					dok.mov.y = -dok.mov.y * .5;
+					dok.mov.y = -dok.mov.y * .4;
 				} else {
 					dok.mov.y = 0;
 					dok.grounded = true;
