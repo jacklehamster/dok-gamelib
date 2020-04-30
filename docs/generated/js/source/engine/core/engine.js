@@ -65,7 +65,6 @@ class Engine {
 			this.running = true;
 		});
 
-
 		this.addEventListener("sceneChange", () => {
 			this.glRenderer.init();
 			this.sceneRenderer.init(this.currentScene);
@@ -92,7 +91,6 @@ class Engine {
 				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
 
 		let lastRefresh = 0;
-
 		function animationFrame(now) {
 			requestAnimationFrame(animationFrame);
 			const { currentScene, running } = engine;
@@ -153,7 +151,9 @@ class Engine {
 				glRenderer.sendSprites(spritesToRemove, now);
 				glRenderer.sendUpdatedBuffers(now);
 				glRenderer.draw(now);
-				onLoopListener.forEach(callback => callback(now));
+				for (let i = 0; i < onLoopListener.length; i++) {
+					onLoopListener[i](now);
+				}
 				glRenderer.resetPools();
 			}
 		}

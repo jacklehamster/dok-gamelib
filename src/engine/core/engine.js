@@ -151,7 +151,9 @@ class Engine {
 				glRenderer.sendSprites(spritesToRemove, now);
 				glRenderer.sendUpdatedBuffers(now);
 				glRenderer.draw(now);
-				onLoopListener.forEach(callback => callback(now));
+				for (let i = 0; i < onLoopListener.length; i++) {
+					onLoopListener[i](now);
+				}
 				glRenderer.resetPools();
 			}
 		}
