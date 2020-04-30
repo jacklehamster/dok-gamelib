@@ -193,10 +193,16 @@ SceneManager.add({
 }, {
 	settings: {
 		docBackground: ({game}) => {
+			if (!game.sceneData.hit) {
+				return 0;
+			}
 			const hitTime = game.now - game.sceneData.hit;
 			return hitTime < 300 ? 0xaa0000 : 0;
 		},
 		background: ({game}) => {
+			if (!game.sceneData.hit) {
+				return 0;
+			}
 			const hitTime = game.now - game.sceneData.hit;
 			return hitTime < 300 ? 0xaa0000 : 0x080523;
 		},

@@ -25,6 +25,9 @@ class Shader {
 		this.shaderProgram = shaderProgram;
 
 		this.use();
+
+		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+		gl.uniform1iv(this.programInfo.textures, new Array(maxTextureUnits).fill(null).map((a, index) => index));
 	}
 
 	use() {
@@ -89,10 +92,10 @@ class Shader {
 	static initializeIndexBuffer(gl) {
 		const indexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, MAX_SPRITE * INDEX_ARRAY_PER_SPRITE.length * Uint16Array.BYTES_PER_ELEMENT, gl.STATIC_DRAW);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, MAX_SPRITE * INDEX_ARRAY_PER_SPRITE.length * Uint32Array.BYTES_PER_ELEMENT, gl.STATIC_DRAW);
 		for (let i = 0; i < MAX_SPRITE; i++) {
 			const slotIndices = INDEX_ARRAY_PER_SPRITE.map(value => value + i * VERTICES_PER_SPRITE);
-			gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, i * slotIndices.length * Uint16Array.BYTES_PER_ELEMENT, slotIndices);
+			gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, i * slotIndices.length * Uint32Array.BYTES_PER_ELEMENT, slotIndices);
 		}
 		return indexBuffer;	
 	}

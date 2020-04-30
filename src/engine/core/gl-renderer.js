@@ -39,6 +39,7 @@ class GLRenderer {
 		this.spritesheetManager = spritesheetManager;
 
 		this.checkSupport();
+		this.extensions = this.applyExtensions();
 
 		const { gl } = this;
 		//	initialize gl
@@ -76,14 +77,15 @@ class GLRenderer {
 			colorEffect: 	new EngineBuffer(this.shader, "colorEffect", TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
 
-		this.mediaManager = mediaManager;
-		this.textureManager = new TextureManager(gl, this.shader, mediaManager);
+		this.boundBuffer = null;
 
-		const { shader, textureManager } = this;
+		this.mediaManager = mediaManager;
+		this.textureManager = new TextureManager(gl, mediaManager);
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
 		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => new Chunk(index, this.bufferInfo, this.pool.vec3forChunk));
 		this.usedChunks = 0;
+		this.visibleChunks = 0;
 
 		//	load texture
 		this.spritesheetManager.fetchImages(
@@ -92,13 +94,7 @@ class GLRenderer {
 			errors => console.error(errors)
 		);
 
-		this.progress = 0;
 		this.cycle = 0;
-		this.init();
-	}
-
-	init() {
-		this.visibleChunks = this.usedChunks;		
 	}
 
 	checkSupport() {
@@ -109,8 +105,18 @@ class GLRenderer {
 			maxTextureUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
 			maxVarying: gl.getParameter(gl.MAX_VARYING_VECTORS),
 			maxUniform: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
+			renderer: gl.getParameter(gl.RENDERER),
+			version: gl.getParameter(gl.VERSION),
+			renderBufferSize: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
 		};
 		console.info(settings);
+	}
+
+	applyExtensions() {
+		const { gl } = this;
+		return [
+			gl.getExtension('OES_element_index_uint'),
+		];
 	}
 
 	resetPools() {
@@ -209,24 +215,29 @@ class GLRenderer {
 		} else {
 			chunk = this.chunks[sprite.chunkIndex];
 		}
-		this.visibleChunks = Math.max(this.visibleChunks, chunk.index + 1);
+		if (chunk) {
+			this.visibleChunks = Math.max(this.visibleChunks, chunk.index + 1);
+		}
 		return chunk;		
 	}
 
-	sendUpdatedBuffers(now) {
-		const { shader, bufferInfo } = this;
-		for (let b in bufferInfo) {
-			this.bindBuffer(bufferInfo[b]);
-			this.sendUpdatedBuffer(bufferInfo[b], now);
-		}
-	}
-
 	bindBuffer(engineBuffer) {
+		if (this.boundBuffer === engineBuffer) {
+			return;
+		}
 		const { gl } = this;
 		const { shaderBuffer } = engineBuffer;
 
 		//	set sprite data
-		gl.bindBuffer(gl.ARRAY_BUFFER, shaderBuffer);		
+		gl.bindBuffer(gl.ARRAY_BUFFER, shaderBuffer);
+		this.boundBuffer = engineBuffer;
+	}
+
+	sendUpdatedBuffers(now) {
+		const { bufferInfo } = this;
+		for (let b in bufferInfo) {
+			this.sendUpdatedBuffer(bufferInfo[b], now);
+		}
 	}
 
 	sendUpdatedBuffer(engineBuffer, now) {
@@ -258,10 +269,11 @@ class GLRenderer {
 		const { gl } = this;
 		const { floatPerVertex, verticesPerSprite } = engineBuffer;
 
+		this.bindBuffer(engineBuffer);
 		//	set sprite data
 		gl.bufferSubData(gl.ARRAY_BUFFER,
 			rangeStart * verticesPerSprite * floatPerVertex * Float32Array.BYTES_PER_ELEMENT,
-			engineBuffer.subarray(rangeStart, rangeEnd),
+			engineBuffer.subarray(rangeStart, rangeEnd)
 		);
 	}
 
@@ -288,7 +300,8 @@ class GLRenderer {
 
 	draw(now) {
 		const { gl } = this;
-		gl.drawElements(gl.TRIANGLES, this.visibleChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_SHORT, 0);
+		this.sendUpdatedBuffers(now);
+		gl.drawElements(gl.TRIANGLES, this.visibleChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_INT, 0);
 		while (this.visibleChunks > 0 && this.chunks[this.visibleChunks-1].hidden) {
 			this.visibleChunks--;
 		}

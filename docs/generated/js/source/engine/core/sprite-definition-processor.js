@@ -37,6 +37,12 @@ class SpriteDefinitionProcessor {
 		}
 	}
 
+	ignore() {
+		const { spriteCollector } = this;
+		spriteCollector.length = 0;
+		return spriteCollector;
+	}
+
 	process(spriteDefinitions, scene, spriteProvider) {
 		const { spriteCollector } = this;
 		spriteCollector.length = 0;

@@ -21,7 +21,7 @@ const GRID_FLOAT_PER_VERTEX 		= 2;	//	cols,rows
 const TINT_FLOAT_PER_VERTEX			= 4;	//	tint color, mix percentage
 
 const VERTICES_PER_SPRITE 			= 4;	//	4 corners
-const INDEX_ARRAY_PER_SPRITE = new Uint16Array([
+const INDEX_ARRAY_PER_SPRITE = new Uint32Array([
 	1,  2,  0,
 	0,  2,  3,
 ]);
@@ -69,7 +69,7 @@ const ShaderConfig = {
 
 
 
-const MAX_SPRITE = 16000;
+const MAX_SPRITE = 100000;
 const TEXTURE_SIZE = 4096;
 
 const ZERO_VEC3 = vec3.create();

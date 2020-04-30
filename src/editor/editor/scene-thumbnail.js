@@ -57,7 +57,7 @@ class SceneThumbnail {
 			tab.innerText = s;
 			tab.scene = s;
 			tab.addEventListener("click", e => {
-				engine.resetScene(e.currentTarget.scene);
+				engine.gotoScene(e.currentTarget.scene);
 			});
 		}
 		const space = sceneThumbnails.appendChild(document.createElement("div"));

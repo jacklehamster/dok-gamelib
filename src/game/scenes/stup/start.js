@@ -51,13 +51,13 @@ SceneManager.add({Game: class extends Game {
 				}
 			},
 			src: "penguin",
-			gridSize: 120,
+			gridSize: 150,
 			pos: [
 				({definition}, index) => definition.particles[index].pos[0] * 5,
 				({definition}, index) => definition.particles[index].pos[1] * 5,
 				({definition}, index) => definition.particles[index].pos[2] * 5,
 			],
-			scale: [ .2, .2 ],
+			scale: [ .1, .1 ],
 			rotation: {
 				angle: [
 					0,
@@ -68,11 +68,11 @@ SceneManager.add({Game: class extends Game {
 			motion: {
 				time: ({game: {now}, definition}, index) => definition.particles[index].time,
 				mov: [
-					({definition}, index) => definition.particles[index].mov[0] * .001,
-					({definition}, index) => definition.particles[index].mov[1] * .001,
-					({definition}, index) => definition.particles[index].mov[2] * .001,
+					({definition}, index) => definition.particles[index].mov[0] * .0001,
+					({definition}, index) => definition.particles[index].mov[1] * .0001,
+					({definition}, index) => definition.particles[index].mov[2] * .0001,
 				],
-				gravity: [0, -0.00001, 0],
+				gravity: [0, -0.000001, 0],
 			},
 			count: ({definition}) => definition.particles.length,
 		},

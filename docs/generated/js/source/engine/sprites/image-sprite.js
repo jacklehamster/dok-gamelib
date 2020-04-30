@@ -13,8 +13,8 @@
  */
 
 class ImageSpriteInstance extends BaseSpriteInstance {
- 	constructor(now) {
- 		super(now);
+ 	constructor() {
+ 		super();
 		this.src = null;
 		this.effects = {
 			tintColor: 0,

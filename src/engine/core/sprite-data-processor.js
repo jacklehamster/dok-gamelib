@@ -89,6 +89,10 @@ class SpriteDataProcessor {
 					timeUpdated: now,
 				});
 
+				if (anim.scene !== scene.name) {
+					anim.scene = scene.name;
+				}
+
 				const spriteWidth = spriteSize[0].get();
 				const spriteHeight = spriteSize[1].get();
 				const gridCols = grid[0].get();

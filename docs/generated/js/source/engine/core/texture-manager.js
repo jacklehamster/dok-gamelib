@@ -13,7 +13,7 @@
  */
 
 class TextureManager {
-	constructor(gl, shader, mediaManager) {
+	constructor(gl, mediaManager) {
 		this.gl = gl;
 		this.glTextures = [];
 		this.videoTextures = {};
@@ -21,8 +21,6 @@ class TextureManager {
 		this.videoTextureIndex = this.glTextures.length - 1;
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
-
-		gl.uniform1iv(shader.programInfo.textures, new Array(maxTextureUnits).fill(null).map((a, index) => index));
 		this.glTextures = new Array(maxTextureUnits).fill(null).map((a, index) => {
 			const glTexture = gl.createTexture();
 			const width = 1, height = 1;

@@ -130,11 +130,5 @@ class SpriteRenderer {
 			const [ gx, gy, gz ] = sprite.motion.gravity;
 			chunk.setGravity(gx, gy, gz, now);
 		}
-
-		// for (let i in updateTimes) {
-		// 	if (updateTimes[i] === now) {
-		// 		Log.status(i);
-		// 	}
-		// }
 	}
 }

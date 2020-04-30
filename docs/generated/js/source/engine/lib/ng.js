@@ -27,9 +27,15 @@ class NewgroundsWrapper {
 
     onLoggedIn() {
         this.username = this.ngio.user.name;
-        console.log(`Logged in newgrounds as ${this.username}`);
         this.loginListeners.forEach(callback => callback(this.username));
-        this.fetchMedals(() => {});
+        this.fetchMedals(medals => {
+            const obj = {
+                user: this.username,
+                medals: {},
+            };
+            medals.forEach(({name, unlocked}) => obj.medals[name] = unlocked);
+            console.log("Newgrounds", obj);
+        });
     }
 
     onLoginFailed() {
@@ -97,7 +103,6 @@ class NewgroundsWrapper {
             this.ngio.callComponent('Medal.getList', {}, result => {
                 if(result.success) {
                     this.medals = result.medals;
-                    this.medals.forEach(medal => console.log(medal.name, medal.unlocked));
                     this.medalCallbacks.forEach(callback => {
                         callback(this.medals);
                     });

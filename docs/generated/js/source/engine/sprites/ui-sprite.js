@@ -13,8 +13,8 @@
 */
 
 class UISpriteInstance extends BaseSpriteInstance {
-	constructor(now) {
-		super(now);
+	constructor() {
+		super();
 	}
 
 	init() {

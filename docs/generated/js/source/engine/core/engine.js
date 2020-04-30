@@ -23,8 +23,8 @@ class Engine {
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.data.generated);
 		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager);
-		this.uiProvider = new SpriteProvider(now => new UISpriteInstance(now));
-		this.spriteProvider = new SpriteProvider(now => new SpriteInstance(now));
+		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());
+		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
@@ -66,7 +66,6 @@ class Engine {
 		});
 
 		this.addEventListener("sceneChange", () => {
-			this.glRenderer.init();
 			this.sceneRenderer.init(this.currentScene);
 			this.spriteDataProcessor.init(this.currentScene);
 			this.spriteDefinitionProcessor.init(this.currentScene.sprites);
@@ -91,13 +90,18 @@ class Engine {
 				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
 
 		let lastRefresh = 0;
-		function animationFrame(now) {
+		function animationFrame(time) {
 			requestAnimationFrame(animationFrame);
 			const { currentScene, running } = engine;
 			if (!running || !currentScene) {
 				return;
-			}
+			}		
 			const frameDuration = 1000 / currentScene.getFrameRate();
+			if (!currentScene.startTime) {
+				currentScene.startTime = time;
+				return;
+			}
+			const now = time - currentScene.startTime;
 			currentScene.now = now;
 
 			if (keyboard.dirty) {
@@ -109,15 +113,11 @@ class Engine {
 
 			sceneRenderer.refresh(currentScene);
 			spriteDataProcessor.refresh(currentScene);
-			spriteDefinitionProcessor.refresh(currentScene.ui, currentScene.now);
-			spriteDefinitionProcessor.refresh(currentScene.sprites, currentScene.now);
+			spriteDefinitionProcessor.refresh(currentScene.ui, now);
+			spriteDefinitionProcessor.refresh(currentScene.sprites, now);
 
-			if (engine.nextScene) {
-				engine.resetScene(engine.nextScene);
-				return;
-			}
-
-			if (now - lastRefresh >= frameDuration) {
+			if (time - lastRefresh >= frameDuration) {
+				const shouldResetScene = engine.nextScene;
 				lastRefresh = now;
 				glRenderer.setTime(now);
 				glRenderer.clearScreen();
@@ -132,11 +132,17 @@ class Engine {
 				uiRenderer.render(uiComponents, now);
 
 				//	show sprites to process
-				const sprites = spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);
+				const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);
 				glRenderer.sendSprites(sprites, now);
 
 				//	update video textures
 				glRenderer.updatePlayingVideos(sprites, now);
+
+				if (shouldResetScene) {
+					spriteProvider.getSprites().forEach(sprite => {
+						sprite.updated = 0;
+					});
+				}
 
 				//	remove unprocessed sprites
 				spritesToRemove.length = 0;
@@ -148,13 +154,17 @@ class Engine {
 						spritesToRemove.push(sprite);
 					}
 				}
+
 				glRenderer.sendSprites(spritesToRemove, now);
-				glRenderer.sendUpdatedBuffers(now);
+
 				glRenderer.draw(now);
 				for (let i = 0; i < onLoopListener.length; i++) {
 					onLoopListener[i](now);
 				}
 				glRenderer.resetPools();
+				if (shouldResetScene) {
+					engine.resetScene(engine.nextScene);
+				}
 			}
 		}
 		requestAnimationFrame(animationFrame);		
@@ -206,6 +216,7 @@ class Engine {
 			const scene = sceneManager.createScene(sceneName, dataStore);
 
 			this.currentScene = scene;
+			this.currentScene.startTime = 0;
 			this.currentScene.now = 0;
 			this.currentScene.setEngine(this);
 			this.onSceneChangeListener.forEach(callback => callback({name:sceneName, scene, config: scene.config}));

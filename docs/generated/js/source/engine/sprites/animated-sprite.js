@@ -13,8 +13,8 @@
   */
 
 class AnimatedSpriteInstance extends ImageSpriteInstance {
-	constructor(now) {
-		super(now);
+	constructor() {
+		super();
 		this.animation = null;
 		this.spriteData = {
 			spriteSize: [ 0, 0 ],

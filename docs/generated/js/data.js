@@ -1097,12 +1097,14 @@ function getData() {
           "creep-font": {
             "scenes": [null],
             "rect": [784, 0, 320, 288],
-            "index": 2
+            "index": 2,
+            "font": true
           },
           "primary-font": {
             "scenes": [null],
             "rect": [1112, 0, 320, 288],
-            "index": 2
+            "index": 2,
+            "font": true
           },
           "home-floor": {
             "scenes": ["dobuki"],

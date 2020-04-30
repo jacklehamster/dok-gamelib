@@ -26,10 +26,10 @@ class SpriteUtils {
 		const realScale = [
 			({definition: { spriteSize, zoomValue, upperScale, heightAboveGround }}, index) =>
 				upperScale[0].get(Math.floor(index / 2)) * (spriteSize[0].get(Math.floor(index / 2)) || 1) * zoomValue.get(Math.floor(index / 2))
-				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 5)),
+				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 3)),
 			({definition: { spriteSize, zoomValue, upperScale, heightAboveGround }}, index) =>
 				upperScale[1].get(Math.floor(index / 2)) * (spriteSize[1].get(Math.floor(index / 2)) || 1) * zoomValue.get(Math.floor(index / 2))
-				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 5) * .7),
+				* (index % 2 === 0 ? 1 : 1 / (1 + heightAboveGround.get(Math.floor(index / 2)) / 3) * .7),
 		];
 
 		return {

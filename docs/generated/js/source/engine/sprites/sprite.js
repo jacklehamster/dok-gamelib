@@ -13,8 +13,8 @@
 */
 
 class SpriteInstance extends AnimatedSpriteInstance {
-	constructor(now) {
-		super(now);
+	constructor() {
+		super();
 		this.scale = 	[0, 0];
 		this.hotspot = 	[0, 0];
 		this.pos = 		[0, 0, 0];

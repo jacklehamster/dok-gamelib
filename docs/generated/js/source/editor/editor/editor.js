@@ -128,11 +128,16 @@ class SourceCode {
 					SourceCode.instance.render(getData().generated.game);
 					break;
 				case "assets":
-					const { imagedata, videos } = this.engine.data.generated;
+					const { data: { generated: { imagedata, videos } }, spriteDataProcessor } = this.engine;
 					const sceneName = this.engine.currentScene.name;
 					const  assets = [], videoArray = [];
+					const spriteDatas = this.engine.currentScene.spriteData.map(definition => {
+						return definition.src.get();
+					});
+
 					for (let id in imagedata.sprites) {
-						if (imagedata.sprites[id].scenes.indexOf(sceneName) >= 0) {
+						const { scenes, font } = imagedata.sprites[id];
+						if (scenes.indexOf(sceneName) >= 0 || spriteDatas.indexOf(id) >= 0) {
 							assets.push(id);
 						}
 					}
