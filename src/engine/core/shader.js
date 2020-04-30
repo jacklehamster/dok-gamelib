@@ -13,47 +13,13 @@
  */
 
 class Shader {
-	constructor(gl, vertexShader, fragmentShader, bufferInfo) {
-		const shaderConfig = {
-			attributes: {
-				vertex: "aVertexPosition",
-				offset: "aOffset",
-				normal: "aNormal",
-				move: "aVertexMove",
-				gravity: "aVertexGravity",
-				spriteType: "aType",
-				texCoord: "aVertexTextureCoord",
-				texCenter: "aVertexTextureCenter",
-				animation: "aAnimationData",
-				grid: "aGrid",
-				colorEffect: "aColorEffect",
-			},
-			uniforms: {
-				projection: "uProjectionMatrix",
-				view: "uViewMatrix",
-				now: "uNow",
-				camRotation: "uCameraRotation",
-				camPosition: "uCamPosition",
-				lightPosition: "uLightPos",
-				lightIntensity: "uLightIntensity",
-				curvature: "uCurvature",
-				background: "uBackground",
-				textures: "uTextures",
-				depthEffect: "uDepthEffect",
-			},
-		};
-
-		const shaderProgram = Shader.initShaderProgram(gl, vertexShader, fragmentShader, shaderConfig.attributes);
-		const programInfo = Shader.getProgramInfo(gl, shaderProgram, shaderConfig);
+	constructor(gl, vertexShader, fragmentShader) {
+		const shaderProgram = Shader.initShaderProgram(gl, vertexShader, fragmentShader, ShaderConfig.attributes);
 		
-		this.programInfo = programInfo;
+		this.programInfo = Shader.getProgramInfo(gl, shaderProgram, ShaderConfig);
 
 		//	initialize buffers
 		this.indexBuffer = Shader.initializeIndexBuffer(gl);
-		for (let b in bufferInfo) {
-			const engineBuffer = bufferInfo[b];
-			engineBuffer.setShaderBuffer(Shader.initializeVertexBuffer(gl, programInfo[b], engineBuffer.floatPerVertex));
-		}
 
 		this.gl = gl;
 		this.shaderProgram = shaderProgram;
@@ -64,6 +30,10 @@ class Shader {
 	use() {
 		const { shaderProgram, gl } = this;
 		gl.useProgram(shaderProgram);		
+	}
+
+	getLocation(name) {
+		return this.programInfo[name];
 	}
 
 	static initShaderProgram(gl, vsSource, fsSource, attributes) {
@@ -114,15 +84,6 @@ class Shader {
 			programInfo[u] = gl.getUniformLocation(shaderProgram, uniforms[u]);
 		}
 		return programInfo;
-	}	
-
-	static initializeVertexBuffer(gl, location, floatsPerVertex) {
-		const vertexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-		gl.vertexAttribPointer(location, floatsPerVertex, gl.FLOAT, false, 0, 0);
-		gl.enableVertexAttribArray(location);
-		gl.bufferData(gl.ARRAY_BUFFER, floatsPerVertex * MAX_SPRITE * VERTICES_PER_SPRITE * Float32Array.BYTES_PER_ELEMENT, gl.STREAM_DRAW);
-		return vertexBuffer;
 	}
 
 	static initializeIndexBuffer(gl) {

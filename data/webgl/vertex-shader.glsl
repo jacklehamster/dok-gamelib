@@ -59,10 +59,7 @@ void main(void) {
 		vNormal = (uCameraRotation * vec4(vNormal, 1.0)).xyz;
 	}
 
-	worldPos.xyz += aOffset;
-
-	worldPos.xyz += aVertexMove.xyz * time;
-	worldPos.xyz += aVertexGravity.xyz * time * time * 0.5;
+	worldPos.xyz += aOffset + aVertexMove.xyz * time + aVertexGravity.xyz * time * time * 0.5;
 
 	if (aType == 7.0) {	//	water wave
 		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .3;

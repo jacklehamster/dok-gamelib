@@ -158,13 +158,13 @@ class Chunk {
 		);
 	}
 
-	setMove(dx, dy, dz, now) {
+	setMove(dx, dy, dz, time, now) {
 		const { bufferInfo, index } = this;
 		this.assignValues(bufferInfo.move,
-			dx, dy, dz, now,
-			dx, dy, dz, now,
-			dx, dy, dz, now,
-			dx, dy, dz, now,
+			dx, dy, dz, time,
+			dx, dy, dz, time,
+			dx, dy, dz, time,
+			dx, dy, dz, time,
 		);
 		bufferInfo.move.chunkUpdateTimes[index] = now;
 	}

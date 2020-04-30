@@ -124,13 +124,10 @@ class SpriteRenderer {
 			this.processWall(sprite, chunk, now);
 		}
 
-		if (updateTimes.mov === now) {
-			const [ mx, my, mz ] = sprite.mov;
-			chunk.setMove(mx, my, mz, now);
-		}
-
-		if (updateTimes.gravity === now) {
-			const [ gx, gy, gz ] = sprite.gravity;
+		if (updateTimes.motion === now) {
+			const [ mx, my, mz ] = sprite.motion.mov;
+			chunk.setMove(mx, my, mz, sprite.motion.time, now);
+			const [ gx, gy, gz ] = sprite.motion.gravity;
 			chunk.setGravity(gx, gy, gz, now);
 		}	
 	}

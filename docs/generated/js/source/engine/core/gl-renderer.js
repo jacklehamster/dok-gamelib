@@ -60,21 +60,22 @@ class GLRenderer {
 			vec3forChunk: new Pool(vec3.create, Utils.clear3), 
 		};
 
+		this.shader = new Shader(gl, vertexShader, fragmentShader);
+
 		this.bufferInfo = {
-			vertex: 		new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			offset: 		new EngineBuffer(FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			normal: 		new EngineBuffer(NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			move: 			new EngineBuffer(MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			gravity: 		new EngineBuffer(GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			spriteType: 	new EngineBuffer(SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			texCoord: 		new EngineBuffer(TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			texCenter: 		new EngineBuffer(TEXTURE_CENTER_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			animation: 		new EngineBuffer(ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			grid: 			new EngineBuffer(GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
-			colorEffect: 	new EngineBuffer(TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			vertex: 		new EngineBuffer(this.shader, "vertex", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			offset: 		new EngineBuffer(this.shader, "offset", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			normal: 		new EngineBuffer(this.shader, "normal", NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			move: 			new EngineBuffer(this.shader, "move", MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			gravity: 		new EngineBuffer(this.shader, "gravity", GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			spriteType: 	new EngineBuffer(this.shader, "spriteType", SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			texCoord: 		new EngineBuffer(this.shader, "texCoord", TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			texCenter: 		new EngineBuffer(this.shader, "texCenter", TEXTURE_CENTER_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			animation: 		new EngineBuffer(this.shader, "animation", ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			grid: 			new EngineBuffer(this.shader, "grid", GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			colorEffect: 	new EngineBuffer(this.shader, "colorEffect", TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
 
-		this.shader = new Shader(gl, vertexShader, fragmentShader, this.bufferInfo);
 		this.mediaManager = mediaManager;
 		this.textureManager = new TextureManager(gl, this.shader, mediaManager);
 
@@ -206,13 +207,22 @@ class GLRenderer {
 	sendUpdatedBuffers(now) {
 		const { shader, bufferInfo } = this;
 		for (let b in bufferInfo) {
+			this.bindBuffer(bufferInfo[b]);
 			this.sendUpdatedBuffer(bufferInfo[b], now);
 		}
 	}
 
+	bindBuffer(engineBuffer) {
+		const { gl } = this;
+		const { shaderBuffer } = engineBuffer;
+
+		//	set sprite data
+		gl.bindBuffer(gl.ARRAY_BUFFER, shaderBuffer);		
+	}
+
 	sendUpdatedBuffer(engineBuffer, now) {
 		const { usedChunks } = this;
-		const { chunkUpdateTimes, shaderBuffer } = engineBuffer;
+		const { chunkUpdateTimes } = engineBuffer;
 
 		const HOLE_LIMIT = 4;
 		let rangeStart = -1, holeSize = 0;
@@ -236,24 +246,14 @@ class GLRenderer {
 	}
 
 	sendBuffer(engineBuffer, rangeStart, rangeEnd) {
-		const { gl, shader } = this;
-		const { floatPerVertex, verticesPerSprite, shaderBuffer } = engineBuffer;
+		const { gl } = this;
+		const { floatPerVertex, verticesPerSprite } = engineBuffer;
 
 		//	set sprite data
-		gl.bindBuffer(gl.ARRAY_BUFFER, shaderBuffer);
 		gl.bufferSubData(gl.ARRAY_BUFFER,
 			rangeStart * verticesPerSprite * floatPerVertex * Float32Array.BYTES_PER_ELEMENT,
 			engineBuffer.subarray(rangeStart, rangeEnd),
 		);
-	}
-
-	getNameFromEngineBuffer(engineBuffer) {
-		for (let i in this.bufferInfo) {
-			if (engineBuffer === this.bufferInfo[i]) {
-				return i;
-			}
-		}
-		return null;
 	}
 
 	sendSprites(sprites, now) {

@@ -121,7 +121,6 @@ class UIRenderer {
 											}
 										break;
 										case "rect":
-											console.log(newX, newY, newWidth, newHeight);
 											context.strokeStyle = strokeStyle.get(c, instanceIndex);
 											context.lineWidth = lineWidth.get(c, instanceIndex);
 											context.beginPath();

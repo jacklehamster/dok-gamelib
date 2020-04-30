@@ -38,6 +38,37 @@ const SpriteType = {
 	Shadow: 8,
 };
 
+const ShaderConfig = {
+	attributes: {
+		vertex: "aVertexPosition",
+		offset: "aOffset",
+		normal: "aNormal",
+		move: "aVertexMove",
+		gravity: "aVertexGravity",
+		spriteType: "aType",
+		texCoord: "aVertexTextureCoord",
+		texCenter: "aVertexTextureCenter",
+		animation: "aAnimationData",
+		grid: "aGrid",
+		colorEffect: "aColorEffect",
+	},
+	uniforms: {
+		projection: "uProjectionMatrix",
+		view: "uViewMatrix",
+		now: "uNow",
+		camRotation: "uCameraRotation",
+		camPosition: "uCamPosition",
+		lightPosition: "uLightPos",
+		lightIntensity: "uLightIntensity",
+		curvature: "uCurvature",
+		background: "uBackground",
+		textures: "uTextures",
+		depthEffect: "uDepthEffect",
+	},
+};
+
+
+
 const MAX_SPRITE = 16000;
 const TEXTURE_SIZE = 4096;
 

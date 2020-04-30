@@ -18,9 +18,12 @@ class SpriteInstance extends AnimatedSpriteInstance {
 		this.scale = 	[0, 0];
 		this.hotspot = 	[0, 0];
 		this.pos = 		[0, 0, 0];
-		this.mov = 		[0, 0, 0];
+		this.motion = {
+			time: 0,
+			mov: [0, 0, 0],
+			gravity: [0, 0, 0],
+		},
 		this.corners = 	[0, 0, 0, 0];
-		this.gravity = 	[0, 0, 0];
 		this.rotation = {
 			center: [0, 0, 0],
 			angle: [0, 0, 0],
@@ -33,7 +36,7 @@ class SpriteInstance extends AnimatedSpriteInstance {
 			return;
 		}
 
-		const { src, animation, scale, pos, mov, gravity, hotspot, corners, rotation: { angle, center }, refresh } = definition;
+		const { src, animation, scale, pos, motion: { mov, gravity, time }, hotspot, corners, rotation: { angle, center }, refresh } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
@@ -76,29 +79,38 @@ class SpriteInstance extends AnimatedSpriteInstance {
 		const newMovY = mov[1].get(instanceIndex);
 		const newMovZ = mov[2].get(instanceIndex);
 
-		if (!Utils.equal3(this.mov, newMovX, newMovY, newMovZ)) {
-			Utils.set3(this.mov, newMovX, newMovY, newMovZ);
-			updateTimes.mov = now;
+		if (!Utils.equal3(this.motion.mov, newMovX, newMovY, newMovZ)) {
+			Utils.set3(this.motion.mov, newMovX, newMovY, newMovZ);
+			updateTimes.motion = now;
 		}
 
 		const newGravityX = gravity[0].get(instanceIndex);
 		const newGravityY = gravity[1].get(instanceIndex);
 		const newGravityZ = gravity[2].get(instanceIndex);
 
-		if (!Utils.equal3(this.gravity, newGravityX, newGravityY, newGravityZ)) {
-			Utils.set3(this.gravity, newGravityX, newGravityY, newGravityZ);
-			updateTimes.gravity = now;
+		if (!Utils.equal3(this.motion.gravity, newGravityX, newGravityY, newGravityZ)) {
+			Utils.set3(this.motion.gravity, newGravityX, newGravityY, newGravityZ);
+			updateTimes.motion = now;
+		}
+
+		const newMotionTime = time.get(instanceIndex);
+		if (this.motion.time !== newMotionTime) {
+			this.motion.time = newMotionTime;
+			updateTimes.motion = now;
 		}
 
 		const angleX = angle[0].get(instanceIndex);
 		const angleY = angle[1].get(instanceIndex);
 		const angleZ = angle[2].get(instanceIndex);
+		if (!Utils.equal3(this.rotation.angle, angleX, angleY, angleZ)) {
+			Utils.set3(this.rotation.angle, angleX, angleY, angleZ);
+			updateTimes.rotation = now;
+		}
+
 		const centerX = center[0].get(instanceIndex);
 		const centerY = center[1].get(instanceIndex);
 		const centerZ = center[2].get(instanceIndex);
-
-		if (!Utils.equal3(this.rotation.angle, angleX, angleY, angleZ) || !Utils.equal3(this.rotation.center, centerX, centerY, centerZ)) {
-			Utils.set3(this.rotation.angle, angleX, angleY, angleZ);
+		if (!Utils.equal3(this.rotation.center, centerX, centerY, centerZ)) {
 			Utils.set3(this.rotation.center, centerX, centerY, centerZ);
 			updateTimes.rotation = now;
 		}

@@ -88,9 +88,6 @@ class Engine {
 				return;
 			}
 			const frameDuration = 1000 / currentScene.getFrameRate();
-			if (!currentScene.startTime) {
-				currentScene.startTime = now;
-			}
 			currentScene.now = now;
 
 			if (keyboard.dirty) {
@@ -111,7 +108,7 @@ class Engine {
 			}
 
 			if (now - glRenderer.lastRefresh >= frameDuration) {
-				glRenderer.setTime(now - currentScene.startTime);
+				glRenderer.setTime(now);
 				glRenderer.clearScreen();
 
 				sceneRenderer.render(currentScene);
@@ -196,7 +193,6 @@ class Engine {
 			const scene = sceneManager.createScene(sceneName, dataStore);
 
 			this.currentScene = scene;
-			this.currentScene.startTime = 0;
 			this.currentScene.now = 0;
 			this.currentScene.setEngine(this);
 			this.sceneRenderer.init(scene);
