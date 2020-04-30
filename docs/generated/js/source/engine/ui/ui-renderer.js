@@ -35,7 +35,7 @@ class UIRenderer {
 	}
 
 	onResize() {
-		if (!this.root) {
+		if (this.root) {
 			this.root.style.top = `${this.canvas.offsetTop}px`;
 			this.root.style.left = `${this.canvas.offsetLeft}px`;
 		}
