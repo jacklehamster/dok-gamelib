@@ -171,34 +171,6 @@ function copyVideos() {
 	});
 }
 
-function copyScenes() {
-	return new Promise((resolve, reject) =>
-		fs.promises.mkdir(path.join(__dirname, `${webDir}/generated/js/scenes`), { recursive: true }).then(() => {
-			template.getFolderAsData(path.join(__dirname, 'src/game', 'scenes')).then(scenes => {
-				Promise.all(scenes.filter(file => path.extname(file)===".js").map(scene => {
-					//check if folder needs to be created
-				    const targetFolder = path.join(__dirname, webDir, 'generated', 'js', 'scenes', path.dirname(scene));
-				    if ( !fs.existsSync( targetFolder ) ) {
-				        fs.mkdirSync( targetFolder );
-				    }
-					return fs.promises.copyFile(
-						path.join(__dirname, 'src/game', 'scenes', scene),
-						path.join(__dirname, webDir, 'generated', 'js', 'scenes', scene)
-					).catch(e => {
-						console.error(e.messsage);
-					});
-				}).concat(scenes.filter(file => path.extname(file)===".json").map(pathname => {
-					const scene = pathname.split("/")[0];
-					return fs.promises.mkdir(`${__dirname}/data/generated/scenes/${scene}`, {recursive: true})
-						.then(() => fs.promises.copyFile(`${__dirname}/src/game/scenes/${pathname}`, `${__dirname}/data/generated/scenes/${scene}/sprites.json`))
-				})).concat([
-					fs.promises.copyFile(`${__dirname}/src/game/game.json`, `${__dirname}/data/generated/game.json`),
-				])).then(resolve);
-			});
-		})
-	);
-}
-
 function copySource() {
 	return template.getFolderAsData(path.join(__dirname, 'src'))
 		.then(files => Promise.all(files.filter(file => path.extname(file)===".js")
@@ -352,9 +324,9 @@ app.get('/', function (req, res) {
 	.then(() => Promise.all([
 		copyVideos(),
 		copySounds(),
-		copyScenes(),
 		copySource(),
 		release ? minifyEngine() : assets.deleteFolders(`docs/generated/js/engine`, `docs/generated/js/editor`),
+		fs.promises.copyFile(`${__dirname}/src/game/game.json`, `${__dirname}/data/generated/game.json`),
 	]))
 	.then(() => console.log(`Done processing assets: ${Date.now() - startTime}ms`))
 	.then(() => Promise.all([
