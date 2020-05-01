@@ -37,27 +37,31 @@ SceneManager.add({Game: class extends Game {
 				const count = definition.gridSize.get() * definition.gridSize.get();
 				definition.particles = new Array(count).fill(null).map(() => {
 					return {
-						time: game.now + Math.random() * 10000,
+						time: game.now + Math.random() * 20000,
 						pos: [ (Math.random()-.5) * 2, 2, (Math.random()-.5) * 2 ],
 						mov: [ (Math.random()-.5) * 2, 0, (Math.random()-.5) * 2 ],
+						lockedUntil: game.now + Math.random() * 20000,
 					};
 				});
 			},
 			refresh: ({game, definition}) => {
 				for (let i = 0; i < definition.particles.length; i++) {
-					if (game.now - definition.particles[i].time > 10000) {
-						definition.particles[i].time += 10000;
+					const expiration = definition.particles[i].time + 20000;
+					if (game.now > expiration) {
+						definition.particles[i].time += 20000;
+						definition.particles[i].lockedUntil = expiration + 20000;
 					}
 				}
 			},
+			lockedUntil: ({definition}, index) => definition.particles[index].lockedUntil,
 			src: "penguin",
-			gridSize: 150,
+			gridSize: 200,
 			pos: [
 				({definition}, index) => definition.particles[index].pos[0] * 5,
 				({definition}, index) => definition.particles[index].pos[1] * 5,
 				({definition}, index) => definition.particles[index].pos[2] * 5,
 			],
-			scale: [ .1, .1 ],
+			scale: [ .08, .08 ],
 			rotation: {
 				angle: [
 					0,
@@ -68,9 +72,9 @@ SceneManager.add({Game: class extends Game {
 			motion: {
 				time: ({game: {now}, definition}, index) => definition.particles[index].time,
 				mov: [
-					({definition}, index) => definition.particles[index].mov[0] * .0001,
-					({definition}, index) => definition.particles[index].mov[1] * .0001,
-					({definition}, index) => definition.particles[index].mov[2] * .0001,
+					({definition}, index) => definition.particles[index].mov[0] * .00008,
+					({definition}, index) => definition.particles[index].mov[1] * .00008,
+					({definition}, index) => definition.particles[index].mov[2] * .00008,
 				],
 				gravity: [0, -0.000001, 0],
 			},

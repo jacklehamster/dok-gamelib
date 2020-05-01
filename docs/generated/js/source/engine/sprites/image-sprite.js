@@ -22,6 +22,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			curvature: 0,
 			hue: 0,
 		};
+		this.isVideoSprite = false;
  	}
 
 	getEvaluated(game, definition) {
@@ -36,6 +37,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 		const spriteSrc = src.get(instanceIndex);
 		if (spriteSrc !== this.src) {
 			this.src = spriteSrc;
+			this.isVideoSprite = game.engine.data.generated.videos[this.src];
 			updateTimes.src = now;
 		}
 

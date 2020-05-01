@@ -88,9 +88,13 @@ class SpriteRenderer {
 	}
 
 	render(sprite, chunk, now) {
-		const { updateTimes } = sprite;
+		const { updateTimes, skipProcess } = sprite;
 
 		sprite.updated = now;
+
+		if (skipProcess) {
+			return;
+		}
 
 		if (updateTimes.type === now) {
 			chunk.setType(sprite.type, now);
@@ -130,7 +134,7 @@ class SpriteRenderer {
 			const [ gx, gy, gz ] = sprite.motion.gravity;
 			chunk.setGravity(gx, gy, gz, now);
 		}
-		
+
 		// for (let i in updateTimes) {
 		// 	if (updateTimes[i] === now) {
 		// 		Log.status(i);

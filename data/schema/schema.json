@@ -73,6 +73,7 @@
 			"destroy": null,
 			"refresh": null,
 			"refreshRate": 0,
+			"lockedUntil": 0,
 			"type": "div",
 			"hidden": false,
 			"count": 1,
@@ -131,6 +132,7 @@
 			"src": null,
 			"type": 0,
 			"hidden": false,
+			"lockedUntil": 0,
 			"pos": [
 				0,
 				0,

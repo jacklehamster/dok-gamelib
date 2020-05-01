@@ -25,18 +25,20 @@ class MediaManager {
 	updatePlayingVideos(sprites, now) {
 		const { videoPlaytimes, playingVideos } = this;
 		for (let i = 0; i < sprites.length; i++) {
-			const { src } = sprites[i];
-			if (!videoPlaytimes[src]) {
-				const video = this.getVideo(src);
-				if (video) {
-					video.play();
-					console.log("Playing video:", src);
-					playingVideos.push(src);
-				} else {
-					continue;
+			const { src, isVideoSprite } = sprites[i];
+			if (isVideoSprite) {
+				if (!videoPlaytimes[src]) {
+					const video = this.getVideo(src);
+					if (video) {
+						video.play();
+						console.log("Playing video:", src);
+						playingVideos.push(src);
+					} else {
+						continue;
+					}
 				}
+				videoPlaytimes[src] = now;
 			}
-			videoPlaytimes[src] = now;
 		}
 
 		for (let i = playingVideos.length - 1; i >= 0; i--) {

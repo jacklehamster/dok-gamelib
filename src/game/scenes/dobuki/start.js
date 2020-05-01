@@ -67,7 +67,7 @@ SceneManager.add({Game: class extends Game {
 				dok.heightAboveGround = 0;
 				dok.flying = false;
 				if (dok.mov.y < -.35) {
-					dok.mov.y = -dok.mov.y * .4;
+					dok.mov.y = -dok.mov.y * .5;
 				} else {
 					dok.mov.y = 0;
 					dok.grounded = true;
@@ -141,12 +141,12 @@ SceneManager.add({Game: class extends Game {
 				],
 			},
 			pos: [
-				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 4.9,
+				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.9,
 				-1.5 + 2,
-				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 4.9,
+				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.9,
 			],
 			scale: [
-				({definition}) => .8 * 40 / definition.count.get(),
+				({definition}) => 1.4 * 40 / definition.count.get(),
 				4,
 			],
 			frame: (_, index) => index,
@@ -155,41 +155,43 @@ SceneManager.add({Game: class extends Game {
 			},
 			count: 40,
 		},
-		// {
-		// 	src: "wall",
-		// 	type: SpriteType.Front,
-		// 	rotation: {
-		// 		angle: [
-		// 			0,
-		// 			({definition}, index) => (index / definition.count.get() - .5) * Math.PI * 2,
-		// 			0,
-		// 		],
-		// 	},
-		// 	pos: [
-		// 		({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 4.9,
-		// 		-1.5 + 4,
-		// 		({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 4.9,
-		// 	],
-		// 	scale: [
-		// 		({definition}) => .8 * 40 / definition.count.get(),
-		// 		4,
-		// 	],
-		// 	frame: (_, index) => index,
-		// 	effects: {
-		// 		brightness: 80,
-		// 	},
-		// 	count: 40,
-		// },
+		{
+			src: "wall",
+			type: SpriteType.Front,
+			rotation: {
+				angle: [
+					0,
+					({definition}, index) => (index / definition.count.get() - .5) * Math.PI * 2,
+					0,
+				],
+			},
+			pos: [
+				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.9,
+				-1.5 + 4,
+				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.9,
+			],
+			scale: [
+				({definition}) => 1.4 * 40 / definition.count.get(),
+				4,
+			],
+			frame: (_, index) => index,
+			effects: {
+				brightness: 80,
+				hue: 1,
+			},
+			count: 40,
+		},
 		{
 			src: "home-floor",
 			type: SpriteType.Floor,
 			circleRadius: 1,
 			pos: [0, -1.15, 0],
-			scale: [10, 10],
+			scale: [16, 16],
 			effects: {
 				tintColor: 0x88995555,
 				brightness: 110,
 			},
+			lockedUntil: -1,
 		},
 		SpriteUtils.makeSprite({
 			src: "dok",
@@ -203,8 +205,8 @@ SceneManager.add({Game: class extends Game {
 				2.4,
 			],
 			heightAboveGround: ({game: { sceneData: { dok: { heightAboveGround } }}}) => heightAboveGround,
-			animation: ({game: { sceneData: { dok: { speed, mov, grounded } }}}) => {
-				return !grounded ? (mov.z < 0 ? "jump-up" : "jump") : speed > .01 ? (mov.z < 0 ? "walk-up" : "walk") : (mov.z < 0 ? "idle-up" : "idle");
+			animation: ({game: { sceneData: { dok: { speed, mov, flying } }}}) => {
+				return flying ? (mov.z < 0 ? "jump-up" : "jump") : speed > .01 ? (mov.z < 0 ? "walk-up" : "walk") : (mov.z < 0 ? "idle-up" : "idle");
 			},
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],

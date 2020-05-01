@@ -30,7 +30,7 @@ const sourceFolders = [
 	'src/engine/lib/*.js',
 	'src/engine/common/*.js',
 	'src/engine/utils/*.js',
-	'src/engine/sprites/base-sprite.js',
+	'src/engine/sprites/base/*.js',
 	'src/engine/sprites/image-sprite.js',
 	'src/engine/sprites/animated-sprite.js',
 	'src/engine/sprites/sprite.js',
@@ -38,6 +38,7 @@ const sourceFolders = [
 	'src/engine/core/*.js',
 	'src/engine/ui/*.js',
 	'src/engine/game/components/*.js',
+	'src/engine/game/base/*.js',
 	'src/engine/game/*.js',
 	'src/engine/scene-manager/*.js',
 ];

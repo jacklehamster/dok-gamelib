@@ -16,9 +16,9 @@
 
 class GameProperty {
 	init(value, game) {
-		const dynamic = typeof(value) === 'function';
+		this.dynamic = typeof(value) === 'function';
 		this.originalValue = value;
-		this.value = dynamic ? value.bind(game) : () => value;
+		this.value = this.dynamic ? value.bind(game) : () => value;
 		this.game = game;
 		this.definition = game;
 		return this;

@@ -28,12 +28,14 @@ class SpriteDefinitionProcessor {
 	refresh(sprites, now) {
 		for (let i = 0; i < sprites.length; i++) {
 			const definition = sprites[i];
-			const refreshRate = definition.refreshRate.get();
-			if (refreshRate && now - definition.lastRefresh < 1000 / refreshRate) {
-				continue;
+			if (definition.refreshing) {
+				const refreshRate = definition.refreshRate.get();
+				if (refreshRate && now - definition.lastRefresh < 1000 / refreshRate) {
+					continue;
+				}
+				definition.refresh.run();
+				definition.lastRefresh = now;
 			}
-			definition.refresh.run();
-			definition.lastRefresh = now;
 		}
 	}
 
@@ -60,7 +62,11 @@ class SpriteDefinitionProcessor {
 
 		for (let i = 0; i < totalCount; i ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);
-			sprite.getEvaluated(scene, definition);
+			if (sprite.shouldEvaluate(scene.now)) {
+				sprite.getEvaluated(scene, definition);
+			} else {
+				sprite.skipProcess = true;
+			}
 			spriteCollector.push(sprite);
 		}
 	}

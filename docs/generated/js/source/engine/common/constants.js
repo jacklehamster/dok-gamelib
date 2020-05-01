@@ -69,7 +69,7 @@ const ShaderConfig = {
 
 
 
-const MAX_SPRITE = 100000;
+const MAX_SPRITE = 1000000;
 const TEXTURE_SIZE = 4096;
 
 const ZERO_VEC3 = vec3.create();

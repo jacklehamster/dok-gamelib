@@ -20,6 +20,8 @@ class BaseSpriteInstance {
 		this.type = -1;
 		this.hidden = false;
 		this.updated = 0;
+		this.lockedUntil = 0;
+		this.skipProcess = false;
 		this.updateTimes = {
 		};
 	}
@@ -27,10 +29,14 @@ class BaseSpriteInstance {
 	init() {
 	}
 
+	shouldEvaluate(now) {
+		return this.lockedUntil >= 0 && this.lockedUntil <= now;
+	}
+
 	getEvaluated(game, definition) {
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
-		const { type, hidden } = definition;
+		const { type, hidden, lockedUntil, dynamic } = definition;
 
 		this.setHidden(hidden.get(instanceIndex), now);
 
@@ -43,11 +49,19 @@ class BaseSpriteInstance {
 			this.type = newType;
 			updateTimes.type = now;
 		}
+
+		const newLockedUntil = !dynamic ? -1 : lockedUntil.get(instanceIndex);
+		if (newLockedUntil !== this.lockedUntil) {
+			this.lockedUntil = newLockedUntil;
+		}
+		this.skipProcess = false;
 	}
 
 	setHidden(value, now) {
 		if (value !== this.hidden) {
 			this.hidden = value;
+			this.lockedUntil = 0;
+			this.skipProcess = false;
 			this.updateTimes.hidden = now;
 		}		
 	}
