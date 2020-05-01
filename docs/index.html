@@ -22,6 +22,17 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-title" content="Hello World">
 
+		<script>
+			const numScenes = "8";
+			const numSources = "46"
+			const release = "true"
+			console.log({
+				numScenes,
+				numSources,
+				release,
+			});
+		</script>
+
 		<script src="generated/js/data.js"></script>
 		<script src="generated/js/engine/engine.min.js"></script>
 		<script>SceneManager.loadingSceneName = "dobuki";</script>
@@ -64,7 +75,7 @@
 				<div id="assets-container" class="assets-container"></div>
 			</div>
 		</div>
-		<div id="panel" class="panel">
+		<div id="panel" class="panel loading">
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>

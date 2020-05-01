@@ -22,6 +22,17 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-title" content="{{obj.title}}">
 
+		<script>
+			const numScenes = "{{{obj.scenes.length}}}";
+			const numSources = "{{{obj.source.length}}}"
+			const release = "{{{obj.release}}}"
+			console.log({
+				numScenes,
+				numSources,
+				release,
+			});
+		</script>
+
 		<script src="generated/js/data.js"></script>
 {{#obj.release}}
 		<script src="generated/js/engine/engine.min.js"></script>
@@ -59,7 +70,7 @@
 				<div id="assets-container" class="assets-container"></div>
 			</div>
 		</div>
-		<div id="panel" class="panel">
+		<div id="panel" class="panel loading">
 			<canvas id="canvas" width={{obj.width}} height={{obj.height}}></canvas>
 		</div>
 		<script>

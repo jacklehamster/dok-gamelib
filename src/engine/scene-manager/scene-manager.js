@@ -15,7 +15,6 @@ class SceneManager {
 		this.DefaultAnimationDefinitionClass = AnimationDefinition;
 		this.scenes = {};
 		this.sceneNames = [];
-		this.configProcessor = new ConfigProcessor();
 	}
 
 	add(name, {Game, SpriteDefinition, AnimationDefinition}, config) {
@@ -44,8 +43,8 @@ class SceneManager {
 		return this.scenes[name];
 	}
 
-	createScene(name, dataStore) {
-		const { scenes, configProcessor } = this;
+	createScene(name, dataStore, configProcessor) {
+		const { scenes } = this;
 		const gameScene = scenes[name];
 		if (gameScene) {
 			const { Game, SpriteDefinition, AnimationDefinition, config } = gameScene;

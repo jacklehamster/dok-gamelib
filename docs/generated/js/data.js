@@ -1312,6 +1312,7 @@ function getData() {
             "pos": [0, 0, 0],
             "motion": {"time": 0, "mov": [0, 0, 0], "gravity": [0, 0, 0]},
             "rotation": {"center": [0, 0, 0], "angle": [0, 0, 0]},
+            "blackhole": {"center": [0, 0, 0], "strength": 0},
             "grid": [1, 1],
             "spriteSize": [0, 0],
             "animation": null,

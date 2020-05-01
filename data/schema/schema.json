@@ -163,6 +163,14 @@
 					0
 				]
 			},
+			"blackhole": {
+				"center": [
+					0,
+					0,
+					0
+				],
+				"strength": 0
+			},
 			"grid": [
 				1,
 				1

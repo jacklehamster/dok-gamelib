@@ -4,8 +4,8 @@
 
 
 class ConfigProcessor {
-	constructor() {
-		this.schema = getData().schema.schema;
+	constructor({schema}) {
+		this.schema = schema.schema;
 		this.gamePropertyPool = new Pool(
 			() => new GameProperty(),
 			gameProperty => gameProperty.init(null, null),

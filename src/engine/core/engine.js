@@ -30,6 +30,9 @@ class Engine {
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
 		this.uiRenderer = new UIRenderer(canvas, this.canvasRenderer);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
+		this.workerManager = new WorkerManager(this);
+		this.configProcessor = new ConfigProcessor(this.data);
+
 		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard(this, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
@@ -74,7 +77,7 @@ class Engine {
 	}
 
 	start() {
-		Engine.beginLooping(this);
+		this.beginLooping();
 		this.onStartListener.forEach(listener => listener(this));
 		this.resetScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
 //		console.log("start scene:", this.currentScene.name);
@@ -85,7 +88,8 @@ class Engine {
 		return match && match[1] ? match[1] === 1 || match[1] === "true" : this.data.generated.game.editor;
 	}
 
-	static beginLooping(engine) {
+	beginLooping() {
+		const engine = this;
 		const { glRenderer, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
 				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
 
@@ -213,7 +217,7 @@ class Engine {
 		const { sceneManager, dataStore } = this;
 		if (sceneManager.hasScene(sceneName)) {
 			this.clearScene();
-			const scene = sceneManager.createScene(sceneName, dataStore);
+			const scene = sceneManager.createScene(sceneName, dataStore, this.configProcessor);
 
 			this.currentScene = scene;
 			this.currentScene.startTime = 0;
