@@ -153,6 +153,7 @@ SceneManager.add({Game: class extends Game {
 			effects: {
 				brightness: 80,
 			},
+			lockedUntil: -1,
 			count: 40,
 		},
 		{
@@ -179,6 +180,7 @@ SceneManager.add({Game: class extends Game {
 				brightness: 80,
 				hue: 1,
 			},
+			lockedUntil: -1,
 			count: 40,
 		},
 		{
