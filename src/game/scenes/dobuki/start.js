@@ -173,12 +173,12 @@ SceneManager.add({Game: class extends Game {
 			},
 			pos: [
 				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.7,
-				({definition}, index) => -1.9 + .5 * Math.floor(index / 40),
+				({definition}, index) => -2.7 + 1 * Math.floor(index / 40),
 				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.7,
 			],
 			scale: [
-				({definition}) => 1.25 * 40 / (definition.count.get() / 2),
-				0.51,
+				({definition}) => 1.3 * 40 / (definition.count.get() / 2),
+				1.05,
 			],
 			frame: (_, index) => index,
 			effects: {
@@ -194,6 +194,18 @@ SceneManager.add({Game: class extends Game {
 			circleRadius: 1,
 			pos: [0, -1.15, 0],
 			scale: [16, 16],
+			effects: {
+				tintColor: 0x88995555,
+				brightness: 110,
+			},
+			lockedUntil: -1,
+		},
+		{
+			src: "home-floor",
+			type: SpriteType.Floor,
+			circleRadius: 1,
+			pos: [0, -3.15, 5],
+			scale: [20, 20],
 			effects: {
 				tintColor: 0x88995555,
 				brightness: 110,

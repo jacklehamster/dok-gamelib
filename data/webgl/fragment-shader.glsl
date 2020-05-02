@@ -99,7 +99,7 @@ void main(void) {
 	}
 
 	//	SDF handling, for text and reduced size sprite
-    color.a = smoothstep(.5 - .01, .5 + .01, color.a);
+    color.a = smoothstep(.5 - .001, .5 + .001, color.a);
 	if (color.a <= 0.001) {
 		discard;
 	}
