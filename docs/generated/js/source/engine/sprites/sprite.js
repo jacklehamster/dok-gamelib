@@ -23,15 +23,10 @@ class SpriteInstance extends AnimatedSpriteInstance {
 			mov: [0, 0, 0],
 			gravity: [0, 0, 0],
 		};
-		this.corners = 	[0, 0, 0, 0];
+		this.corners = [0, 0, 0, 0];
 		this.rotation = {
 			center: [0, 0, 0],
 			angle: [0, 0, 0],
-		};
-		this.blackhole = {
-			center: [0, 0, 0],
-			strength: 0,
-			distance: 0,
 		};
 	}
 
@@ -86,7 +81,13 @@ class SpriteInstance extends AnimatedSpriteInstance {
 
 		if (!Utils.equal3(this.motion.mov, newMovX, newMovY, newMovZ)) {
 			Utils.set3(this.motion.mov, newMovX, newMovY, newMovZ);
-			updateTimes.motion = now;
+			updateTimes.move = now;
+		}
+
+		const newMotionTime = time.get(instanceIndex);
+		if (this.motion.time !== newMotionTime) {
+			this.motion.time = newMotionTime;
+			updateTimes.move = now;
 		}
 
 		const newGravityX = gravity[0].get(instanceIndex);
@@ -95,13 +96,7 @@ class SpriteInstance extends AnimatedSpriteInstance {
 
 		if (!Utils.equal3(this.motion.gravity, newGravityX, newGravityY, newGravityZ)) {
 			Utils.set3(this.motion.gravity, newGravityX, newGravityY, newGravityZ);
-			updateTimes.motion = now;
-		}
-
-		const newMotionTime = time.get(instanceIndex);
-		if (this.motion.time !== newMotionTime) {
-			this.motion.time = newMotionTime;
-			updateTimes.motion = now;
+			updateTimes.gravity = now;
 		}
 
 		const angleX = angle[0].get(instanceIndex);
@@ -118,26 +113,6 @@ class SpriteInstance extends AnimatedSpriteInstance {
 		if (!Utils.equal3(this.rotation.center, centerX, centerY, centerZ)) {
 			Utils.set3(this.rotation.center, centerX, centerY, centerZ);
 			updateTimes.rotation = now;
-		}
-
-		const newBlackholeCenterX = blackhole.center[0].get(instanceIndex);
-		const newBlackholeCenterY = blackhole.center[1].get(instanceIndex);
-		const newBlackholeCenterZ = blackhole.center[2].get(instanceIndex);
-		if (!Utils.equal3(this.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ)) {
-			Utils.set3(this.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ);
-			updateTimes.blackhole = now;
-		}
-
-		const newBlackholeStrength = blackhole.strength.get(instanceIndex);
-		if (this.blackhole.strength !== newBlackholeStrength) {
-			this.blackhole.strength = newBlackholeStrength;
-			updateTimes.blackhole = now;
-		}
-
-		const newBlackholeDistance = blackhole.distance.get(instanceIndex);
-		if (this.blackhole.distance !== newBlackholeDistance) {
-			this.blackhole.distance = newBlackholeDistance;
-			updateTimes.blackhole = now;
 		}
 	}
 }

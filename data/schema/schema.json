@@ -177,15 +177,6 @@
 				0,
 				0
 			],
-			"blackhole": {
-				"center": [
-					0,
-					0,
-					0
-				],
-				"strength": 0,
-				"distance": 0
-			},
 			"grid": [
 				1,
 				1
@@ -206,7 +197,16 @@
 				"brightness": 100,
 				"tintColor": 0,
 				"curvature": 0,
-				"hue": 0
+				"hue": 0,
+				"blackhole": {
+					"center": [
+						0,
+						0,
+						0
+					],
+					"strength": 0,
+					"distance": 0
+				}
 			},
 			"circleRadius": 0,
 			"count": 1,

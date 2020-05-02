@@ -23,6 +23,9 @@ attribute vec4 aAnimationData; 			//	[ time, start, total, frameRate ]
 attribute vec2 aGrid;					//	[ cols, rows ]
 attribute vec4 aColorEffect;			//	[ tint color, mix, hue change ]
 
+attribute vec3 aBlackholeCenter;		//	[ x, y, z ]
+attribute vec2 aBlackholeInfo;			//	[ strength, distance ]
+
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uCameraRotation;
@@ -60,6 +63,18 @@ void main(void) {
 	}
 
 	worldPos.xyz += aOffset + aVertexMove.xyz * time + aVertexGravity.xyz * time * time * 0.5;
+
+	float strength = aBlackholeInfo[0];
+	float distance = aBlackholeInfo[1];
+	if (strength != 0.0) {	//	apply blackhole (generally used for producing spheres)
+		worldPos.xyz = mix(worldPos.xyz, aBlackholeCenter, strength);
+		if (distance != 0.0) {
+			vec3 blackholeToPoint = worldPos.xyz - aBlackholeCenter;
+			blackholeToPoint = blackholeToPoint * distance / length(blackholeToPoint);
+			worldPos.xyz = aBlackholeCenter + blackholeToPoint;
+		}
+	}
+
 
 	if (aType == 7.0) {	//	water wave
 		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .3;

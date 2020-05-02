@@ -25,7 +25,6 @@ class SurfaceChunk {
 
 class SurfaceAllocator {
  	constructor(freeCells) {
- 		this.chunks = [
- 		];
+ 		this.chunks = [];
  	}
 }

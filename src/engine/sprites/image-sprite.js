@@ -21,6 +21,11 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			brightness: 0,
 			curvature: 0,
 			hue: 0,
+			blackhole : {
+				center: [0, 0, 0],
+				strength: 0,
+				distance: 0,
+			},
 		};
 		this.isVideoSprite = false;
  	}
@@ -31,7 +36,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			return;
 		}
 		
-		const { src, effects: { brightness, tintColor, curvature, hue } } = definition;
+		const { src, effects: { brightness, tintColor, curvature, hue, blackhole } } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 		const spriteSrc = src.get(instanceIndex);
@@ -63,6 +68,22 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 		if (newHue !== this.effects.hue) {
 			this.effects.hue = newHue;
 			updateTimes.hue = now;
+		}
+
+		const newBlackholeCenterX = blackhole.center[0].get(instanceIndex);
+		const newBlackholeCenterY = blackhole.center[1].get(instanceIndex);
+		const newBlackholeCenterZ = blackhole.center[2].get(instanceIndex);
+		if (!Utils.equal3(this.effects.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ)) {
+			Utils.set3(this.effects.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ);
+			updateTimes.blackholeCenter = now;
+		}
+
+		const newBlackholeStrength = blackhole.strength.get(instanceIndex);
+		const newBlackholeDistance = blackhole.distance.get(instanceIndex);
+		if (this.effects.blackhole.strength !== newBlackholeStrength || this.effects.blackhole.distance !== newBlackholeDistance) {
+			this.effects.blackhole.strength = newBlackholeStrength;
+			this.effects.blackhole.distance = newBlackholeDistance;
+			updateTimes.blackholeInfo = now;
 		}
 	}
 }

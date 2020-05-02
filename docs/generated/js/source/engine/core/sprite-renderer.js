@@ -124,21 +124,26 @@ class SpriteRenderer {
 		}
 
 		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.curvature === now
-			|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now) {
+			|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now || updateTimes.blackhole === now) {
 			this.processWall(sprite, chunk, now);
 		}
 
-		if (updateTimes.motion === now) {
+		if (updateTimes.move === now) {
 			const [ mx, my, mz ] = sprite.motion.mov;
 			chunk.setMove(mx, my, mz, sprite.motion.time, now);
-			const [ gx, gy, gz ] = sprite.motion.gravity;
-			chunk.setGravity(gx, gy, gz, now);
 		}
 
-		// for (let i in updateTimes) {
-		// 	if (updateTimes[i] === now) {
-		// 		Log.status(i);
-		// 	}
-		// }
+		if (updateTimes.gravity === now) {
+			const [ gx, gy, gz ] = sprite.motion.gravity;
+			chunk.setGravity(gx, gy, gz, now);			
+		}
+
+		if (updateTimes.blackholeCenter === now) {
+			chunk.setBlackholeCenter(sprite.effects.blackhole.center, now);
+		}
+
+		if (updateTimes.blackholeInfo === now) {
+			chunk.setBlackholeInfo(sprite.effects.blackhole.strength, sprite.effects.blackhole.distance, now);
+		}
 	}
 }

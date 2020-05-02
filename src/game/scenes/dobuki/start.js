@@ -54,7 +54,7 @@ SceneManager.add({Game: class extends Game {
 			sceneData.dok.speed = 0;
 		}
 
-		if (dok.grounded) {
+		if (dok.grounded || controls.action > 0 && !dok.flying) {
 			if (controls.action > 0) {
 				dok.mov.y = .25;
 				dok.grounded = false;
@@ -126,7 +126,7 @@ SceneManager.add({Game: class extends Game {
 		{
 			id: "wall",
 			src: "home-floor",
-			grid: [10, 1],
+			grid: [10, 8],
 		},
 	],
 	sprites: [
@@ -136,52 +136,57 @@ SceneManager.add({Game: class extends Game {
 			rotation: {
 				angle: [
 					0,
-					({definition}, index) => (index / definition.count.get() - .5) * Math.PI * 2,
+					({definition}, index) => ((index % 40) / (definition.count.get() / 8) - .5) * Math.PI * 2,
 					0,
 				],
 			},
 			pos: [
-				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.9,
-				-1.5 + 2,
-				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.9,
+				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 8,
+				({definition}, index) => -1 + Math.floor(index / 40),
+				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 8,
 			],
 			scale: [
-				({definition}) => 1.4 * 40 / definition.count.get(),
-				4,
+				({definition}) => 1.41 * 40 / (definition.count.get() / 8),
+				1.05,
 			],
 			frame: (_, index) => index,
 			effects: {
 				brightness: 80,
+				blackhole: {
+					center: [ 0, 0, 0 ],
+					strength: .5,
+					distance: 8,
+				},
 			},
 			lockedUntil: -1,
-			count: 40,
+			count: 320,
 		},
 		{
 			src: "wall",
-			type: SpriteType.Front,
+			type: SpriteType.Back,
 			rotation: {
 				angle: [
 					0,
-					({definition}, index) => (index / definition.count.get() - .5) * Math.PI * 2,
+					({definition}, index) => ((index % 40) / (definition.count.get() / 2) + .5) * Math.PI * 2,
 					0,
 				],
 			},
 			pos: [
-				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.9,
-				-1.5 + 4,
-				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.9,
+				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.7,
+				({definition}, index) => -1.9 + .5 * Math.floor(index / 40),
+				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.7,
 			],
 			scale: [
-				({definition}) => 1.4 * 40 / definition.count.get(),
-				4,
+				({definition}) => 1.25 * 40 / (definition.count.get() / 2),
+				0.51,
 			],
 			frame: (_, index) => index,
 			effects: {
-				brightness: 80,
-				hue: 1,
+				tintColor: 0x88995555,
+				brightness: 110,
 			},
 			lockedUntil: -1,
-			count: 40,
+			count: 80,
 		},
 		{
 			src: "home-floor",

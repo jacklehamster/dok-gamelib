@@ -265,4 +265,26 @@ class Chunk {
 		);
 		bufferInfo.animation.chunkUpdateTimes[index] = now;
 	}
+
+	setBlackholeCenter([ gx, gy, gz ], now) {
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.blackholeCenter,
+			gx, gy, gz,
+			gx, gy, gz,
+			gx, gy, gz,
+			gx, gy, gz,
+		);
+		bufferInfo.blackholeCenter.chunkUpdateTimes[index] = now;
+	}
+
+	setBlackholeInfo(strength, distance, now) {
+		const { bufferInfo, index } = this;
+		this.assignValues(bufferInfo.blackholeInfo,
+			strength, distance,
+			strength, distance,
+			strength, distance,
+			strength, distance,
+		);
+		bufferInfo.blackholeInfo.chunkUpdateTimes[index] = now;
+	}
 }

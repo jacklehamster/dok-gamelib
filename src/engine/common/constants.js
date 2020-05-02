@@ -20,11 +20,15 @@ const ANIMATION_FLOAT_PER_VERTEX 	= 4;	//	time,start,count,frameRate
 const GRID_FLOAT_PER_VERTEX 		= 2;	//	cols,rows
 const TINT_FLOAT_PER_VERTEX			= 4;	//	tint color, mix percentage
 
+const BLACKHOLE_CENTER_FLOAT_PER_VERTEX = 3;	//	x,y,z
+const BLACKHOLE_INFO_FLOAT_PER_VERTEX	= 2;	//	strength, distance
+
 const VERTICES_PER_SPRITE 			= 4;	//	4 corners
 const INDEX_ARRAY_PER_SPRITE = new Uint32Array([
 	1,  2,  0,
 	0,  2,  3,
 ]);
+
 
 const SpriteType = {
 	Sprite: 0,
@@ -51,6 +55,8 @@ const ShaderConfig = {
 		animation: "aAnimationData",
 		grid: "aGrid",
 		colorEffect: "aColorEffect",
+		blackholeCenter: "aBlackholeCenter",
+		blackholeInfo: "aBlackholeInfo",
 	},
 	uniforms: {
 		projection: "uProjectionMatrix",
