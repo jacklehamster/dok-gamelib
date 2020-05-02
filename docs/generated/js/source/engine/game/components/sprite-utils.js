@@ -11,7 +11,7 @@
 class SpriteUtils {
 	static makeSprite(params) {
 		const { position, heightAboveGround, shadowColor, spriteTint, scale, spriteSize, src,
-			animation, init, refresh, refreshRate, hidden, spriteCount } = params;
+			animation, init, refresh, refreshRate, hidden, spriteCount, fixed } = params;
 
 		const zoomValue = ({definition}) => {
 			const spriteWidth = definition.spriteSize[0].get(),
@@ -60,10 +60,11 @@ class SpriteUtils {
 			pos: [
 				({definition}, index) => definition.position[0].get(Math.floor(index / 2)),
 				({definition}, index) => definition.position[1].get(Math.floor(index / 2))
-				+ (index % 2 === 0 ? 0 : -1.15+.01) + (index % 2 === 0 ? (definition.heightAboveGround.get(Math.floor(index / 2)) || 0 ) : 0),
+					+ (index % 2 === 0 ? 0 : -1.15+.01) + (index % 2 === 0 ? (definition.heightAboveGround.get(Math.floor(index / 2)) || 0 ) : 0),
 				({definition}, index) => definition.position[2].get(Math.floor(index / 2)) 
-				- (index % 2 === 1 ? (definition.heightAboveGround.get(Math.floor(index / 2) || 0 ) * .4) : 0),				
+					- (index % 2 === 1 ? (definition.heightAboveGround.get(Math.floor(index / 2) || 0 ) * .4) : 0),				
 			],
+			fixed,
 			spriteCount: spriteCount || 1,
 			count: ({definition}) => definition.spriteCount.get() * 2,
 		};

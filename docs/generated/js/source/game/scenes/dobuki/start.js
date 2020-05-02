@@ -126,6 +126,7 @@ SceneManager.add({Game: class extends Game {
 		{
 			id: "wall",
 			src: "home-floor",
+			padding: 2.5,
 			grid: [10, 8],
 		},
 	],
@@ -146,8 +147,8 @@ SceneManager.add({Game: class extends Game {
 				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 8,
 			],
 			scale: [
-				({definition}) => 1.41 * 40 / (definition.count.get() / 8),
-				1.05,
+				({definition}) => 1.4 * 40 / (definition.count.get() / 8),
+				1,
 			],
 			frame: (_, index) => index,
 			effects: {
@@ -155,10 +156,10 @@ SceneManager.add({Game: class extends Game {
 				blackhole: {
 					center: [ 0, 0, 0 ],
 					strength: .5,
-					distance: 8,
+					distance: 7.98,
 				},
 			},
-			lockedUntil: -1,
+			fixed: true,
 			count: 320,
 		},
 		{
@@ -172,20 +173,20 @@ SceneManager.add({Game: class extends Game {
 				],
 			},
 			pos: [
-				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.7,
-				({definition}, index) => -2.7 + 1 * Math.floor(index / 40),
-				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.7,
+				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.8,
+				({definition}, index) => -2.65 + 1 * Math.floor(index / 40),
+				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.8,
 			],
 			scale: [
-				({definition}) => 1.3 * 40 / (definition.count.get() / 2),
-				1.05,
+				({definition}) => 1.25 * 40 / (definition.count.get() / 2),
+				1,
 			],
 			frame: (_, index) => index,
 			effects: {
 				tintColor: 0x88995555,
 				brightness: 110,
 			},
-			lockedUntil: -1,
+			fixed: true,
 			count: 80,
 		},
 		{
@@ -198,7 +199,7 @@ SceneManager.add({Game: class extends Game {
 				tintColor: 0x88995555,
 				brightness: 110,
 			},
-			lockedUntil: -1,
+			fixed: true,
 		},
 		{
 			src: "home-floor",
@@ -210,7 +211,7 @@ SceneManager.add({Game: class extends Game {
 				tintColor: 0x88995555,
 				brightness: 110,
 			},
-			lockedUntil: -1,
+			fixed: true,
 		},
 		SpriteUtils.makeSprite({
 			src: "dok",
@@ -235,6 +236,7 @@ SceneManager.add({Game: class extends Game {
 			position: [-1, 0, -1],
 			scale: [3, 3],
 			shadowColor: 0xFF333333,
+			fixed: true,
 		}),
 	],
 });

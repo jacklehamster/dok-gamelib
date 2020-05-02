@@ -10,7 +10,7 @@
 
 class ShapeUtils {
 	static cube(params) {
-		let { position, topSrc, sideSrc, scale, hidden, cubeCount, topAnimation, sideAnimation } = params;
+		let { position, topSrc, sideSrc, scale, hidden, cubeCount, topAnimation, sideAnimation, fixed } = params;
 
 		const SPRITE_TYPES = [
 			{ type: SpriteType.Floor, 		offset: [ 0, 1, 0] },
@@ -38,6 +38,7 @@ class ShapeUtils {
 				({definition}, index) => definition.position[1].get(Math.floor(index / SPRITE_TYPES.length)) + SPRITE_TYPES[index % SPRITE_TYPES.length].offset[1] * definition.scale[0].get(Math.floor(index / SPRITE_TYPES.length)) / 2,
 				({definition}, index) => definition.position[2].get(Math.floor(index / SPRITE_TYPES.length)) + SPRITE_TYPES[index % SPRITE_TYPES.length].offset[2] * definition.scale[1].get(Math.floor(index / SPRITE_TYPES.length)) / 2,
 			],
+			fixed,
 			cubeCount: cubeCount || 1,
 			count: ({definition}, index) => 5 * definition.cubeCount.get(Math.floor(index / SPRITE_TYPES.length)),
 		};

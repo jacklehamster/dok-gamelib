@@ -25,13 +25,12 @@ class MediaManager {
 	updatePlayingVideos(sprites, now) {
 		const { videoPlaytimes, playingVideos } = this;
 		for (let i = 0; i < sprites.length; i++) {
-			const { src, isVideoSprite } = sprites[i];
-			if (isVideoSprite) {
+			const { src, isVideoSprite, hidden } = sprites[i];
+			if (isVideoSprite && !hidden) {
 				if (!videoPlaytimes[src]) {
 					const video = this.getVideo(src);
 					if (video) {
 						video.play();
-						console.log("Playing video:", src);
 						playingVideos.push(src);
 					} else {
 						continue;

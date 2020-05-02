@@ -36,7 +36,7 @@ class BaseSpriteInstance {
 	getEvaluated(game, definition) {
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
-		const { type, hidden, lockedUntil, dynamic } = definition;
+		const { type, hidden, lockedUntil, dynamic, fixed } = definition;
 
 		this.setHidden(hidden.get(instanceIndex), now);
 
@@ -50,7 +50,7 @@ class BaseSpriteInstance {
 			updateTimes.type = now;
 		}
 
-		const newLockedUntil = !dynamic ? -1 : lockedUntil.get(instanceIndex);
+		const newLockedUntil = !dynamic || fixed.get(instanceIndex) ? -1 : lockedUntil.get(instanceIndex);
 		if (newLockedUntil !== this.lockedUntil) {
 			this.lockedUntil = newLockedUntil;
 		}

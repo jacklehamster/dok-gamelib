@@ -27,7 +27,7 @@ class TextUtils {
 	}
 
 	static makeSprite(params) {
-		const {position, effects, fontId, scale, text, letterDistance, lineDistance, faceUser, hidden, brightness} = params;
+		const {position, effects, fontId, scale, text, letterDistance, lineDistance, faceUser, hidden, fixed, brightness} = params;
 		let cachedText = null;
 		let cachedFontId = null;
 		let font = null;
@@ -89,6 +89,7 @@ class TextUtils {
 				}
 			],
 			textHidden: hidden || false,
+			fixed,
 			hidden: ({game, definition}, index) => {
 				return indices[index] < 0 || definition.textHidden.get();
 			},
