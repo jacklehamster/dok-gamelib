@@ -22,11 +22,16 @@ class SpriteInstance extends AnimatedSpriteInstance {
 			time: 0,
 			mov: [0, 0, 0],
 			gravity: [0, 0, 0],
-		},
-		this.corners = 	[0, 0, 0, 0];
+		};
+		this.corners = [0, 0, 0, 0];
 		this.rotation = {
 			center: [0, 0, 0],
 			angle: [0, 0, 0],
+		};
+		this.blackhole = {
+			center: [0, 0, 0],
+			strength: 0,
+			distance: 0,
 		};
 	}
 
@@ -36,7 +41,7 @@ class SpriteInstance extends AnimatedSpriteInstance {
 			return;
 		}
 
-		const { src, animation, scale, pos, motion: { mov, gravity, time }, hotspot, corners, rotation: { angle, center }, refresh } = definition;
+		const { src, animation, scale, pos, motion: { mov, gravity, time }, hotspot, corners, rotation: { angle, center }, blackhole, refresh } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 
@@ -113,6 +118,26 @@ class SpriteInstance extends AnimatedSpriteInstance {
 		if (!Utils.equal3(this.rotation.center, centerX, centerY, centerZ)) {
 			Utils.set3(this.rotation.center, centerX, centerY, centerZ);
 			updateTimes.rotation = now;
+		}
+
+		const newBlackholeCenterX = blackhole.center[0].get(instanceIndex);
+		const newBlackholeCenterY = blackhole.center[1].get(instanceIndex);
+		const newBlackholeCenterZ = blackhole.center[2].get(instanceIndex);
+		if (!Utils.equal3(this.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ)) {
+			Utils.set3(this.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ);
+			updateTimes.blackhole = now;
+		}
+
+		const newBlackholeStrength = blackhole.strength.get(instanceIndex);
+		if (this.blackhole.strength !== newBlackholeStrength) {
+			this.blackhole.strength = newBlackholeStrength;
+			updateTimes.blackhole = now;
+		}
+
+		const newBlackholeDistance = blackhole.distance.get(instanceIndex);
+		if (this.blackhole.distance !== newBlackholeDistance) {
+			this.blackhole.distance = newBlackholeDistance;
+			updateTimes.blackhole = now;
 		}
 	}
 }

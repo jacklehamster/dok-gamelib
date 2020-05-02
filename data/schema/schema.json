@@ -163,13 +163,28 @@
 					0
 				]
 			},
+			"scale": [
+				1,
+				1
+			],
+			"hotspot": [
+				0,
+				0
+			],
+			"corners": [
+				0,
+				0,
+				0,
+				0
+			],
 			"blackhole": {
 				"center": [
 					0,
 					0,
 					0
 				],
-				"strength": 0
+				"strength": 0,
+				"distance": 0
 			},
 			"grid": [
 				1,
@@ -187,20 +202,6 @@
 				"frameRate": 0
 			},
 			"frame": 0,
-			"scale": [
-				1,
-				1
-			],
-			"hotspot": [
-				0,
-				0
-			],
-			"corners": [
-				0,
-				0,
-				0,
-				0
-			],
 			"effects": {
 				"brightness": 100,
 				"tintColor": 0,

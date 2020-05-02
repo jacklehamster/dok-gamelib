@@ -1312,7 +1312,10 @@ function getData() {
             "pos": [0, 0, 0],
             "motion": {"time": 0, "mov": [0, 0, 0], "gravity": [0, 0, 0]},
             "rotation": {"center": [0, 0, 0], "angle": [0, 0, 0]},
-            "blackhole": {"center": [0, 0, 0], "strength": 0},
+            "scale": [1, 1],
+            "hotspot": [0, 0],
+            "corners": [0, 0, 0, 0],
+            "blackhole": {"center": [0, 0, 0], "strength": 0, "distance": 0},
             "grid": [1, 1],
             "spriteSize": [0, 0],
             "animation": null,
@@ -1323,9 +1326,6 @@ function getData() {
               "frameRate": 0
             },
             "frame": 0,
-            "scale": [1, 1],
-            "hotspot": [0, 0],
-            "corners": [0, 0, 0, 0],
             "effects": {
               "brightness": 100,
               "tintColor": 0,
