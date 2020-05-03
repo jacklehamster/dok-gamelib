@@ -27,16 +27,36 @@ class WorkerEngine {
 		this.dataStore = new DataStore(localStorageData, this);
 	}
 
+	init() {
+		this.beginLooping();
+	}
+
 	beginLooping() {
 		const engine = this;
 		function animationFrame(time) {
 			requestAnimationFrame(animationFrame);
-			engine.loop();
+			engine.loop(time);
 		}
 		requestAnimationFrame(animationFrame);
 	}
 
-	loop() {
+	loop(time) {
+		time = Math.round(time);
+		const { currentScene, keyboard, } = this;
+		if (!currentScene) {
+			return;
+		}
+		if (!currentScene.startTime) {
+			currentScene.startTime = time;
+			return;
+		}
+		const now = time - currentScene.startTime;
+		currentScene.now = now;
+		console.log(currentScene.name, currentScene.now);
+
+		const frameDuration = 1000 / currentScene.getFrameRate();
+
+
 	}
 
 	sendCommand(component, command, ...parameters) {

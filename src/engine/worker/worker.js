@@ -46,6 +46,7 @@ if (typeof(window) === 'undefined') {
 			case "init": {
 				const {data: { data, localStorageData }}  = event;
 				workerEngine = new WorkerEngine(SceneManager.instance, data, localStorageData);
+				workerEngine.init();
 				break;
 			}
 			case "ping": {

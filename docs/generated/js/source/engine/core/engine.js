@@ -89,6 +89,11 @@ class Engine {
 		return match && match[1] ? match[1] === 1 || match[1] === "true" : this.data.generated.game.editor;
 	}
 
+	importAndPlayCurrentScene() {
+		this.workerManager.import(this.currentScene);
+		this.workerManager.setScene(this.currentScene.name);
+	}
+
 	beginLooping() {
 		const engine = this;
 		const { glRenderer, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
@@ -96,12 +101,12 @@ class Engine {
 
 		let lastRefresh = 0;
 		function animationFrame(time) {
+			time = Math.round(time);
 			requestAnimationFrame(animationFrame);
 			const { currentScene, running } = engine;
 			if (!running || !currentScene) {
 				return;
-			}		
-			const frameDuration = 1000 / currentScene.getFrameRate();
+			}
 			if (!currentScene.startTime) {
 				currentScene.startTime = time;
 				return;
@@ -121,35 +126,36 @@ class Engine {
 			spriteDefinitionProcessor.refresh(currentScene.ui, now);
 			spriteDefinitionProcessor.refresh(currentScene.sprites, now);
 
+			const frameDuration = 1000 / currentScene.getFrameRate();
 			if (time - lastRefresh >= frameDuration) {
 				const shouldResetScene = engine.nextScene;
 				lastRefresh = now;
-				glRenderer.setTime(now);
-				glRenderer.clearScreen();
-
-				sceneRenderer.render(currentScene);
 
 				spriteDataProcessor.process(currentScene);
 
 				//	process UI
 				const uiComponents = spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider);
-				//	render uiComponents
-				uiRenderer.render(uiComponents, now);
 
 				//	show sprites to process
 				const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);
+
+				glRenderer.setTime(now);
+				glRenderer.clearScreen();
+
+				//	render uiComponents
+				sceneRenderer.render(currentScene);
+
+				uiRenderer.render(uiComponents, now);
+
 				glRenderer.sendSprites(sprites, now);
 
 				//	update video textures
 				glRenderer.updatePlayingVideos(sprites, now);
 
-				if (shouldResetScene) {
-					spriteProvider.getSprites().forEach(sprite => {
-						sprite.updated = 0;
-					});
-				}
-
 				//	remove unprocessed sprites
+				if (shouldResetScene) {
+					spriteProvider.getSprites().forEach(sprite => sprite.updated = 0);
+				}
 				spritesToRemove.length = 0;
 				const hiddenSprites = spriteProvider.getSprites();
 				for (let i = 0; i < hiddenSprites.length; i++) {
@@ -159,17 +165,20 @@ class Engine {
 						spritesToRemove.push(sprite);
 					}
 				}
-
 				glRenderer.sendSprites(spritesToRemove, now);
 
+				//	draw
 				glRenderer.draw(now);
+
 				for (let i = 0; i < onLoopListener.length; i++) {
 					onLoopListener[i](now);
 				}
-				glRenderer.resetPools();
+
+				//	resetpool
 				if (shouldResetScene) {
 					engine.resetScene(engine.nextScene);
 				}
+				glRenderer.resetPools();
 			}
 		}
 		requestAnimationFrame(animationFrame);		
