@@ -121,13 +121,13 @@ html, body {
 .editor.shifted {
   visibility: visible;
   opacity: 1;
-  transform: perspective(1000px) translate3d(110px, 0, 0) rotate3d(0, 1, 0, 0);
+  transform: perspective(1000px) translate3d(110px, -50px, 0) rotate3d(0, 1, 0, 0);
 }
 
 .editor.split {
   visibility: visible;
   opacity: 1;
-  transform: perspective(1000px) translate3d(190px, 0, -200px) rotate3d(0, 1, 0, -45deg);  
+  transform: perspective(1000px) translate3d(190px, -96px, -200px) rotate3d(0, 1, 0, -45deg);  
 }
 
 .hidden {

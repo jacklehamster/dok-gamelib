@@ -17,14 +17,31 @@ class WorkerManager {
 		this.engine = engine;
 		this.worker = new Worker(`generated/js/source/engine/worker/worker.js`);
 		this.worker.addEventListener("message", e => this.handleMessage(e));
+		this.engine.addEventListener("start", e => this.init());
 	}
 
-	handleMessage({data}) {
-		switch(data.action) {
-			case "response":
+	handleMessage(event) {
+		const {data : {action}} = event;
+		switch(action) {
+			case "response": {
+				const {data : {message}} = event;
 				console.log(data.message);
 				break;
+			}
+			case "engine": {
+				const {data : {component, command, parameters}} = event;
+				this.engine[component][command](...parameters);
+				break;
+			}
 		}
+	}
+
+	init() {
+		this.worker.postMessage({
+			action: "init",
+			data: this.engine.data,
+			localStorageData: JSON.parse(localStorage.getItem("data")),
+		});		
 	}
 
 	ping(message) {
@@ -34,10 +51,19 @@ class WorkerManager {
 		});
 	}
 
-	import() {
+	import(game) {
 		this.worker.postMessage({
 			action: "import",
+			name: game.name,
 			data: this.engine.data,
+			gameBlob: SourceCode.codeToBlob(game),
+		});
+	}
+
+	setScene(name) {
+		this.worker.postMessage({
+			action: "setScene",
+			name,
 		});
 	}
 }

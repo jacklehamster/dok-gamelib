@@ -13,8 +13,9 @@
  */
 
 class DataStore {
- 	constructor() {
- 		this.data = this.loadDataFromLocalStorage() || {
+ 	constructor(localStorageData, engine) {
+ 		this.engine = engine;
+ 		this.data = localStorageData || this.loadDataFromLocalStorage() || {
  			situations: {},
  		};
  	}
@@ -36,8 +37,19 @@ class DataStore {
  		return this.data;
  	}
 
- 	save() {
-		localStorage.setItem("data", JSON.stringify(this.data));
+ 	syncData(data) {
+ 		this.engine.sendCommand("dataStore", "save", this.getData());
+ 	}
+
+ 	save(data) {
+ 		if (typeof(localStorage) === "undefined") {
+ 			this.syncData();
+ 		} else {
+ 			if (data) {
+	 			this.data = data;
+ 			}
+			localStorage.setItem("data", JSON.stringify(this.data));
+ 		}
  	}
 
  	getSituation(name) {

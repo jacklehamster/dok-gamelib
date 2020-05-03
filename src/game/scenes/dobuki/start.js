@@ -225,8 +225,8 @@ SceneManager.add({Game: class extends Game {
 				2.4,
 			],
 			heightAboveGround: ({game: { sceneData: { dok: { heightAboveGround } }}}) => heightAboveGround,
-			animation: ({game: { sceneData: { dok: { speed, mov, flying } }}}) => {
-				return flying ? (mov.z < 0 ? "jump-up" : "jump") : speed > .01 ? (mov.z < 0 ? "walk-up" : "walk") : (mov.z < 0 ? "idle-up" : "idle");
+			animation: ({game: { sceneData: { dok: { speed, mov, flying, grounded } }}}) => {
+				return flying ? (mov.z < 0 ? "jump-up" : "jump") : (speed > .01 || !grounded) ? (mov.z < 0 ? "walk-up" : "walk") : (mov.z < 0 ? "idle-up" : "idle");
 			},
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],

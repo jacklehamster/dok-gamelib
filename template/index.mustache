@@ -74,7 +74,7 @@
 			<canvas id="canvas" width={{obj.width}} height={{obj.height}}></canvas>
 		</div>
 		<script>
-			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, getData());
 			window.addEventListener("DOMContentLoaded", () => engine.start());
 		</script>
 {{#obj.release}}

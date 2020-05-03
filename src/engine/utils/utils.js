@@ -91,6 +91,7 @@ class Utils {
 						const image = new Image();
 						imageLoading++;
 						image.addEventListener("load", e => {
+							URL.revokeObjectURL(imageURL);
 							imageLoading --;
 							checkCompletion();
 						});

@@ -71,12 +71,8 @@ class Game {
 		return this.settings.frameRate.get();
 	}
 
-	getVideo(name, url) {
-		return this.mediaManager.getVideo(name, url);
-	}
-
-	getMusic(name, url) {
-		return this.mediaManager.getMusic(name, url);
+	getVideoAspect(name) {
+		return this.mediaManager.getVideoAspect(name);
 	}
 
 	getFirstFontName() {

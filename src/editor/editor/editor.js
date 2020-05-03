@@ -158,8 +158,14 @@ class SourceCode {
 		document.querySelector('#assets').innerText = `scenes/${this.engine.currentScene.name}/assets`;
 	}
 
-	static formatCode(obj) {
-		return SourceCode.instance.formatCode(obj);
+	static formatCode(obj, beautify) {
+		const code = SourceCode.instance.formatCode(obj);
+		return beautify ? Tools.beautify(code, {"wrap_line_length": 100}) : code;
+	}
+
+	static codeToBlob(obj) {
+		const code = SourceCode.instance.formatCode(obj);
+		return URL.createObjectURL( new Blob([code], {type: 'application/javascript'}));
 	}
 
  	formatCode(obj) {
@@ -193,7 +199,7 @@ class SourceCode {
  			let subValues = "";
 	 		for (let o in obj) {
 	 			if (obj.hasOwnProperty(o)) {
-		 			subValues += `${Tools.isVarName(o)?o:`"${o}"`}: ${this.formatCode(obj[o])},\n`;
+		 			subValues += `${Tools.isVarName(o)?o:`"${o}"`}: ${this.formatCode(obj[o],)},\n`;
 	 			}
 	 		}
 	 		return `{ ${subValues} }`;
@@ -202,7 +208,7 @@ class SourceCode {
 
 	render(config) {
 		const sourceCode = document.getElementById("source-code");
-		sourceCode.innerHTML = Tools.highlight("javascript", Tools.beautify(this.formatCode(config), {"wrap_line_length": 100}), true).value;
+		sourceCode.innerHTML = Tools.highlight("javascript", SourceCode.formatCode(config, true), true).value;
 		sourceCode.style.display = "";
 	}
 

@@ -65,7 +65,7 @@ class TextureManager {
 	}
 
 	updateVideoTexture(src) {
-		const videoFrame = game.getVideo(src);
+		const videoFrame = this.mediaManager.getVideo(src);
 		if (!videoFrame || !videoFrame.videoWidth || !videoFrame.videoHeight) {
 			return;
 		}

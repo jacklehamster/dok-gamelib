@@ -30,6 +30,7 @@ class MediaManager {
 				if (!videoPlaytimes[src]) {
 					const video = this.getVideo(src);
 					if (video) {
+						console.log("Play video:", src);
 						video.play();
 						playingVideos.push(src);
 					} else {
@@ -105,6 +106,15 @@ class MediaManager {
 
 	playSound(name, url) {
 		this.getSound(name, url).play();
+	}
+
+	getVideoAspect(name) {
+		const { videos } = this;
+		if (!videos[name]) {
+			return 0;
+		}
+		const { videoWidth, videoHeight } = videos[name];
+		return videoHeight / Math.max(videoWidth, videoHeight);
 	}
 
 	getVideo(name, url) {

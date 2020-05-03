@@ -13,11 +13,20 @@
   */
 
 class Engine {
-	constructor(canvas, sceneManager) {
+	constructor(canvas, sceneManager, data) {
 		canvas.focus();
 		this.canvas = canvas;
-		this.data = getData();
-		this.dataStore = new DataStore();
+		this.sceneManager = sceneManager;
+		this.data = data;
+		this.currentScene = null;
+		this.spritesToRemove = [];
+		this.onSceneChangeListener = [];
+		this.onLoopListener = [];
+		this.onStartListener = [];
+		this.running = false;
+		this.logger = new Logger();
+		this.workerManager = new WorkerManager(this);
+		this.dataStore = new DataStore(null, this);
 		this.mediaManager = new MediaManager(this.data.generated);
 		this.spriteRenderer = new SpriteRenderer(this);
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
@@ -30,10 +39,8 @@ class Engine {
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
 		this.uiRenderer = new UIRenderer(canvas, this.canvasRenderer);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
-		this.workerManager = new WorkerManager(this);
 		this.configProcessor = new ConfigProcessor(this.data);
 
-		this.sceneManager = sceneManager;
 		this.keyboard = new Keyboard(this, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
 			onKeyRelease: key => this.currentScene.keyboard.onKeyRelease.run(key),
@@ -57,12 +64,6 @@ class Engine {
 			onMouseUp: mouseStatus => this.currentScene.mouse.onMouseUp.run(mouseStatus),
 			onMouseMove: mousePosition => this.currentScene.mouse.onMouseMove.run(mousePosition),			
 		});
-		this.currentScene = null;
-		this.spritesToRemove = [];
-		this.onSceneChangeListener = [];
-		this.onLoopListener = [];
-		this.onStartListener = [];
-		this.running = false;
 
 		window.addEventListener("load", () => {
 			this.running = true;
@@ -214,10 +215,10 @@ class Engine {
 
 	resetScene(sceneName) {
 		this.nextScene = null;
-		const { sceneManager, dataStore } = this;
+		const { sceneManager, dataStore, configProcessor } = this;
 		if (sceneManager.hasScene(sceneName)) {
 			this.clearScene();
-			const scene = sceneManager.createScene(sceneName, dataStore, this.configProcessor);
+			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor);
 
 			this.currentScene = scene;
 			this.currentScene.startTime = 0;

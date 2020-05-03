@@ -12,60 +12,66 @@
 	Engine
   */
 
-class WorkerEngine {
-	constructor() {
-		this.count = 0;
-	}
+if (typeof(window) === 'undefined') {
+	
 
-	beginLooping() {
-		const engine = this;
-		function animationFrame(time) {
-			requestAnimationFrame(animationFrame);
-			engine.loop();
+	self.importScripts(
+		'../lib/gl-matrix.js',
+		'../utils/pool.js',
+		'../common/constants.js',
+		'../core/config-processor.js',
+		'../core/data-store.js',
+		'../core/sprite-definition-processor.js',
+		'../core/sprite-data-processor.js',
+		'../core/sprite-provider.js',
+		'../core/game-property.js',
+		'../game/components/motion-utils.js',
+		'../game/components/shape-utils.js',
+		'../game/components/sprite-utils.js',
+		'../game/components/text-utils.js',
+		'../game/base/base-definition.js',
+		'../game/animation-definition.js',
+		'../game/ui-definition.js',
+		'../game/sprite-definition.js',
+		'../game/game.js',
+		"../scene-manager/scene-manager.js",
+		'worker-engine.js',
+	);
+
+	let workerEngine;
+
+	self.addEventListener('message', function(event) {
+		const {data: { action }}  = event;
+		switch(action) {
+			case "init": {
+				const {data: { data, localStorageData }}  = event;
+				workerEngine = new WorkerEngine(SceneManager.instance, data, localStorageData);
+				break;
+			}
+			case "ping": {
+				const {data: { message }}  = event;
+				self.postMessage({
+					action: "response",
+					message: message,
+				});
+				break;
+			}
+			case "loop": {
+				workerEngine.beginLooping();
+				break;
+			}
+			case "setScene": {
+				const {data: { name }}  = event;
+				workerEngine.resetScene(name);
+				break;
+			}
+			case "import": {
+				const {data: { name, gameBlob }}  = event;
+				SceneManager.loadingSceneName = name;
+				self.importScripts(gameBlob);
+				URL.revokeObjectURL(gameBlob);
+				break;
+			}
 		}
-		requestAnimationFrame(animationFrame);
-	}
-
-	loop() {
-		self.postMessage({action:"response", message: this.count++})
-	}
+	});
 }
-
-const workerEngine = new WorkerEngine();
-
-self.addEventListener('message', function({data}) {
-	switch(data.action) {
-		case "ping":
-			self.postMessage({
-				action: "response",
-				message: data.message,
-			});
-			break;
-		case "loop":
-			workerEngine.beginLooping();
-			break;
-		case "import":
-			console.log(data.data);
-			self.importScripts(
-				'../lib/gl-matrix.js',
-				'../common/constants.js',
-				'../core/config-processor.js',
-				'../game/components/motion-utils.js',
-				'../game/components/shape-utils.js',
-				'../game/components/sprite-utils.js',
-				'../game/components/text-utils.js',
-				'../game/base/base-definition.js',
-				'../game/animation-definition.js',
-				'../game/ui-definition.js',
-				'../game/sprite-definition.js',
-				'../game/game.js',
-				"../scene-manager/scene-manager.js",
-			);
-
-			SceneManager.loadingSceneName = "dobuki";
-			self.importScripts(`../../game/scenes/${SceneManager.loadingSceneName}/start.js`);
-
-			console.log(SceneManager.instance);
-			break;
-	}
-});
