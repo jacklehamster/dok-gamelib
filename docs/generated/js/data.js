@@ -1332,7 +1332,8 @@ function getData() {
               "tintColor": 0,
               "curvature": 0,
               "hue": 0,
-              "blackhole": {"center": [0, 0, 0], "strength": 0, "distance": 0}
+              "blackhole": {"center": [0, 0, 0], "strength": 0, "distance": 0},
+              "chromaKey": {"low": -1, "high": -1}
             },
             "circleRadius": 0,
             "count": 1,

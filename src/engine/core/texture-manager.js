@@ -55,8 +55,9 @@ class TextureManager {
 		if (!this.videoTextures[src] && this.mediaManager.getVideo(src)) {
 			const { videoWidth, videoHeight } = this.mediaManager.getVideo(src);
 			if (videoWidth && videoHeight) {
+				const size = Math.max(videoWidth, videoHeight);
 				this.videoTextures[src] = {
-					rect: [0, 0, videoWidth, videoHeight],
+					rect: [0, 0, size, size],
 					isVideo: true,
 				};
 			}
@@ -66,7 +67,11 @@ class TextureManager {
 
 	updateVideoTexture(src) {
 		const videoFrame = this.mediaManager.getVideo(src);
-		if (!videoFrame || !videoFrame.videoWidth || !videoFrame.videoHeight) {
+		if (!videoFrame) {
+			return;
+		}
+		const { videoWidth, videoHeight, ready } = videoFrame;
+		if (!videoWidth || !videoHeight || !ready) {
 			return;
 		}
 		const { gl, glTextures } = this;
@@ -76,7 +81,7 @@ class TextureManager {
 		}
 		const index = this.getCurrentVideoTextureIndex();
 
-		const { rect: [ x, y ] } = videoInfo;
+		const { rect: [ x, y, frameWidth, frameHeight ] } = videoInfo;
 
 		const { glTexture, isVideo, width, height } = glTextures[index];
 
@@ -92,8 +97,6 @@ class TextureManager {
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 		}
 
-		if (videoFrame.videoWidth && videoFrame.videoHeight && videoFrame.ready) {
-			gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGB, gl.UNSIGNED_BYTE, videoFrame);
-		}
+		gl.texSubImage2D(gl.TEXTURE_2D, 0, x + (frameWidth/2 - videoWidth/2), y + (frameHeight/2 - videoHeight/2), gl.RGB, gl.UNSIGNED_BYTE, videoFrame);
 	}
 }

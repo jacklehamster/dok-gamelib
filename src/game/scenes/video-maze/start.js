@@ -366,10 +366,7 @@ SceneManager.add({
 			],
 			scale: [
 				({game}, index) => index % 2 === 0 ? -3 : 3,
-				({game}, index) => {
-					const videoAspect = game.getVideoAspect("bunny") || 1;
-					return 3 * videoAspect;
-				},
+				3,
 			],
 			count: ({game, definition}, index) => game.sceneData.cells.length * 4,
 		},	

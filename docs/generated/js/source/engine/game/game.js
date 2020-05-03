@@ -71,10 +71,6 @@ class Game {
 		return this.settings.frameRate.get();
 	}
 
-	getVideoAspect(name) {
-		return this.mediaManager.getVideoAspect(name);
-	}
-
 	getFirstFontName() {
 		const { fonts } = this.engine.data.generated;
 		for (let f in fonts) {

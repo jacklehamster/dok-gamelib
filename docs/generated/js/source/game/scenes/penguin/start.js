@@ -1,6 +1,3 @@
-const GROUND_ICE = 1;
-const GROUND_WATER = 2;
-
 SceneManager.add({
 	Game: class extends Game {
 		constructor() {
@@ -19,6 +16,11 @@ SceneManager.add({
 			sceneData.viewTop = 1;
 			sceneData.viewZoom = 0;
 
+			this.constants = {
+				GROUND_ICE: 1,
+				GROUND_WATER: 2,
+			};
+
 			this.resetMap(0, 0);
 		}
 
@@ -29,6 +31,7 @@ SceneManager.add({
 				this.calcGroundedType(x1, z0),
 				this.calcGroundedType(x1, z1),
 			];
+			const { GROUND_ICE, GROUND_WATER } = this.constants;
 			if (types.some(type => type === GROUND_ICE)) {
 				return 0;
 			}
@@ -420,7 +423,7 @@ SceneManager.add({
 			],
 		},
 		{	//	ground
-			src: ({game, definition}, index) => {
+			src: ({definition, game: {constants: {GROUND_ICE, GROUND_WATER} }}, index) => {
 				const { type } = definition.cell.get(index);
 				if (type === GROUND_WATER) {
 					return "water";
@@ -428,8 +431,8 @@ SceneManager.add({
 				return "artic";
 			},
 			effects: {
-				tintColor: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 0x6600ccFF : 0,
-				brightness: ({definition}, index) => definition.cell.get(index).type === GROUND_ICE ? 80 : 70,
+				tintColor: ({definition, game: {constants: {GROUND_ICE, GROUND_WATER} }}, index) => definition.cell.get(index).type === GROUND_ICE ? 0x6600ccFF : 0,
+				brightness: ({definition, game: {constants: {GROUND_ICE, GROUND_WATER} }}, index) => definition.cell.get(index).type === GROUND_ICE ? 80 : 70,
 			},
 			cell: ({game, definition},index) => game.sceneData.cells[index],
 			grounded: ({game, definition},index) => {
@@ -441,7 +444,7 @@ SceneManager.add({
 				({game, definition},index) => !definition.grounded.get(index) ? 0 : game.sceneData.cells[index].corners[2],
 				({game, definition},index) => !definition.grounded.get(index) ? 0 : game.sceneData.cells[index].corners[3],
 			],
-			type: ({definition}, index) => {
+			type: ({definition, game: {constants: {GROUND_ICE, GROUND_WATER} }}, index) => {
 				const { type } = definition.cell.get(index);
 				if (type === GROUND_WATER) {
 					return SpriteType.Water;
@@ -458,7 +461,7 @@ SceneManager.add({
 			animationOverride: {
 				active: true,
 				range: 4,
-				frameRate: ({definition}, index) => {
+				frameRate: ({definition, game: {constants: {GROUND_ICE, GROUND_WATER} }}, index) => {
 					const { type } = definition.cell.get(index);
 					if (type === GROUND_WATER) {
 						return 10;
