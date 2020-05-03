@@ -19,14 +19,13 @@ class BaseSpriteInstance {
 		this.chunkIndex = -1;
 		this.type = -1;
 		this.hidden = false;
-		this.updated = 0;
-		this.lockedUntil = 0;
-		this.skipProcess = false;
-		this.updateTimes = {
-		};
+		this.updateTimes = {};
 	}
 
 	init() {
+		this.lockedUntil = 0;
+		this.updated = 0;
+		this.skipProcess = false;
 	}
 
 	shouldEvaluate(now) {

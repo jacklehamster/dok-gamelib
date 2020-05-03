@@ -18,6 +18,7 @@ class UISpriteInstance extends BaseSpriteInstance {
 	}
 
 	init() {
+		super.init();
 		this.id = null;
 		this.tag = null;
 		this.parent = null;
