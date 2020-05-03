@@ -133,7 +133,6 @@ class UIRenderer {
 						}
 					}
 				}
-
 				elements[elementId].updated = now;
 			}
 		}

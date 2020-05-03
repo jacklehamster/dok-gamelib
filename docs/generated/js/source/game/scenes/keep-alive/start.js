@@ -553,44 +553,48 @@ SceneManager.add({Game: class extends Game {
 			}
 			game.sceneData.mode = null;
 		},
-		onDownPress: ({game: {sceneData}}) => {
+		onDownPress: ({game}) => {
+			const {sceneData} = game;
 			const dx = Math.sin(sceneData.turnGoal);
 			const dz = Math.cos(sceneData.turnGoal);
-			game.sceneData.position[0] -= dx;
-			game.sceneData.position[1] += dz;
-			game.sceneData.position[0] = Math.round(game.sceneData.position[0]);
-			game.sceneData.position[1] = Math.round(game.sceneData.position[1]);
-			const [ x, y ] = game.sceneData.position;
+			sceneData.position[0] -= dx;
+			sceneData.position[1] += dz;
+			sceneData.position[0] = Math.round(sceneData.position[0]);
+			sceneData.position[1] = Math.round(sceneData.position[1]);
+			const [ x, y ] = sceneData.position;
 			game.onMove(x, y);
 		},
-		onUpPress: ({game: {sceneData}}) => {
+		onUpPress: ({game}) => {
+			const {sceneData} = game;
 			const dx = Math.sin(sceneData.turnGoal);
 			const dz = Math.cos(sceneData.turnGoal);
-			game.sceneData.position[0] += dx;
-			game.sceneData.position[1] -= dz;
-			game.sceneData.position[0] = Math.round(game.sceneData.position[0]);
-			game.sceneData.position[1] = Math.round(game.sceneData.position[1]);
-			const [ x, y ] = game.sceneData.position;
+			sceneData.position[0] += dx;
+			sceneData.position[1] -= dz;
+			sceneData.position[0] = Math.round(sceneData.position[0]);
+			sceneData.position[1] = Math.round(sceneData.position[1]);
+			const [ x, y ] = sceneData.position;
 			game.onMove(x, y);
 		},
-		onLeftPress: ({game: {sceneData}}) => {
+		onLeftPress: ({game}) => {
+			const {sceneData} = game;
 			const dx = Math.cos(sceneData.turnGoal);
 			const dz = Math.sin(sceneData.turnGoal);
-			game.sceneData.position[0] -= dx;
-			game.sceneData.position[1] -= dz;
-			game.sceneData.position[0] = Math.round(game.sceneData.position[0]);
-			game.sceneData.position[1] = Math.round(game.sceneData.position[1]);
-			const [ x, y ] = game.sceneData.position;
+			sceneData.position[0] -= dx;
+			sceneData.position[1] -= dz;
+			sceneData.position[0] = Math.round(sceneData.position[0]);
+			sceneData.position[1] = Math.round(sceneData.position[1]);
+			const [ x, y ] = sceneData.position;
 			game.onMove(x, y);
 		},
-		onRightPress: ({game: {sceneData}}) => {
+		onRightPress: ({game}) => {
+			const {sceneData} = game;
 			const dx = Math.cos(sceneData.turnGoal);
 			const dz = Math.sin(sceneData.turnGoal);
-			game.sceneData.position[0] += dx;
-			game.sceneData.position[1] += dz;
-			game.sceneData.position[0] = Math.round(game.sceneData.position[0]);
-			game.sceneData.position[1] = Math.round(game.sceneData.position[1]);
-			const [ x, y ] = game.sceneData.position;
+			sceneData.position[0] += dx;
+			sceneData.position[1] += dz;
+			sceneData.position[0] = Math.round(sceneData.position[0]);
+			sceneData.position[1] = Math.round(sceneData.position[1]);
+			const [ x, y ] = sceneData.position;
 			game.onMove(x, y);
 		},
 	},
@@ -717,7 +721,7 @@ SceneManager.add({Game: class extends Game {
 				backgroundColor: "#eeeeee",
 				cursor: "pointer",
 			},
-			init: ({definition}) => {
+			init: ({game, definition}) => {
 				definition.setMute.run(game.data.muted);
 			},
 			setMute: ({game}, value) => {
@@ -725,7 +729,7 @@ SceneManager.add({Game: class extends Game {
 				game.saveData();
 			},
 			events: {
-				onClick: ({definition}) => {
+				onClick: ({game, definition}) => {
 					definition.setMute.run(!game.data.muted);
 				},
 			},
@@ -794,14 +798,15 @@ SceneManager.add({Game: class extends Game {
 		{
 			src: "fruits",
 			pos: [
-				({game: {sceneData}}, index) => game.sceneData.goodies[index].x * 4,
-				({game: {sceneData, now}}, index) => {
-					const goodie = game.sceneData.goodies[index];
+				({game}, index) => game.sceneData.goodies[index].x * 4,
+				({game}, index) => {
+					const {sceneData, now} = game;
+					const goodie = sceneData.goodies[index];
 					const { x, y } = goodie;
 					const cell = game.getCell(x, y);
-					return cell.active <= 0 ? -1.5 + Math.sin(now / 200) * .2 : 3 + cell.getHeight(game.now);
+					return cell.active <= 0 ? -1.5 + Math.sin(now / 200) * .2 : 3 + cell.getHeight(now);
 				},
-				({game: {sceneData}}, index) => game.sceneData.goodies[index].y * 4,
+				({game}, index) => game.sceneData.goodies[index].y * 4,
 			],
 			scale: [4, 4],
 			count: ({game}) => game.sceneData.goodies.length,
@@ -1411,15 +1416,17 @@ SceneManager.add({Game: class extends Game {
 				},
 				({game}) => game.sceneData.position[1] * 4,
 			],
-			topAnimation: ({game: { sceneData }}) => {
-				const cell = game.getCell(game.sceneData.position[0], game.sceneData.position[1]);
+			topAnimation: ({game}) => {
+				const { sceneData } = game;
+				const cell = game.getCell(sceneData.position[0], sceneData.position[1]);
 				if (cell.locked) {
 					return "red";
 				}
 				return !sceneData.mode ? "blink" : sceneData.mode === "RAISE" ? "raise" : "lower";
 			},
-			sideAnimation: ({game: { sceneData }}) => {
-				const cell = game.getCell(game.sceneData.position[0], game.sceneData.position[1]);
+			sideAnimation: ({game}) => {
+				const { sceneData } = game;
+				const cell = game.getCell(sceneData.position[0], sceneData.position[1]);
 				if (cell.locked) {
 					return "red";
 				}

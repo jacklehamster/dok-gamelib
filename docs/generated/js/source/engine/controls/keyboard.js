@@ -29,7 +29,7 @@ const KEY_TURN_RIGHT_PERIOD = 'Period';
 const KEY_TURN_LEFT_COMMA = 'Comma';
 
 class Keyboard {
-	constructor(engine, listener) {
+	constructor(document, listener) {
 		const keysDown = {};
 		const keysUp = {};
 		const keys = {};
@@ -51,22 +51,24 @@ class Keyboard {
 			},
 		};
 
-		document.addEventListener("keydown", e => {
-			if (this.active) {
-				keysDown[e.code] = true;
-				delete keysUp[e.code];
-				this.dirty = true;
-				e.preventDefault();
-			}
-		});
-		document.addEventListener("keyup", e => {
-			if (this.active) {
-				keysUp[e.code] = true;
-				delete keysDown[e.code];
-				this.dirty = true;
-				e.preventDefault();
-			}
-		});
+		if (document) {
+			document.addEventListener("keydown", e => {
+				if (this.active) {
+					keysDown[e.code] = true;
+					delete keysUp[e.code];
+					this.dirty = true;
+					e.preventDefault();
+				}
+			});
+			document.addEventListener("keyup", e => {
+				if (this.active) {
+					keysUp[e.code] = true;
+					delete keysDown[e.code];
+					this.dirty = true;
+					e.preventDefault();
+				}
+			});
+		}
 		this.dirty = false;
 		this.keysDown = keysDown;
 		this.keysUp = keysUp;
@@ -78,6 +80,12 @@ class Keyboard {
 			actions,
 		};
 		this.active = true;
+	}
+
+	updateKeys(keysUp, keysDown) {
+		this.keysUp = keysUp;
+		this.keysDown = keysDown;
+		this.dirty = true;
 	}
 
 	handleTurnChanged() {

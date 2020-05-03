@@ -230,6 +230,15 @@ SceneManager.add({Game: class extends Game {
 			},
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],
+			// refresh: ({definition}) => {
+			// 	if (typeof(window)==="undefined") {
+			// 		const anim = definition.animation.get();
+			// 		if (definition.animCache !== anim) {
+			// 			definition.animCache = anim;
+			// 			console.log(definition.animCache);
+			// 		}
+			// 	}
+			// },
 		}),
 		SpriteUtils.makeSprite({
 			src: "tree",

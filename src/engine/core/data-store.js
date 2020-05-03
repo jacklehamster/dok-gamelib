@@ -37,7 +37,7 @@ class DataStore {
  		return this.data;
  	}
 
- 	syncData(data) {
+ 	syncData() {
  		this.engine.sendCommand("dataStore", "save", this.getData());
  	}
 

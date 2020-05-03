@@ -13,7 +13,7 @@
  */
 
 class Mouse {
-	constructor(engine, listener) {
+	constructor(canvas, listener) {
 		document.addEventListener("mousemove", e => {
 			if (this.active) {
 				this.mouseEventToPosition(e, this.newPosition);
@@ -37,7 +37,7 @@ class Mouse {
 				e.preventDefault();
 			}
 		});
-		this.engine = engine;
+		this.canvas = canvas;
 		this.listener = listener;
 		this.active = true;
 		this.dirty = false;
@@ -54,7 +54,7 @@ class Mouse {
 	}
 
 	mouseEventToPosition(event, position) {
-		const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = this.engine.canvas;
+		const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = this.canvas;
 		const x = 2 * (event.pageX - offsetLeft) / offsetWidth;
 		const y = 2 * (event.pageY - offsetTop) / offsetHeight;
 		position.x = Math.max(0, Math.min(2, x)) - 1;
@@ -79,5 +79,5 @@ class Mouse {
 		}
 		this.dirty = false;
 		return position;
-	}	
+	}
 }

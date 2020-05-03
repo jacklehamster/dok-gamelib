@@ -66,4 +66,8 @@ class WorkerManager {
 			name,
 		});
 	}
+
+	sendWorkerLoop(workerPayload, workerArrayBuffers) {
+		this.worker.postMessage(workerPayload, workerArrayBuffers);
+	}
 }

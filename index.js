@@ -36,6 +36,7 @@ const sourceFolders = [
 	'src/engine/sprites/sprite.js',
 	'src/engine/sprites/ui-sprite.js',
 	'src/engine/core/*.js',
+	'src/engine/controls/*.js',
 	'src/engine/ui/*.js',
 	'src/engine/worker/*.js',
 	'src/engine/game/components/*.js',

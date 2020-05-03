@@ -13,18 +13,25 @@
   */
 
 if (typeof(window) === 'undefined') {
-	
 
 	self.importScripts(
 		'../lib/gl-matrix.js',
+		'../utils/utils.js',
 		'../utils/pool.js',
 		'../common/constants.js',
 		'../core/config-processor.js',
 		'../core/data-store.js',
+		'../core/scene-refresher.js',
 		'../core/sprite-definition-processor.js',
 		'../core/sprite-data-processor.js',
 		'../core/sprite-provider.js',
 		'../core/game-property.js',
+		'../controls/keyboard.js',
+		'../sprites/base/base-sprite.js',
+		'../sprites/ui-sprite.js',
+		'../sprites/image-sprite.js',
+		'../sprites/animated-sprite.js',
+		'../sprites/sprite.js',
 		'../game/components/motion-utils.js',
 		'../game/components/shape-utils.js',
 		'../game/components/sprite-utils.js',
@@ -46,7 +53,6 @@ if (typeof(window) === 'undefined') {
 			case "init": {
 				const {data: { data, localStorageData }}  = event;
 				workerEngine = new WorkerEngine(SceneManager.instance, data, localStorageData);
-				workerEngine.init();
 				break;
 			}
 			case "ping": {
@@ -55,10 +61,6 @@ if (typeof(window) === 'undefined') {
 					action: "response",
 					message: message,
 				});
-				break;
-			}
-			case "loop": {
-				workerEngine.beginLooping();
 				break;
 			}
 			case "setScene": {
@@ -71,6 +73,10 @@ if (typeof(window) === 'undefined') {
 				SceneManager.loadingSceneName = name;
 				self.importScripts(gameBlob);
 				URL.revokeObjectURL(gameBlob);
+				break;
+			}
+			case "payload": {
+				workerEngine.processPayload(event.data);
 				break;
 			}
 		}

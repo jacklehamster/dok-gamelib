@@ -45,20 +45,6 @@ class SceneRenderer {
 		};
 	}
 
-	init(game) {
-		const { init } = game;
-		init.run();
-	}
-
-	refresh(scene) {
-		const refreshRate = scene.refreshRate.get();
-		if (refreshRate && scene.now - scene.lastRefresh < 1000 / refreshRate) {
-			return;
-		}
-		scene.refresh.run();
-		scene.lastRefresh = scene.now;
-	}
-
 	render(scene) {
 		const { glRenderer, background } = this;
 		const { settings, view, light } = scene;
@@ -66,13 +52,13 @@ class SceneRenderer {
 
 		const newBackground = settings.background.get();
 		if (newBackground !== background) {
-			glRenderer.setBackground(newBackground);
 			this.background = newBackground;
+			glRenderer.setBackground(this.background);
 		}
 		const docBackground = settings.docBackground.get();
 		if (docBackground !== this.docBackground) {
-			document.body.style.backgroundColor = Utils.getDOMColor(docBackground);
 			this.docBackground = docBackground;
+			document.body.style.backgroundColor = Utils.getDOMColor(this.docBackground);
 		}
 		const newMusicSrc = settings.music.muted.get() ? null : settings.music.src.get();
 		const newVolume = settings.music.volume.get();
@@ -120,8 +106,8 @@ class SceneRenderer {
 		if (!Utils.equal3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ)
 			|| newTilt !== this.view.tilt || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
 			Utils.set3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ);
-			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newTilt, newTurn, -newCameraDistance);
 			this.view.turn = newTurn;
+			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newTilt, newTurn, -newCameraDistance);
 		}
 
 		const newNear = view.range[0].get();
@@ -136,8 +122,8 @@ class SceneRenderer {
 
 		const newCurvature = view.curvature.get();
 		if (this.view.curvature !== newCurvature) {
-			glRenderer.setCurvature(newCurvature);
 			this.view.curvature = newCurvature;
+			glRenderer.setCurvature(newCurvature);
 		}
 	}
 }

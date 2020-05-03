@@ -81,3 +81,4 @@ const TEXTURE_SIZE = 4096;
 const ZERO_VEC3 = vec3.create();
 const IDENTITY_QUAT = quat.identity(quat.create());
 const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];

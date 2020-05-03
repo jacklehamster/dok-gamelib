@@ -36,6 +36,7 @@ class SpriteUtils {
 			toSourceCode: (_,editor) => `SpriteUtils.makeSprite(${editor.formatCode(params)})`,
 			init,
 			refresh,
+			refreshRate,
 			src,
 			spriteHidden: hidden || false,
 			spriteTint: spriteTint || 0,

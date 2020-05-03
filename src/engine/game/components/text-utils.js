@@ -21,7 +21,7 @@ class TextUtils {
 				({definition}) => Math.ceil(font.characters.length / definition.grid[0].get()),
 			],
 			refresh: ({game, definition}) => {
-				font = game.getFont(fontId);
+				font = game.getFont(definition.fontId.get());
 			},
 		};
 	}

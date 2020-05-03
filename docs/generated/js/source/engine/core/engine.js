@@ -31,6 +31,7 @@ class Engine {
 		this.spriteRenderer = new SpriteRenderer(this);
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.data.generated);
+		this.sceneRefresher = new SceneRefresher();
 		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager);
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
@@ -40,8 +41,9 @@ class Engine {
 		this.uiRenderer = new UIRenderer(canvas, this.canvasRenderer);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
+		this.processGameInEngine = true;
 
-		this.keyboard = new Keyboard(this, {
+		this.keyboard = new Keyboard(document, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
 			onKeyRelease: key => this.currentScene.keyboard.onKeyRelease.run(key),
 			onDownPress: () => this.currentScene.keyboard.onDownPress.run(),
@@ -59,7 +61,7 @@ class Engine {
 			onTurnRightPress: () => this.currentScene.keyboard.onTurnRightPress.run(),
 			onTurnRightRelease: () => this.currentScene.keyboard.onTurnRightRelease.run(),
 		});
-		this.mouse = new Mouse(this, {
+		this.mouse = new Mouse(canvas, {
 			onMouseDown: mouseStatus => this.currentScene.mouse.onMouseDown.run(mouseStatus),
 			onMouseUp: mouseStatus => this.currentScene.mouse.onMouseUp.run(mouseStatus),
 			onMouseMove: mousePosition => this.currentScene.mouse.onMouseMove.run(mousePosition),			
@@ -70,10 +72,11 @@ class Engine {
 		});
 
 		this.addEventListener("sceneChange", () => {
-			this.sceneRenderer.init(this.currentScene);
+			this.sceneRefresher.init(this.currentScene);
 			this.spriteDataProcessor.init(this.currentScene);
 			this.spriteDefinitionProcessor.init(this.currentScene.sprites);
 			this.spriteDefinitionProcessor.init(this.currentScene.ui);
+			this.importAndPlayCurrentScene();			
 		});
 	}
 
@@ -96,10 +99,18 @@ class Engine {
 
 	beginLooping() {
 		const engine = this;
-		const { glRenderer, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
+		const { glRenderer, sceneRefresher, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
 				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
 
+		const workerPayload = {
+			action: "payload",
+			time: 0,
+		}, workerArrayBuffers = [];
 		let lastRefresh = 0;
+
+		const spriteCollector = [];
+		const uiCollector = [];
+
 		function animationFrame(time) {
 			time = Math.round(time);
 			requestAnimationFrame(animationFrame);
@@ -114,6 +125,18 @@ class Engine {
 			const now = time - currentScene.startTime;
 			currentScene.now = now;
 
+			//	forward info to worker
+			workerPayload.time = time;
+			if (keyboard.dirty) {
+				workerPayload.keysUp = keyboard.keysUp;
+				workerPayload.keysDown = keyboard.keysDown;
+			} else if (workerPayload.keysUp || workerPayload.keysDown) {
+				delete workerPayload.keysUp;
+				delete workerPayload.keysDown;
+			}
+			engine.workerManager.sendWorkerLoop(workerPayload, workerArrayBuffers);
+			workerArrayBuffers.length = 0;
+
 			if (keyboard.dirty) {
 				currentScene.keys;
 			}
@@ -121,64 +144,64 @@ class Engine {
 				currentScene.mouseStatus;
 			}
 
-			sceneRenderer.refresh(currentScene);
-			spriteDataProcessor.refresh(currentScene);
-			spriteDefinitionProcessor.refresh(currentScene.ui, now);
-			spriteDefinitionProcessor.refresh(currentScene.sprites, now);
+			if (engine.processGameInEngine) {
+				sceneRefresher.refresh(currentScene);
+				spriteDataProcessor.refresh(currentScene);
+				spriteDefinitionProcessor.refresh(currentScene.ui, now);
+				spriteDefinitionProcessor.refresh(currentScene.sprites, now);
 
-			const frameDuration = 1000 / currentScene.getFrameRate();
-			if (time - lastRefresh >= frameDuration) {
-				const shouldResetScene = engine.nextScene;
-				lastRefresh = now;
+				const frameDuration = 1000 / currentScene.getFrameRate();
+				if (time - lastRefresh >= frameDuration) {
+					const shouldResetScene = engine.nextScene;
+					lastRefresh = now;
 
-				spriteDataProcessor.process(currentScene);
+					spriteDataProcessor.process(currentScene);
 
-				//	process UI
-				const uiComponents = spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider);
+					//	process UI
+					const uiComponents = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
 
-				//	show sprites to process
-				const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider);
+					//	show sprites to process
+					const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
-				glRenderer.setTime(now);
-				glRenderer.clearScreen();
+					glRenderer.setTime(now);
+					glRenderer.clearScreen();
 
-				//	render uiComponents
-				sceneRenderer.render(currentScene);
+					//	render uiComponents
+					sceneRenderer.render(currentScene);
+					uiRenderer.render(uiComponents, now);
+					glRenderer.sendSprites(sprites, now);
 
-				uiRenderer.render(uiComponents, now);
+					//	update video textures
+					glRenderer.updatePlayingVideos(sprites, now);
 
-				glRenderer.sendSprites(sprites, now);
-
-				//	update video textures
-				glRenderer.updatePlayingVideos(sprites, now);
-
-				//	remove unprocessed sprites
-				if (shouldResetScene) {
-					spriteProvider.getSprites().forEach(sprite => sprite.updated = 0);
-				}
-				spritesToRemove.length = 0;
-				const hiddenSprites = spriteProvider.getSprites();
-				for (let i = 0; i < hiddenSprites.length; i++) {
-					const sprite = hiddenSprites[i];
-					if (sprite.updated < now && !sprite.hidden) {
-						sprite.setHidden(true, now);
-						spritesToRemove.push(sprite);
+					//	remove unprocessed sprites
+					if (shouldResetScene) {
+						spriteProvider.getSprites().forEach(sprite => sprite.updated = 0);
 					}
-				}
-				glRenderer.sendSprites(spritesToRemove, now);
+					spritesToRemove.length = 0;
+					const hiddenSprites = spriteProvider.getSprites();
+					for (let i = 0; i < hiddenSprites.length; i++) {
+						const sprite = hiddenSprites[i];
+						if (sprite.updated < now && !sprite.hidden) {
+							sprite.setHidden(true, now);
+							spritesToRemove.push(sprite);
+						}
+					}
+					glRenderer.sendSprites(spritesToRemove, now);
 
-				//	draw
-				glRenderer.draw(now);
+					//	draw
+					glRenderer.draw(now);
 
-				for (let i = 0; i < onLoopListener.length; i++) {
-					onLoopListener[i](now);
-				}
+					for (let i = 0; i < onLoopListener.length; i++) {
+						onLoopListener[i](now);
+					}
 
-				//	resetpool
-				if (shouldResetScene) {
-					engine.resetScene(engine.nextScene);
+					//	resetpool
+					if (shouldResetScene) {
+						engine.resetScene(engine.nextScene);
+					}
+					glRenderer.resetPools();
 				}
-				glRenderer.resetPools();
 			}
 		}
 		requestAnimationFrame(animationFrame);		

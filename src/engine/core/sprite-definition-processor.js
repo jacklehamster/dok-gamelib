@@ -15,10 +15,6 @@
  */
 
 class SpriteDefinitionProcessor {
-	constructor() {
-		this.spriteCollector = [];
-	}
-
 	init(sprites) {
 		for (let i = 0; i < sprites.length; i++) {
 			sprites[i].init.run();
@@ -40,13 +36,10 @@ class SpriteDefinitionProcessor {
 	}
 
 	ignore() {
-		const { spriteCollector } = this;
-		spriteCollector.length = 0;
-		return spriteCollector;
+		return EMPTY_ARRAY;
 	}
 
-	process(spriteDefinitions, scene, spriteProvider) {
-		const { spriteCollector } = this;
+	process(spriteDefinitions, scene, spriteProvider, spriteCollector) {
 		spriteCollector.length = 0;
 		for (let i = 0; i < spriteDefinitions.length; i++) {
 			this.processSpriteDefinition(spriteDefinitions[i], i, spriteCollector, scene, spriteProvider);
