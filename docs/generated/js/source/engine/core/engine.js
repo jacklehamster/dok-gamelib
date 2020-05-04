@@ -242,6 +242,10 @@ class Engine {
 		this.spriteProvider.clear();
 	}
 
+	gotoScene(sceneName) {
+		this.currentScene.gotoScene(sceneName);
+	}
+
 	resetScene(sceneName) {
 		const { sceneManager, dataStore, configProcessor } = this;
 		if (sceneManager.hasScene(sceneName)) {

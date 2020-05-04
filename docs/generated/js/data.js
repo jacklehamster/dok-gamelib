@@ -1308,7 +1308,7 @@ function getData() {
           {
             "id": null,
             "src": null,
-            "type": 0,
+            "type": 1,
             "hidden": false,
             "lockedUntil": 0,
             "fixed": false,

@@ -56,9 +56,7 @@ class SceneThumbnail {
 			tab.classList.add("scene-tab");
 			tab.innerText = s;
 			tab.scene = s;
-			tab.addEventListener("click", e => {
-				engine.currentScene.gotoScene(e.currentTarget.scene);
-			});
+			tab.addEventListener("click", e => engine.gotoScene(e.currentTarget.scene));
 		}
 		const space = sceneThumbnails.appendChild(document.createElement("div"));
 		space.style.width = "100%";
