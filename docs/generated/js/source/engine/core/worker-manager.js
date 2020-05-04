@@ -67,6 +67,13 @@ class WorkerManager {
 		});
 	}
 
+	gotoScene(name) {
+		this.worker.postMessage({
+			action: "gotoScene",
+			name,
+		});
+	}
+
 	sendWorkerLoop(workerPayload, workerArrayBuffers) {
 		this.worker.postMessage(workerPayload, workerArrayBuffers);
 	}

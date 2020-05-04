@@ -12,17 +12,17 @@
  *	DataStore
  */
 
-class DataStore {
- 	constructor(localStorageData, engine, inWorker) {
- 		this.engine = engine;
- 		this.inWorker = inWorker;
- 		this.data = localStorageData || this.loadDataFromLocalStorage() || {
+class DataStore extends IDataStore {
+ 	constructor(localStorage) {
+ 		super();
+ 		this.localStorage = localStorage;
+ 		this.data = this.loadDataFromLocalStorage() || {
  			situations: {},
  		};
  	}
 
  	loadDataFromLocalStorage() {
-		const data = localStorage.getItem("data");
+		const data = this.localStorage.getItem("data");
 		if (!data) {
 			return null;
 		}
@@ -34,30 +34,12 @@ class DataStore {
 		}
  	}
 
- 	getData() {
- 		return this.data;
+ 	sync(data) {
+ 		super.sync(data);
+ 		this.save();
  	}
 
- 	syncData() {
- 		this.engine.sendCommand("dataStore", "save", this.getData());
- 	}
-
- 	save(data) {
- 		if (this.inWorker) {
- 			this.syncData();
- 		} else {
- 			if (data) {
-	 			this.data = data;
- 			}
-			localStorage.setItem("data", JSON.stringify(this.data));
- 		}
- 	}
-
- 	getSituation(name) {
- 		const { situations } = this.data;
- 		if (!situations[name]) {
- 			situations[name] = {};
- 		}
- 		return situations[name];
+ 	save() {
+		this.localStorage.setItem("data", JSON.stringify(this.data));
  	}
 }

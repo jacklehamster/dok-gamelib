@@ -27,6 +27,7 @@ const webDir = "docs";
 
 const sourceFolders = [
 	'generated/lib/*.js',
+	'src/engine/interfaces/*.js',
 	'src/engine/lib/*.js',
 	'src/engine/common/*.js',
 	'src/engine/utils/*.js',
@@ -38,6 +39,7 @@ const sourceFolders = [
 	'src/engine/core/*.js',
 	'src/engine/controls/*.js',
 	'src/engine/ui/*.js',
+	'src/engine/debug/*.js',
 	'src/engine/worker/*.js',
 	'src/engine/game/components/*.js',
 	'src/engine/game/base/*.js',

@@ -12,8 +12,8 @@
  *	Logger
  */
 
-class Logger {
+class Logger extends ILogger {
 	log(...message) {
-		console.log(...message);
+		Log.status(...message);
 	}
 }

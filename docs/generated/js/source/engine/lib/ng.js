@@ -1,6 +1,7 @@
-class NewgroundsWrapper {
+class NewgroundsWrapper extends INewgroundsWrapper {
 
     constructor({id, key}) {
+        super();
         this.ngio = new Newgrounds.io.core(id, key);
         this.medals = null;
         this.medalCallbacks = null;
@@ -112,40 +113,49 @@ class NewgroundsWrapper {
         }
     } 
 
-    unlockMedal(medal_name, callback) {
-        console.log("unlocking", medal_name);
-        /* If there is no user attached to our ngio object, it means the user isn't logged in and we can't unlock anything */
-        if (!this.ngio.user) return;
-        this.fetchMedals(medals => {
-            const medal = medals.filter(medal => medal.name === medal_name)[0];
-            if(medal) {
-                if(!medal.unlocked) {
-                    this.ngio.callComponent('Medal.unlock', {id:medal.id}, result => {
-                        if(callback)
-                            callback(result.medal);
-                    });
-                } else {
-                    if(callback)
-                        callback(medal);
-                }
+    unlockMedal(medal_name) {
+        return new Promise((resolve, reject) => {
+            console.log("unlocking", medal_name);
+            /* If there is no user attached to our ngio object, it means the user isn't logged in and we can't unlock anything */
+            if (!this.ngio.user) {
+                reject(null);
             }
+            this.fetchMedals(medals => {
+                const medal = medals.filter(medal => medal.name === medal_name)[0];
+                if(medal) {
+                    if(!medal.unlocked) {
+                        this.ngio.callComponent('Medal.unlock', {id:medal.id}, result => {
+                            resolve(result.medal);
+                        });
+                    } else {
+                        resolve(medal);
+                    }
+                } else {
+                    reject(null);
+                }
+            });
         });
     }
 
     postScore(score) {
-        this.ngio.callComponent("ScoreBoard.getBoards", {}, ({scoreboards: [board] }) => {
-            this.ngio.callComponent("ScoreBoard.postScore", { id: board.id, value: score }, ({score}) => {
-                console.log("Score posted: ", score.value);
+        return new Promise((resolve, reject) => {
+            this.ngio.callComponent("ScoreBoard.getBoards", {}, ({scoreboards: [board] }) => {
+                this.ngio.callComponent("ScoreBoard.postScore", { id: board.id, value: score }, ({score}) => {
+                    resolve(score.value);
+                });
             });
         });
     }
 
     loadScores() {
-        this.ngio.callComponent("ScoreBoard.getBoards", {}, ({scoreboards: [board] }) => {
-            this.ngio.callComponent("ScoreBoard.getScores", { id: board.id }, ({scores}) => {
-                console.log("Scores: ", scores.map(({user, value}) => `${user.name}: ${value}`));
+        return new Promise((resolve, reject) => {
+            this.ngio.callComponent("ScoreBoard.getBoards", {}, ({scoreboards: [board] }) => {
+                this.ngio.callComponent("ScoreBoard.getScores", { id: board.id }, ({scores}) => {
+                    console.log("Scores: ", scores.map(({user, value}) => `${user.name}: ${value}`));
+                    resolve(scores);
+                });
             });
-        });        
+        });
     }
 
     getVersion(callback) {

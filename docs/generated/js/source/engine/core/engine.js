@@ -26,7 +26,7 @@ class Engine {
 		this.running = false;
 		this.logger = new Logger();
 		this.workerManager = new WorkerManager(this);
-		this.dataStore = new DataStore(null, this);
+		this.dataStore = new DataStore(localStorage);
 		this.mediaManager = new MediaManager(this.data.generated);
 		this.spriteRenderer = new SpriteRenderer(this);
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
@@ -243,7 +243,10 @@ class Engine {
 	}
 
 	gotoScene(sceneName) {
-		this.currentScene.gotoScene(sceneName);
+		if (this.processGameInEngine) {
+			this.currentScene.gotoScene(sceneName);
+		}
+		this.workerManager.gotoScene(sceneName);
 	}
 
 	resetScene(sceneName) {

@@ -162,7 +162,7 @@ SceneManager.add({Game: class extends Game {
 		background: 0xaaaa55,
 	},
 	view: {
-		tilt: .4,
+		tilt: ({game: { view: { pos } }}) => pos[1].get() / 20 + .4,
 		cameraDistance: 10,
 		turn: ({game}) => game.sceneData.turn,
 		pos: [

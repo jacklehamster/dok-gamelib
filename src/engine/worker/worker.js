@@ -18,9 +18,11 @@ if (typeof(window) === 'undefined') {
 		'../lib/gl-matrix.js',
 		'../utils/utils.js',
 		'../utils/pool.js',
+		'../interfaces/data-store-interface.js',
+		'../interfaces/logger-interface.js',
+		'../interfaces/newgrounds-interface.js',
 		'../common/constants.js',
 		'../core/config-processor.js',
-		'../core/data-store.js',
 		'../core/scene-refresher.js',
 		'../core/sprite-definition-processor.js',
 		'../core/sprite-data-processor.js',
@@ -42,7 +44,10 @@ if (typeof(window) === 'undefined') {
 		'../game/sprite-definition.js',
 		'../game/game.js',
 		"../scene-manager/scene-manager.js",
+		'worker-data-store.js',
 		'worker-engine.js',
+		'worker-newgrounds.js',
+		'worker-logger.js',
 	);
 
 	let workerEngine;
@@ -66,6 +71,11 @@ if (typeof(window) === 'undefined') {
 			case "setScene": {
 				const {data: { name }}  = event;
 				workerEngine.resetScene(name);
+				break;
+			}
+			case "gotoScene": {
+				const {data: { name }}  = event;
+				workerEngine.gotoScene(name);
 				break;
 			}
 			case "import": {
