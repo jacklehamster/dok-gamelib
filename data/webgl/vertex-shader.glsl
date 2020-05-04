@@ -26,6 +26,8 @@ attribute vec4 aColorEffect;			//	[ tint color, mix, hue change ]
 attribute vec3 aBlackholeCenter;		//	[ x, y, z ]
 attribute vec2 aBlackholeInfo;			//	[ strength, distance ]
 
+attribute vec3 aChromaKey;				//	[ low, high, color ]
+
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uCameraRotation;
@@ -42,6 +44,7 @@ varying float vTextureSlot;
 varying float vBrightness;
 varying vec4 vTintColor;
 varying float vHue;
+varying vec3 vChromaKey;
 
 vec4 makeColorFromRGB(float rgb, float mixRatio) {
 	return vec4(

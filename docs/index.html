@@ -24,7 +24,7 @@
 
 		<script>
 			const numScenes = "8";
-			const numSources = "46"
+			const numSources = "50"
 			const release = "true"
 			console.log({
 				numScenes,
@@ -79,7 +79,7 @@
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
-			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance);
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, getData());
 			window.addEventListener("DOMContentLoaded", () => engine.start());
 		</script>
 		<script src="generated/js/editor/editor.min.js"></script>

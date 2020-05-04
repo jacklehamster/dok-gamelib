@@ -13,8 +13,9 @@
  */
 
 class DataStore {
- 	constructor(localStorageData, engine) {
+ 	constructor(localStorageData, engine, inWorker) {
  		this.engine = engine;
+ 		this.inWorker = inWorker;
  		this.data = localStorageData || this.loadDataFromLocalStorage() || {
  			situations: {},
  		};
@@ -42,7 +43,7 @@ class DataStore {
  	}
 
  	save(data) {
- 		if (typeof(localStorage) === "undefined") {
+ 		if (this.inWorker) {
  			this.syncData();
  		} else {
  			if (data) {

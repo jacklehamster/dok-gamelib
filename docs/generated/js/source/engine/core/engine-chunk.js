@@ -287,4 +287,9 @@ class Chunk {
 		);
 		bufferInfo.blackholeInfo.chunkUpdateTimes[index] = now;
 	}
+
+	setChromaKey(range, color, now) {
+		const { bufferInfo, index } = this;
+		
+	}
 }

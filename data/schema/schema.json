@@ -210,8 +210,8 @@
 					"distance": 0
 				},
 				"chromaKey": {
-					"low": -1,
-					"high": -1
+					"range": [0, 0],
+					"color": 0
 				}
 			},
 			"circleRadius": 0,

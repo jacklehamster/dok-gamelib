@@ -26,6 +26,10 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 				strength: 0,
 				distance: 0,
 			},
+			chromaKey: {
+				range: [0, 0],
+				color: 0,
+			},
 		};
 		this.isVideoSprite = false;
  	}
@@ -36,7 +40,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			return;
 		}
 		
-		const { src, effects: { brightness, tintColor, curvature, hue, blackhole } } = definition;
+		const { src, effects: { brightness, tintColor, curvature, hue, blackhole, chromaKey } } = definition;
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 		const spriteSrc = src.get(instanceIndex);
@@ -84,6 +88,17 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 			this.effects.blackhole.strength = newBlackholeStrength;
 			this.effects.blackhole.distance = newBlackholeDistance;
 			updateTimes.blackholeInfo = now;
+		}
+
+		const newChromaKeyLow = chromaKey.range[0].get(instanceIndex);
+		const newChromaKeyHigh = chromaKey.range[1].get(instanceIndex);
+		const newChromaKeyColor = chromaKey.color.get(instanceIndex);
+		if (this.effects.chromaKey.range[0] !== newChromaKeyLow || this.effects.chromaKey.range[1] !== newChromaKeyHigh ||
+			this.effects.chromaKey.color !== newChromaKeyColor) {
+			this.effects.chromaKey.range[0] = newChromaKeyLow;
+			this.effects.chromaKey.range[1] = newChromaKeyHigh;
+			this.effects.chromaKey.color = newChromaKeyColor;
+			updateTimes.chromaKey = now;
 		}
 	}
 }

@@ -41,6 +41,7 @@ class Engine {
 		this.uiRenderer = new UIRenderer(canvas, this.canvasRenderer);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
+		this.focusFixer = new FocusFixer(canvas);
 		this.processGameInEngine = true;
 
 		this.keyboard = new Keyboard(document, {
@@ -152,7 +153,7 @@ class Engine {
 
 				const frameDuration = 1000 / currentScene.getFrameRate();
 				if (time - lastRefresh >= frameDuration) {
-					const shouldResetScene = engine.nextScene;
+					const shouldResetScene = currentScene.nextScene;
 					lastRefresh = now;
 
 					spriteDataProcessor.process(currentScene);
@@ -198,7 +199,7 @@ class Engine {
 
 					//	resetpool
 					if (shouldResetScene) {
-						engine.resetScene(engine.nextScene);
+						engine.resetScene(currentScene.nextScene);
 					}
 					glRenderer.resetPools();
 				}
@@ -241,12 +242,7 @@ class Engine {
 		this.spriteProvider.clear();
 	}
 
-	gotoScene(sceneName) {
-		this.nextScene = sceneName;
-	}
-
 	resetScene(sceneName) {
-		this.nextScene = null;
 		const { sceneManager, dataStore, configProcessor } = this;
 		if (sceneManager.hasScene(sceneName)) {
 			this.clearScene();

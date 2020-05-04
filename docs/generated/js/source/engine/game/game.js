@@ -21,30 +21,25 @@ class Game {
 		this.lastMouse = 0;
 		this.keysCache = null;
 		this.mouseCache = null;
+		this.nextScene = null;
 		this.classes = { Game, SpriteDefinition };
-		this.dataStore = null;
 		this.config = {};
 	}
 
 	setEngine(value) {
 		this.engine = value;
-		this.mediaManager = this.engine.mediaManager;
 	}
 
 	get data() {
-		return this.dataStore.getData();
+		return this.engine.dataStore.getData();
 	}
 
 	get situation() {
-		return this.dataStore.getSituation(this.name);
+		return this.engine.dataStore.getSituation(this.name);
 	}
 
 	saveData() {
-		this.dataStore.save();
-	}
-
-	get scenes() {
-		return this.engine.sceneManager.sceneNames;
+		this.engine.dataStore.save();
 	}
 
 	get keys() {
@@ -64,7 +59,7 @@ class Game {
 	}
 
 	gotoScene(name) {
-		this.engine.gotoScene(name);
+		this.nextScene = name;
 	}
 
 	getFrameRate() {

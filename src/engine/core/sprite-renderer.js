@@ -145,5 +145,9 @@ class SpriteRenderer {
 		if (updateTimes.blackholeInfo === now) {
 			chunk.setBlackholeInfo(sprite.effects.blackhole.strength, sprite.effects.blackhole.distance, now);
 		}
+
+		if (updateTimes.chromaKey === now) {
+			chunk.setChromaKey(sprite.effects.chromaKey.range, sprite.effects.chromaKey.color, now);
+		}
 	}
 }

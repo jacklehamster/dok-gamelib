@@ -27,7 +27,7 @@ class WorkerEngine {
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());		
 		this.configProcessor = new ConfigProcessor(this.data);
-		this.dataStore = new DataStore(localStorageData, this);
+		this.dataStore = new DataStore(localStorageData, this, true);
 
 		this.keyboard = new Keyboard(null, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
