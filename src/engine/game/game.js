@@ -14,6 +14,7 @@
 
 class Game {
 	constructor() {
+		this.engine = null;
 		this.now = 0;
 		this.startTime = 0;
 		this.lastRefresh = 0;

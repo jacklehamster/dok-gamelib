@@ -7,10 +7,10 @@
 	Year: 2020
  */
 class MotionUtils {
-	static follow(follower, target, strength, distance) {
-		const dx = target[0] - follower[0];
-		const dy = target[1] - follower[1];
-		const dz = target[2] - follower[2];
+	static follow(follower, targetX, targetY, targetZ, strength, distance) {
+		const dx = targetX - follower[0];
+		const dy = targetY - follower[1];
+		const dz = targetZ - follower[2];
 		const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
 		if (dist > distance) {

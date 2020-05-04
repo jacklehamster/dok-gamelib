@@ -62,7 +62,7 @@ void main(void) {
 	vec4 worldPos = vec4(aVertexPosition, 1.0);
 	vNormal = aNormal;
 
-	if (aType == 0.0) {	//	sprite face camera
+	if (aType == 1.0) {	//	sprite face camera
 		worldPos = uCameraRotation * worldPos;
 		vNormal = (uCameraRotation * vec4(vNormal, 1.0)).xyz;
 	}
@@ -72,16 +72,19 @@ void main(void) {
 	float strength = aBlackholeInfo[0];
 	float distance = aBlackholeInfo[1];
 	if (strength != 0.0) {	//	apply blackhole (generally used for producing spheres)
-		worldPos.xyz = mix(worldPos.xyz, aBlackholeCenter, strength);
+		vec3 newWorldPos = mix(worldPos.xyz, aBlackholeCenter, strength);
 		if (distance != 0.0) {
-			vec3 blackholeToPoint = worldPos.xyz - aBlackholeCenter;
-			blackholeToPoint = blackholeToPoint * distance / length(blackholeToPoint);
-			worldPos.xyz = aBlackholeCenter + blackholeToPoint;
+			vec3 blackholeToPoint = newWorldPos - aBlackholeCenter;
+			if (length(blackholeToPoint) < distance) {
+				newWorldPos = normalize(worldPos.xyz - aBlackholeCenter) * distance;
+			}
 		}
+		vNormal = normalize(aBlackholeCenter - newWorldPos);
+		worldPos.xyz = newWorldPos;
 	}
 
 
-	if (aType == 7.0) {	//	water wave
+	if (aType == 8.0) {	//	water wave
 		worldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .3;
 	}
 
@@ -109,7 +112,7 @@ void main(void) {
 
 	vTextureSlot = floor(aVertexTextureCoord.x * .5);
 	vBrightness = floor(aVertexTextureCoord.y * .5);
-	vTintColor = makeColorFromRGB(aColorEffect.x, aColorEffect.y);
+	vTintColor = aColorEffect.y == 0.0 ? vec4(0.0) : makeColorFromRGB(aColorEffect.x, aColorEffect.y);
 	vHue = aColorEffect.z;
 
 	vChromaKeyLowColor = makeColorFromRGB(aChromaKey[0], 1.0).rgb;

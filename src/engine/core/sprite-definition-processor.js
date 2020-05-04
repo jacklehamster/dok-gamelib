@@ -41,6 +41,16 @@ class SpriteDefinitionProcessor {
 
 	process(spriteDefinitions, scene, spriteProvider, spriteCollector) {
 		spriteCollector.length = 0;
+
+		//	register IDs
+		for (let i = 0; i < spriteDefinitions.length; i++) {
+			const definition = spriteDefinitions[i];
+			const definitionId = definition.id.get();
+			if (definitionId) {
+				scene.definitions[definitionId] = definition;			
+			}
+		}
+
 		for (let i = 0; i < spriteDefinitions.length; i++) {
 			this.processSpriteDefinition(spriteDefinitions[i], i, spriteCollector, scene, spriteProvider);
 		}
@@ -48,15 +58,8 @@ class SpriteDefinitionProcessor {
 	}
 
 	processSpriteDefinition(definition, definitionIndex, spriteCollector, scene, spriteProvider) {
-		const { id, count } = definition;
+		const { count } = definition;
 		const totalCount = count.get(definitionIndex);
-
-		SpriteDefinitionProcessor.lastProcessedDefinition = definition;
-
-		const definitionId = id.get();
-		if (definitionId) {
-			scene.definitions[definitionId] = definition;
-		}
 
 		for (let i = 0; i < totalCount; i ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);

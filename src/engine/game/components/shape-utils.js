@@ -43,4 +43,48 @@ class ShapeUtils {
 			count: ({definition}, index) => 5 * definition.cubeCount.get(Math.floor(index / SPRITE_TYPES.length)),
 		};
 	}
+
+	static cylinder(params) {
+		const { src, type, cols, rows, radius, center, scale, brightness, tintColor, hidden, spherical, fixed } = params;
+		return {
+			toSourceCode: (_,editor) => `ShapeUtils.cylinder(${editor.formatCode(params)})`,
+			src,
+			type: type || SpriteType.Front,
+			cols,
+			rows,
+			radius,
+			rotation: {
+				angle: [
+					0,
+					({definition: { cols, rows }}, index) => ((index % cols.get()) / cols.get() - .5) * Math.PI * 2,
+					0,
+				],
+			},
+			center,
+			pos: [
+				({definition: { center, rotation, radius }}, index) => center[0].get() + Math.sin(- rotation.angle[1].get(index)) * radius.get(),
+				({definition: { center, cols }}, index) => center[1].get() + Math.floor(index / cols.get()),
+				({definition: { center, rotation, radius }}, index) => center[2].get() - Math.cos(- rotation.angle[1].get(index)) * radius.get(),
+			],
+			scale,
+			frame: (_, index) => index,
+			spherical,
+			effects: {
+				tintColor,
+				brightness,
+				blackhole: {
+					center: [
+						({definition: { center }}) => center[0].get(),
+						({definition: { center }}) => center[1].get() + 1,
+						({definition: { center }}) => center[2].get(),
+					],
+					strength: ({definition: {spherical}}) => spherical ? 1 : 0,
+					distance: ({definition: {radius}}) => radius.get(),
+				},
+			},
+			hidden,
+			fixed,
+			count: ({definition: {cols, rows}}) => rows.get() * cols.get(),
+		};
+	}
 }

@@ -33,15 +33,16 @@ const INDEX_ARRAY_PER_SPRITE = new Uint32Array([
 
 
 const SpriteType = {
-	Sprite: 0,
-	Front: 1,
-	Back: 2,
-	Floor: 3,
-	Ceiling: 4,
-	LeftWall: 5,
-	RightWall: 6,
-	Water: 7,
-	Shadow: 8,
+	None: 0,
+	Sprite: 1,
+	Front: 2,
+	Back: 3,
+	Floor: 4,
+	Ceiling: 5,
+	LeftWall: 6,
+	RightWall: 7,
+	Water: 8,
+	Shadow: 9,
 };
 
 const ShaderConfig = {

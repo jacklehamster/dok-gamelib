@@ -14,6 +14,57 @@ SceneManager.add({Game: class extends Game {
 			},
 			cam: [ 0, 0, 0 ],
 		};
+		this.levels = [
+			{ name:"upper-level", height:0 },
+			{ name:"lower-level", height:-2 },
+			{ height: 100 },
+		];
+	}
+
+	tryMoveBy(dx, dz) {
+		const { sceneData: { dok } } = this;
+		const shiftX = dx * dok.speed * (dok.flying ? 1.6 : 1);
+		const shiftZ = dz * dok.speed * (dok.flying ? 1.6 : 1);
+
+		const preHeight = this.getHeight(dok.pos[0], dok.pos[2]);
+		const postHeight = this.getHeight(dok.pos[0] + shiftX, dok.pos[2] + shiftZ);
+
+		const diffHeight = postHeight - preHeight;
+		if (diffHeight === 0) {
+			dok.pos[0] += shiftX;
+			dok.pos[2] += shiftZ;
+		} else if (diffHeight - dok.heightAboveGround < 0 || diffHeight - dok.heightAboveGround < 1 && dok.mov.y <= 0) {
+			dok.pos[0] += shiftX;
+			dok.pos[2] += shiftZ;
+			dok.pos[1] += diffHeight;
+			dok.heightAboveGround -= diffHeight;
+			dok.flying = true;
+			dok.grounded = false;
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	tryAngled(dx, dz) {
+		const angle = Math.atan2(dz, dx);
+		{
+			const cos = Math.cos(angle + 20);
+			const sin = Math.sin(angle + 20);
+			const dist = Math.sqrt(dx*dx + dz*dz);
+			if (this.tryMoveBy(cos * dist, sin * dist)) {
+				return true;
+			}
+		}
+		{
+			const cos = Math.cos(angle - 20);
+			const sin = Math.sin(angle - 20);
+			const dist = Math.sqrt(dx*dx + dz*dz);
+			if (this.tryMoveBy(cos * dist, sin * dist)) {
+				return true;
+			}			
+		}
+		return false;
 	}
 
 	loop() {
@@ -48,8 +99,10 @@ SceneManager.add({Game: class extends Game {
 
 		if (dok.speed > .0001) {
 			const [ dx, dz ] = MotionUtils.getNormalDirection(sceneData.turn, mov.x, mov.y);
-			dok.pos[0] += dx * dok.speed * (dok.flying ? 1.6 : 1);
-			dok.pos[2] += dz * dok.speed * (dok.flying ? 1.6 : 1);
+
+			if (!this.tryMoveBy(dx, dz)) {
+				this.tryAngled(dx, dz);
+			}
 		} else {
 			sceneData.dok.speed = 0;
 		}
@@ -76,12 +129,33 @@ SceneManager.add({Game: class extends Game {
 		}
 
 		//	camera follow
-		MotionUtils.follow(sceneData.cam, sceneData.dok.pos, .05, 0);
+		MotionUtils.follow(sceneData.cam, dok.pos[0], dok.pos[1] + dok.heightAboveGround / 2, dok.pos[2], .05, 0);
+	}
+
+	getHeight(px, pz) {
+		for (let i = 0; i < this.levels.length - 1; i++) {
+			const { name, height } = this.levels[i];
+			if (!name) {
+				break;
+			}
+			const definition = this.getDefinition(name);
+			if (definition) {
+				const centerX = definition.pos[0].get();
+				const centerZ = definition.pos[2].get();
+				const dx = centerX - px;
+				const dz = centerZ - pz;
+				const dist = Math.sqrt(dx * dx + dz * dz);
+				if (dist < definition.size.get() / 2) {
+					return height;
+				}
+			}
+		}
+		return this.levels[this.levels.length - 1].height;
 	}
 
 }}, {
 	settings: {
-		background: 0x000000,
+		background: 0x668833,
 	},
 	view: {
 		tilt: .4,
@@ -131,70 +205,92 @@ SceneManager.add({Game: class extends Game {
 		},
 	],
 	sprites: [
-		{
+		ShapeUtils.cylinder({
 			src: "wall",
 			type: SpriteType.Front,
-			rotation: {
-				angle: [
-					0,
-					({definition}, index) => ((index % 40) / (definition.count.get() / 8) - .5) * Math.PI * 2,
-					0,
-				],
-			},
-			pos: [
-				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 8,
-				({definition}, index) => -1 + Math.floor(index / 40),
-				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 8,
+			cols: 40, rows: 8,
+			radius: 8,
+			center: [
+				({game}) => game.getDefinition("upper-level").pos[0].get(),
+				-1,
+				({game}) => game.getDefinition("upper-level").pos[2].get(),
 			],
-			scale: [
-				({definition}) => 1.4 * 40 / (definition.count.get() / 8),
-				1,
-			],
-			frame: (_, index) => index,
-			effects: {
-				brightness: 80,
-				blackhole: {
-					center: [ 0, 0, 0 ],
-					strength: .5,
-					distance: 7.98,
-				},
-			},
+			scale: [ 1.4, 1 ],
+			brightness: 80,
+			spherical: true,
 			fixed: true,
-			count: 320,
-		},
-		{
+			hidden: ({game, definition}, index) => {
+				const floorDefinition = game.getDefinition("lower-level");
+				if (floorDefinition) {
+					const floorX = floorDefinition.pos[0].get();
+					const floorZ = floorDefinition.pos[2].get();
+					const floorRadius = floorDefinition.size.get() / 2;
+					const posX = definition.pos[0].get(index);
+					const posZ = definition.pos[2].get(index);
+					const dx = floorX - posX;
+					const dz = floorZ - posZ;
+					const dist = Math.sqrt(dx*dx + dz*dz);
+					return dist < floorRadius;
+				}
+				return false;
+			},
+		}),
+		ShapeUtils.cylinder({
 			src: "wall",
 			type: SpriteType.Back,
-			rotation: {
-				angle: [
-					0,
-					({definition}, index) => ((index % 40) / (definition.count.get() / 2) + .5) * Math.PI * 2,
-					0,
-				],
-			},
-			pos: [
-				({definition}, index) => Math.sin(- definition.rotation.angle[1].get(index)) * 7.8,
-				({definition}, index) => -2.65 + 1 * Math.floor(index / 40),
-				({definition}, index) => -Math.cos(- definition.rotation.angle[1].get(index)) * 7.8,
+			cols: 40, rows: 2,
+			radius: 7.85,
+			center: [
+				({game}) => game.getDefinition("upper-level").pos[0].get(),
+				-2.65,
+				({game}) => game.getDefinition("upper-level").pos[2].get(),
 			],
-			scale: [
-				({definition}) => 1.25 * 40 / (definition.count.get() / 2),
-				1,
-			],
-			frame: (_, index) => index,
-			effects: {
-				tintColor: 0x88995555,
-				brightness: 110,
-			},
+			scale: [ 1.25, 1 ],
+			tintColor: 0x88995555,
+			brightness: 110,
 			fixed: true,
-			count: 80,
-		},
+		}),
+		// ShapeUtils.cylinder({
+		// 	src: "wall",
+		// 	type: SpriteType.Front,
+		// 	cols: 40, rows: 8,
+		// 	radius: ({game}) => game.getDefinition("lower-level").size.get() / 2 - .2,
+		// 	center: [
+		// 		({game}) => game.getDefinition("lower-level").pos[0].get(),
+		// 		-2.65,
+		// 		({game}) => game.getDefinition("lower-level").pos[2].get(),
+		// 	],
+		// 	scale: [ 2, 1 ],
+		// 	tintColor: 0x88995555,
+		// 	brightness: 110,
+		// 	hidden: ({game, definition}, index) => {
+		// 		const floorDefinition = game.getDefinition("upper-level");
+		// 		if (floorDefinition) {
+		// 			const floorX = floorDefinition.pos[0].get();
+		// 			const floorZ = floorDefinition.pos[2].get();
+		// 			const floorRadius = floorDefinition.size.get() / 2;
+		// 			const posX = definition.pos[0].get(index);
+		// 			const posZ = definition.pos[2].get(index);
+		// 			const dx = floorX - posX;
+		// 			const dz = floorZ - posZ;
+		// 			const dist = Math.sqrt(dx*dx + dz*dz);
+		// 			return dist < floorRadius;
+		// 		}
+		// 		return false;
+		// 	},			
+		// 	fixed: true,
+		// }),
 		{	//	upper level
+			id: "upper-level",
 			src: "home-floor",
+			size: 16,
 			type: SpriteType.Floor,
 			circleRadius: 1,
 			pos: [0, -1.15, 0],
-			scale: [16, 16],
+			scale: [
+				({definition}) => definition.size.get(),
+				({definition}) => definition.size.get(),
+			],
 			effects: {
 				tintColor: 0x88995555,
 				brightness: 110,
@@ -202,11 +298,16 @@ SceneManager.add({Game: class extends Game {
 			fixed: true,
 		},
 		{	//	floor
+			id: "lower-level",
 			src: "home-floor",
+			size: 25,
 			type: SpriteType.Floor,
 			circleRadius: 1,
-			pos: [0, -3.15, 5],
-			scale: [20, 20],
+			pos: [0, -3.15, 15],
+			scale: [
+				({definition}) => definition.size.get(),
+				({definition}) => definition.size.get(),
+			],
 			effects: {
 				tintColor: 0x88995555,
 				brightness: 110,
@@ -225,8 +326,8 @@ SceneManager.add({Game: class extends Game {
 				2.4,
 			],
 			heightAboveGround: ({game: { sceneData: { dok: { heightAboveGround } }}}) => heightAboveGround,
-			animation: ({game: { sceneData: { dok: { speed, mov, flying, grounded } }}}) => {
-				return flying ? (mov.z < 0 ? "jump-up" : "jump") : (speed > .01 || !grounded) ? (mov.z < 0 ? "walk-up" : "walk") : (mov.z < 0 ? "idle-up" : "idle");
+			animation: ({game: { keys: { actions }, sceneData: { dok: { speed, mov, flying, grounded } }}}) => {
+				return flying ? (actions.mov.y < 0 ? "jump-up" : "jump") : (speed > .01 || !grounded) ? (actions.mov.y < 0 ? "walk-up" : "walk") : (actions.mov.y < 0 ? "idle-up" : "idle");
 			},
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],
