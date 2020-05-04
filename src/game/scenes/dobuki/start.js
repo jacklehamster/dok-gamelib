@@ -172,15 +172,7 @@ SceneManager.add({Game: class extends Game {
 		],
 	},
 	light: {
-		pos: [
-			0,
-			100,
-			0,
-		],
-		ambient: .7,
-		shininess: 1,
-		specularStrength: 0.1,
-		diffusionStrength: 0.5,
+		ambient: .8,
 	},
 	refresh: ({game}) => game.loop(),
 	spriteData: [
