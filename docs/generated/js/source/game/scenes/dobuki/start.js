@@ -14,11 +14,15 @@ SceneManager.add({Game: class extends Game {
 			},
 			cam: [ 0, 0, 0 ],
 		};
+		this.wallDistance = .5;
 		this.levels = [
-			{ name:"upper-level", height:0 },
-			{ name:"lower-level", height:-2 },
+			{ name: "tree", height: 2, size: 1.5 },
+			{ name:"upper-level", height: 0, size: 16 + this.wallDistance },
+			{ name:"lower-level", height:-2, size: 25 + this.wallDistance },
 			{ height: 100 },
 		];
+		this.levelMap = {};
+		this.levels.forEach(level => this.levelMap[level.name] = level);
 	}
 
 	tryMoveBy(dx, dz) {
@@ -134,7 +138,7 @@ SceneManager.add({Game: class extends Game {
 
 	getHeight(px, pz) {
 		for (let i = 0; i < this.levels.length - 1; i++) {
-			const { name, height } = this.levels[i];
+			const { name, height, size } = this.levels[i];
 			if (!name) {
 				break;
 			}
@@ -145,7 +149,7 @@ SceneManager.add({Game: class extends Game {
 				const dx = centerX - px;
 				const dz = centerZ - pz;
 				const dist = Math.sqrt(dx * dx + dz * dz);
-				if (dist < definition.size.get() / 2) {
+				if (dist < size / 2) {
 					return height;
 				}
 			}
@@ -155,7 +159,7 @@ SceneManager.add({Game: class extends Game {
 
 }}, {
 	settings: {
-		background: 0x668833,
+		background: 0xaaaa55,
 	},
 	view: {
 		tilt: .4,
@@ -250,40 +254,39 @@ SceneManager.add({Game: class extends Game {
 			brightness: 110,
 			fixed: true,
 		}),
-		// ShapeUtils.cylinder({
-		// 	src: "wall",
-		// 	type: SpriteType.Front,
-		// 	cols: 40, rows: 8,
-		// 	radius: ({game}) => game.getDefinition("lower-level").size.get() / 2 - .2,
-		// 	center: [
-		// 		({game}) => game.getDefinition("lower-level").pos[0].get(),
-		// 		-2.65,
-		// 		({game}) => game.getDefinition("lower-level").pos[2].get(),
-		// 	],
-		// 	scale: [ 2, 1 ],
-		// 	tintColor: 0x88995555,
-		// 	brightness: 110,
-		// 	hidden: ({game, definition}, index) => {
-		// 		const floorDefinition = game.getDefinition("upper-level");
-		// 		if (floorDefinition) {
-		// 			const floorX = floorDefinition.pos[0].get();
-		// 			const floorZ = floorDefinition.pos[2].get();
-		// 			const floorRadius = floorDefinition.size.get() / 2;
-		// 			const posX = definition.pos[0].get(index);
-		// 			const posZ = definition.pos[2].get(index);
-		// 			const dx = floorX - posX;
-		// 			const dz = floorZ - posZ;
-		// 			const dist = Math.sqrt(dx*dx + dz*dz);
-		// 			return dist < floorRadius;
-		// 		}
-		// 		return false;
-		// 	},			
-		// 	fixed: true,
-		// }),
+		ShapeUtils.cylinder({
+			src: "wall",
+			type: SpriteType.Front,
+			cols: 40, rows: 8,
+			radius: ({game}) => game.getDefinition("lower-level").size.get() / 2 - .2,
+			center: [
+				({game}) => game.getDefinition("lower-level").pos[0].get(),
+				-2.65,
+				({game}) => game.getDefinition("lower-level").pos[2].get(),
+			],
+			scale: [ 2, 1 ],
+			brightness: 80,
+			hidden: ({game, definition}, index) => {
+				const floorDefinition = game.getDefinition("upper-level");
+				if (floorDefinition) {
+					const floorX = floorDefinition.pos[0].get();
+					const floorZ = floorDefinition.pos[2].get();
+					const floorRadius = floorDefinition.size.get() / 2;
+					const posX = definition.pos[0].get(index);
+					const posZ = definition.pos[2].get(index);
+					const dx = floorX - posX;
+					const dz = floorZ - posZ;
+					const dist = Math.sqrt(dx*dx + dz*dz);
+					return dist < floorRadius;
+				}
+				return false;
+			},			
+			fixed: true,
+		}),
 		{	//	upper level
 			id: "upper-level",
 			src: "home-floor",
-			size: 16,
+			size: ({game: { levelMap, wallDistance }, definition: {id}}) => levelMap[id.get()].size - wallDistance,
 			type: SpriteType.Floor,
 			circleRadius: 1,
 			pos: [0, -1.15, 0],
@@ -300,7 +303,7 @@ SceneManager.add({Game: class extends Game {
 		{	//	floor
 			id: "lower-level",
 			src: "home-floor",
-			size: 25,
+			size: ({game: { levelMap, wallDistance }, definition: {id}}) => levelMap[id.get()].size - wallDistance,
 			type: SpriteType.Floor,
 			circleRadius: 1,
 			pos: [0, -3.15, 15],
@@ -342,6 +345,7 @@ SceneManager.add({Game: class extends Game {
 			// },
 		}),
 		SpriteUtils.makeSprite({
+			id: "tree",
 			src: "tree",
 			position: [-1, 0, -1],
 			scale: [3, 3],
