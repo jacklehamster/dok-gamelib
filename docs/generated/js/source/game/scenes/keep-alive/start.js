@@ -398,7 +398,6 @@ SceneManager.add({Game: class extends Game {
 		shininess: 1,
 		specularStrength: 0.1,
 		diffusionStrength: 0.5,
-		curvature: .5,
 	},
 	view: {
 		pos: [
@@ -410,6 +409,7 @@ SceneManager.add({Game: class extends Game {
 		tilt: .8,
 		turn: ({game}) => game.sceneData.turn,
 		range: [1, 200],
+		curvature: .5,
 	},
 	refresh: ({game}) => game.loop(),
 	spriteData: [

@@ -171,6 +171,17 @@ SceneManager.add({Game: class extends Game {
 			({game}) => game.sceneData.cam[2],
 		],
 	},
+	light: {
+		pos: [
+			0,
+			100,
+			0,
+		],
+		ambient: .7,
+		shininess: 1,
+		specularStrength: 0.1,
+		diffusionStrength: 0.5,
+	},
 	refresh: ({game}) => game.loop(),
 	spriteData: [
 		{
