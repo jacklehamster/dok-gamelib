@@ -292,6 +292,11 @@ SceneManager.add({
 		},
 		{
 			src: "bunny",
+			effects: {
+				chromaKey: {
+					range: [0, 0],
+				},
+			},
 			rotation: {
 				angle: [
 					0,

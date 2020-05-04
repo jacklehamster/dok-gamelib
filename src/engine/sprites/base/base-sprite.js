@@ -13,6 +13,7 @@
 
 class BaseSpriteInstance {
 	constructor() {
+		this.id = null;
 		this.providerIndex = -1;
 		this.definitionIndex = -1;
 		this.instanceIndex = -1;

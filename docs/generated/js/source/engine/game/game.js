@@ -24,6 +24,19 @@ class Game {
 		this.nextScene = null;
 		this.classes = { Game, SpriteDefinition };
 		this.config = {};
+		this.definitions = {};
+	}
+
+	getDefinition(id) {
+		const definition = this.definitions[id];
+		if (definition) {
+			if (definition.id.get() !== id) {
+				delete this.definitions[id];
+			} else {
+				return definition;
+			}
+		}
+		return null;
 	}
 
 	setEngine(value) {

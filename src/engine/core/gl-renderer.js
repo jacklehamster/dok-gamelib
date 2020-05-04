@@ -77,6 +77,7 @@ class GLRenderer {
 			colorEffect: 	new EngineBuffer(this.shader, "colorEffect", TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			blackholeCenter: new EngineBuffer(this.shader, "blackholeCenter", BLACKHOLE_CENTER_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 			blackholeInfo:  new EngineBuffer(this.shader, "blackholeInfo", BLACKHOLE_INFO_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			chromaKey: 		new EngineBuffer(this.shader, "chromaKey", CHROMA_KEY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
 		};
 
 		this.boundBuffer = null;
@@ -138,10 +139,10 @@ class GLRenderer {
 	setBackground(color) {
 		const { gl, shader, canvas } = this;
 		color = color || 0;
-		const a = 1 - ((color >> 24) % 256) / 256;
-		const r = ((color >> 16) % 256) / 256;
-		const g = ((color >> 8) % 256) / 256;
-		const b = ((color) % 256) / 256;
+		const a = 1 - ((color >> 24) % 256) / 255;
+		const r = ((color >> 16) % 256) / 255;
+		const g = ((color >> 8) % 256) / 255;
+		const b = ((color) % 256) / 255;
 		gl.uniform4f(shader.programInfo.background, r, g, b, a);
 		gl.clearColor(r, g, b, 1.0);
 		canvas.style.backgroundColor = Utils.getDOMColor(color);

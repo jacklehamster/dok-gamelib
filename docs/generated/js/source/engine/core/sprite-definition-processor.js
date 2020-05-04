@@ -48,10 +48,15 @@ class SpriteDefinitionProcessor {
 	}
 
 	processSpriteDefinition(definition, definitionIndex, spriteCollector, scene, spriteProvider) {
-		const { count } = definition;
+		const { id, count } = definition;
 		const totalCount = count.get(definitionIndex);
 
 		SpriteDefinitionProcessor.lastProcessedDefinition = definition;
+
+		const definitionId = id.get();
+		if (definitionId) {
+			scene.definitions[definitionId] = definition;
+		}
 
 		for (let i = 0; i < totalCount; i ++) {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);

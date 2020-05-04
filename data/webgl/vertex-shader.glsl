@@ -26,7 +26,7 @@ attribute vec4 aColorEffect;			//	[ tint color, mix, hue change ]
 attribute vec3 aBlackholeCenter;		//	[ x, y, z ]
 attribute vec2 aBlackholeInfo;			//	[ strength, distance ]
 
-attribute vec3 aChromaKey;				//	[ low, high, color ]
+attribute vec4 aChromaKey;				//	[ low, high, color, colorAlpha ]
 
 uniform mat4 uProjectionMatrix;
 uniform mat4 uViewMatrix;
@@ -44,7 +44,9 @@ varying float vTextureSlot;
 varying float vBrightness;
 varying vec4 vTintColor;
 varying float vHue;
-varying vec3 vChromaKey;
+varying vec3 vChromaKeyLowColor;
+varying vec3 vChromaKeyHighColor;
+varying vec4 vChromaKeyReplaceColor;
 
 vec4 makeColorFromRGB(float rgb, float mixRatio) {
 	return vec4(
@@ -109,6 +111,10 @@ void main(void) {
 	vBrightness = floor(aVertexTextureCoord.y * .5);
 	vTintColor = makeColorFromRGB(aColorEffect.x, aColorEffect.y);
 	vHue = aColorEffect.z;
+
+	vChromaKeyLowColor = makeColorFromRGB(aChromaKey[0], 1.0).rgb;
+	vChromaKeyHighColor = makeColorFromRGB(aChromaKey[1], 1.0).rgb;
+	vChromaKeyReplaceColor = makeColorFromRGB(aChromaKey[2], aChromaKey[3]);
 
 	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 10.0)) * .2);
 	gl_Position = position;

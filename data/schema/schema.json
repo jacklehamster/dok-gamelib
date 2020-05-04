@@ -69,6 +69,7 @@
 	},
 	"ui": [
 		{
+			"id": null,
 			"init": null,
 			"destroy": null,
 			"refresh": null,
@@ -78,7 +79,6 @@
 			"type": "div",
 			"hidden": false,
 			"count": 1,
-			"id": null,
 			"parent": null,
 			"style": {},
 			"innerText": null,
@@ -130,6 +130,7 @@
 	],
 	"sprites": [
 		{
+			"id": null,
 			"src": null,
 			"type": 0,
 			"hidden": false,
@@ -210,7 +211,7 @@
 					"distance": 0
 				},
 				"chromaKey": {
-					"range": [0, 0],
+					"range": [1, 0],
 					"color": 0
 				}
 			},

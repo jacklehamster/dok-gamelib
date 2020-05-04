@@ -189,7 +189,7 @@ SceneManager.add({Game: class extends Game {
 			fixed: true,
 			count: 80,
 		},
-		{
+		{	//	upper level
 			src: "home-floor",
 			type: SpriteType.Floor,
 			circleRadius: 1,
@@ -201,7 +201,7 @@ SceneManager.add({Game: class extends Game {
 			},
 			fixed: true,
 		},
-		{
+		{	//	floor
 			src: "home-floor",
 			type: SpriteType.Floor,
 			circleRadius: 1,

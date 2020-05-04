@@ -75,10 +75,15 @@ class SpriteDataProcessor {
 
 	process(scene) {
 		const { spriteData, now } = scene;
-		spriteData.forEach(({id, src, spriteSize, grid, padding, frameRate, animations }) => {
+		spriteData.forEach(spriteDataElement => {
+			const {id, src, spriteSize, grid, padding, frameRate, animations } = spriteDataElement;
 			const s = src.get();
 			if (s) {
-				const identifier = id.get() || src.get();
+				const elementId = id.get();
+				if (elementId) {
+					scene.definitions[elementId] = spriteDataElement;
+				}
+				const identifier = elementId || src.get();
 				const anim = this.data[identifier] || (this.data[identifier] = {
 					src: s,
 					spriteSize: [0, 0],

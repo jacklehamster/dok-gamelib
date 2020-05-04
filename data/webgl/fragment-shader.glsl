@@ -22,6 +22,9 @@ varying float vTextureSlot;
 varying float vBrightness;
 varying vec4 vTintColor;
 varying float vHue;
+varying vec3 vChromaKeyLowColor;
+varying vec3 vChromaKeyHighColor;
+varying vec4 vChromaKeyReplaceColor;
 
 uniform vec4 uBackground;
 uniform vec3 uLightPos;
@@ -64,6 +67,12 @@ vec4 alterHueSatLum(vec4 color, vec3 vHSV) {
     return vec4(fragRGB, color.a);
 }
 
+bool isColorBetween(vec3 rgb, vec3 low, vec3 high) {
+	return low.r <= rgb.r && rgb.r <= high.r
+		&& low.g <= rgb.g && rgb.g <= high.g
+		&& low.b <= rgb.b && rgb.b <= high.b;
+}
+
 void main(void) {
 	vec3 normal = normalize(vNormal);
 	vec3 lightDir = normalize(uLightPos - vFragPos.xyz);
@@ -96,6 +105,10 @@ void main(void) {
 		color.a *= (.992 - textureDist);
 	} else {
 		color = getTextureColor(uTextures, vTextureSlot, texturePoint);		
+	}
+
+	if (isColorBetween(color.rgb, vChromaKeyLowColor, vChromaKeyHighColor)) {
+		color = vChromaKeyReplaceColor;
 	}
 
 	//	SDF handling, for text and reduced size sprite

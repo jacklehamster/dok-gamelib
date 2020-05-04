@@ -23,7 +23,7 @@ const TINT_FLOAT_PER_VERTEX			= 4;	//	tint color, mix percentage
 const BLACKHOLE_CENTER_FLOAT_PER_VERTEX = 3;	//	x,y,z
 const BLACKHOLE_INFO_FLOAT_PER_VERTEX	= 2;	//	strength, distance
 
-const CHROMA_KEY_FLOAT_PER_VERTEX 	= 3;	//	low,high,color
+const CHROMA_KEY_FLOAT_PER_VERTEX 	= 4;	//	low,high,color,colorAlpha
 
 const VERTICES_PER_SPRITE 			= 4;	//	4 corners
 const INDEX_ARRAY_PER_SPRITE = new Uint32Array([

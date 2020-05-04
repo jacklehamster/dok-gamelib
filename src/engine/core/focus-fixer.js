@@ -21,9 +21,8 @@ class FocusFixer {
 
 	fix() {
 		const { input } = this;
-		input.id = "kb-focus";
-		input.contentEditable = "true";
-		input.readonly = "true";
+		input.setAttribute("contenteditable", "");
+		input.setAttribute("readonly", "");
 		input.classList.add("focus-fixer-input");
 
 		window.addEventListener("DOMContentLoaded", () => {
@@ -36,7 +35,7 @@ class FocusFixer {
 	}
 
 	lostFocus() {
-		
+
 	}
 
 	gainFocus() {

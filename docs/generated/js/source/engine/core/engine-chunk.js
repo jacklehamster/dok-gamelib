@@ -288,8 +288,19 @@ class Chunk {
 		bufferInfo.blackholeInfo.chunkUpdateTimes[index] = now;
 	}
 
-	setChromaKey(range, color, now) {
+	setChromaKey([low, high], color, now) {
 		const { bufferInfo, index } = this;
-		
+
+		const { gl, shader, canvas } = this;
+		const a = ((color >> 24) % 256) / 255;
+		const rgb = color & 0xFFFFFF;
+
+		this.assignValues(bufferInfo.chromaKey,
+			low, high, rgb, a,
+			low, high, rgb, a,
+			low, high, rgb, a,
+			low, high, rgb, a,
+		);
+		bufferInfo.chromaKey.chunkUpdateTimes[index] = now;
 	}
 }
