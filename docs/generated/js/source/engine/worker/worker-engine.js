@@ -29,6 +29,15 @@ class WorkerEngine {
 		this.dataStore = new WorkerDataStore(this, localStorageData);
 		this.newgrounds = new WorkerNewgrounds(this);
 		this.logger = new WorkerLogger(this);
+		this.pool = {
+			payloadCommands: new Pool(() => {
+				return {
+					component: null,
+					command: null,
+					parameters: [],
+				};
+			}, ({parameters}) => parameters.length = 0),
+		};
 
 		this.keyboard = new Keyboard(null, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
@@ -56,6 +65,12 @@ class WorkerEngine {
 			this.spriteDefinitionProcessor.init(this.currentScene.ui);
 			this.logger.log("Scene change:", this.currentScene.name);
 		});
+
+		this.payload = {
+			action: "payload",
+			time: 0,
+			commands: [],
+		};
 	}
 
 	processPayload({
@@ -87,10 +102,6 @@ class WorkerEngine {
 		const frameDuration = 1000 / currentScene.getFrameRate();
 
 		const spriteCollector = [], uiCollector = [];
-		const payload = {
-			time: 0,
-			action: "payload",
-		};
 
 		if (time - this.lastRefresh >= frameDuration) {
 			const shouldResetScene = this.currentScene.nextScene;
@@ -104,9 +115,9 @@ class WorkerEngine {
 			//	show sprites to process
 			const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
-			payload.time = now;
+			this.payload.time = now;
 
-			this.postBack(payload);
+			this.postBack(this.payload);
 			// glRenderer.setTime(now);
 			// glRenderer.clearScreen();
 
@@ -145,8 +156,9 @@ class WorkerEngine {
 				this.resetScene(this.currentScene.nextScene);
 			}
 			// glRenderer.resetPools();
+			this.payload.commands.length = 0;
+			this.pool.payloadCommands.reset();
 		}
-
 	}
 
 	// loop(time) {
@@ -169,12 +181,13 @@ class WorkerEngine {
 	// }
 
 	sendCommand(component, command, ...parameters) {
-		self.postMessage({
-			action: "engine",
-			component,
-			command,
-			parameters,
-		});		
+		const payloadCommand = this.pool.payloadCommands.get();
+		payloadCommand.component = component;
+		payloadCommand.command = command;
+		for (let i = 0; i < parameters.length; i++) {
+			payloadCommand.parameters[i] = parameters[i];
+		}
+		this.payload.commands.push(payloadCommand);
 	}
 
 	postBack(payload, ...buffers) {

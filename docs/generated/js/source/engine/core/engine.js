@@ -32,7 +32,7 @@ class Engine {
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.data.generated);
 		this.sceneRefresher = new SceneRefresher();
-		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager);
+		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager, document);
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();

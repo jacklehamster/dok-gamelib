@@ -33,6 +33,14 @@ class WorkerManager {
 				this.engine[component][command](...parameters);
 				break;
 			}
+			case "payload": {
+				const {data: {commands}} = event;
+				for (let i = 0; i < commands.length; i++) {
+					const { component, command, parameters} = commands[i];
+					this.engine[component][command](...parameters);
+				}
+				break;
+			}
 		}
 	}
 

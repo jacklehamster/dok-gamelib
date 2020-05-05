@@ -27,8 +27,8 @@ SceneManager.add({Game: class extends Game {
 
 	tryMoveBy(dx, dz) {
 		const { sceneData: { dok } } = this;
-		const shiftX = dx * dok.speed * (dok.flying ? 1.6 : 1);
-		const shiftZ = dz * dok.speed * (dok.flying ? 1.6 : 1);
+		const shiftX = dx * dok.speed * (dok.flying ? 2 : 1);
+		const shiftZ = dz * dok.speed * (dok.flying ? 2 : 1);
 
 		const preHeight = this.getHeight(dok.pos[0], dok.pos[2]);
 		const postHeight = this.getHeight(dok.pos[0] + shiftX, dok.pos[2] + shiftZ);
@@ -101,8 +101,8 @@ SceneManager.add({Game: class extends Game {
 		}
 		dok.speed *= .8;
 
+		const [ dx, dz ] = MotionUtils.getNormalDirection(sceneData.turn, mov.x, mov.y);
 		if (dok.speed > .0001) {
-			const [ dx, dz ] = MotionUtils.getNormalDirection(sceneData.turn, mov.x, mov.y);
 
 			if (!this.tryMoveBy(dx, dz)) {
 				this.tryAngled(dx, dz);
@@ -133,7 +133,7 @@ SceneManager.add({Game: class extends Game {
 		}
 
 		//	camera follow
-		MotionUtils.follow(sceneData.cam, dok.pos[0], dok.pos[1] + dok.heightAboveGround / 2, dok.pos[2], .05, 0);
+		MotionUtils.follow(sceneData.cam, dok.pos[0] + dx * 4, dok.pos[1] + dok.heightAboveGround / 2, dok.pos[2] + dz * 4, .05, 0);
 	}
 
 	getHeight(px, pz) {
@@ -208,14 +208,14 @@ SceneManager.add({Game: class extends Game {
 			id: "wall",
 			src: "home-floor",
 			padding: 2.5,
-			grid: [10, 8],
+			grid: [10, 10],
 		},
 	],
 	sprites: [
 		ShapeUtils.cylinder({
 			src: "wall",
 			type: SpriteType.Front,
-			cols: 40, rows: 8,
+			cols: 40, rows: 15,
 			radius: 8,
 			center: [
 				({game}) => game.getDefinition("upper-level").pos[0].get(),
@@ -260,7 +260,7 @@ SceneManager.add({Game: class extends Game {
 		ShapeUtils.cylinder({
 			src: "wall",
 			type: SpriteType.Front,
-			cols: 40, rows: 8,
+			cols: 40, rows: 10,
 			radius: ({game}) => game.getDefinition("lower-level").size.get() / 2 - .2,
 			center: [
 				({game}) => game.getDefinition("lower-level").pos[0].get(),

@@ -12,8 +12,9 @@
  *	MediaManager
  */
 
-class MediaManager {
+class MediaManager extends IMediaManager {
 	constructor(config) {
+		super();
 		this.videos = {};
 		this.sounds = {};
 		this.config = config;
@@ -23,19 +24,15 @@ class MediaManager {
 	}
 
 	updatePlayingVideos(sprites, now) {
-		const { videoPlaytimes, playingVideos } = this;
+		const { videoPlaytimes, playingVideos, config } = this;
 		for (let i = 0; i < sprites.length; i++) {
-			const { src, isVideoSprite, hidden } = sprites[i];
-			if (isVideoSprite && !hidden) {
+			const { src, hidden } = sprites[i];
+			if (config.videos[src] && !hidden) {
 				if (!videoPlaytimes[src]) {
 					const video = this.getVideo(src);
-					if (video) {
-						console.log("Play video:", src);
-						video.play();
-						playingVideos.push(src);
-					} else {
-						continue;
-					}
+					console.log("Play video:", src);
+					video.play();
+					playingVideos.push(src);
 				}
 				videoPlaytimes[src] = now;
 			}
@@ -46,12 +43,10 @@ class MediaManager {
 			if (videoPlaytimes[src] !== now) {
 				delete videoPlaytimes[src];
 				const video = this.getVideo(src);
-				if (video) {
-					video.pause();
-					console.log("Pause video:", src);
-					playingVideos[i] = playingVideos[playingVideos.length-1];
-					playingVideos.pop();
-				}
+				video.pause();
+				console.log("Pause video:", src);
+				playingVideos[i] = playingVideos[playingVideos.length-1];
+				playingVideos.pop();
 			}
 		}
 		return playingVideos;

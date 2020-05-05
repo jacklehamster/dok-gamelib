@@ -13,9 +13,10 @@
   */
 
 class SceneRenderer {
-	constructor(glRenderer, mediaManager) {
+	constructor(glRenderer, mediaManager, document) {
 		this.mediaManager = mediaManager;
 		this.glRenderer = glRenderer;
+		this.document = document;
 		this.view = {
 			pos: [0, 0, 0],
 			viewAngle: 0,
@@ -46,7 +47,7 @@ class SceneRenderer {
 	}
 
 	render(scene) {
-		const { glRenderer, background } = this;
+		const { glRenderer, background, document, mediaManager } = this;
 		const { settings, view, light } = scene;
 		const { depthEffect } = view;
 
@@ -65,7 +66,7 @@ class SceneRenderer {
 		if (newMusicSrc !== this.settings.music.src || newVolume !== this.settings.music.volume) {
 			this.settings.music.src = newMusicSrc;
 			this.settings.music.volume = newVolume;
-			this.mediaManager.setTheme(this.settings.music.src, this.settings.music.volume);
+			mediaManager.setTheme(this.settings.music.src, this.settings.music.volume);
 		}
 
 		const newLightPosX = light.pos[0].get();
