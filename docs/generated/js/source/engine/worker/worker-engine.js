@@ -26,13 +26,8 @@ class WorkerEngine {
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());		
 		this.configProcessor = new ConfigProcessor(this.data);
-		this.mediaManager = new WorkerMediaManager(this, this.data.generated);
 		this.dataStore = new WorkerDataStore(this, localStorageData);
 		this.newgrounds = new WorkerNewgrounds(this);
-		this.domManager = new WorkerDOMManager(this);
-		this.sceneGL = new WorkerSceneGL(this);
-		this.sceneRenderer = new SceneRenderer(this.sceneGL, this.mediaManager, this.domManager);
-
 		this.logger = new WorkerLogger(this);
 		this.pool = {
 			payloadCommands: new Pool(() => {
@@ -43,13 +38,8 @@ class WorkerEngine {
 				};
 			}, ({parameters}) => parameters.length = 0),
 		};
-		this.payload = {
-			action: "payload",
-			time: 0,
-			commands: [],
-		};
 
-		this.keyboard = new Keyboard(null, null, {
+		this.keyboard = new Keyboard(null, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
 			onKeyRelease: key => this.currentScene.keyboard.onKeyRelease.run(key),
 			onDownPress: () => this.currentScene.keyboard.onDownPress.run(),
@@ -73,26 +63,26 @@ class WorkerEngine {
 			this.spriteDataProcessor.init(this.currentScene);
 			this.spriteDefinitionProcessor.init(this.currentScene.sprites);
 			this.spriteDefinitionProcessor.init(this.currentScene.ui);
-			this.sendCommand(null, "notifySceneChange", this.currentScene.name);
 			this.logger.log("Scene change:", this.currentScene.name);
-			this.postBack(this.payload);
 		});
 
-		const engine = this;
-		function animationFrame(time) {
-			requestAnimationFrame(animationFrame);
-			engine.loop(time);
-		}
-		requestAnimationFrame(animationFrame);		
+		this.payload = {
+			action: "payload",
+			time: 0,
+			commands: [],
+		};
 	}
 
-	loop(timeMillis) {
+	processPayload({
+		time,
+		keysUp,
+		keysDown,
+	}) {
 		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor,
-			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, } = this;
+			uiProvider, spriteProvider } = this;
 		if (!currentScene) {
 			return;
 		}
-		const time = Math.round(timeMillis);
 		if (!currentScene.startTime) {
 			currentScene.startTime = time;
 			return;
@@ -100,12 +90,9 @@ class WorkerEngine {
 		const now = time - currentScene.startTime;
 		currentScene.now = now;
 
-		if (keyboard.dirty) {
-			currentScene.keys;
+		if (keysUp || keysDown) {
+			this.keyboard.updateKeys(keysUp, keysDown);
 		}
-		// if (mouse.dirty) {
-		// 	currentScene.mouseStatus;
-		// }
 
 		sceneRefresher.refresh(currentScene);
 		spriteDataProcessor.refresh(currentScene);
@@ -123,19 +110,19 @@ class WorkerEngine {
 			spriteDataProcessor.process(currentScene);
 
 			//	process UI
-			const uiComponents = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
+			const uiComponents = spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
 
 			//	show sprites to process
 			const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
 			this.payload.time = now;
-			sceneRenderer.render(currentScene);
 
 			this.postBack(this.payload);
 			// glRenderer.setTime(now);
 			// glRenderer.clearScreen();
 
 			//	render uiComponents
+			// sceneRenderer.render(currentScene);
 			// uiRenderer.render(uiComponents, now);
 			// glRenderer.sendSprites(sprites, now);
 
@@ -168,17 +155,35 @@ class WorkerEngine {
 			if (shouldResetScene) {
 				this.resetScene(this.currentScene.nextScene);
 			}
-
 			// glRenderer.resetPools();
+			this.payload.commands.length = 0;
 			this.pool.payloadCommands.reset();
 		}
 	}
+
+	// loop(time) {
+	// 	time = Math.round(time);
+	// 	const { currentScene, keyboard, } = this;
+	// 	if (!currentScene) {
+	// 		return;
+	// 	}
+	// 	if (!currentScene.startTime) {
+	// 		currentScene.startTime = time;
+	// 		return;
+	// 	}
+	// 	const now = time - currentScene.startTime;
+	// 	currentScene.now = now;
+	// 	console.log(currentScene.name, currentScene.now);
+
+	// 	const frameDuration = 1000 / currentScene.getFrameRate();
+
+
+	// }
 
 	sendCommand(component, command, ...parameters) {
 		const payloadCommand = this.pool.payloadCommands.get();
 		payloadCommand.component = component;
 		payloadCommand.command = command;
-		payloadCommand.parameters.length = parameters.length;
 		for (let i = 0; i < parameters.length; i++) {
 			payloadCommand.parameters[i] = parameters[i];
 		}
@@ -187,7 +192,6 @@ class WorkerEngine {
 
 	postBack(payload, ...buffers) {
 		self.postMessage(payload, buffers);
-		payload.commands.length = 0;
 	}
 
 	getListeners(type) {
@@ -238,7 +242,7 @@ class WorkerEngine {
 			this.currentScene.startTime = 0;
 			this.currentScene.now = 0;
 			this.currentScene.setEngine(this);
-			this.onSceneChangeListener.forEach(callback => callback(sceneName));
+			this.onSceneChangeListener.forEach(callback => callback({name:sceneName, scene, config: scene.config}));
 		}
 	}		
 }

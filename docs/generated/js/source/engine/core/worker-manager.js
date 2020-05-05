@@ -18,7 +18,6 @@ class WorkerManager {
 		this.worker = new Worker(`generated/js/source/engine/worker/worker.js`);
 		this.worker.addEventListener("message", e => this.handleMessage(e));
 		this.engine.addEventListener("start", e => this.init());
-		this.keyboardPayload = {};
 	}
 
 	handleMessage(event) {
@@ -35,16 +34,11 @@ class WorkerManager {
 				break;
 			}
 			case "payload": {
-				const {data: {commands, time}} = event;
+				const {data: {commands}} = event;
 				for (let i = 0; i < commands.length; i++) {
 					const { component, command, parameters} = commands[i];
-					if (component) {
-						this.engine[component][command](...parameters);
-					} else {
-						this.engine[command](...parameters);						
-					}
+					this.engine[component][command](...parameters);
 				}
-				this.engine.refresh(time);
 				break;
 			}
 		}
@@ -88,9 +82,7 @@ class WorkerManager {
 		});
 	}
 
-	onKey(type, code) {
-		this.keyboardPayload.action = type;
-		this.keyboardPayload.code = code;
-		this.worker.postMessage(this.keyboardPayload);
+	sendWorkerLoop(workerPayload, workerArrayBuffers) {
+		this.worker.postMessage(workerPayload, workerArrayBuffers);
 	}
 }

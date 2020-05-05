@@ -29,7 +29,7 @@ const KEY_TURN_RIGHT_PERIOD = 'Period';
 const KEY_TURN_LEFT_COMMA = 'Comma';
 
 class Keyboard {
-	constructor(workerManager, document, listener) {
+	constructor(document, listener) {
 		const keysDown = {};
 		const keysUp = {};
 		const keys = {};
@@ -54,19 +54,17 @@ class Keyboard {
 		if (document) {
 			document.addEventListener("keydown", e => {
 				if (this.active) {
-					this.onKeyDown(e.code);
-					if (workerManager) {
-						workerManager.onKey("keydown", e.code);
-					}
+					keysDown[e.code] = true;
+					delete keysUp[e.code];
+					this.dirty = true;
 					e.preventDefault();
 				}
 			});
 			document.addEventListener("keyup", e => {
 				if (this.active) {
-					this.onKeyUp(e.code);
-					if (workerManager) {
-						workerManager.onKey("keyup", e.code);
-					}
+					keysUp[e.code] = true;
+					delete keysDown[e.code];
+					this.dirty = true;
 					e.preventDefault();
 				}
 			});
@@ -82,18 +80,6 @@ class Keyboard {
 			actions,
 		};
 		this.active = true;
-	}
-
-	onKeyDown(code) {
-		this.keysDown[code] = true;
-		delete this.keysUp[code];
-		this.dirty = true;
-	}
-
-	onKeyUp(code) {
-		this.keysUp[code] = true;
-		delete this.keysDown[code];
-		this.dirty = true;
 	}
 
 	updateKeys(keysUp, keysDown) {

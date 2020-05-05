@@ -14,48 +14,68 @@
 
 class MediaManager extends IMediaManager {
 	constructor(config) {
-		super(config);
+		super();
+		this.videos = {};
+		this.sounds = {};
+		this.config = config;
+		this.theme = null;
+		this.videoPlaytimes = {};
+		this.playingVideos = [];
 	}
 
-	playMusic(id, reset, url) {
-		const music = this.getMusic(id, url);
-		if (music) {
-			music.loop = "loop";
-			if (reset) {
-				music.currentTime = 0;
+	updatePlayingVideos(sprites, now) {
+		const { videoPlaytimes, playingVideos, config } = this;
+		for (let i = 0; i < sprites.length; i++) {
+			const { src, hidden } = sprites[i];
+			if (config.videos[src] && !hidden) {
+				if (!videoPlaytimes[src]) {
+					const video = this.getVideo(src);
+					console.log("Play video:", src);
+					video.play();
+					playingVideos.push(src);
+				}
+				videoPlaytimes[src] = now;
 			}
-			music.play();
 		}
-	}
 
-	playVideo(id, reset, url) {
-		const video = this.getVideo(id, url);
-		if (video) {
-			if (reset) {
-				video.currentTime = 0;
+		for (let i = playingVideos.length - 1; i >= 0; i--) {
+			const src = playingVideos[i];
+			if (videoPlaytimes[src] !== now) {
+				delete videoPlaytimes[src];
+				const video = this.getVideo(src);
+				video.pause();
+				console.log("Pause video:", src);
+				playingVideos[i] = playingVideos[playingVideos.length-1];
+				playingVideos.pop();
 			}
-			video.play();
 		}
+		return playingVideos;
 	}
 
-	setMusicVolume(id, volume) {
-		const music = this.getMusic(id);
-		if (music) {
-			music.volume = volume;
+	setTheme(name, volume) {
+		if (this.theme !== name) {
+			const previousMusic = this.theme ? this.getMusic(this.theme) : null;
+			if (previousMusic) {
+				previousMusic.pause();
+			}
+			this.theme = name;
+			if (this.theme) {
+				const music = this.getMusic(this.theme);
+				if (music) {
+					if (previousMusic) {
+						music.currentTime = 0;
+					}
+					music.loop = "loop";
+					music.play();
+				}
+			}
 		}
-	}
 
-	pauseVideo(id) {
-		const video = this.getVideo(id);
-		if (video) {
-			video.pause();
-		}
-	}
-
-	pauseMusic(id) {
-		const sound = this.getSound(id);
-		if (sound) {
-			sound.pause();
+		if (this.theme) {
+			const music = this.getMusic(this.theme);
+			if (music) {
+				music.volume = volume;
+			}
 		}
 	}
 
@@ -70,10 +90,17 @@ class MediaManager extends IMediaManager {
 				const sound = sounds[name] = document.createElement("audio");
 				sound.src = url || config.sounds[name].path;
 				sound.preload = 'auto';
+				sound.addEventListener('canplay', () => {
+					sound.ready = true;
+				}, true);
 			}
 			return sounds[name];
 		}
 		return null;
+	}
+
+	playSound(name, url) {
+		this.getSound(name, url).play();
 	}
 
 	getVideo(name, url) {
@@ -85,7 +112,11 @@ class MediaManager extends IMediaManager {
 				video.crossOrigin = '';
 				video.preload = 'auto';
 				video.loop = "loop";
-				video.volume = 0;			}
+				video.volume = 0;
+				video.addEventListener('canplay', () => {
+					video.ready = true;
+				}, true);
+			}
 			return videos[name];
 		}
 		return null;

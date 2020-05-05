@@ -20,7 +20,7 @@ class SourceCode {
 					document.getElementById('editor').style.display = "";
 				}, 1000);
 
-				engine.addEventListener("sceneChange", () => {
+				engine.addEventListener("sceneChange", ({config}) => {
 					this.refreshView();
 				});
 
