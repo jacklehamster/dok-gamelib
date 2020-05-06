@@ -18,15 +18,19 @@ if (typeof(window) === 'undefined') {
 		'../lib/gl-matrix.js',
 		'../utils/utils.js',
 		'../utils/pool.js',
+		'../interfaces/scene-gl-interface.js',
 		'../interfaces/data-store-interface.js',
 		'../interfaces/logger-interface.js',
 		'../interfaces/newgrounds-interface.js',
+		'../interfaces/media-manager-interface.js',
+		'../interfaces/dom-manager-interface.js',
 		'../common/constants.js',
 		'../core/config-processor.js',
 		'../core/scene-refresher.js',
 		'../core/sprite-definition-processor.js',
 		'../core/sprite-data-processor.js',
 		'../core/sprite-provider.js',
+		'../core/scene-renderer.js',
 		'../core/game-property.js',
 		'../controls/keyboard.js',
 		'../sprites/base/base-sprite.js',
@@ -48,6 +52,9 @@ if (typeof(window) === 'undefined') {
 		'worker-engine.js',
 		'worker-newgrounds.js',
 		'worker-logger.js',
+		'worker-media-manager.js',
+		'worker-dom-manager.js',
+		'worker-scene-gl.js',
 	);
 
 	let workerEngine;
@@ -87,6 +94,16 @@ if (typeof(window) === 'undefined') {
 			}
 			case "payload": {
 				workerEngine.processPayload(event.data);
+				break;
+			}
+			case "keydown": {
+				const {data: { code }} = event;
+				workerEngine.keyboard.onKeyDown(code);
+				break;
+			}
+			case "keyup": {
+				const {data: { code }} = event;
+				workerEngine.keyboard.onKeyUp(code);
 				break;
 			}
 		}

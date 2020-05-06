@@ -22,7 +22,7 @@ class SceneThumbnail {
 			engine.addEventListener("start", engine => {			
 				this.setupSceneThumbnails(engine);
 			});
-			engine.addEventListener("sceneChange", ({name}) => {
+			engine.addEventListener("sceneChange", name => {
 				const sceneThumbnails = document.getElementById("scene-thumbnails");
 				const tabs = sceneThumbnails.querySelectorAll(".scene-tab");
 				for (let t = 0; t < tabs.length; t++) {

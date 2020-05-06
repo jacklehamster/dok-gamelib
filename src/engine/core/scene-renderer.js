@@ -13,10 +13,10 @@
   */
 
 class SceneRenderer {
-	constructor(glRenderer, mediaManager, document) {
+	constructor(renderer, mediaManager, domManager) {
 		this.mediaManager = mediaManager;
-		this.glRenderer = glRenderer;
-		this.document = document;
+		this.renderer = renderer;
+		this.domManager = domManager;
 		this.view = {
 			pos: [0, 0, 0],
 			viewAngle: 0,
@@ -47,19 +47,19 @@ class SceneRenderer {
 	}
 
 	render(scene) {
-		const { glRenderer, background, document, mediaManager } = this;
+		const { renderer, background, domManager, mediaManager } = this;
 		const { settings, view, light } = scene;
 		const { depthEffect } = view;
 
 		const newBackground = settings.background.get();
 		if (newBackground !== background) {
 			this.background = newBackground;
-			glRenderer.setBackground(this.background);
+			renderer.setBackground(this.background);
 		}
 		const docBackground = settings.docBackground.get();
 		if (docBackground !== this.docBackground) {
 			this.docBackground = docBackground;
-			document.body.style.backgroundColor = Utils.getDOMColor(this.docBackground);
+			domManager.setBackgroundColor(this.dokBackground);
 		}
 		const newMusicSrc = settings.music.muted.get() ? null : settings.music.src.get();
 		const newVolume = settings.music.volume.get();
@@ -85,7 +85,8 @@ class SceneRenderer {
 			this.light.diffusionStrength = newDiffusionStrength;
 			this.light.specularStrength = newSpecularStrength;
 			this.light.shininess = newShininess;
-			glRenderer.setLight(this.light.pos, newAmbient, newDiffusionStrength, newSpecularStrength, newShininess);
+			this.light.ambient = newAmbient;
+			renderer.setLight(this.light.pos, newAmbient, newDiffusionStrength, newSpecularStrength, newShininess);
 		}
 
 		const newDepthFading = depthEffect.fading.get();
@@ -95,7 +96,7 @@ class SceneRenderer {
 			this.view.depthEffect.fading = newDepthFading;
 			this.view.depthEffect.saturation[0] = closeStaturation;
 			this.view.depthEffect.saturation[1] = farSaturation;
-			glRenderer.setDepthEffect(newDepthFading, closeStaturation, farSaturation);
+			renderer.setDepthEffect(newDepthFading, closeStaturation, farSaturation);
 		}
 
 		const newViewPosX = view.pos[0].get();
@@ -108,7 +109,9 @@ class SceneRenderer {
 			|| newTilt !== this.view.tilt || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
 			Utils.set3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ);
 			this.view.turn = newTurn;
-			glRenderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newTilt, newTurn, -newCameraDistance);
+			this.view.tilt = newTilt;
+			this.view.cameraDistance = newCameraDistance;
+			renderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newTilt, newTurn, -newCameraDistance);
 		}
 
 		const newNear = view.range[0].get();
@@ -118,13 +121,13 @@ class SceneRenderer {
 			this.view.range[0] = newNear;
 			this.view.range[1] = newFar;
 			this.view.viewAngle = newViewAngle;
-			glRenderer.setViewAngle(newViewAngle, newNear, newFar);
+			renderer.setViewAngle(newViewAngle, newNear, newFar);
 		}
 
 		const newCurvature = view.curvature.get();
 		if (this.view.curvature !== newCurvature) {
 			this.view.curvature = newCurvature;
-			glRenderer.setCurvature(newCurvature);
+			renderer.setCurvature(newCurvature);
 		}
 	}
 }

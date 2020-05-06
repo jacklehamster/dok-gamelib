@@ -28,11 +28,13 @@ class Engine {
 		this.workerManager = new WorkerManager(this);
 		this.dataStore = new DataStore(localStorage);
 		this.mediaManager = new MediaManager(this.data.generated);
+		this.domManager = new DOMManager(document);
 		this.spriteRenderer = new SpriteRenderer(this);
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.data.generated);
+		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
 		this.sceneRefresher = new SceneRefresher();
-		this.sceneRenderer = new SceneRenderer(this.glRenderer, this.mediaManager, document);
+		this.sceneRenderer = new SceneRenderer(this.sceneGL, this.mediaManager, this.domManager);
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
@@ -44,7 +46,7 @@ class Engine {
 		this.focusFixer = new FocusFixer(canvas);
 		this.processGameInEngine = true;
 
-		this.keyboard = new Keyboard(document, {
+		this.keyboard = new Keyboard(this.workerManager, document, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
 			onKeyRelease: key => this.currentScene.keyboard.onKeyRelease.run(key),
 			onDownPress: () => this.currentScene.keyboard.onDownPress.run(),
@@ -72,12 +74,17 @@ class Engine {
 			this.running = true;
 		});
 
-		this.addEventListener("sceneChange", () => {
-			this.sceneRefresher.init(this.currentScene);
-			this.spriteDataProcessor.init(this.currentScene);
-			this.spriteDefinitionProcessor.init(this.currentScene.sprites);
-			this.spriteDefinitionProcessor.init(this.currentScene.ui);
-			this.importAndPlayCurrentScene();			
+		if (this.processGameInEngine) {
+			this.addEventListener("sceneChange", () => {
+				this.sceneRefresher.init(this.currentScene);
+				this.spriteDataProcessor.init(this.currentScene);
+				this.spriteDefinitionProcessor.init(this.currentScene.sprites);
+				this.spriteDefinitionProcessor.init(this.currentScene.ui);
+			});
+		}
+
+		this.addEventListener("start", () => {
+			this.importScenes();
 		});
 	}
 
@@ -85,6 +92,7 @@ class Engine {
 		this.beginLooping();
 		this.onStartListener.forEach(listener => listener(this));
 		this.resetScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
+		this.setCurrentScene();
 //		console.log("start scene:", this.currentScene.name);
 	}
 
@@ -93,28 +101,31 @@ class Engine {
 		return match && match[1] ? match[1] === 1 || match[1] === "true" : this.data.generated.game.editor;
 	}
 
-	importAndPlayCurrentScene() {
-		this.workerManager.import(this.currentScene);
+	importScenes() {
+		const { sceneManager, dataStore, configProcessor } = this;
+		sceneManager.sceneNames.forEach(sceneName => {
+			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor);
+			this.workerManager.import(scene);
+		});
+	}
+
+	setCurrentScene() {
 		this.workerManager.setScene(this.currentScene.name);
 	}
 
 	beginLooping() {
 		const engine = this;
 		const { glRenderer, sceneRefresher, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
-				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor } = engine;
+				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor, sceneGL } = engine;
 
-		const workerPayload = {
-			action: "payload",
-			time: 0,
-		}, workerArrayBuffers = [];
 		let lastRefresh = 0;
 
 		const spriteCollector = [];
 		const uiCollector = [];
 
 		function animationFrame(time) {
-			time = Math.round(time);
 			requestAnimationFrame(animationFrame);
+			time = Math.round(time);
 			const { currentScene, running } = engine;
 			if (!running || !currentScene) {
 				return;
@@ -126,18 +137,7 @@ class Engine {
 			const now = time - currentScene.startTime;
 			currentScene.now = now;
 
-			//	forward info to worker
-			workerPayload.time = time;
-			if (keyboard.dirty) {
-				workerPayload.keysUp = keyboard.keysUp;
-				workerPayload.keysDown = keyboard.keysDown;
-			} else if (workerPayload.keysUp || workerPayload.keysDown) {
-				delete workerPayload.keysUp;
-				delete workerPayload.keysDown;
-			}
-			engine.workerManager.sendWorkerLoop(workerPayload, workerArrayBuffers);
-			workerArrayBuffers.length = 0;
-
+			//	remove below when processed all in worker
 			if (keyboard.dirty) {
 				currentScene.keys;
 			}
@@ -202,10 +202,14 @@ class Engine {
 						engine.resetScene(currentScene.nextScene);
 					}
 					glRenderer.resetPools();
+					sceneGL.resetPools();
 				}
 			}
 		}
 		requestAnimationFrame(animationFrame);		
+	}
+
+	refresh(now) {
 	}
 
 	getListeners(type) {
@@ -259,9 +263,14 @@ class Engine {
 			this.currentScene.startTime = 0;
 			this.currentScene.now = 0;
 			this.currentScene.setEngine(this);
-			this.onSceneChangeListener.forEach(callback => callback({name:sceneName, scene, config: scene.config}));
+			this.setCurrentScene();
+			this.notifySceneChange(sceneName);
 			window.game = scene;
 		}
+	}
+
+	notifySceneChange(sceneName) {
+		this.onSceneChangeListener.forEach(callback => callback(sceneName));
 	}
 
 	sendScore(score) {
