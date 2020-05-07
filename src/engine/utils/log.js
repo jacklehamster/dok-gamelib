@@ -13,6 +13,7 @@ class Log {
 		if (!window.logStatus) {
 			const logStatusDiv = document.body.appendChild(document.createElement("div"));
 			logStatusDiv.style.display = "flex";
+			logStatusDiv.style.position = "absolute";
 			const logStatusText = logStatusDiv.appendChild(document.createElement("div"));
 			const logStatusCount = logStatusDiv.appendChild(document.createElement("div"));
 			logStatusCount.style.marginLeft = "10px";

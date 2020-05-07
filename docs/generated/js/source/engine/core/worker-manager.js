@@ -38,7 +38,6 @@ class WorkerManager {
 					} else {
 						this.engine[command](...parameters);						
 					}
-					console.log(component, command, ...parameters);
 				}
 				this.engine.refresh(buffer, size);
 				if (buffer) {
