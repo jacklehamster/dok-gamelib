@@ -353,7 +353,7 @@ SceneManager.add({Game: class extends Game {
 	deactivate(x, y) {
 		const cell = this.getCell(x, y, true);
 		if (!cell.locked) {
-			cell.active = -game.now;
+			cell.active = -this.now;
 		}
 	}
 
@@ -681,7 +681,7 @@ SceneManager.add({Game: class extends Game {
 						strokeStyle: ({definition, game}) => definition.strokes[Math.floor(game.now / 100) % definition.strokes.length],
 						lineWidth: 2,
 						x: 5,
-						y: ({definition}, index) => 5 + 48 * definition.idx.get(),
+						y: ({definition}) => 5 + 48 * definition.idx.get(),
 						width: 40,
 						height: 40,
 						hidden: ({game: { sceneData: { mode } }}) => mode,
@@ -689,7 +689,7 @@ SceneManager.add({Game: class extends Game {
 					{
 						src: "selector",
 						x: 5,
-						y: ({definition}, index) => 5 + 48 * definition.idx.get(),
+						y: ({definition}) => 5 + 48 * definition.idx.get(),
 						width: 40,
 						height: 40,
 						frame: ({game: { sceneData: { mode }}}) => mode === "RAISE" ? 4 : 5,

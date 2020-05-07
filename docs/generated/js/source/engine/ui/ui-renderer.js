@@ -94,37 +94,30 @@ class UIRenderer {
 				}
 
 				if (type === 'canvas') {
-					const refreshRate = canvas.refreshRate.get(instanceIndex);
+					const refreshRate = canvas.refreshRate;
 					if (now - (elements[elementId].lastDraw||0) > refreshRate) {
 						elements[elementId].lastDraw = now;	
 
 						const context = element.getContext("2d");
 						for (let i = 0; i < canvas.draw.length; i++) {
-							const { type, src, hidden, x, y, width, height, frame, strokeStyle, lineWidth, count } = canvas.draw[i];
-							if (!hidden.get(instanceIndex)) {
-								const newCount = count.get(instanceIndex);
-								for (let c = 0; c < newCount; c++) {
-									const newX = x.get(c, instanceIndex);
-									const newY = y.get(c, instanceIndex);
-									const newWidth = width.get(c, instanceIndex);
-									const newHeight = height.get(c, instanceIndex);
-									const newType = type.get(c, instanceIndex);
-									switch(newType) {
+							const draws = canvas.draw[i];
+							for (let d = 0; d < draws.length; d++) {
+								const { type, src, hidden, x, y, width, height, frame, strokeStyle, lineWidth } = draws[d];
+								if (!hidden) {
+									switch(type) {
 										case "clear":
 											context.clearRect(0, 0, element.width, element.height);
 										break;
 										case "image":
-											const newSrc = src.get(c, instanceIndex);
-											const newFrame = frame.get(c, instanceIndex);
-											if (newSrc) {
-												this.canvasRenderer.drawToCanvas(newSrc, newX, newY, newWidth, newHeight, element, newFrame);
+											if (src) {
+												this.canvasRenderer.drawToCanvas(src, x, y, width, height, element, frame);
 											}
 										break;
 										case "rect":
-											context.strokeStyle = strokeStyle.get(c, instanceIndex);
-											context.lineWidth = lineWidth.get(c, instanceIndex);
+											context.strokeStyle = strokeStyle;
+											context.lineWidth = lineWidth;
 											context.beginPath();
-											context.rect(newX, newY, newWidth, newHeight);
+											context.rect(x, y, width, height);
 											context.stroke();
 										break;
 									}

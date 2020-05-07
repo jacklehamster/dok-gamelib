@@ -28,7 +28,6 @@ class SceneGL extends ISceneGL {
 	}
 
 	setBackground(color) {
-		console.log("background", color);
 		const { gl, shader, canvas } = this;
 		color = color || 0;
 		const a = 1 - ((color >> 24) % 256) / 255;
@@ -44,7 +43,6 @@ class SceneGL extends ISceneGL {
 		if (near <= 0) {
 			console.error(`Invalid range [near, far]. Near needs to be higher than 0.`);
 		}
-		console.log("viewangle", viewAngle, near, far);
 		const { gl, shader, projectionMatrix } = this;
 		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
@@ -72,20 +70,17 @@ class SceneGL extends ISceneGL {
 	}
 
 	setCurvature(curvature) {
-		console.log("curvature", curvature);
 		const { gl, shader } = this;
 		gl.uniform1f(shader.programInfo.curvature, curvature);
 	}
 
 	setLight(x, y, z, ambient, diffusionStrength, specularStrength, shininess) {
-		console.log("light", x, y, z, ambient, diffusionStrength, specularStrength, shininess);
 		const { gl, shader } = this;
 		gl.uniform4f(shader.programInfo.lightIntensity, ambient, diffusionStrength, specularStrength, shininess);
 		gl.uniform3f(shader.programInfo.lightPosition, x, y, z);
 	}
 
 	setDepthEffect(fading, closeSaturation, farSaturation) {
-		console.log("depth-effect", fading, closeSaturation, farSaturation);
 		const { gl, shader } = this;
 		gl.uniform4f(shader.programInfo.depthEffect, fading, 0, closeSaturation, farSaturation);
 	}

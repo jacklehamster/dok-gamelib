@@ -254,5 +254,13 @@ class WorkerEngine {
 			this.currentScene.setEngine(this);
 			this.onSceneChangeListener.forEach(callback => callback(sceneName));
 		}
-	}		
+	}
+
+	sendScore(score) {
+		this.newgrounds.postScore(score);
+	}
+
+	unlockMedal(medalName) {
+		this.newgrounds.unlockMedal(medalName);
+	}
 }
