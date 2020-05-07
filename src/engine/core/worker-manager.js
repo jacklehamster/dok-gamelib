@@ -29,13 +29,8 @@ class WorkerManager {
 				console.log(data.message);
 				break;
 			}
-			case "engine": {
-				const {data : {component, command, parameters}} = event;
-				this.engine[component][command](...parameters);
-				break;
-			}
 			case "payload": {
-				const {data: {commands, time}} = event;
+				const {data: {commands, time, buffer, size}} = event;
 				for (let i = 0; i < commands.length; i++) {
 					const { component, command, parameters} = commands[i];
 					if (component) {
@@ -43,11 +38,22 @@ class WorkerManager {
 					} else {
 						this.engine[command](...parameters);						
 					}
+					console.log(component, command, ...parameters);
 				}
-				this.engine.refresh(time);
+				this.engine.refresh(buffer, size);
+				if (buffer) {
+					this.returnBuffer(buffer);
+				}
 				break;
 			}
 		}
+	}
+
+	returnBuffer(buffer) {
+		this.worker.postMessage({
+			action: "returnBuffer",
+			buffer,
+		}, [ buffer ]);
 	}
 
 	init() {

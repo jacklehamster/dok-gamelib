@@ -8,6 +8,7 @@
  */
 class MotionUtils {
 	static follow(follower, targetX, targetY, targetZ, strength, distance) {
+		distance = Math.max(.01, distance);
 		const dx = targetX - follower[0];
 		const dy = targetY - follower[1];
 		const dz = targetZ - follower[2];

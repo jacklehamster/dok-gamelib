@@ -70,8 +70,8 @@ class TextureManager {
 		if (!videoFrame) {
 			return;
 		}
-		const { videoWidth, videoHeight } = videoFrame;
-		if (!videoWidth || !videoHeight) {
+		const { videoWidth, videoHeight, ready } = videoFrame;
+		if (!videoWidth || !videoHeight || !ready) {
 			return;
 		}
 		const { gl, glTextures } = this;

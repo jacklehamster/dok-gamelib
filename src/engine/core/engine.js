@@ -33,8 +33,8 @@ class Engine {
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.data.generated);
 		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
+		this.communicator = new Communicator(this.sceneGL);
 		this.sceneRefresher = new SceneRefresher();
-		this.sceneRenderer = new SceneRenderer(this.sceneGL, this.mediaManager, this.domManager);
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
@@ -45,6 +45,12 @@ class Engine {
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
 		this.processGameInEngine = true;
+		this.processSceneInEngine = true;
+
+		if (this.processSceneInEngine) {
+			this.engineCommunicator = new EngineCommunicator();
+			this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);			
+		}
 
 		this.keyboard = new Keyboard(this.workerManager, document, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
@@ -83,9 +89,7 @@ class Engine {
 			});
 		}
 
-		this.addEventListener("start", () => {
-			this.importScenes();
-		});
+		this.addEventListener("start", () => this.importScenes());
 	}
 
 	start() {
@@ -167,9 +171,15 @@ class Engine {
 					glRenderer.setTime(now);
 					glRenderer.clearScreen();
 
+					if (sceneRenderer) {
+						sceneRenderer.render(currentScene);
+						engine.communicator.applyBuffer(engine.engineCommunicator.getBuffer(), engine.engineCommunicator.count);
+						engine.engineCommunicator.count = 0;
+					}
+
 					//	render uiComponents
-					sceneRenderer.render(currentScene);
 					uiRenderer.render(uiComponents, now);
+
 					glRenderer.sendSprites(sprites, now);
 
 					//	update video textures
@@ -202,14 +212,19 @@ class Engine {
 						engine.resetScene(currentScene.nextScene);
 					}
 					glRenderer.resetPools();
-					sceneGL.resetPools();
 				}
 			}
 		}
 		requestAnimationFrame(animationFrame);		
 	}
 
-	refresh(now) {
+	refresh(buffer, size) {
+		if (buffer) {
+			const { communicator, sceneGL, sceneRenderer } = this;
+			if (!sceneRenderer) {
+				communicator.applyBuffer(buffer, size);
+			}
+		}
 	}
 
 	getListeners(type) {
@@ -256,6 +271,10 @@ class Engine {
 	resetScene(sceneName) {
 		const { sceneManager, dataStore, configProcessor } = this;
 		if (sceneManager.hasScene(sceneName)) {
+			if (this.currentScene && this.currentScene.name === sceneName) {
+				this.currentScene.nextScene = null;
+				return;
+			}
 			this.clearScene();
 			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor);
 

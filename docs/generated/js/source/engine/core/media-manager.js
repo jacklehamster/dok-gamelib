@@ -68,6 +68,7 @@ class MediaManager extends IMediaManager {
 		if (sounds[name] || config.sounds[name] || url) {
 			if (!sounds[name]) {
 				const sound = sounds[name] = document.createElement("audio");
+				sound.addEventListener("canplay", e => sound.ready = true);
 				sound.src = url || config.sounds[name].path;
 				sound.preload = 'auto';
 			}
@@ -81,6 +82,7 @@ class MediaManager extends IMediaManager {
 		if (videos[name] || config.videos[name] || url) {
 			if (!videos[name]) {
 				const video = videos[name] = document.createElement("video");
+				video.addEventListener("canplay", e => video.ready = true);
 				video.src = url || config.videos[name].path;
 				video.crossOrigin = '';
 				video.preload = 'auto';

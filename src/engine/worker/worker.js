@@ -25,6 +25,7 @@ if (typeof(window) === 'undefined') {
 		'../interfaces/media-manager-interface.js',
 		'../interfaces/dom-manager-interface.js',
 		'../common/constants.js',
+		'../communicator/engine-communicator.js',
 		'../core/config-processor.js',
 		'../core/scene-refresher.js',
 		'../core/sprite-definition-processor.js',
@@ -54,7 +55,7 @@ if (typeof(window) === 'undefined') {
 		'worker-logger.js',
 		'worker-media-manager.js',
 		'worker-dom-manager.js',
-		'worker-scene-gl.js',
+		'worker-scene-renderer.js',
 	);
 
 	let workerEngine;
@@ -104,6 +105,11 @@ if (typeof(window) === 'undefined') {
 			case "keyup": {
 				const {data: { code }} = event;
 				workerEngine.keyboard.onKeyUp(code);
+				break;
+			}
+			case "returnBuffer": {
+				const {data: { buffer }} = event;
+				workerEngine.engineCommunicator.setBuffer(buffer);
 				break;
 			}
 		}

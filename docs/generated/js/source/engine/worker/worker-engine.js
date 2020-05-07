@@ -30,8 +30,9 @@ class WorkerEngine {
 		this.dataStore = new WorkerDataStore(this, localStorageData);
 		this.newgrounds = new WorkerNewgrounds(this);
 		this.domManager = new WorkerDOMManager(this);
-		this.sceneGL = new WorkerSceneGL(this);
-		this.sceneRenderer = new SceneRenderer(this.sceneGL, this.mediaManager, this.domManager);
+		this.engineCommunicator = new EngineCommunicator();
+		this.workerSceneRenderer = new WorkerSceneRenderer(this.engineCommunicator);
+		this.sceneRenderer = new SceneRenderer(this.workerSceneRenderer, this.mediaManager, this.domManager);
 
 		this.logger = new WorkerLogger(this);
 		this.pool = {
@@ -75,7 +76,7 @@ class WorkerEngine {
 			this.spriteDefinitionProcessor.init(this.currentScene.ui);
 			this.sendCommand(null, "notifySceneChange", this.currentScene.name);
 			this.logger.log("Scene change:", this.currentScene.name);
-			this.postBack(this.payload);
+			this.postBackPayload(this.currentScene.now);
 		});
 
 		const engine = this;
@@ -88,7 +89,7 @@ class WorkerEngine {
 
 	loop(timeMillis) {
 		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor,
-			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, } = this;
+			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator } = this;
 		if (!currentScene) {
 			return;
 		}
@@ -128,10 +129,9 @@ class WorkerEngine {
 			//	show sprites to process
 			const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
-			this.payload.time = now;
 			sceneRenderer.render(currentScene);
 
-			this.postBack(this.payload);
+			this.postBackPayload(now);
 			// glRenderer.setTime(now);
 			// glRenderer.clearScreen();
 
@@ -185,8 +185,18 @@ class WorkerEngine {
 		this.payload.commands.push(payloadCommand);
 	}
 
-	postBack(payload, ...buffers) {
-		self.postMessage(payload, buffers);
+	postBackPayload(now) {
+		const { payload, engineCommunicator } = this;
+		payload.time = now;
+		if (engineCommunicator.count && engineCommunicator.getBuffer().byteLength) {
+			payload.buffer = engineCommunicator.getBuffer();
+			payload.size = engineCommunicator.count;
+			self.postMessage(payload, [payload.buffer]);
+		} else if (payload.commands.length) {
+			delete payload.buffer;
+			delete payload.size;
+			self.postMessage(payload);
+		}
 		payload.commands.length = 0;
 	}
 
@@ -231,6 +241,10 @@ class WorkerEngine {
 	resetScene(sceneName) {
 		const { sceneManager, dataStore, configProcessor } = this;
 		if (sceneManager.hasScene(sceneName)) {
+			if (this.currentScene && this.currentScene.name === sceneName) {
+				this.currentScene.nextScene = null;
+				return;
+			}
 			this.clearScene();
 			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor);
 

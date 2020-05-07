@@ -59,7 +59,7 @@ class SceneRenderer {
 		const docBackground = settings.docBackground.get();
 		if (docBackground !== this.docBackground) {
 			this.docBackground = docBackground;
-			domManager.setBackgroundColor(this.dokBackground);
+			domManager.setBackgroundColor(this.docBackground);
 		}
 		const newMusicSrc = settings.music.muted.get() ? null : settings.music.src.get();
 		const newVolume = settings.music.volume.get();
@@ -86,7 +86,8 @@ class SceneRenderer {
 			this.light.specularStrength = newSpecularStrength;
 			this.light.shininess = newShininess;
 			this.light.ambient = newAmbient;
-			renderer.setLight(this.light.pos, newAmbient, newDiffusionStrength, newSpecularStrength, newShininess);
+			const [ x, y, z ] = this.light.pos;
+			renderer.setLight(x, y, z, newAmbient, newDiffusionStrength, newSpecularStrength, newShininess);
 		}
 
 		const newDepthFading = depthEffect.fading.get();

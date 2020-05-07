@@ -31,6 +31,14 @@ const INDEX_ARRAY_PER_SPRITE = new Uint32Array([
 	0,  2,  3,
 ]);
 
+const Commands = {
+	SCENE_BACKGROUND: 1,
+	SCENE_VIEWANGLE: 2,
+	SCENE_VIEW_POSITION: 3,
+	SCENE_CURVATURE: 4,
+	SCENE_LIGHT: 5,
+	SCENE_DEPTHEFFECT: 6,
+};
 
 const SpriteType = {
 	None: 0,
