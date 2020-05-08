@@ -1282,6 +1282,7 @@ function getData() {
                   "type": "image",
                   "src": null,
                   "hidden": false,
+                  "phase": [],
                   "x": 0,
                   "y": 0,
                   "width": 0,

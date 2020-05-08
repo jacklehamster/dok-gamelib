@@ -205,8 +205,7 @@ SceneManager.add({Game: class extends Game {
 			}
 		}
 		str.push(`🔢${this.sceneData.score}`);
-
-		document.getElementById("infoBox").innerText = str.join("\n");
+		this.info = str.join("\n");
 	}
 
 	rotateTile() {
@@ -635,7 +634,7 @@ SceneManager.add({Game: class extends Game {
 				fontSize: "10pt",
 				fontFamily: "Courier New",
 			},
-			innerText: "",
+			innerText: ({game: {info}}) => info || "",
 		},
 		{
 			id: "toolbox",
@@ -678,13 +677,36 @@ SceneManager.add({Game: class extends Game {
 					},
 					{
 						type: "rect",
-						strokeStyle: ({definition, game}) => definition.strokes[Math.floor(game.now / 100) % definition.strokes.length],
+						strokeStyle: ({definition, game}) => definition.strokes[0],
 						lineWidth: 2,
 						x: 5,
 						y: ({definition}) => 5 + 48 * definition.idx.get(),
 						width: 40,
 						height: 40,
 						hidden: ({game: { sceneData: { mode } }}) => mode,
+						phase: [100, 200],
+					},
+					{
+						type: "rect",
+						strokeStyle: ({definition, game}) => definition.strokes[1],
+						lineWidth: 2,
+						x: 5,
+						y: ({definition}) => 5 + 48 * definition.idx.get(),
+						width: 40,
+						height: 40,
+						hidden: ({game: { sceneData: { mode } }}) => mode,
+						phase: [0, 100, 100],
+					},
+					{
+						type: "rect",
+						strokeStyle: ({definition, game}) => definition.strokes[2],
+						lineWidth: 2,
+						x: 5,
+						y: ({definition}) => 5 + 48 * definition.idx.get(),
+						width: 40,
+						height: 40,
+						hidden: ({game: { sceneData: { mode } }}) => mode,
+						phase: [0, 200, 100],
 					},
 					{
 						src: "selector",

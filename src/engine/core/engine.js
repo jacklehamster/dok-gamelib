@@ -176,6 +176,7 @@ class Engine {
 
 					//	render uiComponents
 					uiRenderer.render(uiComponents, now);
+					uiRenderer.updateUI(now);
 
 					glRenderer.sendSprites(sprites, now);
 

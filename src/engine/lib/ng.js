@@ -141,7 +141,11 @@ class NewgroundsWrapper extends INewgroundsWrapper {
         return new Promise((resolve, reject) => {
             this.ngio.callComponent("ScoreBoard.getBoards", {}, ({scoreboards: [board] }) => {
                 this.ngio.callComponent("ScoreBoard.postScore", { id: board.id, value: score }, ({score}) => {
-                    resolve(score.value);
+                    if (score) {
+                        resolve(score.value);
+                    } else {
+                        reject(null);
+                    }
                 });
             });
         });
