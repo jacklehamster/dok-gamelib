@@ -20,6 +20,7 @@ class WorkerManager {
 		this.engine.addEventListener("start", e => this.init());
 		this.keyboardPayload = {};
 		this.mousePayload = { type: "mouse" };
+		this.functionRegistry = [];
 	}
 
 	handleMessage(event) {
@@ -69,6 +70,14 @@ class WorkerManager {
 			action: "ping",
 			message,
 		});
+	}
+
+	onClickUI(id, instanceIndex) {
+		this.worker.postMessage({
+			action: "clickUI",
+			id,
+			instanceIndex,
+		});		
 	}
 
 	import(game) {

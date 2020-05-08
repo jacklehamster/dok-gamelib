@@ -41,7 +41,7 @@ class Engine {
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
-		this.uiRenderer = new UIRenderer(canvas, this.canvasRenderer);
+		this.uiRenderer = new UIRenderer(canvas, this.canvasRenderer, this.workerManager);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);

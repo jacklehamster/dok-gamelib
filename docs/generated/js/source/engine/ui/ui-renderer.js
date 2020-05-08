@@ -13,9 +13,10 @@
 */
 
 class UIRenderer {
-	constructor(canvas, canvasRenderer) {
+	constructor(canvas, canvasRenderer, workerManager) {
 		this.canvas = canvas;
 		this.canvasRenderer = canvasRenderer;
+		this.workerManager = workerManager;
 		this.root = null;
 		this.elements = {};
 		window.addEventListener("resize", e => this.onResize());
@@ -41,27 +42,40 @@ class UIRenderer {
 		}
 	}
 
-	setupEvents(element, events, instanceIndex) {
-		const { onClick } = events;
-		element.addEventListener("click", e => {
-			onClick.run(e, instanceIndex);
-		});
+	setupEvents(element, onClick, instanceIndex) {
+		if (onClick && onClick.dynamic) {
+			element.addEventListener("click", () => onClick.run(instanceIndex));
+			if (this.workerManager) {
+				element.addEventListener("click", () => this.workerManager.onClickUI(element.id, instanceIndex));
+			}
+		}
+	}
+
+	createElement(id, instanceIndex, type, onClick) {
+		const { elements } = this;
+		const elementId = `${id}${!instanceIndex ? "" : `-${instanceIndex}`}`;
+		let element = elements[elementId] ? elements[elementId].element : null;
+		if (!element) {
+			element = document.createElement(type);
+			element.id = elementId;
+			elements[elementId] = { element, updated: 0 };
+			this.setupEvents(element, onClick, instanceIndex);
+		}
 	}
 
 	render(uiSprites, now) {
 		const { elements } = this;
+		window.uiSprites = uiSprites;
 
 		for (let i = 0; i < uiSprites.length; i++) {
-			const { type, id, classList, style, parent, innerText, instanceIndex, width, height, hidden, updateTimes, events, canvas } = uiSprites[i];
+			const { type, id, classList, style, parent, innerText, instanceIndex, width, height, hidden, updateTimes, events: { onClick }, canvas } = uiSprites[i];
 			if (id) {
 				const elementId = `${id}${!instanceIndex ? "" : `-${instanceIndex}`}`;
-				let element = elements[elementId] ? elements[elementId].element : null;
-				if (!element) {
-					element = document.createElement(type);
-					element.id = elementId;
-					elements[elementId] = { element, updated: 0 };
-					this.setupEvents(element, events, instanceIndex);
+				if (!elements[elementId]) {
+					this.createElement(id, instanceIndex, type, onClick);
 				}
+				const element = elements[elementId].element;
+
 				if (parent !== elements[elementId].parent) {
 					elements[elementId].parent = parent;
 					elements[elementId].needReparent = true;

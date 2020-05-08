@@ -120,6 +120,11 @@ if (typeof(window) === 'undefined') {
 				workerEngine.engineCommunicator.setBuffer(buffer);
 				break;
 			}
+			case "clickUI": {
+				const {data: { id, instanceIndex }} = event;
+				console.log("Clicked on", id, instanceIndex);
+				break;				
+			}
 		}
 	});
 }
