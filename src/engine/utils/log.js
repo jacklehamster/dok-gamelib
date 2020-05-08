@@ -14,6 +14,9 @@ class Log {
 			const logStatusDiv = document.body.appendChild(document.createElement("div"));
 			logStatusDiv.style.display = "flex";
 			logStatusDiv.style.position = "absolute";
+			logStatusDiv.style.color = "white";
+			logStatusDiv.style.fontSize = "20pt";
+			logStatusDiv.style.textShadow = "2px 2px black";
 			const logStatusText = logStatusDiv.appendChild(document.createElement("div"));
 			const logStatusCount = logStatusDiv.appendChild(document.createElement("div"));
 			logStatusCount.style.marginLeft = "10px";

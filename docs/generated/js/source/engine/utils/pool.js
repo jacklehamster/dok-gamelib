@@ -17,11 +17,23 @@ class Pool {
 		this.createCall = createCall;
 		this.initCall = initCall;
 		this.pool = [];
+		this.recycler = [];
 		this.index = 0;
 		Pool.pools.push(this);
 	}
 
+	recycle(element, init) {
+		if (init && this.initCall) {
+			this.initCall(element);
+		}
+		this.recycler.push(element);
+	}
+
 	get(init) {
+		if (this.recycler.length) {
+			return this.recycler.pop();
+		}
+
 		if (this.index >= this.pool.length) {
 			this.pool.push(this.createCall());
 		}

@@ -13,30 +13,41 @@
  */
 
 class Mouse {
-	constructor(canvas, listener) {
-		document.addEventListener("mousemove", e => {
-			if (this.active) {
-				this.mouseEventToPosition(e, this.newPosition);
-				this.dirty = true;
-				e.preventDefault();
-			}
-		});
-		document.addEventListener("mousedown", e => {
-			if (this.active) {
-				this.mouseEventToPosition(e, this.newPosition);
-				this.newPosition.mouseDown = true;
-				this.dirty = true;
-				e.preventDefault();
-			}
-		});
-		document.addEventListener("mouseup", e => {
-			if (this.active) {
-				this.mouseEventToPosition(e, this.newPosition);
-				this.newPosition.mouseDown = false;
-				this.dirty = true;
-				e.preventDefault();
-			}
-		});
+	constructor(workerManager, canvas, document, listener) {
+		if (document) {
+			document.addEventListener("mousemove", e => {
+				if (this.active) {
+					this.mouseEventToPosition(e, this.newPosition);
+					this.onMouse(this.newPosition.x, this.newPosition.y, this.newPosition.mouseDown);
+					if (workerManager) {
+						workerManager.onMouse(this.newPosition.x, this.newPosition.y, this.newPosition.mouseDown);
+					}
+					e.preventDefault();
+				}
+			});
+			document.addEventListener("mousedown", e => {
+				if (this.active) {
+					this.mouseEventToPosition(e, this.newPosition);
+					this.newPosition.mouseDown = true;
+					this.onMouse(this.newPosition.x, this.newPosition.y, this.newPosition.mouseDown);
+					if (workerManager) {
+						workerManager.onMouse(this.newPosition.x, this.newPosition.y, this.newPosition.mouseDown);
+					}
+					e.preventDefault();
+				}
+			});
+			document.addEventListener("mouseup", e => {
+				if (this.active) {
+					this.mouseEventToPosition(e, this.newPosition);
+					this.newPosition.mouseDown = false;
+					this.onMouse(this.newPosition.x, this.newPosition.y, this.newPosition.mouseDown);
+					if (workerManager) {
+						workerManager.onMouse(this.newPosition.x, this.newPosition.y, this.newPosition.mouseDown);
+					}
+					e.preventDefault();
+				}
+			});
+		}
 		this.canvas = canvas;
 		this.listener = listener;
 		this.active = true;
@@ -51,6 +62,25 @@ class Mouse {
 			y: 0,
 			mouseDown: 0,
 		};
+	}
+
+	refresh(currentScene, now) {
+		const newActive = currentScene.mouse.active.get();
+		if (newActive !== this.active) {
+			this.active = newActive;
+			if (this.dirty) {
+				this.getMouse(now);
+			}
+		}
+	}
+
+	onMouse(x, y, mouseDown) {
+		if (this.active) {
+			this.newPosition.x = x;
+			this.newPosition.y = y;
+			this.newPosition.mouseDown = mouseDown;
+			this.dirty = true;
+		}
 	}
 
 	mouseEventToPosition(event, position) {

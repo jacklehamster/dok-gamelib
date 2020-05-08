@@ -25,8 +25,8 @@ const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
 const KEY_TURN_RIGHT_E = 'KeyE';
 const KEY_TURN_LEFT_Q = 'KeyQ';
-const KEY_TURN_RIGHT_PERIOD = 'Period';
-const KEY_TURN_LEFT_COMMA = 'Comma';
+const KEY_TURN_LEFT_BRACKET = 'BracketLeft';
+const KEY_TURN_RIGHT_BRACKET = 'BracketRight';
 
 class Keyboard {
 	constructor(workerManager, document, listener) {
@@ -84,22 +84,30 @@ class Keyboard {
 		this.active = true;
 	}
 
+	refresh(currentScene, now) {
+		const newActive = currentScene.keyboard.active.get();
+		if (newActive !== this.active) {
+			this.active = newActive;
+			if (this.dirty) {
+				this.getKeyboard(now);
+			}
+		}
+	}
+
 	onKeyDown(code) {
-		this.keysDown[code] = true;
-		delete this.keysUp[code];
-		this.dirty = true;
+		if (this.active) {
+			this.keysDown[code] = true;
+			delete this.keysUp[code];
+			this.dirty = true;
+		}
 	}
 
 	onKeyUp(code) {
-		this.keysUp[code] = true;
-		delete this.keysDown[code];
-		this.dirty = true;
-	}
-
-	updateKeys(keysUp, keysDown) {
-		this.keysUp = keysUp;
-		this.keysDown = keysDown;
-		this.dirty = true;
+		if (this.active) {
+			this.keysUp[code] = true;
+			delete this.keysDown[code];
+			this.dirty = true;
+		}
 	}
 
 	handleTurnChanged() {
@@ -145,7 +153,7 @@ class Keyboard {
 		const { keyboard: { controls }, listener } = this;
 		switch(key) {
 			case KEY_TURN_LEFT_Q:
-			case KEY_TURN_LEFT_COMMA:
+			case KEY_TURN_LEFT_BRACKET:
 				if (down && controls.turnLeft <= 0) {
 					controls.turnLeft = now;
 					listener.onTurnLeftPress();
@@ -157,7 +165,7 @@ class Keyboard {
 				}
 				break;
 			case KEY_TURN_RIGHT_E:
-			case KEY_TURN_RIGHT_PERIOD:
+			case KEY_TURN_RIGHT_BRACKET:
 				if (down && controls.turnRight <= 0) {
 					controls.turnRight = now;
 					listener.onTurnRightPress();
@@ -234,7 +242,7 @@ class Keyboard {
 	}
 
 	getKeyboard(now) {
-		const { keys, keysDown, keysUp, listener, keyboard } = this;
+		const { keys, keysDown, keysUp, listener, keyboard, active } = this;
 		for (let key in keysDown) {
 			if (!keys[key] || keys[key] < 0) {
 				keys[key] = now;

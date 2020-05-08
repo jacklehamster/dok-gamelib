@@ -9,6 +9,30 @@
 
 
 class SpriteUtils {
+	static overlap(x, z, definition, instanceIndex, multiplier) {
+		const mul = multiplier || 1;
+		const index = instanceIndex || 0;
+		if (definition && definition.type.get(index) === SpriteType.Floor) {
+			const floorX = definition.pos[0].get(index);
+			const floorZ = definition.pos[2].get(index);
+			const halfwidth = definition.scale[0].get(index) / 2 * mul;
+			const halfheight = definition.scale[1].get(index) / 2 * mul;
+
+			const radius = definition.circleRadius.get(index);
+			const dx = (floorX - x) / halfwidth;
+			const dz = (floorZ - z) / halfheight;
+			if (radius > 0) {
+				const dist = Math.sqrt(dx*dx + dz*dz);
+				if (dist <= radius) {
+					return true;
+				}
+			} else {
+				return Math.abs(dx) < halfwidth && Math.abs(dz) < halfheight;
+			}
+		}
+		return false;
+	}
+
 	static makeSprite(params) {
 		const { id, position, heightAboveGround, shadowColor, spriteTint, scale, spriteSize, src,
 			animation, init, refresh, refreshRate, hidden, spriteCount, fixed } = params;

@@ -72,6 +72,10 @@ class Game {
 		return this.mouseCache;
 	}
 
+	runAfter(delay, action) {
+		this.engine.timeScheduler.scheduleAt(this.now + delay, action);
+	}
+
 	gotoScene(name) {
 		this.nextScene = name;
 	}

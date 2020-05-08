@@ -18,6 +18,7 @@ if (typeof(window) === 'undefined') {
 		'../lib/gl-matrix.js',
 		'../utils/utils.js',
 		'../utils/pool.js',
+		'../utils/time-scheduler.js',
 		'../interfaces/scene-gl-interface.js',
 		'../interfaces/data-store-interface.js',
 		'../interfaces/logger-interface.js',
@@ -34,11 +35,13 @@ if (typeof(window) === 'undefined') {
 		'../core/scene-renderer.js',
 		'../core/game-property.js',
 		'../controls/keyboard.js',
+		'../controls/mouse.js',
 		'../sprites/base/base-sprite.js',
 		'../sprites/ui-sprite.js',
 		'../sprites/image-sprite.js',
 		'../sprites/animated-sprite.js',
 		'../sprites/sprite.js',
+		'../game/components/color-utils.js',
 		'../game/components/motion-utils.js',
 		'../game/components/shape-utils.js',
 		'../game/components/sprite-utils.js',
@@ -105,6 +108,11 @@ if (typeof(window) === 'undefined') {
 			case "keyup": {
 				const {data: { code }} = event;
 				workerEngine.keyboard.onKeyUp(code);
+				break;
+			}
+			case "mouse": {
+				const {data: {x,y,mouseDown}} = event;
+				workerEngine.mouse.onMouse(x,y,mouseDown);
 				break;
 			}
 			case "returnBuffer": {

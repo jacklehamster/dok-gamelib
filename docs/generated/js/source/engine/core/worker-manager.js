@@ -19,6 +19,7 @@ class WorkerManager {
 		this.worker.addEventListener("message", e => this.handleMessage(e));
 		this.engine.addEventListener("start", e => this.init());
 		this.keyboardPayload = {};
+		this.mousePayload = { type: "mouse" };
 	}
 
 	handleMessage(event) {
@@ -97,5 +98,11 @@ class WorkerManager {
 		this.keyboardPayload.action = type;
 		this.keyboardPayload.code = code;
 		this.worker.postMessage(this.keyboardPayload);
+	}
+
+	onMouse(x, y, mouseDown) {
+		this.mousePayload.x = x;
+		this.mousePayload.y = y;
+		this.mousePayload.mouseDown = mouseDown;
 	}
 }

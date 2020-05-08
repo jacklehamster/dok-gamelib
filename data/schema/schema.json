@@ -4,6 +4,7 @@
 	"refresh": null,
 	"refreshRate": 0,
 	"keyboard": {
+		"active": true,
 		"onKeyPress": null,
 		"onKeyRelease": null,
 		"onLeftPress": null,
@@ -22,6 +23,7 @@
 		"onTurnRightRelease": null
 	},
 	"mouse": {
+		"active": true,
 		"onMouseDown": null,
 		"onMouseUp": null,
 		"onMouseMove": null

@@ -31,6 +31,7 @@ class WorkerEngine {
 		this.newgrounds = new WorkerNewgrounds(this);
 		this.domManager = new WorkerDOMManager(this);
 		this.engineCommunicator = new EngineCommunicator();
+		this.timeScheduler = new TimeScheduler();
 		this.workerSceneRenderer = new WorkerSceneRenderer(this.engineCommunicator);
 		this.sceneRenderer = new SceneRenderer(this.workerSceneRenderer, this.mediaManager, this.domManager);
 
@@ -67,7 +68,14 @@ class WorkerEngine {
 			onTurnLeftRelease: () => this.currentScene.keyboard.onTurnLeftRelease.run(),
 			onTurnRightPress: () => this.currentScene.keyboard.onTurnRightPress.run(),
 			onTurnRightRelease: () => this.currentScene.keyboard.onTurnRightRelease.run(),
-		});		
+		});
+
+		this.mouse = new Mouse(null, null, null, {
+			onMouseDown: mouseStatus => this.currentScene.mouse.onMouseDown.run(mouseStatus),
+			onMouseUp: mouseStatus => this.currentScene.mouse.onMouseUp.run(mouseStatus),
+			onMouseMove: mousePosition => this.currentScene.mouse.onMouseMove.run(mousePosition),			
+		});
+	
 
 		this.addEventListener("sceneChange", () => {
 			this.sceneRefresher.init(this.currentScene);
@@ -101,12 +109,8 @@ class WorkerEngine {
 		const now = time - currentScene.startTime;
 		currentScene.now = now;
 
-		if (keyboard.dirty) {
-			currentScene.keys;
-		}
-		// if (mouse.dirty) {
-		// 	currentScene.mouseStatus;
-		// }
+		keyboard.refresh(currentScene, now);
+		mouse.refresh(currentScene, now);
 
 		sceneRefresher.refresh(currentScene);
 		spriteDataProcessor.refresh(currentScene);

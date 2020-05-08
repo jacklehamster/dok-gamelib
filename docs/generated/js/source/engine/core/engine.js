@@ -25,6 +25,7 @@ class Engine {
 		this.onStartListener = [];
 		this.running = false;
 		this.logger = new Logger();
+		this.timeScheduler = new TimeScheduler();
 		this.workerManager = new WorkerManager(this);
 		this.dataStore = new DataStore(localStorage);
 		this.mediaManager = new MediaManager(this.data.generated);
@@ -70,7 +71,7 @@ class Engine {
 			onTurnRightPress: () => this.currentScene.keyboard.onTurnRightPress.run(),
 			onTurnRightRelease: () => this.currentScene.keyboard.onTurnRightRelease.run(),
 		});
-		this.mouse = new Mouse(canvas, {
+		this.mouse = new Mouse(this.workerManager, canvas, document, {
 			onMouseDown: mouseStatus => this.currentScene.mouse.onMouseDown.run(mouseStatus),
 			onMouseUp: mouseStatus => this.currentScene.mouse.onMouseUp.run(mouseStatus),
 			onMouseMove: mousePosition => this.currentScene.mouse.onMouseMove.run(mousePosition),			
@@ -120,7 +121,7 @@ class Engine {
 	beginLooping() {
 		const engine = this;
 		const { glRenderer, sceneRefresher, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
-				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor, sceneGL } = engine;
+				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor, sceneGL, timeScheduler } = engine;
 
 		let lastRefresh = 0;
 
@@ -141,15 +142,11 @@ class Engine {
 			const now = time - currentScene.startTime;
 			currentScene.now = now;
 
-			//	remove below when processed all in worker
-			if (keyboard.dirty) {
-				currentScene.keys;
-			}
-			if (mouse.dirty) {
-				currentScene.mouseStatus;
-			}
+			keyboard.refresh(currentScene, now);
+			mouse.refresh(currentScene, now);
 
 			if (engine.processGameInEngine) {
+				timeScheduler.process(now);
 				sceneRefresher.refresh(currentScene);
 				spriteDataProcessor.refresh(currentScene);
 				spriteDefinitionProcessor.refresh(currentScene.ui, now);

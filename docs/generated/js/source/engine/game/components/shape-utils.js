@@ -45,7 +45,7 @@ class ShapeUtils {
 	}
 
 	static cylinder(params) {
-		const { src, type, cols, rows, radius, center, scale, brightness, tintColor, hidden, spherical, fixed } = params;
+		const { src, type, cols, rows, radius, center, scale, brightness, tintColor, hue, hidden, spherical, fixed } = params;
 		return {
 			toSourceCode: (_,editor) => `ShapeUtils.cylinder(${editor.formatCode(params)})`,
 			src,
@@ -72,6 +72,7 @@ class ShapeUtils {
 			effects: {
 				tintColor,
 				brightness,
+				hue,
 				blackhole: {
 					center: [
 						({definition: { center }}) => center[0].get(),

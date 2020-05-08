@@ -5,7 +5,7 @@ SceneManager.add({Game: class extends Game {
 			turn: 0,
 			turnGoal: 0,
 			dok: {
-				pos: [0, 0, 0],
+				pos: [0, 1.5, 0],
 				mov: { x: 0, y: 0, z: 0 },
 				heightAboveGround: 0,
 				speed: 0,
@@ -14,15 +14,20 @@ SceneManager.add({Game: class extends Game {
 			},
 			cam: [ 0, 0, 0 ],
 		};
-		this.wallDistance = .5;
+		this.CLOSEFACTOR = 3;
+		this.currentLevel = null;
+		this.closeElement = null;
 		this.levels = [
 			{ name: "tree", height: 2, size: 1.5 },
-			{ name:"upper-level", height: 0, size: 16 + this.wallDistance },
-			{ name:"lower-level", height:-2, size: 25 + this.wallDistance },
-			{ height: 100 },
+			{ name:"bed", height: 1.2, size: 6 },
+			{ name:"upper-level", height: 0, size: 16 },
+			{ name:"lower-level", height:-2, size: 20 },
+			{ name:"entrance", height:-2, size: 4 },
+			{ name: "outside", height: 100 },
 		];
 		this.levelMap = {};
 		this.levels.forEach(level => this.levelMap[level.name] = level);
+		this.exiting = 0;
 	}
 
 	tryMoveBy(dx, dz) {
@@ -30,8 +35,8 @@ SceneManager.add({Game: class extends Game {
 		const shiftX = dx * dok.speed * (dok.flying ? 2 : 1);
 		const shiftZ = dz * dok.speed * (dok.flying ? 2 : 1);
 
-		const preHeight = this.getHeight(dok.pos[0], dok.pos[2]);
-		const postHeight = this.getHeight(dok.pos[0] + shiftX, dok.pos[2] + shiftZ);
+		const preHeight = this.getHeight(dok.pos[0], dok.pos[1], dok.pos[2]);
+		const postHeight = this.getHeight(dok.pos[0] + shiftX, dok.pos[1], dok.pos[2] + shiftZ);
 
 		const diffHeight = postHeight - preHeight;
 		if (diffHeight === 0) {
@@ -40,8 +45,8 @@ SceneManager.add({Game: class extends Game {
 		} else if (diffHeight - dok.heightAboveGround < 0 || diffHeight - dok.heightAboveGround < 1 && dok.mov.y <= 0) {
 			dok.pos[0] += shiftX;
 			dok.pos[2] += shiftZ;
-			dok.pos[1] += diffHeight;
-			dok.heightAboveGround -= diffHeight;
+			dok.heightAboveGround = dok.pos[1] + dok.heightAboveGround - postHeight;
+			dok.pos[1] = postHeight;
 			dok.flying = true;
 			dok.grounded = false;
 		} else {
@@ -71,9 +76,20 @@ SceneManager.add({Game: class extends Game {
 		return false;
 	}
 
+	onPlatform(name) {
+		if (name === "entrance") {
+			this.exiting = this.now;
+		}
+	}
+
+	onClosedTo(name) {
+		console.log("close to", name)
+	}
+
 	loop() {
 		const { sceneData, keys: { actions: { mov, turn }, controls } } = this;
 		const { dok } = sceneData;
+
 		//	turn camera
 		const turnSpeed = .03;
 		const turnStep = Math.PI / 8;
@@ -132,11 +148,27 @@ SceneManager.add({Game: class extends Game {
 			}
 		}
 
+		if (!dok.flying) {
+			const currentPlatform = this.getPlatform(...dok.pos);
+			if (currentPlatform.name !== this.currentLevel) {
+				this.currentLevel = currentPlatform.name;
+				this.onPlatform(this.currentLevel);
+			}
+			const closeElement = this.getCloseElement(...dok.pos);
+			if (closeElement.name !== this.closeElement) {
+				this.closeElement = closeElement.name;
+				this.onClosedTo(this.closeElement);
+			}
+		}
+
 		//	camera follow
 		MotionUtils.follow(sceneData.cam, dok.pos[0] + dx * 4, dok.pos[1] + dok.heightAboveGround / 2, dok.pos[2] + dz * 4, .05, 0);
 	}
 
-	getHeight(px, pz) {
+	getPlatform(px, py, pz, distance) {
+		if (!distance) {
+			distance = 0;
+		}
 		for (let i = 0; i < this.levels.length - 1; i++) {
 			const { name, height, size } = this.levels[i];
 			if (!name) {
@@ -149,17 +181,34 @@ SceneManager.add({Game: class extends Game {
 				const dx = centerX - px;
 				const dz = centerZ - pz;
 				const dist = Math.sqrt(dx * dx + dz * dz);
-				if (dist < size / 2) {
-					return height;
+				if (dist < size / 2 + distance) {
+					return this.levels[i];
 				}
 			}
 		}
-		return this.levels[this.levels.length - 1].height;
+		return this.levels[this.levels.length - 1];
+	}
+
+	getHeight(px, py, pz) {
+		const platform = this.getPlatform(px, py, pz);
+		return platform ? platform.height : 0;
+	}
+
+	getCloseElement(px, py, pz) {
+		return this.getPlatform(px, py, pz, this.CLOSEFACTOR);
 	}
 
 }}, {
 	settings: {
-		background: 0xaaaa55,
+		background: ({game: {now,exiting}}) => {
+			const color = 0x444422;
+			if (!exiting) {
+				return color;
+			}
+			const coef = exiting ? (1 - (now - exiting) / 500) : 1;
+			const [ r, g, b ] = ColorUtils.toRGB(color);
+			return ColorUtils.fromRGB(r * coef, g * coef, b * coef);
+		}
 	},
 	view: {
 		tilt: ({game: { view: { pos } }}) => pos[1].get() / 20 + .4,
@@ -170,9 +219,12 @@ SceneManager.add({Game: class extends Game {
 			({game}) => game.sceneData.cam[1],
 			({game}) => game.sceneData.cam[2],
 		],
+		depthEffect: {
+			fading: ({game: {now,exiting}}) => exiting ? .7 + (now - exiting) / 500 : .7,
+		},
 	},
 	light: {
-		ambient: .8,
+		ambient: .9,
 	},
 	refresh: ({game}) => game.loop(),
 	spriteData: [
@@ -210,8 +262,48 @@ SceneManager.add({Game: class extends Game {
 			padding: 2.5,
 			grid: [10, 10],
 		},
+		{
+			id: "entrance-floor",
+			src: "home-floor",
+			padding: 2.5,
+			grid: [5, 5],
+		},
 	],
 	sprites: [
+		{	//	upper level
+			id: "bed",
+			src: "home-floor",
+			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size - 1,
+			type: SpriteType.Floor,
+			circleRadius: 1,
+			pos: [0, 0, 0],
+			scale: [
+				({definition}) => definition.size.get(),
+				({definition}) => definition.size.get(),
+			],
+			effects: {
+				tintColor: 0x88995555,
+				brightness: 110,
+				hue: .5,
+			},
+			fixed: true,
+		},
+		ShapeUtils.cylinder({
+			src: "wall",
+			type: SpriteType.Back,
+			cols: 40, rows: 1,
+			radius: ({game}) => game.getDefinition("bed").size.get() / 2 -  .04,
+			center: [
+				({game}) => game.getDefinition("bed").pos[0].get(),
+				-.5,
+				({game}) => game.getDefinition("bed").pos[2].get(),
+			],
+			scale: [ .5, 1 ],
+			tintColor: 0x88995555,
+			brightness: 110,
+			hue: .5,
+			fixed: true,
+		}),	
 		ShapeUtils.cylinder({
 			src: "wall",
 			type: SpriteType.Front,
@@ -229,19 +321,32 @@ SceneManager.add({Game: class extends Game {
 			hidden: ({game, definition}, index) => {
 				const floorDefinition = game.getDefinition("lower-level");
 				if (floorDefinition) {
-					const floorX = floorDefinition.pos[0].get();
-					const floorZ = floorDefinition.pos[2].get();
-					const floorRadius = floorDefinition.size.get() / 2;
 					const posX = definition.pos[0].get(index);
 					const posZ = definition.pos[2].get(index);
-					const dx = floorX - posX;
-					const dz = floorZ - posZ;
-					const dist = Math.sqrt(dx*dx + dz*dz);
-					return dist < floorRadius;
+					if (SpriteUtils.overlap(posX, posZ, floorDefinition)) {
+						return true;
+					}
 				}
 				return false;
 			},
 		}),
+		{	//	upper level
+			id: "upper-level",
+			src: "home-floor",
+			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size,
+			type: SpriteType.Floor,
+			circleRadius: 1,
+			pos: [0, -1.15, 0],
+			scale: [
+				({definition}) => definition.size.get(),
+				({definition}) => definition.size.get(),
+			],
+			effects: {
+				tintColor: 0x88995555,
+				brightness: 110,
+			},
+			fixed: true,
+		},
 		ShapeUtils.cylinder({
 			src: "wall",
 			type: SpriteType.Back,
@@ -260,53 +365,42 @@ SceneManager.add({Game: class extends Game {
 		ShapeUtils.cylinder({
 			src: "wall",
 			type: SpriteType.Front,
-			cols: 40, rows: 10,
+			cols: 80, rows: 10,
 			radius: ({game}) => game.getDefinition("lower-level").size.get() / 2 - .2,
 			center: [
 				({game}) => game.getDefinition("lower-level").pos[0].get(),
 				-2.65,
 				({game}) => game.getDefinition("lower-level").pos[2].get(),
 			],
-			scale: [ 2, 1 ],
+			scale: [ .8, 1 ],
 			brightness: 80,
 			hidden: ({game, definition}, index) => {
-				const floorDefinition = game.getDefinition("upper-level");
-				if (floorDefinition) {
-					const floorX = floorDefinition.pos[0].get();
-					const floorZ = floorDefinition.pos[2].get();
-					const floorRadius = floorDefinition.size.get() / 2;
-					const posX = definition.pos[0].get(index);
-					const posZ = definition.pos[2].get(index);
-					const dx = floorX - posX;
-					const dz = floorZ - posZ;
-					const dist = Math.sqrt(dx*dx + dz*dz);
-					return dist < floorRadius;
+				const posX = definition.pos[0].get(index);
+				const posZ = definition.pos[2].get(index);
+				if (SpriteUtils.overlap(posX, posZ, game.getDefinition("upper-level"), 0, .98)
+					|| SpriteUtils.overlap(posX, posZ, game.getDefinition("entrance"), 0, .5)) {
+					return true;
 				}
 				return false;
 			},			
 			fixed: true,
 		}),
-		{	//	upper level
-			id: "upper-level",
-			src: "home-floor",
-			size: ({game: { levelMap, wallDistance }, definition: {id}}) => levelMap[id.get()].size - wallDistance,
+		{
+			id: "entrance",
+			src: "entrance-floor",
 			type: SpriteType.Floor,
-			circleRadius: 1,
-			pos: [0, -1.15, 0],
-			scale: [
-				({definition}) => definition.size.get(),
-				({definition}) => definition.size.get(),
-			],
+			pos: [0, -3.155, 25],
+			scale: [6, 6],
 			effects: {
-				tintColor: 0x88995555,
-				brightness: 110,
+				brightness: ({game}) => game.getDefinition("lower-level").effects.brightness.get(),
+				hue: ({game}) => game.getDefinition("lower-level").effects.hue.get(),
 			},
-			fixed: true,
+			fixed: true,			
 		},
 		{	//	floor
 			id: "lower-level",
 			src: "home-floor",
-			size: ({game: { levelMap, wallDistance }, definition: {id}}) => levelMap[id.get()].size - wallDistance,
+			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size,
 			type: SpriteType.Floor,
 			circleRadius: 1,
 			pos: [0, -3.15, 15],
@@ -315,8 +409,8 @@ SceneManager.add({Game: class extends Game {
 				({definition}) => definition.size.get(),
 			],
 			effects: {
-				tintColor: 0x88995555,
-				brightness: 110,
+				brightness: 50,
+				hue: 1.1,
 			},
 			fixed: true,
 		},
@@ -347,13 +441,13 @@ SceneManager.add({Game: class extends Game {
 			// 	}
 			// },
 		}),
-		SpriteUtils.makeSprite({
-			id: "tree",
-			src: "tree",
-			position: [-1, 0, -1],
-			scale: [3, 3],
-			shadowColor: 0xFF333333,
-			fixed: true,
-		}),
+		// SpriteUtils.makeSprite({
+		// 	id: "tree",
+		// 	src: "tree",
+		// 	position: [-1, 0, -1],
+		// 	scale: [3, 3],
+		// 	shadowColor: 0xFF333333,
+		// 	fixed: true,
+		// }),
 	],
 });

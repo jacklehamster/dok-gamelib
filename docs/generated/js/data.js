@@ -1209,6 +1209,7 @@ function getData() {
         "refresh": null,
         "refreshRate": 0,
         "keyboard": {
+          "active": true,
           "onKeyPress": null,
           "onKeyRelease": null,
           "onLeftPress": null,
@@ -1226,7 +1227,12 @@ function getData() {
           "onTurnRightPress": null,
           "onTurnRightRelease": null
         },
-        "mouse": {"onMouseDown": null, "onMouseUp": null, "onMouseMove": null},
+        "mouse": {
+          "active": true,
+          "onMouseDown": null,
+          "onMouseUp": null,
+          "onMouseMove": null
+        },
         "settings": {
           "docBackground": 0,
           "background": 0,
