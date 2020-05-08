@@ -88,9 +88,13 @@ class Keyboard {
 		const newActive = currentScene.keyboard.active.get();
 		if (newActive !== this.active) {
 			this.active = newActive;
-			if (this.dirty) {
-				this.getKeyboard(now);
+			const { keys } = this;
+			for (let key in keys) {
+				this.handleDirection(key, false, now);				
 			}
+		}
+		if (this.dirty) {
+			this.getKeyboard(now);
 		}
 	}
 
@@ -150,17 +154,21 @@ class Keyboard {
 	}
 
 	handleDirection(key, down, now) {
-		const { keyboard: { controls }, listener } = this;
+		const { keyboard: { controls }, listener, active } = this;
 		switch(key) {
 			case KEY_TURN_LEFT_Q:
 			case KEY_TURN_LEFT_BRACKET:
 				if (down && controls.turnLeft <= 0) {
 					controls.turnLeft = now;
-					listener.onTurnLeftPress();
+					if (active) {
+						listener.onTurnLeftPress();
+					}
 					this.handleTurnChanged();
 				} else if (!down && controls.turnLeft >= 0) {
 					controls.turnLeft = -now;
-					listener.onTurnLeftRelease();
+					if (active) {
+						listener.onTurnLeftRelease();
+					}
 					this.handleTurnChanged();
 				}
 				break;
@@ -168,11 +176,15 @@ class Keyboard {
 			case KEY_TURN_RIGHT_BRACKET:
 				if (down && controls.turnRight <= 0) {
 					controls.turnRight = now;
-					listener.onTurnRightPress();
+					if (active) {
+						listener.onTurnRightPress();
+					}
 					this.handleTurnChanged();
 				} else if (!down && controls.turnRight >= 0) {
 					controls.turnRight = -now;
-					listener.onTurnRightRelease();
+					if (active) {
+						listener.onTurnRightRelease();
+					}
 					this.handleTurnChanged();
 				}
 				break;
@@ -180,11 +192,15 @@ class Keyboard {
 			case KEY_LEFT:
 				if (down && controls.left <= 0) {
 					controls.left = now;
-					listener.onLeftPress();
+					if (active) {
+						listener.onLeftPress();
+					}
 					this.handleMoveChanged();
 				} else if (!down && controls.left >= 0) {
 					controls.left = -now;
-					listener.onLeftRelease();
+					if (active) {
+						listener.onLeftRelease();
+					}
 					this.handleMoveChanged();
 				}
 				break;
@@ -192,11 +208,15 @@ class Keyboard {
 			case KEY_UP:
 				if (down && controls.up <= 0) {
 					controls.up = now;
-					listener.onUpPress();
+					if (active) {
+						listener.onUpPress();
+					}
 					this.handleMoveChanged();
 				} else if (!down && controls.up >= 0) {
 					controls.up = -now;
-					listener.onUpRelease();
+					if (active) {
+						listener.onUpRelease();
+					}
 					this.handleMoveChanged();
 				}
 				break;
@@ -204,11 +224,15 @@ class Keyboard {
 			case KEY_RIGHT:
 				if (down && controls.right <= 0) {
 					controls.right = now;
-					listener.onRightPress();
+					if (active) {
+						listener.onRightPress();
+					}
 					this.handleMoveChanged();
 				} else if (!down && controls.right >= 0) {
 					controls.right = -now;
-					listener.onRightRelease();
+					if (active) {
+						listener.onRightRelease();
+					}
 					this.handleMoveChanged();
 				}
 				break;
@@ -217,11 +241,15 @@ class Keyboard {
 			case KEY_DOWN:
 				if (down && controls.down <= 0) {
 					controls.down = now;
-					listener.onDownPress();
+					if (active) {
+						listener.onDownPress();
+					}
 					this.handleMoveChanged();
 				} else if (!down && controls.down >= 0) {
 					controls.down = -now;
-					listener.onDownRelease();
+					if (active) {
+						listener.onDownRelease();
+					}
 					this.handleMoveChanged();
 				}
 				break;
@@ -230,11 +258,15 @@ class Keyboard {
 			case KEY_ACTION_SPACE:
 				if (down && controls.action <= 0) {
 					controls.action = now;
-					listener.onActionPress();
+					if (active) {
+						listener.onActionPress();
+					}
 					this.handleMoveChanged();
 				} else if (!down && controls.action >= 0) {
 					controls.action = -now;
-					listener.onActionRelease();
+					if (active) {
+						listener.onActionRelease();
+					}
 					this.handleMoveChanged();
 				}
 				break;
@@ -246,7 +278,9 @@ class Keyboard {
 		for (let key in keysDown) {
 			if (!keys[key] || keys[key] < 0) {
 				keys[key] = now;
-				listener.onKeyPress(key);
+				if (active) {
+					listener.onKeyPress(key);
+				}
 			}
 			delete keysDown[key];
 			this.handleDirection(key, true, now);
@@ -254,7 +288,9 @@ class Keyboard {
 		for (let key in keysUp) {
 			if (!keys[key] || keys[key] > 0) {
 				keys[key] = -now;
-				listener.onKeyRelease(key);
+				if (active) {
+					listener.onKeyRelease(key);
+				}
 			}
 			delete keysUp[key];
 			this.handleDirection(key, false, now);

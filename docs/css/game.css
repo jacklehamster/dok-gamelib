@@ -142,14 +142,3 @@ html, body {
     -ms-user-select: none;
     user-select: none;
 }
-
-.focus-fixer-input {
-  color: transparent;
-  text-shadow: 0 0 0 red;
-  background-color: transparent;
-  border: 0px;
-  outline: none;
-  position: absolute;
-  top: -30px
-}
-

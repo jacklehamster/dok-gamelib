@@ -68,9 +68,13 @@ class Mouse {
 		const newActive = currentScene.mouse.active.get();
 		if (newActive !== this.active) {
 			this.active = newActive;
-			if (this.dirty) {
-				this.getMouse(now);
+			if (!this.active) {
+				this.newPosition.mouseDown = false;
+				this.dirty = true;
 			}
+		}
+		if (this.dirty) {
+			this.getMouse(now);
 		}
 	}
 
@@ -92,19 +96,25 @@ class Mouse {
 	}
 
 	getMouse(now) {
-		const { listener, position, newPosition } = this;
+		const { listener, position, newPosition, active } = this;
 		if (newPosition.x !== position.x || newPosition.y !== position.y) {
 			position.x = newPosition.x;
 			position.y = newPosition.y;
-			listener.onMouseMove(position);
+			if (active) {
+				listener.onMouseMove(position);
+			}
 		}
 
 		if (newPosition.mouseDown && position.mouseDown <= 0 || !newPosition.mouseDown && position.mouseDown >= 0) {
 			position.mouseDown = newPosition.mouseDown ? now : -now;
 			if (newPosition.mouseDown) {
-				listener.onMouseDown(position);
+				if (active) {
+					listener.onMouseDown(position);
+				}
 			} else {
-				listener.onMouseUp(position);				
+				if (active) {
+					listener.onMouseUp(position);
+				}
 			}
 		}
 		this.dirty = false;

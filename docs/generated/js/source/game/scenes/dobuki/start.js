@@ -110,6 +110,9 @@ SceneManager.add({Game: class extends Game {
 			dok.speed += .02;
 			if (mov.x) {
 				dok.mov.x = mov.x;
+				if (!mov.y) {
+					dok.mov.z = 0;
+				}
 			}
 			if (mov.y) {
 				dok.mov.z = mov.y;
@@ -119,7 +122,6 @@ SceneManager.add({Game: class extends Game {
 
 		const [ dx, dz ] = MotionUtils.getNormalDirection(sceneData.turn, mov.x, mov.y);
 		if (dok.speed > .0001) {
-
 			if (!this.tryMoveBy(dx, dz)) {
 				this.tryAngled(dx, dz);
 			}
@@ -226,6 +228,9 @@ SceneManager.add({Game: class extends Game {
 	light: {
 		ambient: .9,
 	},
+	keyboard: {
+		active: ({game}) => !game.exiting,
+	},
 	refresh: ({game}) => game.loop(),
 	spriteData: [
 		{
@@ -323,7 +328,7 @@ SceneManager.add({Game: class extends Game {
 				if (floorDefinition) {
 					const posX = definition.pos[0].get(index);
 					const posZ = definition.pos[2].get(index);
-					if (SpriteUtils.overlap(posX, posZ, floorDefinition)) {
+					if (SpriteUtils.overlap(posX, posZ, floorDefinition, 0, .95)) {
 						return true;
 					}
 				}
@@ -377,7 +382,7 @@ SceneManager.add({Game: class extends Game {
 			hidden: ({game, definition}, index) => {
 				const posX = definition.pos[0].get(index);
 				const posZ = definition.pos[2].get(index);
-				if (SpriteUtils.overlap(posX, posZ, game.getDefinition("upper-level"), 0, .98)
+				if (SpriteUtils.overlap(posX, posZ, game.getDefinition("upper-level"), 0, .97)
 					|| SpriteUtils.overlap(posX, posZ, game.getDefinition("entrance"), 0, .5)) {
 					return true;
 				}
@@ -426,8 +431,16 @@ SceneManager.add({Game: class extends Game {
 				2.4,
 			],
 			heightAboveGround: ({game: { sceneData: { dok: { heightAboveGround } }}}) => heightAboveGround,
-			animation: ({game: { keys: { actions }, sceneData: { dok: { speed, mov, flying, grounded } }}}) => {
-				return flying ? (actions.mov.y < 0 ? "jump-up" : "jump") : (speed > .01 || !grounded) ? (actions.mov.y < 0 ? "walk-up" : "walk") : (actions.mov.y < 0 ? "idle-up" : "idle");
+			animation: ({game: { active, keys: { actions }, sceneData: { dok: { speed, mov, flying, grounded } }}}) => {
+				if (flying) {
+					return actions.mov.y < 0 ? "jump-up" : "jump";
+				}
+
+				if (speed > .01 || !grounded) {
+					return actions.mov.y < 0 || (mov.z < 0 && !actions.mov.x) ? "walk-up" : "walk";
+				}
+
+				return actions.mov.y < 0 || (mov.z < 0 && !actions.mov.x) ? "idle-up" : "idle";
 			},
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],

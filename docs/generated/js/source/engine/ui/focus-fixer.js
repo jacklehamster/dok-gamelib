@@ -16,6 +16,13 @@ class FocusFixer {
 	constructor(canvas) {
 		this.canvas = canvas;
 		this.input = document.createElement("input");
+		this.input.style.color = "transparent";
+		this.input.style.textShadow = "0 0 0 black";
+		this.input.style.backgroundColor = "transparent";
+		this.input.style.border = "0px";
+		this.input.style.outline = "none";
+		this.input.style.position = "absolute";
+		this.input.style.top = "-30px";
 		this.fix();
 	}
 
