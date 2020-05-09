@@ -18,6 +18,6 @@ class DOMManager {
 	}
 
 	setBackgroundColor(color) {
-		this.document.body.style.backgroundColor = Utils.getDOMColor(color);		
+		this.document.body.style.backgroundColor = typeof(color) === "number" ? Utils.getDOMColor(color) : color || "#000000";
 	}
 }

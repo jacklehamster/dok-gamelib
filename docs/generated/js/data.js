@@ -1234,7 +1234,7 @@ function getData() {
           "onMouseMove": null
         },
         "settings": {
-          "docBackground": 0,
+          "docBackground": null,
           "background": 0,
           "frameRate": 60,
           "music": {"src": null, "volume": 0.5, "muted": false}

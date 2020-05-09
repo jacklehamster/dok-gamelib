@@ -8,10 +8,11 @@
  */
 
 class Communicator {
-	constructor(engine, sceneGL, sceneUI) {
+	constructor(engine, sceneGL, sceneUI, domManager) {
 		this.sceneGL = sceneGL;
 		this.sceneUI = sceneUI;
 		this.engine = engine;
+		this.domManager = domManager;
 	}
 
 	applyBuffer(arrayBuffer, count, extra) {
@@ -130,6 +131,11 @@ class Communicator {
 				case Commands.ENG_NOTIFY_SCENE_CHANGE: {
 					const name = extra[extraIndex++];
 					engine.notifySceneChange(name);
+					break;
+				}
+				case Commands.DOM_BG_COLOR: {
+					const color = extra[extraIndex++];
+					domManager.setBackgroundColor(color);
 					break;
 				}
 			}

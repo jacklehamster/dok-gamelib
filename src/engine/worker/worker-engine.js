@@ -20,6 +20,7 @@ class WorkerEngine {
 		this.data = data;
 		this.onSceneChangeListener = [];
 		this.sceneManager = sceneManager;
+		this.engineCommunicator = new EngineCommunicator();
 		this.sceneRefresher = new SceneRefresher();
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
@@ -29,8 +30,7 @@ class WorkerEngine {
 		this.mediaManager = new WorkerMediaManager(this, this.data.generated);
 		this.dataStore = new WorkerDataStore(this, localStorageData);
 		this.newgrounds = new WorkerNewgrounds(this);
-		this.domManager = new WorkerDOMManager(this);
-		this.engineCommunicator = new EngineCommunicator();
+		this.domManager = new WorkerDOMManager(this.engineCommunicator);
 		this.timeScheduler = new TimeScheduler();
 		this.engineUIRenderer = new EngineUIRenderer(this.engineCommunicator);
 		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);

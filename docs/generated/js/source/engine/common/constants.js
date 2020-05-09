@@ -47,6 +47,7 @@ const Commands = {
 	UI_SET_CANVAS: 13,
 	UI_REMOVE_ELEMENT: 14,
 	ENG_NOTIFY_SCENE_CHANGE: 15,
+	DOM_BG_COLOR: 16,
 };
 
 const SpriteType = {

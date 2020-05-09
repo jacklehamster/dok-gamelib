@@ -380,7 +380,7 @@ SceneManager.add({Game: class extends Game {
 }}, {
 	settings: {
 		background: 0xaacc88,
-		docBackground: 0xFFFFFF,
+		docBackground: "silver",
 		music: {
 			src: "guita",
 			volume: .5,

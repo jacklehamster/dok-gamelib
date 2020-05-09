@@ -13,11 +13,11 @@
 */
 
 class WorkerDOMManager {
-	constructor(engine) {
-		this.engine = engine;
+	constructor(engineCommunicator) {
+		this.engineCommunicator = engineCommunicator;
 	}
 
 	setBackgroundColor(color) {
- 		this.engine.sendCommand("domManager", "setBackgroundColor", color);
+		this.engineCommunicator.sendCommand(Commands.DOM_BG_COLOR, null, [color]);
 	}
 }
