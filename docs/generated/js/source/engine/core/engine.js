@@ -121,7 +121,7 @@ class Engine {
 	beginLooping() {
 		const engine = this;
 		const { glRenderer, sceneRefresher, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
-				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor, sceneGL, timeScheduler } = engine;
+				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor, sceneGL, timeScheduler, engineCommunicator } = engine;
 
 		let lastRefresh = 0;
 
@@ -170,8 +170,8 @@ class Engine {
 
 					if (sceneRenderer) {
 						sceneRenderer.render(currentScene);
-						engine.communicator.applyBuffer(engine.engineCommunicator.getBuffer(), engine.engineCommunicator.count);
-						engine.engineCommunicator.count = 0;
+						engine.communicator.applyBuffer(engineCommunicator.getBuffer(), engineCommunicator.count);
+						engineCommunicator.count = 0;
 					}
 
 					//	render uiComponents
