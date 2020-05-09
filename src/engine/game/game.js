@@ -15,6 +15,10 @@
 class Game {
 	constructor() {
 		this.engine = null;
+		this.dataStore = null;
+		this.name = null;
+		this.config = {};
+		this.classes = {};
 		this.now = 0;
 		this.startTime = 0;
 		this.lastRefresh = 0;
@@ -24,8 +28,15 @@ class Game {
 		this.mouseCache = null;
 		this.nextScene = null;
 		this.classes = { Game, SpriteDefinition };
-		this.config = {};
 		this.definitions = {};
+	}
+
+	init({engine, dataStore, name, config, classes}) {
+		this.engine = engine;
+		this.dataStore = dataStore;
+		this.name = name;
+		this.config = config;
+		this.classes = classes;
 	}
 
 	getDefinition(id) {
@@ -40,20 +51,16 @@ class Game {
 		return null;
 	}
 
-	setEngine(value) {
-		this.engine = value;
-	}
-
 	get data() {
-		return this.engine.dataStore.getData();
+		return this.dataStore.getData();
 	}
 
 	get situation() {
-		return this.engine.dataStore.getSituation(this.name);
+		return this.dataStore.getSituation(this.name);
 	}
 
 	saveData() {
-		this.engine.dataStore.save();
+		this.dataStore.save();
 	}
 
 	get keys() {

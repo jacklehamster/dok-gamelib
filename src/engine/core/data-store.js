@@ -35,11 +35,13 @@ class DataStore extends IDataStore {
  	}
 
  	sync(data) {
- 		super.sync(data);
- 		this.save();
+ 		if (super.sync(data)) {
+	 		this.save();
+ 		}
  	}
 
  	save() {
+ 		this.localStorage.setItem("lastUpdated", Date.now());
 		this.localStorage.setItem("data", JSON.stringify(this.data));
  	}
 }

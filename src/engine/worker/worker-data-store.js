@@ -13,13 +13,13 @@
   */
 
 class WorkerDataStore extends IDataStore {
- 	constructor(engine, data) {
+ 	constructor(engineCommunicator, data) {
  		super();
- 		this.engine = engine;
+ 		this.engineCommunicator = engineCommunicator;
  		this.sync(data);
  	}
 
  	save() {
- 		this.engine.sendCommand("dataStore", "sync", this.getData());
+		this.engineCommunicator.sendCommand(Commands.DATA_SAVE, null, [this.getData()]);
  	}
 }

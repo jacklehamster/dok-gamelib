@@ -14,7 +14,9 @@
 
 class IDataStore {
 	sync(data) {
+		const updated = (JSON.stringify(data) !== JSON.stringify(this.data));
 		this.data = data;
+		return updated;
 	}
 
  	getData() {

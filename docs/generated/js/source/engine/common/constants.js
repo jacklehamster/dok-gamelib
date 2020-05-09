@@ -49,6 +49,7 @@ const Commands = {
 	ENG_NOTIFY_SCENE_CHANGE: 15,
 	DOM_BG_COLOR: 16,
 	LOGGER_LOG_MESSAGE: 17,
+	DATA_SAVE: 18,
 };
 
 function commandName(command) {

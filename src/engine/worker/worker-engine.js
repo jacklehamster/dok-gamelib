@@ -28,7 +28,7 @@ class WorkerEngine {
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());		
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.mediaManager = new WorkerMediaManager(this, this.data.generated);
-		this.dataStore = new WorkerDataStore(this, localStorageData);
+		this.dataStore = new WorkerDataStore(this.engineCommunicator, localStorageData);
 		this.newgrounds = new WorkerNewgrounds(this);
 		this.domManager = new WorkerDOMManager(this.engineCommunicator);
 		this.timeScheduler = new TimeScheduler();
@@ -84,6 +84,7 @@ class WorkerEngine {
 			this.spriteDefinitionProcessor.init(this.currentScene.sprites);
 			this.spriteDefinitionProcessor.init(this.currentScene.ui);
 			this.notifySceneChange(this.currentScene.name);
+			this.currentScene.saveData();
 			this.logger.log("Scene change:", this.currentScene.name);
 			this.postBackPayload(this.currentScene.now);
 		});
@@ -184,7 +185,7 @@ class WorkerEngine {
 	}
 
 	sendCommand(component, command, ...parameters) {
-		//console.log(">", component, command);
+		console.log(">", component, command);
 		const payloadCommand = this.pool.payloadCommands.get();
 		payloadCommand.component = component;
 		payloadCommand.command = command;
@@ -262,12 +263,11 @@ class WorkerEngine {
 				return;
 			}
 			this.clearScene();
-			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor);
-
+			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor, this);
 			this.currentScene = scene;
 			this.currentScene.startTime = 0;
 			this.currentScene.now = 0;
-			this.currentScene.setEngine(this);
+			this.currentScene.data.lastScene = sceneName;
 			this.onSceneChangeListener.forEach(callback => callback(sceneName));
 		}
 	}

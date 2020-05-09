@@ -8,16 +8,17 @@
  */
 
 class Communicator {
-	constructor(engine, sceneGL, sceneUI, domManager, logger) {
+	constructor(engine, sceneGL, sceneUI, domManager, logger, dataStore) {
 		this.sceneGL = sceneGL;
 		this.sceneUI = sceneUI;
 		this.engine = engine;
 		this.domManager = domManager;
 		this.logger = logger;
+		this.dataStore = dataStore;
 	}
 
 	applyBuffer(arrayBuffer, count, extra) {
-		const { sceneGL, sceneUI, engine, domManager, logger } = this;
+		const { sceneGL, sceneUI, engine, domManager, logger, dataStore } = this;
 		const intBuffer = new Int32Array(arrayBuffer);
 		const floatBuffer = new Float32Array(arrayBuffer);
 
@@ -143,6 +144,11 @@ class Communicator {
 				case Commands.LOGGER_LOG_MESSAGE: {
 					const message = extra[extraIndex++];
 					logger.log(...message);
+					break;
+				}
+				case Commands.DATA_SAVE: {
+					const data = extra[extraIndex++];
+					dataStore.sync(data);
 					break;
 				}
 			}

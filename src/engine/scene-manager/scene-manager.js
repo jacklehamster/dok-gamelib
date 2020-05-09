@@ -43,16 +43,14 @@ class SceneManager {
 		return this.scenes[name];
 	}
 
-	createScene(name, dataStore, configProcessor) {
+	createScene(name, dataStore, configProcessor, engine) {
 		const { scenes } = this;
 		const gameScene = scenes[name];
 		if (gameScene) {
 			const { Game, SpriteDefinition, AnimationDefinition, config } = gameScene;
+			const classes = { Game, SpriteDefinition, AnimationDefinition };
 			const sceneObj = new Game();
-			sceneObj.dataStore = dataStore;
-			sceneObj.name = name;
-			sceneObj.config = config;
-			sceneObj.classes = { Game, SpriteDefinition, AnimationDefinition };
+			sceneObj.init({engine, dataStore, name, config, classes})
 
 	 		Object.assign(sceneObj, configProcessor.processScene(config, sceneObj));
 

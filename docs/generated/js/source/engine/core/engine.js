@@ -24,7 +24,6 @@ class Engine {
 		this.onLoopListener = [];
 		this.onStartListener = [];
 		this.running = false;
-		this.logger = new Logger();
 		this.timeScheduler = new TimeScheduler();
 		this.dataStore = new DataStore(localStorage);
 		this.workerManager = new WorkerManager(this, this.dataStore);
@@ -41,12 +40,12 @@ class Engine {
 		this.spriteDataProcessor = new SpriteDataProcessor();
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
 		this.sceneUI = new SceneUI(this.canvas, this.workerManager, this.canvasRenderer);
-		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, this.logger);
+		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, new Logger(), this.dataStore);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
 		this.processGameInEngine = true;
-		this.processSceneInEngine = true;
+		this.processSceneInEngine = false;
 
 		if (this.processSceneInEngine) {
 			this.engineCommunicator = new EngineCommunicator();
@@ -285,12 +284,11 @@ class Engine {
 				return;
 			}
 			this.clearScene();
-			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor);
+			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor, this);
 
 			this.currentScene = scene;
 			this.currentScene.startTime = 0;
 			this.currentScene.now = 0;
-			this.currentScene.setEngine(this);
 			this.setCurrentScene();
 			this.notifySceneChange(sceneName);
 			window.game = scene;
