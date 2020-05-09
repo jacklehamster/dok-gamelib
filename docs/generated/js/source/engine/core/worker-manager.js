@@ -13,8 +13,9 @@
   */
 
 class WorkerManager {
-	constructor(engine) {
+	constructor(engine, dataStore) {
 		this.engine = engine;
+		this.dataStore = dataStore;
 		this.worker = new Worker(`generated/js/source/engine/worker/worker.js`);
 		this.worker.addEventListener("message", e => this.handleMessage(e));
 		this.engine.addEventListener("start", e => this.init());
@@ -61,7 +62,7 @@ class WorkerManager {
 		this.worker.postMessage({
 			action: "init",
 			data: this.engine.data,
-			localStorageData: JSON.parse(localStorage.getItem("data")),
+			localStorageData: this.dataStore.getData(),
 		});		
 	}
 

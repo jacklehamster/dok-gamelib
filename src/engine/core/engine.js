@@ -26,8 +26,8 @@ class Engine {
 		this.running = false;
 		this.logger = new Logger();
 		this.timeScheduler = new TimeScheduler();
-		this.workerManager = new WorkerManager(this);
 		this.dataStore = new DataStore(localStorage);
+		this.workerManager = new WorkerManager(this, this.dataStore);
 		this.mediaManager = new MediaManager(this.data.generated);
 		this.domManager = new DOMManager(document);
 		this.spriteRenderer = new SpriteRenderer(this);
