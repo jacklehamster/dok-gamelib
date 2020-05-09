@@ -119,7 +119,7 @@ if (typeof(window) === 'undefined') {
 			}
 			case "returnBuffer": {
 				const {data: { buffer }} = event;
-				workerEngine.engineCommunicator.setBuffer(buffer);
+				workerEngine.engineCommunicator.restoreBuffer(buffer);
 				break;
 			}
 			case "clickUI": {
@@ -127,6 +127,11 @@ if (typeof(window) === 'undefined') {
 				workerEngine.uiRenderer.triggegClick(id, instanceIndex);
 				console.log("Clicked on", id, instanceIndex);
 				break;				
+			}
+			case "askWorker": {
+				const {data: { callback }} = event;
+				eval(callback)(workerEngine);
+				break;
 			}
 		}
 	});

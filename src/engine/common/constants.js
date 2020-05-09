@@ -48,7 +48,17 @@ const Commands = {
 	UI_REMOVE_ELEMENT: 14,
 	ENG_NOTIFY_SCENE_CHANGE: 15,
 	DOM_BG_COLOR: 16,
+	LOGGER_LOG_MESSAGE: 17,
 };
+
+function commandName(command) {
+	for (let name in Commands) {
+		if(Commands[name] === command) {
+			return name;
+		}
+	}
+	return null;
+}
 
 const SpriteType = {
 	None: 0,

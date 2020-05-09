@@ -8,15 +8,16 @@
  */
 
 class Communicator {
-	constructor(engine, sceneGL, sceneUI, domManager) {
+	constructor(engine, sceneGL, sceneUI, domManager, logger) {
 		this.sceneGL = sceneGL;
 		this.sceneUI = sceneUI;
 		this.engine = engine;
 		this.domManager = domManager;
+		this.logger = logger;
 	}
 
 	applyBuffer(arrayBuffer, count, extra) {
-		const { sceneGL, sceneUI, engine } = this;
+		const { sceneGL, sceneUI, engine, domManager, logger } = this;
 		const intBuffer = new Int32Array(arrayBuffer);
 		const floatBuffer = new Float32Array(arrayBuffer);
 
@@ -25,6 +26,7 @@ class Communicator {
 		let extraIndex = 0;
 		while (index < count) {
 			const command = intBuffer[index++];
+//			console.log(commandName(command));
 			switch (command) {
 				case Commands.SCENE_BACKGROUND: {
 					const color = floatBuffer[index++];
@@ -136,6 +138,11 @@ class Communicator {
 				case Commands.DOM_BG_COLOR: {
 					const color = extra[extraIndex++];
 					domManager.setBackgroundColor(color);
+					break;
+				}
+				case Commands.LOGGER_LOG_MESSAGE: {
+					const message = extra[extraIndex++];
+					logger.log(...message);
 					break;
 				}
 			}

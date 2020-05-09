@@ -12,8 +12,9 @@
 	WorkerDOMManager 
 */
 
-class WorkerDOMManager {
+class WorkerDOMManager extends IDOMManager {
 	constructor(engineCommunicator) {
+		super();
 		this.engineCommunicator = engineCommunicator;
 	}
 

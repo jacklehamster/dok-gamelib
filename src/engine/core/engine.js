@@ -41,7 +41,7 @@ class Engine {
 		this.spriteDataProcessor = new SpriteDataProcessor();
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
 		this.sceneUI = new SceneUI(this.canvas, this.workerManager, this.canvasRenderer);
-		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager);
+		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, this.logger);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
@@ -92,6 +92,13 @@ class Engine {
 		}
 
 		this.addEventListener("start", () => this.importScenes());
+	}
+
+	askWorker(callback) {
+		if (!this.isEditor()) {
+			throw new Error("askWorker is only available in edit mode.");
+		}
+		this.workerManager.askWorker(callback);
 	}
 
 	start() {
@@ -222,8 +229,8 @@ class Engine {
 
 	refresh(buffer, count, extra) {
 		if (buffer) {
-			const { communicator, sceneGL, sceneRenderer } = this;
-			if (!sceneRenderer) {
+			const { communicator, sceneGL, sceneRenderer, processGameInEngine } = this;
+			if (!sceneRenderer || !processGameInEngine) {
 				communicator.applyBuffer(buffer, count, extra);
 			}
 		}

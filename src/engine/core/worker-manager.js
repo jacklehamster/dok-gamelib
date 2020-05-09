@@ -36,6 +36,7 @@ class WorkerManager {
 				for (let i = 0; i < commands.length; i++) {
 					const { component, command, parameters} = commands[i];
 					if (component) {
+						console.log(component, command, parameters);
 						this.engine[component][command](...parameters);
 					} else {
 						this.engine[command](...parameters);						
@@ -47,6 +48,15 @@ class WorkerManager {
 				}
 				break;
 			}
+		}
+	}
+
+	askWorker(callback) {
+		if (typeof(callback) === "function") {
+			this.worker.postMessage({
+				action: "askWorker",
+				callback: callback.toString(),
+			});
 		}
 	}
 

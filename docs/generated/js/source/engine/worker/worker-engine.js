@@ -36,7 +36,7 @@ class WorkerEngine {
 		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
 		this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
 
-		this.logger = new WorkerLogger(this);
+		this.logger = new WorkerLogger(this.engineCommunicator);
 		this.pool = {
 			payloadCommands: new Pool(() => {
 				return {
@@ -184,7 +184,7 @@ class WorkerEngine {
 	}
 
 	sendCommand(component, command, ...parameters) {
-		console.log(">", component, command);
+		//console.log(">", component, command);
 		const payloadCommand = this.pool.payloadCommands.get();
 		payloadCommand.component = component;
 		payloadCommand.command = command;
@@ -198,10 +198,12 @@ class WorkerEngine {
 	postBackPayload(now) {
 		const { payload, engineCommunicator } = this;
 		payload.time = now;
-		if (engineCommunicator.count && engineCommunicator.getBuffer().byteLength) {
+		//console.log(engineCommunicator.getCount(), engineCommunicator.getBuffer().byteLength, engineCommunicator.getExtra());
+		if (engineCommunicator.getCount() && engineCommunicator.getBuffer().byteLength) {
 			payload.buffer = engineCommunicator.getBuffer();
 			payload.count = engineCommunicator.getCount();
 			payload.extra = engineCommunicator.getExtra();
+			//console.log(JSON.parse(JSON.stringify(engineCommunicator.getExtra())));
 			self.postMessage(payload, [payload.buffer]);
 			engineCommunicator.clear();
 		} else if (payload.commands.length) {

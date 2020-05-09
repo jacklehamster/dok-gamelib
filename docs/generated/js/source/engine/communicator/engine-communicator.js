@@ -14,14 +14,21 @@ class EngineCommunicator {
 		this.intBuffer = null;
 		this.floatBuffer = null;
 		this.extraData = [];
-		this.setBuffer(new ArrayBuffer(1000000));
+		this.pool = new Pool(() => new ArrayBuffer(1000000));
+		this.clear();
 	}
 
-	setBuffer(arrayBuffer) {
-		this.arrayBuffer = arrayBuffer;
-		this.intBuffer = new Int32Array(this.arrayBuffer);
-		this.floatBuffer = new Float32Array(this.arrayBuffer);
-		this.clear();
+	restoreBuffer(arrayBuffer) {
+		this.pool.recycle(arrayBuffer);
+	}
+
+	ensureBuffer() {
+		if (!this.arrayBuffer || this.arrayBuffer.byteLength === 0) {
+			this.arrayBuffer = this.pool.get();
+			this.intBuffer = new Int32Array(this.arrayBuffer);
+			this.floatBuffer = new Float32Array(this.arrayBuffer);
+			this.count = 0;
+		}
 	}
 
 	clear() {
@@ -47,6 +54,7 @@ class EngineCommunicator {
 	}
 
 	loadToBuffer(command, params) {
+		this.ensureBuffer();
 		this.intBuffer[this.count++] = command;
 		if (params) {
 			for (let i = 0; i < params.length; i++) {
