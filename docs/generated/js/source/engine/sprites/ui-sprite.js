@@ -49,11 +49,13 @@ class UISpriteInstance extends BaseSpriteInstance {
 		if (this.id !== newId || this.type !== newType) {
 			this.id = newId;
 			this.type = newType;
+			updateTimes.id = now;
 		}
 
 		const newParent = parent.get(instanceIndex);
 		if (this.parent !== newParent) {
 			this.parent = newParent;
+			updateTimes.parent = now;
 		}
 
 		const newClassList = classList.get(instanceIndex);

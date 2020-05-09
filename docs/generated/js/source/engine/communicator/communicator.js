@@ -8,17 +8,20 @@
  */
 
 class Communicator {
-	constructor(sceneGL) {
+	constructor(engine, sceneGL, sceneUI) {
 		this.sceneGL = sceneGL;
+		this.sceneUI = sceneUI;
+		this.engine = engine;
 	}
 
-	applyBuffer(arrayBuffer, count) {
-		const { sceneGL } = this;
+	applyBuffer(arrayBuffer, count, extra) {
+		const { sceneGL, sceneUI, engine } = this;
 		const intBuffer = new Int32Array(arrayBuffer);
 		const floatBuffer = new Float32Array(arrayBuffer);
 
 		let updatedScene = false;
 		let index = 0;
+		let extraIndex = 0;
 		while (index < count) {
 			const command = intBuffer[index++];
 			switch (command) {
@@ -71,6 +74,62 @@ class Communicator {
 					const farSaturation = floatBuffer[index++];
 					sceneGL.setDepthEffect(fading, closeSaturation, farSaturation);
 					updatedScene = true;
+					break;
+				}
+				case Commands.UI_CREATE_ELEMENT: {
+					const instanceIndex = floatBuffer[index++];
+					const hasOnClick = floatBuffer[index++];
+					const elementId = extra[extraIndex++];
+					const type = extra[extraIndex++];
+					sceneUI.createElement(elementId, instanceIndex, type, hasOnClick);
+					break;
+				}
+				case Commands.UI_SET_PARENT: {
+					const elementId = extra[extraIndex++];
+					const parent = extra[extraIndex++];
+					sceneUI.setParent(elementId, parent);
+					break;
+				}
+				case Commands.UI_SET_CLASS: {
+					const elementId = extra[extraIndex++];
+					const classList = extra[extraIndex++];
+					sceneUI.setClass(elementId, classList);
+					break;
+				}
+				case Commands.UI_SET_STYLE: {
+					const elementId = extra[extraIndex++];
+					const style = extra[extraIndex++];
+					const value = extra[extraIndex++];
+					sceneUI.setStyle(elementId, style, value);
+					break;
+				}
+				case Commands.UI_SET_TEXT: {
+					const elementId = extra[extraIndex++];
+					const text = extra[extraIndex++];
+					sceneUI.setText(elementId, text);
+					break;
+				}
+				case Commands.UI_SET_SIZE: {
+					const elementId = extra[extraIndex++];
+					const width = floatBuffer[index++];
+					const height = floatBuffer[index++];
+					sceneUI.setSize(elementId, width, height);
+					break;
+				}
+				case Commands.UI_SET_CANVAS: {
+					const elementId = extra[extraIndex++];
+					const canvas = extra[extraIndex++];
+					sceneUI.setCanvas(elementId, canvas);
+					break;
+				}
+				case Commands.UI_REMOVE_ELEMENT: {
+					const elementId = extra[extraIndex++];
+					sceneUI.removeElement(elementId);
+					break;
+				}
+				case Commands.ENG_NOTIFY_SCENE_CHANGE: {
+					const name = extra[extraIndex++];
+					engine.notifySceneChange(name);
 					break;
 				}
 			}

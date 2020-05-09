@@ -45,6 +45,8 @@ const Commands = {
 	UI_SET_TEXT: 11,
 	UI_SET_SIZE: 12,
 	UI_SET_CANVAS: 13,
+	UI_REMOVE_ELEMENT: 14,
+	ENG_NOTIFY_SCENE_CHANGE: 15,
 };
 
 const SpriteType = {

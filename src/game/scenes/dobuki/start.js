@@ -313,7 +313,7 @@ SceneManager.add({Game: class extends Game {
 			src: "wall",
 			type: SpriteType.Front,
 			cols: 40, rows: 15,
-			radius: 8,
+			radius: ({game: { levelMap }, definition: {id}}) => levelMap['upper-level'].size / 2 + .05,
 			center: [
 				({game}) => game.getDefinition("upper-level").pos[0].get(),
 				-1,
@@ -338,7 +338,7 @@ SceneManager.add({Game: class extends Game {
 		{	//	upper level
 			id: "upper-level",
 			src: "home-floor",
-			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size,
+			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size + .3,
 			type: SpriteType.Floor,
 			circleRadius: 1,
 			pos: [0, -1.15, 0],
@@ -356,7 +356,7 @@ SceneManager.add({Game: class extends Game {
 			src: "wall",
 			type: SpriteType.Back,
 			cols: 40, rows: 2,
-			radius: 7.85,
+			radius: 8,
 			center: [
 				({game}) => game.getDefinition("upper-level").pos[0].get(),
 				-2.65,

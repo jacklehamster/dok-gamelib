@@ -27,6 +27,8 @@ if (typeof(window) === 'undefined') {
 		'../interfaces/dom-manager-interface.js',
 		'../common/constants.js',
 		'../communicator/engine-communicator.js',
+		'../communicator/engine-scene-renderer.js',
+		'../communicator/engine-ui-renderer.js',
 		'../core/config-processor.js',
 		'../core/scene-refresher.js',
 		'../core/sprite-definition-processor.js',
@@ -52,13 +54,13 @@ if (typeof(window) === 'undefined') {
 		'../game/sprite-definition.js',
 		'../game/game.js',
 		"../scene-manager/scene-manager.js",
+		"../ui/ui-renderer.js",
 		'worker-data-store.js',
 		'worker-engine.js',
 		'worker-newgrounds.js',
 		'worker-logger.js',
 		'worker-media-manager.js',
 		'worker-dom-manager.js',
-		'worker-scene-renderer.js',
 	);
 
 	let workerEngine;
@@ -122,6 +124,7 @@ if (typeof(window) === 'undefined') {
 			}
 			case "clickUI": {
 				const {data: { id, instanceIndex }} = event;
+				workerEngine.uiRenderer.triggegClick(id, instanceIndex);
 				console.log("Clicked on", id, instanceIndex);
 				break;				
 			}

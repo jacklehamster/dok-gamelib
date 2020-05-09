@@ -32,8 +32,9 @@ class WorkerEngine {
 		this.domManager = new WorkerDOMManager(this);
 		this.engineCommunicator = new EngineCommunicator();
 		this.timeScheduler = new TimeScheduler();
-		this.workerSceneRenderer = new WorkerSceneRenderer(this.engineCommunicator);
-		this.sceneRenderer = new SceneRenderer(this.workerSceneRenderer, this.mediaManager, this.domManager);
+		this.engineUIRenderer = new EngineUIRenderer(this.engineCommunicator);
+		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
+		this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
 
 		this.logger = new WorkerLogger(this);
 		this.pool = {
@@ -82,7 +83,7 @@ class WorkerEngine {
 			this.spriteDataProcessor.init(this.currentScene);
 			this.spriteDefinitionProcessor.init(this.currentScene.sprites);
 			this.spriteDefinitionProcessor.init(this.currentScene.ui);
-			this.sendCommand(null, "notifySceneChange", this.currentScene.name);
+			this.notifySceneChange(this.currentScene.name);
 			this.logger.log("Scene change:", this.currentScene.name);
 			this.postBackPayload(this.currentScene.now);
 		});
@@ -95,9 +96,13 @@ class WorkerEngine {
 		requestAnimationFrame(animationFrame);		
 	}
 
+	notifySceneChange(name) {
+		this.engineCommunicator.sendCommand(Commands.ENG_NOTIFY_SCENE_CHANGE, null, [name]);
+	}
+
 	loop(timeMillis) {
 		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor,
-			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator } = this;
+			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer } = this;
 		if (!currentScene) {
 			return;
 		}
@@ -134,13 +139,13 @@ class WorkerEngine {
 			const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
 			sceneRenderer.render(currentScene);
+			uiRenderer.render(uiComponents, now);
 
 			this.postBackPayload(now);
 			// glRenderer.setTime(now);
 			// glRenderer.clearScreen();
 
 			//	render uiComponents
-			// uiRenderer.render(uiComponents, now);
 			// glRenderer.sendSprites(sprites, now);
 
 			//	update video textures
@@ -179,6 +184,7 @@ class WorkerEngine {
 	}
 
 	sendCommand(component, command, ...parameters) {
+		console.log(">", component, command);
 		const payloadCommand = this.pool.payloadCommands.get();
 		payloadCommand.component = component;
 		payloadCommand.command = command;
@@ -194,11 +200,14 @@ class WorkerEngine {
 		payload.time = now;
 		if (engineCommunicator.count && engineCommunicator.getBuffer().byteLength) {
 			payload.buffer = engineCommunicator.getBuffer();
-			payload.size = engineCommunicator.count;
+			payload.count = engineCommunicator.getCount();
+			payload.extra = engineCommunicator.getExtra();
 			self.postMessage(payload, [payload.buffer]);
+			engineCommunicator.clear();
 		} else if (payload.commands.length) {
 			delete payload.buffer;
-			delete payload.size;
+			delete payload.count;
+			delete payload.extra;
 			self.postMessage(payload);
 		}
 		payload.commands.length = 0;
@@ -234,8 +243,9 @@ class WorkerEngine {
 			this.currentScene.destroy.run();
 		}
 //		this.uiRenderer.destroy();
-//		this.uiProvider.clear();
+		this.uiProvider.clear();
 		this.spriteProvider.clear();
+		this.uiRenderer.clear();
 	}
 
 	gotoScene(sceneName) {

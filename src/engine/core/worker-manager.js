@@ -21,7 +21,6 @@ class WorkerManager {
 		this.engine.addEventListener("start", e => this.init());
 		this.keyboardPayload = {};
 		this.mousePayload = { type: "mouse" };
-		this.functionRegistry = [];
 	}
 
 	handleMessage(event) {
@@ -33,7 +32,7 @@ class WorkerManager {
 				break;
 			}
 			case "payload": {
-				const {data: {commands, time, buffer, size}} = event;
+				const {data: {commands, time, buffer, count, extra}} = event;
 				for (let i = 0; i < commands.length; i++) {
 					const { component, command, parameters} = commands[i];
 					if (component) {
@@ -42,7 +41,7 @@ class WorkerManager {
 						this.engine[command](...parameters);						
 					}
 				}
-				this.engine.refresh(buffer, size);
+				this.engine.refresh(buffer, count, extra);
 				if (buffer) {
 					this.returnBuffer(buffer);
 				}

@@ -7,21 +7,21 @@
     Year: 2020
  */
 
-class EngineUIRenderer {
+class WorkerUIRenderer {
 	constructor(engineCommunicator) {
 		this.engineCommunicator = engineCommunicator;
 	}
 
 	loadToBuffer(commandId, ...params) {
-		this.engineCommunicator.loadToBuffer(commandId, params);
+		this.engineCommunicator.loadToBuffer(commandId, params, extra);
 	}
 
 	loadExtra(...extra) {
 		this.engineCommunicator.loadExtra(extra);
 	}
 
-	createElement(elementId, instanceIndex, type, hasOnClick) {
-		this.loadToBuffer(Commands.UI_CREATE_ELEMENT, instanceIndex, hasOnClick?1:0);
+	createElement(elementId, instanceIndex, type) {
+		this.loadToBuffer(Commands.UI_CREATE_ELEMENT, instanceIndex);
 		this.loadExtra(elementId, type);
 	}
 
@@ -46,7 +46,7 @@ class EngineUIRenderer {
 	}
 
 	setSize(elementId, width, height) {
-		this.loadToBuffer(Commands.UI_SET_SIZE, width, height);
+		this.loadToBuffer(Commands.UI_SET_STYLE, width, height);
 		this.loadExtra(elementId);
 	}
 
@@ -54,9 +54,4 @@ class EngineUIRenderer {
 		this.loadToBuffer(Commands.UI_SET_CANVAS);
 		this.loadExtra(elementId, canvas);
 	}	
-
-	removeElement(elementId) {
-		this.loadToBuffer(Commands.UI_REMOVE_ELEMENT);
-		this.loadExtra(elementId);
-	}
 }

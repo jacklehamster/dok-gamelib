@@ -34,14 +34,14 @@ class Engine {
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.data.generated);
 		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
-		this.communicator = new Communicator(this.sceneGL);
 		this.sceneRefresher = new SceneRefresher();
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
-		this.uiRenderer = new UIRenderer(canvas, this.canvasRenderer, this.workerManager);
+		this.sceneUI = new SceneUI(this.canvas, this.workerManager, this.canvasRenderer);
+		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
@@ -50,7 +50,8 @@ class Engine {
 
 		if (this.processSceneInEngine) {
 			this.engineCommunicator = new EngineCommunicator();
-			this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);			
+			this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
+			this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
 		}
 
 		this.keyboard = new Keyboard(this.workerManager, document, {
@@ -169,14 +170,17 @@ class Engine {
 					glRenderer.clearScreen();
 
 					if (sceneRenderer) {
+						uiRenderer.render(uiComponents, now);
 						sceneRenderer.render(currentScene);
-						engine.communicator.applyBuffer(engineCommunicator.getBuffer(), engineCommunicator.count);
-						engineCommunicator.count = 0;
-					}
+						engine.communicator.applyBuffer(
+							engineCommunicator.getBuffer(),
+							engineCommunicator.getCount(),
+							engineCommunicator.getExtra()
+						);
+						engineCommunicator.clear();
 
-					//	render uiComponents
-					uiRenderer.render(uiComponents, now);
-					uiRenderer.updateUI(now);
+					}
+					engine.sceneUI.updateUI(now);
 
 					glRenderer.sendSprites(sprites, now);
 
@@ -216,11 +220,11 @@ class Engine {
 		requestAnimationFrame(animationFrame);		
 	}
 
-	refresh(buffer, size) {
+	refresh(buffer, count, extra) {
 		if (buffer) {
 			const { communicator, sceneGL, sceneRenderer } = this;
 			if (!sceneRenderer) {
-				communicator.applyBuffer(buffer, size);
+				communicator.applyBuffer(buffer, count, extra);
 			}
 		}
 	}
@@ -254,7 +258,7 @@ class Engine {
 			this.spriteDataProcessor.destroy(this.currentScene);
 			this.currentScene.destroy.run();
 		}
-		this.uiRenderer.destroy();
+		this.sceneUI.destroy();
 		this.uiProvider.clear();
 		this.spriteProvider.clear();
 	}

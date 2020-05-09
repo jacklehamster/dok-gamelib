@@ -1268,7 +1268,7 @@ function getData() {
             "type": "div",
             "hidden": false,
             "count": 1,
-            "parent": null,
+            "parent": "root",
             "style": {},
             "innerText": null,
             "classList": null,
