@@ -9,6 +9,7 @@
 
 class EngineCommunicator {
 	constructor() {
+		this.extraData = [];
 		this.setBuffer(new ArrayBuffer(1000000));
 	}
 
@@ -17,6 +18,7 @@ class EngineCommunicator {
 		this.arrayBuffer = arrayBuffer;
 		this.intBuffer = new Int32Array(this.arrayBuffer);
 		this.floatBuffer = new Float32Array(this.arrayBuffer);
+		this.extraData.length = 0;
 	}
 
 	getBuffer() {

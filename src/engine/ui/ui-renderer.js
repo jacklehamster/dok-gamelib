@@ -51,7 +51,7 @@ class UIRenderer {
 		}
 	}
 
-	createElement(elementId, instanceIndex, type, parent, onClick) {
+	createElement(elementId, instanceIndex, type, onClick) {
 		const { elements } = this;
 		let dom = elements[elementId] ? elements[elementId].dom : null;
 		if (!dom) {
@@ -113,7 +113,7 @@ class UIRenderer {
 				const indexSuffix = !instanceIndex ? "" : `-${instanceIndex}`;
 				const elementId = `${id}${indexSuffix}`;
 				if (!elements[elementId]) {
-					this.createElement(elementId, instanceIndex, type, parent, onClick);
+					this.createElement(elementId, instanceIndex, type, onClick);
 				}
 
 				if (parent !== elements[elementId].parent) {
