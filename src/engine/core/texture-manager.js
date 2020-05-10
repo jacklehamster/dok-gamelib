@@ -19,6 +19,7 @@ class TextureManager {
 		this.videoTextures = {};
 		this.mediaManager = mediaManager;
 		this.videoTextureIndex = this.glTextures.length - 1;
+		this.videoCycle = 0;
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 		this.glTextures = new Array(maxTextureUnits).fill(null).map((a, index) => {
@@ -63,6 +64,13 @@ class TextureManager {
 			}
 		}
 		return this.videoTextures[src];
+	}
+
+	updateVideosTexture(videos) {
+		if (videos.length) {
+			this.updateVideoTexture(videos[this.videoCycle % videos.length]);
+			this.videoCycle = (this.videoCycle + 1) % videos.length;
+		}
 	}
 
 	updateVideoTexture(src) {

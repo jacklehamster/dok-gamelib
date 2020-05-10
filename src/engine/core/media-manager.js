@@ -29,6 +29,7 @@ class MediaManager extends IMediaManager {
 	}
 
 	playVideo(id, reset, url) {
+		super.playVideo(id, reset, url);
 		const video = this.getVideo(id, url);
 		if (video) {
 			if (reset) {
@@ -46,6 +47,7 @@ class MediaManager extends IMediaManager {
 	}
 
 	pauseVideo(id) {
+		super.pauseVideo(id);
 		const video = this.getVideo(id);
 		if (video) {
 			video.pause();

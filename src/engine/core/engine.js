@@ -40,12 +40,12 @@ class Engine {
 		this.spriteDataProcessor = new SpriteDataProcessor();
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
 		this.sceneUI = new SceneUI(this.canvas, this.workerManager, this.canvasRenderer);
-		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, new Logger(), this.dataStore, this.mediaManager);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
+		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, new Logger(), this.dataStore, this.mediaManager, this.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
 		this.processGameInEngine = true;
-		this.processSceneInEngine = false;
+		this.processSceneInEngine = true;
 
 		if (this.processSceneInEngine) {
 			this.engineCommunicator = new EngineCommunicator();
@@ -104,7 +104,6 @@ class Engine {
 		this.beginLooping();
 		this.onStartListener.forEach(listener => listener(this));
 		this.resetScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
-		this.setCurrentScene();
 //		console.log("start scene:", this.currentScene.name);
 	}
 
@@ -121,13 +120,13 @@ class Engine {
 		});
 	}
 
-	setCurrentScene() {
-		this.workerManager.setScene(this.currentScene.name);
+	setCurrentScene(name) {
+		this.workerManager.gotoScene(name);
 	}
 
 	beginLooping() {
 		const engine = this;
-		const { glRenderer, sceneRefresher, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider,
+		const { glRenderer, sceneRefresher, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider, mediaManager,
 				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor, sceneGL, timeScheduler, engineCommunicator } = engine;
 
 		let lastRefresh = 0;
@@ -142,17 +141,23 @@ class Engine {
 			if (!running || !currentScene) {
 				return;
 			}
-			if (!currentScene.startTime) {
-				currentScene.startTime = time;
-				return;
-			}
-			const now = time - currentScene.startTime;
-			currentScene.now = now;
 
-			keyboard.refresh(currentScene, now);
-			mouse.refresh(currentScene, now);
+			const { textureManager } = glRenderer;
+			const { playingVideos } = mediaManager;
+			textureManager.updateVideosTexture(playingVideos);
 
 			if (engine.processGameInEngine) {
+				if (!currentScene.startTime) {
+					currentScene.startTime = time;
+					return;
+				}
+				const now = time - currentScene.startTime;
+				currentScene.now = now;
+
+				keyboard.refresh(currentScene, now);
+				mouse.refresh(currentScene, now);
+
+
 				timeScheduler.process(now);
 				sceneRefresher.refresh(currentScene);
 				spriteDataProcessor.refresh(currentScene);
@@ -185,13 +190,13 @@ class Engine {
 						);
 						engineCommunicator.clear();
 
+						mediaManager.updatePlayingVideos(sprites, now);
 					}
 					engine.sceneUI.updateUI(now);
 
 					glRenderer.sendSprites(sprites, now);
 
-					//	update video textures
-					glRenderer.updatePlayingVideos(sprites, now);
+
 
 					//	remove unprocessed sprites
 					if (shouldResetScene) {
@@ -227,11 +232,9 @@ class Engine {
 	}
 
 	refresh(buffer, count, extra) {
-		if (buffer) {
-			const { communicator, sceneGL, sceneRenderer, processGameInEngine } = this;
-			if (!sceneRenderer || !processGameInEngine) {
-				communicator.applyBuffer(buffer, count, extra);
-			}
+		const { communicator, sceneGL, sceneRenderer, processGameInEngine } = this;
+		if (!sceneRenderer || !processGameInEngine) {
+			communicator.applyBuffer(buffer, count, extra);
 		}
 	}
 
@@ -289,7 +292,7 @@ class Engine {
 			this.currentScene = scene;
 			this.currentScene.startTime = 0;
 			this.currentScene.now = 0;
-			this.setCurrentScene();
+			this.setCurrentScene(this.currentScene.name);
 			this.notifySceneChange(sceneName);
 			window.game = scene;
 		}
@@ -300,10 +303,10 @@ class Engine {
 	}
 
 	sendScore(score) {
-		this.newgrounds.postScore(score);
+//		this.newgrounds.postScore(score);
 	}
 
 	unlockMedal(medalName) {
-		this.newgrounds.unlockMedal(medalName);
+//		this.newgrounds.unlockMedal(medalName);
 	}
 }

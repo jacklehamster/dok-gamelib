@@ -23,6 +23,7 @@ class WorkerMediaManager extends IMediaManager {
 	}
 
 	playVideo(id, reset, url) {
+		super.playVideo(id, reset, url);
 		this.engineCommunicator.sendCommand(Commands.MEDIA_PLAY_VIDEO, [reset?1:0], [id, url||null]);
 	}
 
@@ -31,6 +32,7 @@ class WorkerMediaManager extends IMediaManager {
 	}
 
 	pauseVideo(id) {
+		super.pauseVideo(id);
 		this.engineCommunicator.sendCommand(Commands.MEDIA_PAUSE_VIDEO, null, [id]);
 	}
 

@@ -8,7 +8,7 @@
  */
 
 class Communicator {
-	constructor(engine, sceneGL, sceneUI, domManager, logger, dataStore, mediaManager) {
+	constructor(engine, sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds) {
 		this.sceneGL = sceneGL;
 		this.sceneUI = sceneUI;
 		this.engine = engine;
@@ -16,10 +16,11 @@ class Communicator {
 		this.logger = logger;
 		this.dataStore = dataStore;
 		this.mediaManager = mediaManager;
+		this.newgrounds = newgrounds;
 	}
 
 	applyBuffer(arrayBuffer, count, extra) {
-		const { sceneGL, sceneUI, engine, domManager, logger, dataStore, mediaManager } = this;
+		const { sceneGL, sceneUI, engine, domManager, logger, dataStore, mediaManager, newgrounds } = this;
 		const intBuffer = new Int32Array(arrayBuffer);
 		const floatBuffer = new Float32Array(arrayBuffer);
 
@@ -167,7 +168,7 @@ class Communicator {
 				case Commands.MEDIA_PLAY_VIDEO: {
 					const id = extra[extraIndex++];
 					const url = extra[extraIndex++];
-					const reset = floatBuffer[index++];					
+					const reset = floatBuffer[index++];
 					mediaManager.playVideo(id, reset, url);
 					break;
 				}
@@ -180,6 +181,16 @@ class Communicator {
 					const id = extra[extraIndex++];
 					const volume = floatBuffer[index++];					
 					mediaManager.setMusicVolume(id, volume);
+					break;
+				}
+				case Commands.NG_UNLOCK_MEDAL: {
+					const medal = extra[extraIndex++];
+					newgrounds.unlockMedal(medal).then(console.log).catch(console.error);
+					break;
+				}
+				case Commands.NG_POST_SCORE: {
+					const score = floatBuffer[index++];
+					newgrounds.postScore(score).then(console.log).catch(console.error);
 					break;
 				}
 			}

@@ -55,6 +55,8 @@ const Commands = {
 	MEDIA_PLAY_VIDEO: 21,
 	MEDIA_PAUSE_VIDEO: 22,
 	MEDIA_SET_MUSIC_VOLUME: 23,
+	NG_UNLOCK_MEDAL: 24,
+	NG_POST_SCORE: 25,
 };
 
 function commandName(command) {

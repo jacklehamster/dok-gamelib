@@ -91,8 +91,6 @@ class GLRenderer {
 			images => images.forEach((image, index) => this.textureManager.setImage(index, image)),
 			errors => console.error(errors)
 		);
-
-		this.cycle = 0;
 	}
 
 	checkSupport() {
@@ -228,15 +226,6 @@ class GLRenderer {
 		}
 	}
 
-	updatePlayingVideos(sprites, now) {
-		const { mediaManager, textureManager, cycle } = this;
-		const videos = mediaManager.updatePlayingVideos(sprites, now);
-		if (videos.length) {
-			//	only update video once per frame. Cycle through.
-			textureManager.updateVideoTexture(videos[cycle % videos.length]);
-		}
-	}
-
 	draw(now) {
 		const { gl } = this;
 		this.sendUpdatedBuffers(now);
@@ -244,6 +233,5 @@ class GLRenderer {
 		while (this.visibleChunks > 0 && this.chunks[this.visibleChunks-1].hidden) {
 			this.visibleChunks--;
 		}
-		this.cycle ++;
 	}
 }

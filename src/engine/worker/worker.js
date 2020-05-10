@@ -81,11 +81,6 @@ if (typeof(window) === 'undefined') {
 				});
 				break;
 			}
-			case "setScene": {
-				const {data: { name }}  = event;
-				workerEngine.resetScene(name);
-				break;
-			}
 			case "gotoScene": {
 				const {data: { name }}  = event;
 				workerEngine.gotoScene(name);

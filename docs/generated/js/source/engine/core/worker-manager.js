@@ -32,20 +32,9 @@ class WorkerManager {
 				break;
 			}
 			case "payload": {
-				const {data: {commands, time, buffer, count, extra}} = event;
-				for (let i = 0; i < commands.length; i++) {
-					const { component, command, parameters} = commands[i];
-					if (component) {
-						console.log(component, command, parameters);
-						this.engine[component][command](...parameters);
-					} else {
-						this.engine[command](...parameters);						
-					}
-				}
+				const {data: { time, buffer, count, extra}} = event;
 				this.engine.refresh(buffer, count, extra);
-				if (buffer) {
-					this.returnBuffer(buffer);
-				}
+				this.returnBuffer(buffer);
 				break;
 			}
 		}
@@ -96,13 +85,6 @@ class WorkerManager {
 			name: game.name,
 			data: this.engine.data,
 			gameBlob: SourceCode.codeToBlob(game),
-		});
-	}
-
-	setScene(name) {
-		this.worker.postMessage({
-			action: "setScene",
-			name,
 		});
 	}
 

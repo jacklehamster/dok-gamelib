@@ -47,7 +47,6 @@ class IMediaManager {
 			if (config.videos[src] && !hidden) {
 				if (!videoPlaytimes[src]) {
 					this.playVideo(src);
-					playingVideos.push(src);
 				}
 				videoPlaytimes[src] = now;
 			}
@@ -58,11 +57,8 @@ class IMediaManager {
 			if (videoPlaytimes[src] !== now) {
 				delete videoPlaytimes[src];
 				this.pauseVideo(src);
-				playingVideos[i] = playingVideos[playingVideos.length-1];
-				playingVideos.pop();
 			}
 		}
-		return playingVideos;
 	}
 
 	playMusic(id, reset, url) {
@@ -70,7 +66,8 @@ class IMediaManager {
 	}
 
 	playVideo(id, reset, url) {
-		throw new Error("This function needs to be overwritten.");
+		const { playingVideos } = this;
+		playingVideos.push(id);
 	}
 
 	setMusicVolume(id, volume) {
@@ -78,7 +75,12 @@ class IMediaManager {
 	}
 
 	pauseVideo(id) {
-		throw new Error("This function needs to be overwritten.");
+		const { playingVideos } = this;
+		const i = playingVideos.indexOf(id);
+		if (i >= 0) {
+			playingVideos[i] = playingVideos[playingVideos.length-1];
+			playingVideos.pop();
+		}
 	}
 
 	pauseMusic(id) {

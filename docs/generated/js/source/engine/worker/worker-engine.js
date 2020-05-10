@@ -29,7 +29,7 @@ class WorkerEngine {
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.mediaManager = new WorkerMediaManager(this.engineCommunicator, this.data.generated);
 		this.dataStore = new WorkerDataStore(this.engineCommunicator, localStorageData);
-		this.newgrounds = new WorkerNewgrounds(this);
+		this.newgrounds = new WorkerNewgrounds(this.engineCommunicator);
 		this.domManager = new WorkerDOMManager(this.engineCommunicator);
 		this.timeScheduler = new TimeScheduler();
 		this.engineUIRenderer = new EngineUIRenderer(this.engineCommunicator);
@@ -37,19 +37,9 @@ class WorkerEngine {
 		this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
 
 		this.logger = new WorkerLogger(this.engineCommunicator);
-		this.pool = {
-			payloadCommands: new Pool(() => {
-				return {
-					component: null,
-					command: null,
-					parameters: [],
-				};
-			}, ({parameters}) => parameters.length = 0),
-		};
 		this.payload = {
 			action: "payload",
 			time: 0,
-			commands: [],
 		};
 
 		this.keyboard = new Keyboard(null, null, {
@@ -142,6 +132,23 @@ class WorkerEngine {
 			sceneRenderer.render(currentScene);
 			uiRenderer.render(uiComponents, now);
 
+			this.mediaManager.updatePlayingVideos(sprites, now);
+			// if (videos.length) {
+			// 	console.log(videos);
+			// }
+	// updatePlayingVideos(sprites, now) {
+	// 	const { mediaManager, textureManager, cycle } = this;
+	// 	const videos = mediaManager.updatePlayingVideos(sprites, now);
+	// 	if (videos.length) {
+	// 		//	only update video once per frame. Cycle through.
+	// 		textureManager.updateVideoTexture(videos[cycle % videos.length]);
+	// 	}
+	// }
+
+
+
+
+
 			this.postBackPayload(now);
 			// glRenderer.setTime(now);
 			// glRenderer.clearScreen();
@@ -180,40 +187,21 @@ class WorkerEngine {
 			}
 
 			// glRenderer.resetPools();
-			this.pool.payloadCommands.reset();
 		}
-	}
-
-	sendCommand(component, command, ...parameters) {
-		console.log(">", component, command);
-		const payloadCommand = this.pool.payloadCommands.get();
-		payloadCommand.component = component;
-		payloadCommand.command = command;
-		payloadCommand.parameters.length = parameters.length;
-		for (let i = 0; i < parameters.length; i++) {
-			payloadCommand.parameters[i] = parameters[i];
-		}
-		this.payload.commands.push(payloadCommand);
 	}
 
 	postBackPayload(now) {
 		const { payload, engineCommunicator } = this;
-		payload.time = now;
 		//console.log(engineCommunicator.getCount(), engineCommunicator.getBuffer().byteLength, engineCommunicator.getExtra());
 		if (engineCommunicator.getCount() && engineCommunicator.getBuffer().byteLength) {
+			payload.time = now;
 			payload.buffer = engineCommunicator.getBuffer();
 			payload.count = engineCommunicator.getCount();
 			payload.extra = engineCommunicator.getExtra();
 			//console.log(JSON.parse(JSON.stringify(engineCommunicator.getExtra())));
 			self.postMessage(payload, [payload.buffer]);
 			engineCommunicator.clear();
-		} else if (payload.commands.length) {
-			delete payload.buffer;
-			delete payload.count;
-			delete payload.extra;
-			self.postMessage(payload);
 		}
-		payload.commands.length = 0;
 	}
 
 	getListeners(type) {
@@ -252,7 +240,11 @@ class WorkerEngine {
 	}
 
 	gotoScene(sceneName) {
-		this.currentScene.gotoScene(sceneName);
+		if (this.currentScene) {
+			this.currentScene.gotoScene(sceneName);
+		} else {
+			this.resetScene(sceneName);
+		}
 	}
 
 	resetScene(sceneName) {
