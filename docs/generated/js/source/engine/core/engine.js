@@ -45,7 +45,7 @@ class Engine {
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
 		this.processGameInEngine = true;
-		this.processSceneInEngine = true;
+		this.processSceneInEngine = false;
 
 		if (this.processSceneInEngine) {
 			this.engineCommunicator = new EngineCommunicator();
@@ -127,7 +127,8 @@ class Engine {
 	beginLooping() {
 		const engine = this;
 		const { glRenderer, sceneRefresher, sceneRenderer, uiRenderer, spriteDefinitionProcessor, spriteProvider, uiProvider, mediaManager,
-				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor, sceneGL, timeScheduler, engineCommunicator } = engine;
+				keyboard, mouse, spritesToRemove, onLoopListener, spriteDataProcessor, sceneGL, timeScheduler, engineCommunicator,
+				sceneUI } = engine;
 
 		let lastRefresh = 0;
 
@@ -157,12 +158,12 @@ class Engine {
 				if (sceneRenderer) {
 					keyboard.refresh(currentScene, now);
 					mouse.refresh(currentScene, now);
+					spriteDefinitionProcessor.refresh(currentScene.ui, now);
 				}
 
 				timeScheduler.process(now);
 				sceneRefresher.refresh(currentScene);
 				spriteDataProcessor.refresh(currentScene);
-				spriteDefinitionProcessor.refresh(currentScene.ui, now);
 				spriteDefinitionProcessor.refresh(currentScene.sprites, now);
 
 				const frameDuration = 1000 / currentScene.getFrameRate();
@@ -172,9 +173,6 @@ class Engine {
 
 					spriteDataProcessor.process(currentScene);
 
-					//	process UI
-					const uiComponents = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
-
 					//	show sprites to process
 					const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
@@ -182,6 +180,8 @@ class Engine {
 					glRenderer.clearScreen();
 
 					if (sceneRenderer) {
+						//	process UI
+						const uiComponents = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
 						uiRenderer.render(uiComponents, now);
 						sceneRenderer.render(currentScene);
 						engine.communicator.applyBuffer(
@@ -193,7 +193,7 @@ class Engine {
 
 						mediaManager.updatePlayingVideos(sprites, now);
 					}
-					engine.sceneUI.updateUI(now);
+					sceneUI.updateUI(now);
 
 					glRenderer.sendSprites(sprites, now);
 

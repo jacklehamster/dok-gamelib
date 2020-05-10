@@ -181,25 +181,33 @@ class GLRenderer {
 		const { usedChunks } = this;
 		const { chunkUpdateTimes } = engineBuffer;
 
-		const HOLE_LIMIT = 4;
-		let rangeStart = -1, holeSize = 0;
 		for (let i = 0; i < usedChunks; i++) {
-			if (rangeStart < 0) {
-				if (chunkUpdateTimes[i] === now) {
-					rangeStart = i;
-				}
-			} else if (chunkUpdateTimes[i] !== now) {
-				holeSize++;
-				if (holeSize >= HOLE_LIMIT) {
-					this.sendBuffer(engineBuffer, rangeStart, i);
-					rangeStart = -1;
-					holeSize = 0;
-				}
+			if (chunkUpdateTimes[i] === now) {
+				this.sendBuffer(engineBuffer, i, i+1);
 			}
 		}
-		if (rangeStart >= 0) {
-			this.sendBuffer(engineBuffer, rangeStart, usedChunks);
-		}
+
+
+
+		// const HOLE_LIMIT = 4;
+		// let rangeStart = -1, holeSize = 0;
+		// for (let i = 0; i < usedChunks; i++) {
+		// 	if (rangeStart < 0) {
+		// 		if (chunkUpdateTimes[i] === now) {
+		// 			rangeStart = i;
+		// 		}
+		// 	} else if (chunkUpdateTimes[i] !== now) {
+		// 		holeSize++;
+		// 		if (holeSize >= HOLE_LIMIT) {
+		// 			this.sendBuffer(engineBuffer, rangeStart, i);
+		// 			rangeStart = -1;
+		// 			holeSize = 0;
+		// 		}
+		// 	}
+		// }
+		// if (rangeStart >= 0) {
+		// 	this.sendBuffer(engineBuffer, rangeStart, usedChunks);
+		// }
 	}
 
 	sendBuffer(engineBuffer, rangeStart, rangeEnd) {

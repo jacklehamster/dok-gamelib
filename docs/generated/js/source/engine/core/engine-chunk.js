@@ -20,37 +20,33 @@ class Chunk {
 		this.hidden = false;
 	}
 
-	assignValues(buffer, ... values) {
-		buffer.assignValues(this.index, ... values);
+	static assignValues(engineBuffer, index, ... values) {
+		engineBuffer.assignValues(index, ... values);
 	}
 
-	setType(type, now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.spriteType, type, type, type, type);
-		bufferInfo.spriteType.chunkUpdateTimes[index] = now;
+	setType(type, now, engineBuffer, index) {
+		Chunk.assignValues(engineBuffer, index, type, type, type, type);
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setOffset([x, y, z], now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.offset,
+	setOffset([x, y, z], now, engineBuffer, index) {
+		Chunk.assignValues(engineBuffer, index,
 			x, y, z,
 			x, y, z,
 			x, y, z,
 			x, y, z,
 		);
-		bufferInfo.offset.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setHidden(now) {
-		const { bufferInfo, index } = this;
- 		const { buffer, floatPerVertex, verticesPerSprite } = bufferInfo.vertex;
-		buffer.fill(0, this.index * verticesPerSprite * floatPerVertex, (this.index+1) * verticesPerSprite * floatPerVertex);
-		bufferInfo.vertex.chunkUpdateTimes[index] = now;
+	setHidden(now, engineBuffer, index) {
+ 		const { buffer, floatPerVertex, verticesPerSprite } = engineBuffer;
+		buffer.fill(0, index * verticesPerSprite * floatPerVertex, (index+1) * verticesPerSprite * floatPerVertex);
+		engineBuffer.chunkUpdateTimes[index] = now;
 		this.hidden = true;
 	}
 
-	applyNormal(vertices, engineBuffer, curvature, i) {
-		const { vec3pool } = this;
+	static applyNormal(vertices, engineBuffer, curvature, i, index, vec3pool) {
  		const { buffer, floatPerVertex, verticesPerSprite } = engineBuffer;
 		const vectorA = vec3.sub(vec3pool.get(), vertices[i], Utils.getFromArray(vertices, i + 1));
 		const vectorB = vec3.sub(vec3pool.get(), vertices[i], Utils.getFromArray(vertices, i - 1));
@@ -63,9 +59,9 @@ class Chunk {
 			const vectorB = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i - 1));
 			const newCross = vec3.cross(vec3pool.get(), vectorA, vectorB);
 			vec3.normalize(newCross, newCross);
-			buffer.set(newCross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
+			buffer.set(newCross, index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 		} else {
-			buffer.set(cross, this.index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
+			buffer.set(cross, index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 		}
 	}
 
@@ -89,7 +85,7 @@ class Chunk {
 		bufferInfo.vertex.chunkUpdateTimes[index] = now;
 
 		for (let i = 0; i < vertices.length; i++) {
-			this.applyNormal(vertices, bufferInfo.normal, curvature, i);
+			Chunk.applyNormal(vertices, bufferInfo.normal, curvature, i, index, vec3pool);
 		}
 		bufferInfo.normal.chunkUpdateTimes[index] = now;
 	}
@@ -166,30 +162,27 @@ class Chunk {
 		this.hidden = false;
 	}
 
-	setMove(dx, dy, dz, time, now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.move,
+	setMove(dx, dy, dz, time, now, engineBuffer, index) {
+		Chunk.assignValues(engineBuffer, index,
 			dx, dy, dz, time,
 			dx, dy, dz, time,
 			dx, dy, dz, time,
 			dx, dy, dz, time,
 		);
-		bufferInfo.move.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setGravity(gx, gy, gz, now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.gravity,
+	setGravity(gx, gy, gz, now, engineBuffer, index) {
+		Chunk.assignValues(engineBuffer, index,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
 		);
-		bufferInfo.gravity.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, circleRadius, now) {
-		const { bufferInfo, index } = this;
+	setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, now, engineBuffer, index) {
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
 		const [ scaleH, scaleV ] = scale;
@@ -212,95 +205,97 @@ class Chunk {
 			down = temp;
 		}
 
-		this.assignValues(bufferInfo.texCenter,
-			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
-			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
-			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
-			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
-		);
-
-		bufferInfo.texCenter.chunkUpdateTimes[index] = now;
-
-		this.assignValues(bufferInfo.texCoord,
+		Chunk.assignValues(engineBuffer, index,
 			left,	up,		texWidth,	texHeight,
 			left,	down,	texWidth,	texHeight,
 			right,	down,	texWidth,	texHeight,
 			right,	up,		texWidth,	texHeight,
 		);
 
-		bufferInfo.texCoord.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setTintAndHue(value, hue, now) {
-		const { bufferInfo, index } = this;
+	setTextureCenter(spriteX, spriteY, spriteWidth, spriteHeight, padding, circleRadius, now, engineBuffer, index) {
+		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
+		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
+
+		let left = texX + (padding * texWidth / 100),
+			right = texX + texWidth - (padding * texWidth / 100);
+		let up = texY + (padding * texHeight / 100),
+			down = texY + texHeight - (padding * texHeight / 100);
+
+		Chunk.assignValues(engineBuffer, index,
+			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+		);
+
+		engineBuffer.chunkUpdateTimes[index] = now;
+	}
+
+	setTintAndHue(value, hue, now, engineBuffer, index) {
 		const color = value & 0xFFFFFF;
 		const mixRatio = Math.max(0, (value / 0xFFFFFF) / 255);
-		this.assignValues(bufferInfo.colorEffect,
+		Chunk.assignValues(engineBuffer, index,
 			color, mixRatio, hue, 0,
 			color, mixRatio, hue, 0,
 			color, mixRatio, hue, 0,
 			color, mixRatio, hue, 0,
 		);
-		bufferInfo.colorEffect.chunkUpdateTimes[index] = now;				
+		engineBuffer.chunkUpdateTimes[index] = now;				
 	}
 
-	setGrid(cols, rows, now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.grid,
+	setGrid(cols, rows, now, engineBuffer, index) {
+		Chunk.assignValues(engineBuffer, index,
 			cols, rows,
 			cols, rows,
 			cols, rows,
 			cols, rows,
 		);
-		bufferInfo.grid.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setAnimation(start, range, frameRate, now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.animation,
+	setAnimation(start, range, frameRate, now, engineBuffer, index) {
+		Chunk.assignValues(engineBuffer, index,
 			now, start, range, frameRate,
 			now, start, range, frameRate,
 			now, start, range, frameRate,
 			now, start, range, frameRate,
 		);
-		bufferInfo.animation.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setBlackholeCenter([ gx, gy, gz ], now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.blackholeCenter,
+	setBlackholeCenter([ gx, gy, gz ], now, engineBuffer, index) {
+		Chunk.assignValues(engineBuffer, index,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
 			gx, gy, gz,
 		);
-		bufferInfo.blackholeCenter.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setBlackholeInfo(strength, distance, now) {
-		const { bufferInfo, index } = this;
-		this.assignValues(bufferInfo.blackholeInfo,
+	setBlackholeInfo(strength, distance, now, engineBuffer, index) {
+		Chunk.assignValues(engineBuffer, index,
 			strength, distance,
 			strength, distance,
 			strength, distance,
 			strength, distance,
 		);
-		bufferInfo.blackholeInfo.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 
-	setChromaKey([low, high], color, now) {
-		const { bufferInfo, index } = this;
-
-		const { gl, shader, canvas } = this;
+	setChromaKey([low, high], color, now, engineBuffer, index) {
 		const a = ((color >> 24) % 256) / 255;
 		const rgb = color & 0xFFFFFF;
 
-		this.assignValues(bufferInfo.chromaKey,
+		Chunk.assignValues(engineBuffer, index,
 			low, high, rgb, a,
 			low, high, rgb, a,
 			low, high, rgb, a,
 			low, high, rgb, a,
 		);
-		bufferInfo.chromaKey.chunkUpdateTimes[index] = now;
+		engineBuffer.chunkUpdateTimes[index] = now;
 	}
 }

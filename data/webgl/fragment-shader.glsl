@@ -93,15 +93,15 @@ void main(void) {
 	vec2 texturePoint = vTextureData.xy;
 	vec2 textureCenter = vTextureData.zw;
 	if (vTextureSize[0] > 0.0 && vTextureSize[1] > 0.0) {
-		vec2 ux = texturePoint;
-		float dx = (ux.x - textureCenter.x) / vTextureSize[0];
-		float dy = (ux.y - textureCenter.y) / vTextureSize[1];
+		vec2 uv = texturePoint;
+		float dx = (uv.x - textureCenter.x) / vTextureSize[0];
+		float dy = (uv.y - textureCenter.y) / vTextureSize[1];
 		float textureDist = sqrt(dx * dx + dy * dy);
 
-		// ux.x = 1.6 * dx * pow(abs(dx), .4) * vTextureSize[0] + vTextureCenter.x;
-		// ux.y = 1.6 * dy * pow(abs(dy), .4) * vTextureSize[1] + vTextureCenter.y;
+		// uv.x = 1.6 * dx * pow(abs(dx), .4) * vTextureSize[0] + vTextureCenter.x;
+		// uv.y = 1.6 * dy * pow(abs(dy), .4) * vTextureSize[1] + vTextureCenter.y;
 
-		color = getTextureColor(uTextures, vTextureSlot, ux);		
+		color = getTextureColor(uTextures, vTextureSlot, uv);		
 		color.a *= (.992 - textureDist);
 	} else {
 		color = getTextureColor(uTextures, vTextureSlot, texturePoint);		

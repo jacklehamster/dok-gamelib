@@ -23,9 +23,9 @@ class EngineBuffer {
 
 	initializeVertexBuffer(shader, name) {
 		const gl = shader.gl;
-		const location = shader.getLocation(name);
 		const vertexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+		const location = shader.getLocation(name);
 		gl.vertexAttribPointer(location, this.floatPerVertex, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(location);
 		gl.bufferData(gl.ARRAY_BUFFER, this.floatPerVertex * MAX_SPRITE * VERTICES_PER_SPRITE * Float32Array.BYTES_PER_ELEMENT, gl.STREAM_DRAW);
