@@ -13,28 +13,28 @@
  */
 
 class WorkerMediaManager extends IMediaManager {
-	constructor(engine, config) {
+	constructor(engineCommunicator, config) {
 		super(config);
-		this.engine = engine;
+		this.engineCommunicator = engineCommunicator;
 	}
 
 	playMusic(id, reset, url) {
-        this.engine.sendCommand("mediaManager", "playMusic", id, reset, url);
+		this.engineCommunicator.sendCommand(Commands.MEDIA_PLAY_MUSIC, [reset?1:0], [id, url||null]);
 	}
 
 	playVideo(id, reset, url) {
-        this.engine.sendCommand("mediaManager", "playVideo", id, reset, url);
+		this.engineCommunicator.sendCommand(Commands.MEDIA_PLAY_VIDEO, [reset?1:0], [id, url||null]);
 	}
 
 	setMusicVolume(id, volume) {
-        this.engine.sendCommand("mediaManager", "setMusicVolume", id, volume);
+		this.engineCommunicator.sendCommand(Commands.MEDIA_SET_MUSIC_VOLUME, [volume], [id]);
 	}
 
 	pauseVideo(id) {
-        this.engine.sendCommand("mediaManager", "pauseVideo", id);
+		this.engineCommunicator.sendCommand(Commands.MEDIA_PAUSE_VIDEO, null, [id]);
 	}
 
 	pauseMusic(id) {
-        this.engine.sendCommand("mediaManager", "pauseMusic", id);
+		this.engineCommunicator.sendCommand(Commands.MEDIA_PAUSE_MUSIC, null, [id]);
 	}
 }

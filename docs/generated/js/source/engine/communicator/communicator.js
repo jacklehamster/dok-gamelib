@@ -8,17 +8,18 @@
  */
 
 class Communicator {
-	constructor(engine, sceneGL, sceneUI, domManager, logger, dataStore) {
+	constructor(engine, sceneGL, sceneUI, domManager, logger, dataStore, mediaManager) {
 		this.sceneGL = sceneGL;
 		this.sceneUI = sceneUI;
 		this.engine = engine;
 		this.domManager = domManager;
 		this.logger = logger;
 		this.dataStore = dataStore;
+		this.mediaManager = mediaManager;
 	}
 
 	applyBuffer(arrayBuffer, count, extra) {
-		const { sceneGL, sceneUI, engine, domManager, logger, dataStore } = this;
+		const { sceneGL, sceneUI, engine, domManager, logger, dataStore, mediaManager } = this;
 		const intBuffer = new Int32Array(arrayBuffer);
 		const floatBuffer = new Float32Array(arrayBuffer);
 
@@ -149,6 +150,36 @@ class Communicator {
 				case Commands.DATA_SAVE: {
 					const data = extra[extraIndex++];
 					dataStore.sync(data);
+					break;
+				}
+				case Commands.MEDIA_PLAY_MUSIC: {
+					const id = extra[extraIndex++];
+					const url = extra[extraIndex++];
+					const reset = floatBuffer[index++];
+					mediaManager.playMusic(id, reset, url);
+					break;
+				}
+				case Commands.MEDIA_PAUSE_MUSIC: {
+					const id = extra[extraIndex++];
+					mediaManager.pauseMusic(id);
+					break;					
+				}
+				case Commands.MEDIA_PLAY_VIDEO: {
+					const id = extra[extraIndex++];
+					const url = extra[extraIndex++];
+					const reset = floatBuffer[index++];					
+					mediaManager.playVideo(id, reset, url);
+					break;
+				}
+				case Commands.MEDIA_PAUSE_VIDEO: {
+					const id = extra[extraIndex++];
+					mediaManager.pauseVideo(id);					
+					break;
+				}
+				case Commands.MEDIA_SET_MUSIC_VOLUME: {
+					const id = extra[extraIndex++];
+					const volume = floatBuffer[index++];					
+					mediaManager.setMusicVolume(id, volume);
 					break;
 				}
 			}

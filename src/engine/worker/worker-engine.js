@@ -27,7 +27,7 @@ class WorkerEngine {
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());		
 		this.configProcessor = new ConfigProcessor(this.data);
-		this.mediaManager = new WorkerMediaManager(this, this.data.generated);
+		this.mediaManager = new WorkerMediaManager(this.engineCommunicator, this.data.generated);
 		this.dataStore = new WorkerDataStore(this.engineCommunicator, localStorageData);
 		this.newgrounds = new WorkerNewgrounds(this);
 		this.domManager = new WorkerDOMManager(this.engineCommunicator);

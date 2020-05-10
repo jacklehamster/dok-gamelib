@@ -125,7 +125,6 @@ if (typeof(window) === 'undefined') {
 			case "clickUI": {
 				const {data: { id, instanceIndex }} = event;
 				workerEngine.uiRenderer.triggegClick(id, instanceIndex);
-				console.log("Clicked on", id, instanceIndex);
 				break;				
 			}
 			case "askWorker": {

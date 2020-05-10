@@ -362,7 +362,7 @@ SceneManager.add({Game: class extends Game {
 				-2.65,
 				({game}) => game.getDefinition("upper-level").pos[2].get(),
 			],
-			scale: [ 1.25, 1 ],
+			scale: [ 1.3, 1 ],
 			tintColor: 0x88995555,
 			brightness: 110,
 			fixed: true,
