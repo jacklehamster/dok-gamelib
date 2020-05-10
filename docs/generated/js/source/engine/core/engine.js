@@ -154,9 +154,10 @@ class Engine {
 				const now = time - currentScene.startTime;
 				currentScene.now = now;
 
-				keyboard.refresh(currentScene, now);
-				mouse.refresh(currentScene, now);
-
+				if (sceneRenderer) {
+					keyboard.refresh(currentScene, now);
+					mouse.refresh(currentScene, now);
+				}
 
 				timeScheduler.process(now);
 				sceneRefresher.refresh(currentScene);

@@ -92,7 +92,7 @@ class WorkerEngine {
 	}
 
 	loop(timeMillis) {
-		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor,
+		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor, mediaManager, timeScheduler,
 			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer } = this;
 		if (!currentScene) {
 			return;
@@ -108,6 +108,7 @@ class WorkerEngine {
 		keyboard.refresh(currentScene, now);
 		mouse.refresh(currentScene, now);
 
+		timeScheduler.process(now);
 		sceneRefresher.refresh(currentScene);
 		spriteDataProcessor.refresh(currentScene);
 		spriteDefinitionProcessor.refresh(currentScene.ui, now);
@@ -118,7 +119,7 @@ class WorkerEngine {
 		const spriteCollector = [], uiCollector = [];
 
 		if (time - this.lastRefresh >= frameDuration) {
-			const shouldResetScene = this.currentScene.nextScene;
+			const shouldResetScene = currentScene.nextScene;
 			this.lastRefresh = now;
 
 			spriteDataProcessor.process(currentScene);
@@ -132,21 +133,7 @@ class WorkerEngine {
 			sceneRenderer.render(currentScene);
 			uiRenderer.render(uiComponents, now);
 
-			this.mediaManager.updatePlayingVideos(sprites, now);
-			// if (videos.length) {
-			// 	console.log(videos);
-			// }
-	// updatePlayingVideos(sprites, now) {
-	// 	const { mediaManager, textureManager, cycle } = this;
-	// 	const videos = mediaManager.updatePlayingVideos(sprites, now);
-	// 	if (videos.length) {
-	// 		//	only update video once per frame. Cycle through.
-	// 		textureManager.updateVideoTexture(videos[cycle % videos.length]);
-	// 	}
-	// }
-
-
-
+			mediaManager.updatePlayingVideos(sprites, now);
 
 
 			this.postBackPayload(now);
@@ -155,9 +142,6 @@ class WorkerEngine {
 
 			//	render uiComponents
 			// glRenderer.sendSprites(sprites, now);
-
-			//	update video textures
-			// glRenderer.updatePlayingVideos(sprites, now);
 
 			//	remove unprocessed sprites
 			// if (shouldResetScene) {
@@ -192,7 +176,6 @@ class WorkerEngine {
 
 	postBackPayload(now) {
 		const { payload, engineCommunicator } = this;
-		//console.log(engineCommunicator.getCount(), engineCommunicator.getBuffer().byteLength, engineCommunicator.getExtra());
 		if (engineCommunicator.getCount() && engineCommunicator.getBuffer().byteLength) {
 			payload.time = now;
 			payload.buffer = engineCommunicator.getBuffer();
@@ -233,7 +216,6 @@ class WorkerEngine {
 			this.spriteDataProcessor.destroy(this.currentScene);
 			this.currentScene.destroy.run();
 		}
-//		this.uiRenderer.destroy();
 		this.uiProvider.clear();
 		this.spriteProvider.clear();
 		this.uiRenderer.clear();
