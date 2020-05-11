@@ -54,17 +54,15 @@ class GLRenderer {
 
 		this.imagedata = imagedata;
 		this.videos = videos;
-		this.pool = {
-			vec3forChunk: new Pool(vec3.create, Utils.clear3), 
-		};
+		this.vec3pool = new Pool(vec3.create, Utils.clear3);
 
 		this.shader = new Shader(gl, vertexShader, fragmentShader);
 
 		this.bufferInfo = {
 			spriteType: 	new EngineBuffer(BufferType.SPRITE_TYPE, this.shader, "spriteType", SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			vertex: 		new EngineBuffer(BufferType.VERTEX, this.shader, "vertex", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			vertex: 		new EngineBuffer(BufferType.VERTEX, this.shader, "vertex", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
 			offset: 		new EngineBuffer(BufferType.OFFSET, this.shader, "offset", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			normal: 		new EngineBuffer(BufferType.NORMAL, this.shader, "normal", NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE),
+			normal: 		new EngineBuffer(BufferType.NORMAL, this.shader, "normal", NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
 			move: 			new EngineBuffer(BufferType.MOVE, this.shader, "move", MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
 			gravity: 		new EngineBuffer(BufferType.GRAVITY, this.shader, "gravity", GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
 			texCoord: 		new EngineBuffer(BufferType.TEXCOORD, this.shader, "texCoord", TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
@@ -88,11 +86,10 @@ class GLRenderer {
 		this.textureManager = new TextureManager(gl, mediaManager);
 
 		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
-		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => new Chunk(index, this.bufferInfo, this.pool.vec3forChunk));
+		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => new Chunk(index, this.bufferInfo, this.vec3pool));
 		this.usedChunks = 0;
 		this.visibleChunks = 0;
 
-		this.spriteIndices = new Array(MAX_SPRITE).fill(null);
 		this.tempSprites = [];
 
 		//	load texture
@@ -155,7 +152,6 @@ class GLRenderer {
 			chunk = this.newChunk();
 			if (chunk) {
 				sprite.chunkIndex = chunk.index;
-				this.spriteIndices[sprite.chunkIndex] = sprite;
 			} else if (!this.tooManySpriteError) {
 				this.tooManySpriteError = true;
 				console.error("Too many sprites.");
@@ -240,7 +236,7 @@ class GLRenderer {
 	}
 
 	sendSprites(sprites, now) {
-		const { gl, pool, spriteRenderer, spriteIndices, tempSprites } = this;
+		const { gl, pool, spriteRenderer, tempSprites, vec3pool } = this;
 
 		//	ensure chunks
 		tempSprites.length = 0;
@@ -482,17 +478,95 @@ class GLRenderer {
 			}
 		}
 
+		//	process wall
+		for (let i = 0; i < tempSprites.length; i++) {
+			const sprite = tempSprites[i];
+			const { updateTimes } = sprite;
+			if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.curvature === now
+				|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now) {
+				const { scale, hotspot, hidden, corners, rotation, effects, type } = sprite;
+				if (hidden) {
+					this.setHidden(sprite);
+				} else {
+					const spriteWidth = Math.abs(scale[0]);
+					const spriteHeight = Math.abs(scale[1]);
+					switch (type) {
+						case SpriteType.Ceiling:
+							this.setCeiling(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+							break;
+						case SpriteType.Water:		
+						case SpriteType.Floor:
+						case SpriteType.Shadow:
+							this.setFloor(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+							break;
+						case SpriteType.LeftWall:
+							this.setLeftWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+							break;
+						case SpriteType.RightWall:
+							this.setRightWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+							break;
+						case SpriteType.Sprite:
+						case SpriteType.Front:
+							this.setWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);			
+							break;
+						case SpriteType.Back:
+							this.setBackWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+							break;
+						default:
+							console.error("invalid type");
+					}
+				}				
+			}
+		}
+
+
+
+
+	// static processWall(sprite, chunk, now) {
+	// 	const { scale, hotspot, hidden, corners, rotation, effects, type } = sprite;
+	// 	if (hidden) {
+	// 		chunk.setHidden(now, chunk.bufferInfo.vertex, chunk.index);
+	// 	} else {
+	// 		const spriteWidth = Math.abs(scale[0]);
+	// 		const spriteHeight = Math.abs(scale[1]);
+	// 		switch (type) {
+	// 			case SpriteType.Ceiling:
+	// 				chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+	// 				break;
+	// 			case SpriteType.Water:		
+	// 			case SpriteType.Floor:
+	// 			case SpriteType.Shadow:
+	// 				chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+	// 				break;
+	// 			case SpriteType.LeftWall:
+	// 				chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+	// 				break;
+	// 			case SpriteType.RightWall:
+	// 				chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+	// 				break;
+	// 			case SpriteType.Sprite:
+	// 			case SpriteType.Front:
+	// 				chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);			
+	// 				break;
+	// 			case SpriteType.Back:
+	// 				chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+	// 				break;
+	// 			default:
+	// 				console.error("invalid type");
+	// 		}
+	// 	}
+	// }
+
 
 		for (let i = 0; i < sprites.length; i++) {
 			const sprite = sprites[i];
 			const chunk = this.getChunkFor(sprite);
 			if (chunk && sprite.chunkIndex >= 0) {
-				pool.vec3forChunk.reset();
+				vec3pool.reset();
 				SpriteRenderer.render(sprite, chunk, now, spriteRenderer.engine);
 			}
 		}
 	}
-
 
 	setTexture(sprite, texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, now) {
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
@@ -526,8 +600,7 @@ class GLRenderer {
 		);
 	}	
 
-
-	setTextureCenter(sprite, spriteX, spriteY, spriteWidth, spriteHeight, padding, circleRadius, now, engineBuffer, index) {
+	setTextureCenter(sprite, spriteX, spriteY, spriteWidth, spriteHeight, padding, circleRadius, now) {
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
 
@@ -543,6 +616,140 @@ class GLRenderer {
 			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
 			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
 		);
+	}
+
+	setHidden(sprite) {
+		this.engineCommunicator.loadGLBuffer(BufferType.VERTEX,
+			sprite.chunkIndex * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX,
+			0, 0, 0,
+			0, 0, 0,
+			0, 0, 0,
+			0, 0, 0,
+		);
+	}
+
+
+	applyNormal(sprite, vertices, curvature, i) {
+		const { vec3pool } = this;
+		const vectorA = vec3.sub(vec3pool.get(), vertices[i], Utils.getFromArray(vertices, i + 1));
+		const vectorB = vec3.sub(vec3pool.get(), vertices[i], Utils.getFromArray(vertices, i - 1));
+		const cross = vec3.cross(vec3pool.get(), vectorA, vectorB);
+		vec3.normalize(cross, cross);
+
+		if (curvature !== 0) {
+			const crossValue = vec3.scale(vec3pool.get(), cross, curvature);	
+			const vectorA = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i + 1));
+			const vectorB = vec3.sub(vec3pool.get(), vec3.add(vec3pool.get(), vertices[i], crossValue), Utils.getFromArray(vertices, i - 1));
+			const newCross = vec3.cross(vec3pool.get(), vectorA, vectorB);
+			vec3.normalize(newCross, newCross);
+			this.engineCommunicator.loadGLBuffer(BufferType.NORMAL,
+				sprite.chunkIndex * VERTICES_PER_SPRITE * NORMAL_FLOAT_PER_VERTEX,
+				... newCross,
+			);
+		} else {
+			this.engineCommunicator.loadGLBuffer(BufferType.NORMAL,
+				sprite.chunkIndex * VERTICES_PER_SPRITE * NORMAL_FLOAT_PER_VERTEX,
+				... cross,
+			);
+		}
+	}
+
+	assignVertices(sprite, now, { angle, center }, { curvature }, ... vertices) {
+		const { vec3pool } = this;
+
+ 		const [ angleX, angleY, angleZ ] = angle;
+ 		const deg2rad = 180 / Math.PI;
+ 		const quaternion = quat.fromEuler(quat.create(), angleX * deg2rad, angleY * deg2rad, angleZ * deg2rad);
+ 		for (let i = 0; i < vertices.length; i++) {
+ 			const newVec3 = vec3pool.get();
+ 			vec3.sub(newVec3, vertices[i], center);
+			vec3.transformQuat(newVec3, newVec3, quaternion);
+ 			vec3.add(newVec3, newVec3, center);
+ 			vertices[i] = newVec3;
+ 		}
+		this.engineCommunicator.loadGLBuffer(BufferType.VERTEX,
+			sprite.chunkIndex * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX,
+			... vertices[0],
+			... vertices[1],
+			... vertices[2],
+			... vertices[3],
+		);
+
+		for (let i = 0; i < vertices.length; i++) {
+			this.applyNormal(sprite, vertices, curvature, i);
+		}
+	}
+
+	setWall(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
+		const { vec3pool } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		this.assignVertices(sprite, now, rotation, effects,
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
+		);
+		// this.hidden = false;
+	}
+
+	setBackWall(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
+		const { vec3pool } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		this.assignVertices(sprite, now, rotation, effects,
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, A),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, B),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
+		);
+		// this.hidden = false;
+	}
+
+	setFloor(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
+		const { vec3pool } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		this.assignVertices(sprite, now, rotation, effects,
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, A, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, B, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, D, - halfHeight - hotspotY * height),
+		);
+		// this.hidden = false;
+	}
+
+	setCeiling(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
+		const { vec3pool } = this;
+		const halfWidth = width/2, halfHeight = height/2;
+		this.assignVertices(sprite, now, rotation, effects,
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, A, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, B, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, D, + halfHeight - hotspotY * height),
+		);
+		// this.hidden = false;
+	}
+
+	setLeftWall(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
+		const { vec3pool } = this;
+		const halfWidth = height/2, halfHeight = width/2;
+		this.assignVertices(sprite, now, rotation, effects,
+			Utils.set3(vec3pool.get(), A, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), B, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+		);
+		// this.hidden = false;
+	}
+
+	setRightWall(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
+		const { vec3pool } = this;
+		const halfWidth = height/2, halfHeight = width/2;
+		this.assignVertices(sprite, now, rotation, effects,
+			Utils.set3(vec3pool.get(), A, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), B, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
+		);
+		// this.hidden = false;
 	}
 
 	draw(now) {

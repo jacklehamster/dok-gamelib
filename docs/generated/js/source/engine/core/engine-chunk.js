@@ -40,10 +40,10 @@ class Chunk {
 	// }
 
 	setHidden(now, engineBuffer, index) {
- 		const { buffer, floatPerVertex, verticesPerSprite } = engineBuffer;
-		buffer.fill(0, index * verticesPerSprite * floatPerVertex, (index+1) * verticesPerSprite * floatPerVertex);
-		engineBuffer.chunkUpdateTimes[index] = now;
-		this.hidden = true;
+ 	// 	const { buffer, floatPerVertex, verticesPerSprite } = engineBuffer;
+		// buffer.fill(0, index * verticesPerSprite * floatPerVertex, (index+1) * verticesPerSprite * floatPerVertex);
+		// engineBuffer.chunkUpdateTimes[index] = now;
+		// this.hidden = true;
 	}
 
 	static applyNormal(vertices, engineBuffer, curvature, i, index, vec3pool) {
@@ -92,9 +92,9 @@ class Chunk {
  			vertices[i] = newVec3;
  		}
 		for (let i = 0; i < vertices.length; i++) {
-			buffer.set(vertices[i], index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
+//			buffer.set(vertices[i], index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 		}
-		bufferInfo.vertex.chunkUpdateTimes[index] = now;
+//		bufferInfo.vertex.chunkUpdateTimes[index] = now;
 
 		for (let i = 0; i < vertices.length; i++) {
 			Chunk.applyNormal(vertices, bufferInfo.normal, curvature, i, index, vec3pool);

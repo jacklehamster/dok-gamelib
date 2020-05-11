@@ -147,9 +147,9 @@ class SpriteRenderer {
 		// 	SpriteRenderer.processTexture(sprite, chunk, now, engine);
 		// }
 
-		if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.curvature === now
-			|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now || updateTimes.blackhole === now) {
-			SpriteRenderer.processWall(sprite, chunk, now);
-		}
+		// if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.curvature === now
+		// 	|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now || updateTimes.blackhole === now) {
+		// 	SpriteRenderer.processWall(sprite, chunk, now);
+		// }
 	}
 }
