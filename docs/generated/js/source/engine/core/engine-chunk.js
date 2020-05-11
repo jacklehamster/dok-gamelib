@@ -24,20 +24,20 @@ class Chunk {
 		engineBuffer.assignValues(index, ... values);
 	}
 
-	setType(type, now, engineBuffer, index) {
-		Chunk.assignValues(engineBuffer, index, type, type, type, type);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// static setType(type, now, engineBuffer, index) {
+	// 	Chunk.assignValues(engineBuffer, index, type, type, type, type);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setOffset([x, y, z], now, engineBuffer, index) {
-		Chunk.assignValues(engineBuffer, index,
-			x, y, z,
-			x, y, z,
-			x, y, z,
-			x, y, z,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// static setOffset([x, y, z], now, engineBuffer, index) {
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		x, y, z,
+	// 		x, y, z,
+	// 		x, y, z,
+	// 		x, y, z,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
 	setHidden(now, engineBuffer, index) {
  		const { buffer, floatPerVertex, verticesPerSprite } = engineBuffer;
@@ -64,6 +64,18 @@ class Chunk {
 			buffer.set(cross, index * verticesPerSprite * floatPerVertex + i * floatPerVertex);
 		}
 	}
+
+	// static setTintAndHue(tint, hue, now, engineBuffer, index) {
+	// 	const color = tint & 0xFFFFFF;
+	// 	const mixRatio = Math.max(0, (tint / 0xFFFFFF) / 255);
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		color, mixRatio, hue, 0,
+	// 		color, mixRatio, hue, 0,
+	// 		color, mixRatio, hue, 0,
+	// 		color, mixRatio, hue, 0,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;				
+	// }
 
 	assignVertices(now, { angle, center }, { curvature }, ... vertices) {
 		const { bufferInfo, index, vec3pool } = this;
@@ -162,140 +174,128 @@ class Chunk {
 		this.hidden = false;
 	}
 
-	setMove(dx, dy, dz, time, now, engineBuffer, index) {
-		Chunk.assignValues(engineBuffer, index,
-			dx, dy, dz, time,
-			dx, dy, dz, time,
-			dx, dy, dz, time,
-			dx, dy, dz, time,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// static setMove(dx, dy, dz, time, now, engineBuffer, index) {
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		dx, dy, dz, time,
+	// 		dx, dy, dz, time,
+	// 		dx, dy, dz, time,
+	// 		dx, dy, dz, time,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setGravity(gx, gy, gz, now, engineBuffer, index) {
-		Chunk.assignValues(engineBuffer, index,
-			gx, gy, gz,
-			gx, gy, gz,
-			gx, gy, gz,
-			gx, gy, gz,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// static setGravity(gx, gy, gz, now, engineBuffer, index) {
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		gx, gy, gz,
+	// 		gx, gy, gz,
+	// 		gx, gy, gz,
+	// 		gx, gy, gz,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, now, engineBuffer, index) {
-		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
-		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
-		const [ scaleH, scaleV ] = scale;
-		const horizontalShift = texIndex * 2;
-		const verticalShift = Math.round(brightness) * 2;
+	// static setTexture(texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, now, engineBuffer, index) {
+	// 	const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
+	// 	const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
+	// 	const [ scaleH, scaleV ] = scale;
+	// 	const horizontalShift = texIndex * 2;
+	// 	const verticalShift = Math.round(brightness) * 2;
 
-		let left = horizontalShift + texX + (padding * texWidth / 100),
-			right = horizontalShift + texX + texWidth - (padding * texWidth / 100);
-		let up = verticalShift + texY + (padding * texHeight / 100),
-			down = verticalShift + texY + texHeight - (padding * texHeight / 100);
+	// 	let left = horizontalShift + texX + (padding * texWidth / 100),
+	// 		right = horizontalShift + texX + texWidth - (padding * texWidth / 100);
+	// 	let up = verticalShift + texY + (padding * texHeight / 100),
+	// 		down = verticalShift + texY + texHeight - (padding * texHeight / 100);
 
-		if (scaleH < 0) {
-			const temp = left;
-			left = right;
-			right = temp;
-		}
-		if (scaleV < 0) {
-			const temp = up;
-			up = down;
-			down = temp;
-		}
+	// 	if (scaleH < 0) {
+	// 		const temp = left;
+	// 		left = right;
+	// 		right = temp;
+	// 	}
+	// 	if (scaleV < 0) {
+	// 		const temp = up;
+	// 		up = down;
+	// 		down = temp;
+	// 	}
 
-		Chunk.assignValues(engineBuffer, index,
-			left,	up,		texWidth,	texHeight,
-			left,	down,	texWidth,	texHeight,
-			right,	down,	texWidth,	texHeight,
-			right,	up,		texWidth,	texHeight,
-		);
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		left,	up,		texWidth,	texHeight,
+	// 		left,	down,	texWidth,	texHeight,
+	// 		right,	down,	texWidth,	texHeight,
+	// 		right,	up,		texWidth,	texHeight,
+	// 	);
 
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setTextureCenter(spriteX, spriteY, spriteWidth, spriteHeight, padding, circleRadius, now, engineBuffer, index) {
-		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
-		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
+	// static setTextureCenter(spriteX, spriteY, spriteWidth, spriteHeight, padding, circleRadius, now, engineBuffer, index) {
+	// 	const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
+	// 	const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
 
-		let left = texX + (padding * texWidth / 100),
-			right = texX + texWidth - (padding * texWidth / 100);
-		let up = texY + (padding * texHeight / 100),
-			down = texY + texHeight - (padding * texHeight / 100);
+	// 	let left = texX + (padding * texWidth / 100),
+	// 		right = texX + texWidth - (padding * texWidth / 100);
+	// 	let up = texY + (padding * texHeight / 100),
+	// 		down = texY + texHeight - (padding * texHeight / 100);
 
-		Chunk.assignValues(engineBuffer, index,
-			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
-			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
-			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
-			(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
-		);
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+	// 		(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+	// 		(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+	// 		(left % 2 + right % 2) / 2, (up % 2 + down % 2) / 2, circleRadius * Math.abs(left - right), circleRadius * Math.abs(up - down),
+	// 	);
 
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setTintAndHue(value, hue, now, engineBuffer, index) {
-		const color = value & 0xFFFFFF;
-		const mixRatio = Math.max(0, (value / 0xFFFFFF) / 255);
-		Chunk.assignValues(engineBuffer, index,
-			color, mixRatio, hue, 0,
-			color, mixRatio, hue, 0,
-			color, mixRatio, hue, 0,
-			color, mixRatio, hue, 0,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;				
-	}
+	// static setGrid(cols, rows, now, engineBuffer, index) {
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		cols, rows,
+	// 		cols, rows,
+	// 		cols, rows,
+	// 		cols, rows,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setGrid(cols, rows, now, engineBuffer, index) {
-		Chunk.assignValues(engineBuffer, index,
-			cols, rows,
-			cols, rows,
-			cols, rows,
-			cols, rows,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// static setAnimation(start, range, frameRate, now, engineBuffer, index) {
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		now, start, range, frameRate,
+	// 		now, start, range, frameRate,
+	// 		now, start, range, frameRate,
+	// 		now, start, range, frameRate,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setAnimation(start, range, frameRate, now, engineBuffer, index) {
-		Chunk.assignValues(engineBuffer, index,
-			now, start, range, frameRate,
-			now, start, range, frameRate,
-			now, start, range, frameRate,
-			now, start, range, frameRate,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// static setBlackholeCenter([ gx, gy, gz ], now, engineBuffer, index) {
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		gx, gy, gz,
+	// 		gx, gy, gz,
+	// 		gx, gy, gz,
+	// 		gx, gy, gz,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setBlackholeCenter([ gx, gy, gz ], now, engineBuffer, index) {
-		Chunk.assignValues(engineBuffer, index,
-			gx, gy, gz,
-			gx, gy, gz,
-			gx, gy, gz,
-			gx, gy, gz,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// static setBlackholeInfo(strength, distance, now, engineBuffer, index) {
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		strength, distance,
+	// 		strength, distance,
+	// 		strength, distance,
+	// 		strength, distance,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 
-	setBlackholeInfo(strength, distance, now, engineBuffer, index) {
-		Chunk.assignValues(engineBuffer, index,
-			strength, distance,
-			strength, distance,
-			strength, distance,
-			strength, distance,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// static setChromaKey([low, high], color, now, engineBuffer, index) {
+	// 	const a = ((color >> 24) % 256) / 255;
+	// 	const rgb = color & 0xFFFFFF;
 
-	setChromaKey([low, high], color, now, engineBuffer, index) {
-		const a = ((color >> 24) % 256) / 255;
-		const rgb = color & 0xFFFFFF;
-
-		Chunk.assignValues(engineBuffer, index,
-			low, high, rgb, a,
-			low, high, rgb, a,
-			low, high, rgb, a,
-			low, high, rgb, a,
-		);
-		engineBuffer.chunkUpdateTimes[index] = now;
-	}
+	// 	Chunk.assignValues(engineBuffer, index,
+	// 		low, high, rgb, a,
+	// 		low, high, rgb, a,
+	// 		low, high, rgb, a,
+	// 		low, high, rgb, a,
+	// 	);
+	// 	engineBuffer.chunkUpdateTimes[index] = now;
+	// }
 }

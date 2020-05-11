@@ -31,8 +31,6 @@ class Engine {
 		this.domManager = new DOMManager(document);
 		this.spriteRenderer = new SpriteRenderer(this);
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
-		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.data.generated);
-		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
 		this.sceneRefresher = new SceneRefresher();
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
@@ -41,7 +39,6 @@ class Engine {
 		this.canvasRenderer = new CanvasRenderer(this.spriteDataProcessor, this.spritesheetManager, this.data.generated);
 		this.sceneUI = new SceneUI(this.canvas, this.workerManager, this.canvasRenderer);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
-		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, new Logger(), this.dataStore, this.mediaManager, this.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
 		this.processGameInEngine = true;
@@ -52,6 +49,9 @@ class Engine {
 			this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
 			this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
 		}
+		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.engineCommunicator, this.data.generated);
+		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
+		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, new Logger(), this.dataStore, this.mediaManager, this.newgrounds, this.glRenderer);
 
 		this.keyboard = new Keyboard(this.workerManager, document, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
@@ -179,6 +179,25 @@ class Engine {
 					glRenderer.setTime(now);
 					glRenderer.clearScreen();
 
+
+					glRenderer.sendSprites(sprites, now);
+
+					//	remove unprocessed sprites
+					if (shouldResetScene) {
+						spriteProvider.getSprites().forEach(sprite => sprite.updated = 0);
+					}
+					spritesToRemove.length = 0;
+					const hiddenSprites = spriteProvider.getSprites();
+					for (let i = 0; i < hiddenSprites.length; i++) {
+						const sprite = hiddenSprites[i];
+						if (sprite.updated < now && !sprite.hidden) {
+							sprite.setHidden(true, now);
+							spritesToRemove.push(sprite);
+						}
+					}
+					glRenderer.sendSprites(spritesToRemove, now);
+
+
 					if (sceneRenderer) {
 						//	process UI
 						const uiComponents = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
@@ -195,24 +214,7 @@ class Engine {
 					}
 					sceneUI.updateUI(now);
 
-					glRenderer.sendSprites(sprites, now);
 
-
-
-					//	remove unprocessed sprites
-					if (shouldResetScene) {
-						spriteProvider.getSprites().forEach(sprite => sprite.updated = 0);
-					}
-					spritesToRemove.length = 0;
-					const hiddenSprites = spriteProvider.getSprites();
-					for (let i = 0; i < hiddenSprites.length; i++) {
-						const sprite = hiddenSprites[i];
-						if (sprite.updated < now && !sprite.hidden) {
-							sprite.setHidden(true, now);
-							spritesToRemove.push(sprite);
-						}
-					}
-					glRenderer.sendSprites(spritesToRemove, now);
 
 					//	draw
 					glRenderer.draw(now);

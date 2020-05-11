@@ -57,6 +57,24 @@ const Commands = {
 	MEDIA_SET_MUSIC_VOLUME: 23,
 	NG_UNLOCK_MEDAL: 24,
 	NG_POST_SCORE: 25,
+	GL_UPDATE_BUFFER: 26,
+};
+
+const BufferType = {
+	SPRITE_TYPE: 1,
+	VERTEX: 2,
+	OFFSET: 3,
+	NORMAL: 4,
+	MOVE: 5,
+	GRAVITY: 6,
+	TEXCOORD: 7,
+	TEXCENTER: 8,
+	ANIMATION: 9,
+	GRID: 10,
+	COLOR_EFFECT: 11,
+	BLACKHOLE_CENTER: 12,
+	BLACKHOLE_INFO: 13,
+	CHROMA_KEY: 14,
 };
 
 function commandName(command) {
@@ -117,6 +135,7 @@ const ShaderConfig = {
 
 const MAX_SPRITE = 1000000;
 const TEXTURE_SIZE = 4096;
+const MAX_BUFFER_SIZE = 10000000 * Float32Array.BYTES_PER_ELEMENT;
 
 const ZERO_VEC3 = vec3.create();
 const IDENTITY_QUAT = quat.identity(quat.create());

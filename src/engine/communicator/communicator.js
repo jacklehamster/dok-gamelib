@@ -8,7 +8,7 @@
  */
 
 class Communicator {
-	constructor(engine, sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds) {
+	constructor(engine, sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer) {
 		this.sceneGL = sceneGL;
 		this.sceneUI = sceneUI;
 		this.engine = engine;
@@ -17,10 +17,14 @@ class Communicator {
 		this.dataStore = dataStore;
 		this.mediaManager = mediaManager;
 		this.newgrounds = newgrounds;
+		this.glRenderer = glRenderer;
 	}
 
 	applyBuffer(arrayBuffer, count, extra) {
-		const { sceneGL, sceneUI, engine, domManager, logger, dataStore, mediaManager, newgrounds } = this;
+		if (!count) {
+			return;
+		}
+		const { sceneGL, sceneUI, engine, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = this;
 		const intBuffer = new Int32Array(arrayBuffer);
 		const floatBuffer = new Float32Array(arrayBuffer);
 
@@ -191,6 +195,15 @@ class Communicator {
 				case Commands.NG_POST_SCORE: {
 					const score = floatBuffer[index++];
 					newgrounds.postScore(score).then(console.log).catch(console.error);
+					break;
+				}
+				case Commands.GL_UPDATE_BUFFER: {
+					const bufferType = intBuffer[index++];
+					const offset = intBuffer[index++];
+					const size = intBuffer[index++];
+					const buffer = floatBuffer.subarray(index, index + size);
+					index += size;
+					glRenderer.sendBufferToGL(bufferType, offset, buffer);
 					break;
 				}
 			}

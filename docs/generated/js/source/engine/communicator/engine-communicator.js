@@ -14,7 +14,16 @@ class EngineCommunicator {
 		this.intBuffer = null;
 		this.floatBuffer = null;
 		this.extraData = [];
-		this.pool = new Pool(() => new ArrayBuffer(1000000));
+		this.pool = new Pool(() => new ArrayBuffer(MAX_BUFFER_SIZE));
+		this.lastError = null;
+		this.maxSize = 0;
+		this.lastGLBuffer = {
+			bufferIndex: -1,
+			nextIndex: -1,
+			type: null,
+			offset: null,
+			size: 0,
+		};
 		this.clear();
 	}
 
@@ -28,10 +37,21 @@ class EngineCommunicator {
 			this.intBuffer = new Int32Array(this.arrayBuffer);
 			this.floatBuffer = new Float32Array(this.arrayBuffer);
 			this.count = 0;
+
+			this.lastGLBuffer.bufferIndex = -1;
+			this.lastGLBuffer.nextIndex = -1;
+			this.lastGLBuffer.type = null;
+			this.lastGLBuffer.offset = null;
+			this.lastGLBuffer.size = 0;
 		}
 	}
 
 	clear() {
+		if (this.count > this.maxSize) {
+			this.maxSize = this.count;
+			console.log("MAX SIZE", (100 * this.maxSize / MAX_BUFFER_SIZE).toFixed(2) + "%");
+		}
+
 		this.count = 0;
 		this.extraData.length = 0;
 	}
@@ -70,4 +90,78 @@ class EngineCommunicator {
 			}
 		}
 	}
+
+	loadGLBuffer(type, offset, ...params) {
+		const { lastGLBuffer } = this;
+		//	check if it's a continuation of previous buffer
+		if (lastGLBuffer.nextIndex === this.count
+			&& type === lastGLBuffer.type
+			&& offset === lastGLBuffer.offset + lastGLBuffer.size) {
+
+			for (let i = 0; i < params.length; i++) {
+				this.floatBuffer[this.count + i] = params[i];
+			}
+			this.count += params.length;
+
+			lastGLBuffer.size = this.intBuffer[lastGLBuffer.bufferIndex + 3] = this.intBuffer[lastGLBuffer.bufferIndex + 3] + params.length;
+			lastGLBuffer.nextIndex = lastGLBuffer.bufferIndex + 4 + lastGLBuffer.size;
+			return;
+		}
+
+		this.ensureBuffer();
+
+		lastGLBuffer.bufferIndex = this.count;
+		lastGLBuffer.type = type;
+		lastGLBuffer.offset = offset;
+		lastGLBuffer.size = params.length;
+		lastGLBuffer.nextIndex = lastGLBuffer.bufferIndex + 4 + params.length;
+
+		this.intBuffer[this.count++] = Commands.GL_UPDATE_BUFFER;
+		this.intBuffer[this.count++] = type;
+		this.intBuffer[this.count++] = offset;
+		this.intBuffer[this.count++] = params.length;
+		for (let i = 0; i < params.length; i++) {
+			this.floatBuffer[this.count + i] = params[i];
+		}
+		this.count += params.length;
+	}
+
+	// rawGLBufferBegin() {
+	// 	this.ensureBuffer();
+	// 	this.intBuffer[this.count++] = Commands.GL_UPDATE_BUFFER;
+	// }
+
+	// rawGLBufferSetType(type) {
+	// 	const index = this.count ++;
+	// 	this.intBuffer[index] = type;
+	// 	return index;
+	// }
+
+	// rawGLBufferOffset(offset) {
+	// 	const index = this.count ++;
+	// 	this.intBuffer[index] = offset;
+	// 	return index;
+	// }
+
+	// rawGLBufferSize(size) {
+	// 	const index = this.count ++;
+	// 	this.intBuffer[index] = size;
+	// 	return index;
+	// }
+
+	// rawGLBufferSet(index, value) {
+	// 	this.intBuffer[index] = value;
+	// }
+
+	// stepLoadRawGLBuffer(...params) {
+	// 	this.ensureBuffer();
+	// 	this.intBuffer[this.count++] = Commands.GL_UPDATE_BUFFER;
+	// 	this.intBuffer[this.count++] = type;
+	// 	this.intBuffer[this.count++] = offset;
+	// 	this.intBuffer[this.count++] = params.length;
+	// 	for (let i = 0; i < params.length; i++) {
+	// 		this.floatBuffer[this.count + i] = params[i];
+	// 	}
+	// 	this.count += params.length;
+	// }
 }
