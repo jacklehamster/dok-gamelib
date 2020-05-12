@@ -49,7 +49,9 @@ class EngineCommunicator {
 	clear() {
 		if (this.count > this.maxSize) {
 			this.maxSize = this.count;
-			console.log("MAX SIZE", (100 * this.maxSize / MAX_BUFFER_SIZE).toFixed(2) + "%");
+			if (this.floatBuffer.length) {
+				console.log("Data buffer used:", (100 * this.maxSize / this.floatBuffer.length).toFixed(2) + "%");
+			}
 		}
 
 		this.count = 0;

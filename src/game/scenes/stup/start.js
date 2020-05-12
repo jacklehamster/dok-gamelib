@@ -36,11 +36,12 @@ SceneManager.add({Game: class extends Game {
 			init: ({game, definition}) => {
 				const count = definition.gridSize.get() * definition.gridSize.get();
 				definition.particles = new Array(count).fill(null).map(() => {
+					const time = game.now + Math.random() * 20000;
 					return {
-						time: game.now + Math.random() * 20000,
+						time,
 						pos: [ (Math.random()-.5) * 2, 2, (Math.random()-.5) * 2 ],
 						mov: [ (Math.random()-.5) * 2, 0, (Math.random()-.5) * 2 ],
-						lockedUntil: game.now + Math.random() * 20000,
+						lockedUntil: time + 20000,
 					};
 				});
 			},

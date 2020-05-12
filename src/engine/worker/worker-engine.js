@@ -217,6 +217,7 @@ class WorkerEngine {
 		this.uiProvider.clear();
 		this.spriteProvider.clear();
 		this.uiRenderer.clear();
+//		this.glRenderer.clear();
 	}
 
 	gotoScene(sceneName) {

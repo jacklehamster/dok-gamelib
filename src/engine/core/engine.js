@@ -309,6 +309,7 @@ class Engine {
 		this.sceneUI.destroy();
 		this.uiProvider.clear();
 		this.spriteProvider.clear();
+		this.glRenderer.clear();
 	}
 
 	gotoScene(sceneName) {
