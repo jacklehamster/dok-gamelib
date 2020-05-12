@@ -15,154 +15,46 @@ GLRenderer Engine
 */
 
 class GLRenderer {
-	constructor(canvas, webgl, mediaManager, spriteRenderer, spritesheetManager, engineCommunicator, {imagedata, game, videos}) {
-		const resolution = devicePixelRatio;
-		canvas.width = game.width * resolution;
-		canvas.height = game.height * resolution;
-		canvas.style.width = `${canvas.width / resolution}px`;
-		canvas.style.height = `${canvas.height / resolution}px`;
-
-		this.spriteRenderer = spriteRenderer;
+	constructor(gl, textureManager, webgl, engineCommunicator, spriteProvider, {imagedata, videos}) {
+		this.spriteProvider = spriteProvider;
 
 		const { vertexShader, fragmentShader } = webgl;
-		this.canvas = canvas;
-		this.webGLOptions = {
-			antialias: false,
-			preserveDrawingBuffer: false,
-			alpha: false,
-			depth: true,
-			stencil: false,
-			desynchronized: true,
-			premultipliedAlpha: true,
-		};
-		this.gl = canvas.getContext("webgl", this.webGLOptions);
-		this.spritesheetManager = spritesheetManager;
+		this.gl = gl;
 		this.engineCommunicator = engineCommunicator;
-
-		this.checkSupport();
-		this.extensions = this.applyExtensions();
-
-		const { gl } = this;
-		//	initialize gl
-		gl.enable(gl.BLEND);
-		gl.enable(gl.DEPTH_TEST);
-		gl.enable(gl.CULL_FACE);
-
-		gl.cullFace(gl.BACK);
-		gl.depthFunc(gl.LEQUAL);
-		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);	
-
 		this.imagedata = imagedata;
 		this.videos = videos;
 		this.vec3pool = new Pool(vec3.create, Utils.clear3);
+		this.shader = new Shader(this.gl, vertexShader, fragmentShader);
+		this.textureManager = textureManager;
 
-		this.shader = new Shader(gl, vertexShader, fragmentShader);
-
-		this.bufferInfo = {
-			spriteType: 	new EngineBuffer(BufferType.SPRITE_TYPE, this.shader, "spriteType", SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			vertex: 		new EngineBuffer(BufferType.VERTEX, this.shader, "vertex", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			offset: 		new EngineBuffer(BufferType.OFFSET, this.shader, "offset", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			normal: 		new EngineBuffer(BufferType.NORMAL, this.shader, "normal", NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			move: 			new EngineBuffer(BufferType.MOVE, this.shader, "move", MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			gravity: 		new EngineBuffer(BufferType.GRAVITY, this.shader, "gravity", GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			texCoord: 		new EngineBuffer(BufferType.TEXCOORD, this.shader, "texCoord", TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			texCenter: 		new EngineBuffer(BufferType.TEXCENTER, this.shader, "texCenter", TEXTURE_CENTER_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			animation: 		new EngineBuffer(BufferType.ANIMATION, this.shader, "animation", ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			grid: 			new EngineBuffer(BufferType.GRID, this.shader, "grid", GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			colorEffect: 	new EngineBuffer(BufferType.COLOR_EFFECT, this.shader, "colorEffect", TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			blackholeCenter: new EngineBuffer(BufferType.BLACKHOLE_CENTER, this.shader, "blackholeCenter", BLACKHOLE_CENTER_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			blackholeInfo:  new EngineBuffer(BufferType.BLACKHOLE_INFO, this.shader, "blackholeInfo", BLACKHOLE_INFO_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
-			chromaKey: 		new EngineBuffer(BufferType.CHROMA_KEY, this.shader, "chromaKey", CHROMA_KEY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+		const bufferInfo = {
+			spriteType: 	new EngineBuffer(BufferType.SPRITE_TYPE, 		this.shader, "spriteType", SPRITE_TYPE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			vertex: 		new EngineBuffer(BufferType.VERTEX, 			this.shader, "vertex", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			offset: 		new EngineBuffer(BufferType.OFFSET, 			this.shader, "offset", FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			normal: 		new EngineBuffer(BufferType.NORMAL, 			this.shader, "normal", NORMAL_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			move: 			new EngineBuffer(BufferType.MOVE, 				this.shader, "move", MOVE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			gravity: 		new EngineBuffer(BufferType.GRAVITY, 			this.shader, "gravity", GRAVITY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			texCoord: 		new EngineBuffer(BufferType.TEXCOORD, 			this.shader, "texCoord", TEXTURE_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			texCenter: 		new EngineBuffer(BufferType.TEXCENTER, 			this.shader, "texCenter", TEXTURE_CENTER_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			animation: 		new EngineBuffer(BufferType.ANIMATION, 			this.shader, "animation", ANIMATION_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			grid: 			new EngineBuffer(BufferType.GRID, 				this.shader, "grid", GRID_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			colorEffect: 	new EngineBuffer(BufferType.COLOR_EFFECT, 		this.shader, "colorEffect", TINT_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			blackholeCenter: new EngineBuffer(BufferType.BLACKHOLE_CENTER, 	this.shader, "blackholeCenter", BLACKHOLE_CENTER_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			blackholeInfo:  new EngineBuffer(BufferType.BLACKHOLE_INFO, 	this.shader, "blackholeInfo", BLACKHOLE_INFO_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
+			chromaKey: 		new EngineBuffer(BufferType.CHROMA_KEY, 		this.shader, "chromaKey", CHROMA_KEY_FLOAT_PER_VERTEX, VERTICES_PER_SPRITE, MAX_SPRITE, true),
 		};
 
 		this.bufferInfos = [];
-		for (let i in this.bufferInfo) {
-			this.bufferInfos[this.bufferInfo[i].type] = this.bufferInfo[i];
+		for (let i in bufferInfo) {
+			this.bufferInfos[bufferInfo[i].type] = bufferInfo[i];
 		}
 
 		this.boundBuffer = null;
 
-		this.mediaManager = mediaManager;
-		this.textureManager = new TextureManager(gl, mediaManager);
-
-		this.chunkUpdateTimes = new Array(MAX_SPRITE).fill(0);
-		this.chunks = new Array(MAX_SPRITE).fill(null).map((a, index) => new Chunk(index, this.bufferInfo, this.vec3pool));
 		this.usedChunks = 0;
 		this.visibleChunks = 0;
 
 		this.tempSprites = [];
-
-		//	load texture
-		this.spritesheetManager.fetchImages(
-			progress => console.log(progress.toFixed(2) + "%"),
-			images => images.forEach((image, index) => this.textureManager.setImage(index, image)),
-			errors => console.error(errors)
-		);
-	}
-
-	checkSupport() {
-		const { gl } = this;
-		const settings = {
-			maxVertexAttributes: gl.getParameter(gl.MAX_VERTEX_ATTRIBS),
-			maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
-			maxTextureUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
-			maxVarying: gl.getParameter(gl.MAX_VARYING_VECTORS),
-			maxUniform: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
-			renderer: gl.getParameter(gl.RENDERER),
-			version: gl.getParameter(gl.VERSION),
-			renderBufferSize: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
-		};
-		console.info(settings);
-	}
-
-	applyExtensions() {
-		const { gl } = this;
-		return [
-			gl.getExtension('OES_element_index_uint'),
-		];
-	}
-
-	resetPools() {
-		for (let p in this.pool) {
-			this.pool[p].reset();
-		}
-	}
-
-	newChunk() {
-		if (this.usedChunks < this.chunks.length) {
-			const index = this.usedChunks++;
-			return this.chunks[index];			
-		}
-		return null;
-	}
-
-	setTime(now) {
-		const { gl, shader } = this;
-		gl.uniform1f(shader.programInfo.now, now);
-	}
-
-	clearScreen() {
-		const { gl } = this;
-		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-	}
-
-	getChunkFor(sprite) {
-		let chunk;
-		if (sprite.chunkIndex < 0) {
-			chunk = this.newChunk();
-			if (chunk) {
-				sprite.chunkIndex = chunk.index;
-			} else if (!this.tooManySpriteError) {
-				this.tooManySpriteError = true;
-				console.error("Too many sprites.");
-			}
-		} else {
-			chunk = this.chunks[sprite.chunkIndex];
-		}
-		if (chunk) {
-			this.visibleChunks = Math.max(this.visibleChunks, chunk.index + 1);
-		}
-		return chunk;		
 	}
 
 	bindBuffer(shaderBuffer) {
@@ -176,55 +68,6 @@ class GLRenderer {
 		this.boundBuffer = shaderBuffer;
 	}
 
-	sendUpdatedBuffers(now) {
-		const { bufferInfo } = this;
-		for (let b in bufferInfo) {
-			this.sendUpdatedBuffer(bufferInfo[b], now);
-		}
-	}
-
-	sendUpdatedBuffer(engineBuffer, now) {
-		const { usedChunks } = this;
-		const { chunkUpdateTimes, skipSend } = engineBuffer;
-		if (skipSend) {
-			return;
-		}
-
-		for (let i = 0; i < usedChunks; i++) {
-			if (chunkUpdateTimes[i] === now) {
-				this.sendBuffer(engineBuffer, i, i+1);
-			}
-		}
-
-
-
-		// const HOLE_LIMIT = 4;
-		// let rangeStart = -1, holeSize = 0;
-		// for (let i = 0; i < usedChunks; i++) {
-		// 	if (rangeStart < 0) {
-		// 		if (chunkUpdateTimes[i] === now) {
-		// 			rangeStart = i;
-		// 		}
-		// 	} else if (chunkUpdateTimes[i] !== now) {
-		// 		holeSize++;
-		// 		if (holeSize >= HOLE_LIMIT) {
-		// 			this.sendBuffer(engineBuffer, rangeStart, i);
-		// 			rangeStart = -1;
-		// 			holeSize = 0;
-		// 		}
-		// 	}
-		// }
-		// if (rangeStart >= 0) {
-		// 	this.sendBuffer(engineBuffer, rangeStart, usedChunks);
-		// }
-	}
-
-	sendBuffer(engineBuffer, rangeStart, rangeEnd) {
-		const { gl } = this;
-		const { floatPerVertex, verticesPerSprite, type } = engineBuffer;
-		this.sendBufferToGL(type, rangeStart * verticesPerSprite * floatPerVertex, engineBuffer.subarray(rangeStart, rangeEnd));
-	}
-
 	sendBufferToGL(type, offset, buffer) {
 		const { gl, bufferInfos } = this;
 		this.bindBuffer(bufferInfos[type].shaderBuffer);
@@ -236,14 +79,22 @@ class GLRenderer {
 	}
 
 	sendSprites(sprites, now) {
-		const { gl, pool, spriteRenderer, tempSprites, vec3pool } = this;
+		const { gl, tempSprites, vec3pool, spriteProvider } = this;
+
+		this.visibleChunks = 0;
 
 		//	ensure chunks
 		tempSprites.length = 0;
 		for (let i = 0; i < sprites.length; i++) {
 			const sprite = sprites[i];
-			this.getChunkFor(sprite);
-			if (!sprite.hidden && !sprite.skipProcess) {
+			if (sprite.chunkIndex < 0) {
+				sprite.chunkIndex = this.usedChunks++;
+			}
+			sprite.updated = now;
+			if (!sprite.hidden) {
+				this.visibleChunks = Math.max(sprite.chunkIndex + 1, this.visibleChunks);
+			}
+			if (!sprite.skipProcess) {
 				tempSprites.push(sprite);
 			}
 		}
@@ -488,6 +339,7 @@ class GLRenderer {
 				if (hidden) {
 					this.setHidden(sprite);
 				} else {
+					sprite.inactive = false;
 					const spriteWidth = Math.abs(scale[0]);
 					const spriteHeight = Math.abs(scale[1]);
 					switch (type) {
@@ -515,55 +367,17 @@ class GLRenderer {
 						default:
 							console.error("invalid type");
 					}
+					vec3pool.reset();					
 				}				
 			}
 		}
 
-
-
-
-	// static processWall(sprite, chunk, now) {
-	// 	const { scale, hotspot, hidden, corners, rotation, effects, type } = sprite;
-	// 	if (hidden) {
-	// 		chunk.setHidden(now, chunk.bufferInfo.vertex, chunk.index);
-	// 	} else {
-	// 		const spriteWidth = Math.abs(scale[0]);
-	// 		const spriteHeight = Math.abs(scale[1]);
-	// 		switch (type) {
-	// 			case SpriteType.Ceiling:
-	// 				chunk.setCeiling(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-	// 				break;
-	// 			case SpriteType.Water:		
-	// 			case SpriteType.Floor:
-	// 			case SpriteType.Shadow:
-	// 				chunk.setFloor(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-	// 				break;
-	// 			case SpriteType.LeftWall:
-	// 				chunk.setLeftWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-	// 				break;
-	// 			case SpriteType.RightWall:
-	// 				chunk.setRightWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-	// 				break;
-	// 			case SpriteType.Sprite:
-	// 			case SpriteType.Front:
-	// 				chunk.setWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);			
-	// 				break;
-	// 			case SpriteType.Back:
-	// 				chunk.setBackWall(spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-	// 				break;
-	// 			default:
-	// 				console.error("invalid type");
-	// 		}
-	// 	}
-	// }
-
-
-		for (let i = 0; i < sprites.length; i++) {
-			const sprite = sprites[i];
-			const chunk = this.getChunkFor(sprite);
-			if (chunk && sprite.chunkIndex >= 0) {
-				vec3pool.reset();
-				SpriteRenderer.render(sprite, chunk, now, spriteRenderer.engine);
+		//	remove unprocessed sprites
+		const hiddenSprites = spriteProvider.getSprites();
+		for (let i = 0; i < hiddenSprites.length; i++) {
+			const sprite = hiddenSprites[i];
+			if (sprite.updated < now && !sprite.inactive) {
+				this.setHidden(sprite);
 			}
 		}
 	}
@@ -626,6 +440,7 @@ class GLRenderer {
 			0, 0, 0,
 			0, 0, 0,
 		);
+		sprite.inactive = true;
 	}
 
 
@@ -689,7 +504,6 @@ class GLRenderer {
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
 		);
-		// this.hidden = false;
 	}
 
 	setBackWall(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -701,7 +515,6 @@ class GLRenderer {
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, - halfHeight - hotspotY * height, C),
 			Utils.set3(vec3pool.get(), - halfWidth - hotspotX * width, + halfHeight - hotspotY * height, D),
 		);
-		// this.hidden = false;
 	}
 
 	setFloor(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -713,7 +526,6 @@ class GLRenderer {
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, D, - halfHeight - hotspotY * height),
 		);
-		// this.hidden = false;
 	}
 
 	setCeiling(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -725,7 +537,6 @@ class GLRenderer {
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, C, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), + halfWidth - hotspotX * width, D, + halfHeight - hotspotY * height),
 		);
-		// this.hidden = false;
 	}
 
 	setLeftWall(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -737,7 +548,6 @@ class GLRenderer {
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, - halfHeight - hotspotY * height),
 		);
-		// this.hidden = false;
 	}
 
 	setRightWall(sprite, width, height, [hotspotX, hotspotY], [A,B,C,D], rotation, effects, now) {
@@ -749,15 +559,12 @@ class GLRenderer {
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 		);
-		// this.hidden = false;
 	}
 
 	draw(now) {
-		const { gl } = this;
-		this.sendUpdatedBuffers(now);
+		const { gl, shader } = this;
+		gl.uniform1f(shader.programInfo.now, now);
+		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 		gl.drawElements(gl.TRIANGLES, this.visibleChunks * INDEX_ARRAY_PER_SPRITE.length, gl.UNSIGNED_INT, 0);
-		while (this.visibleChunks > 0 && this.chunks[this.visibleChunks-1].hidden) {
-			this.visibleChunks--;
-		}
 	}
 }

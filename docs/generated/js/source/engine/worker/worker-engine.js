@@ -125,16 +125,14 @@ class WorkerEngine {
 			spriteDataProcessor.process(currentScene);
 
 			//	process UI
-			const uiComponents = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
+			const uiComponents = shouldResetScene ? EMPTY_ARRAY : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
 
 			//	show sprites to process
-			const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
+			const sprites = shouldResetScene ? EMPTY_ARRAY : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
 			sceneRenderer.render(currentScene);
 			uiRenderer.render(uiComponents, now);
-
 			mediaManager.updatePlayingVideos(sprites, now);
-
 
 			this.postBackPayload(now);
 			// glRenderer.setTime(now);

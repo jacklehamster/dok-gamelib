@@ -35,10 +35,6 @@ class SpriteDefinitionProcessor {
 		}
 	}
 
-	ignore() {
-		return EMPTY_ARRAY;
-	}
-
 	process(spriteDefinitions, scene, spriteProvider, spriteCollector) {
 		spriteCollector.length = 0;
 

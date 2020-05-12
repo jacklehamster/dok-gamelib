@@ -24,12 +24,13 @@ class Engine {
 		this.onLoopListener = [];
 		this.onStartListener = [];
 		this.running = false;
+		this.gl = this.initCanvasGL(canvas);
 		this.timeScheduler = new TimeScheduler();
 		this.dataStore = new DataStore(localStorage);
 		this.workerManager = new WorkerManager(this, this.dataStore);
 		this.mediaManager = new MediaManager(this.data.generated);
+		this.textureManager = new TextureManager(this.gl, this.mediaManager);
 		this.domManager = new DOMManager(document);
-		this.spriteRenderer = new SpriteRenderer(this);
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.sceneRefresher = new SceneRefresher();
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());
@@ -49,7 +50,7 @@ class Engine {
 			this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
 			this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
 		}
-		this.glRenderer = new GLRenderer(canvas, this.data.webgl, this.mediaManager, this.spriteRenderer, this.spritesheetManager, this.engineCommunicator, this.data.generated);
+		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.engineCommunicator, this.spriteProvider, this.data.generated);
 		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
 		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, new Logger(), this.dataStore, this.mediaManager, this.newgrounds, this.glRenderer);
 
@@ -89,8 +90,67 @@ class Engine {
 				this.spriteDefinitionProcessor.init(this.currentScene.ui);
 			});
 		}
+		//	load texture
+		this.spritesheetManager.fetchImages(
+			progress => console.log(progress.toFixed(2) + "%"),
+			images => images.forEach((image, index) => this.textureManager.setImage(index, image)),
+			errors => console.error(errors)
+		);
 
 		this.addEventListener("start", () => this.importScenes());
+	}
+
+	initCanvasGL(canvas) {
+		const { width, height } = this.data.generated.game;
+		const resolution = devicePixelRatio;
+		canvas.width = width * resolution;
+		canvas.height = height * resolution;
+		canvas.style.width = `${canvas.width / resolution}px`;
+		canvas.style.height = `${canvas.height / resolution}px`;
+
+		const webGLOptions = {
+			antialias: false,
+			preserveDrawingBuffer: false,
+			alpha: false,
+			depth: true,
+			stencil: false,
+			desynchronized: true,
+			premultipliedAlpha: true,
+		};
+		const gl = canvas.getContext("webgl", webGLOptions);
+
+		this.checkSupport(gl);
+		this.applyExtensions(gl);
+
+		//	initialize gl
+		gl.enable(gl.BLEND);
+		gl.enable(gl.DEPTH_TEST);
+		gl.enable(gl.CULL_FACE);
+
+		gl.cullFace(gl.BACK);
+		gl.depthFunc(gl.LEQUAL);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);	
+		return gl;
+	}
+
+	applyExtensions(gl) {
+		return [
+			gl.getExtension('OES_element_index_uint'),
+		];
+	}
+
+	checkSupport(gl) {
+		const settings = {
+			maxVertexAttributes: gl.getParameter(gl.MAX_VERTEX_ATTRIBS),
+			maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+			maxTextureUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
+			maxVarying: gl.getParameter(gl.MAX_VARYING_VECTORS),
+			maxUniform: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
+			renderer: gl.getParameter(gl.RENDERER),
+			version: gl.getParameter(gl.VERSION),
+			renderBufferSize: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
+		};
+		console.info(settings);
 	}
 
 	askWorker(callback) {
@@ -174,33 +234,11 @@ class Engine {
 					spriteDataProcessor.process(currentScene);
 
 					//	show sprites to process
-					const sprites = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
-
-					glRenderer.setTime(now);
-					glRenderer.clearScreen();
-
-
-					glRenderer.sendSprites(sprites, now);
-
-					//	remove unprocessed sprites
-					if (shouldResetScene) {
-						spriteProvider.getSprites().forEach(sprite => sprite.updated = 0);
-					}
-					spritesToRemove.length = 0;
-					const hiddenSprites = spriteProvider.getSprites();
-					for (let i = 0; i < hiddenSprites.length; i++) {
-						const sprite = hiddenSprites[i];
-						if (sprite.updated < now && !sprite.hidden) {
-							sprite.setHidden(true, now);
-							spritesToRemove.push(sprite);
-						}
-					}
-					glRenderer.sendSprites(spritesToRemove, now);
-
+					const sprites = shouldResetScene ? EMPTY_ARRAY : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
 					if (sceneRenderer) {
 						//	process UI
-						const uiComponents = shouldResetScene ? spriteDefinitionProcessor.ignore() : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
+						const uiComponents = shouldResetScene ? EMPTY_ARRAY : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
 						uiRenderer.render(uiComponents, now);
 						sceneRenderer.render(currentScene);
 						engine.communicator.applyBuffer(
@@ -214,9 +252,8 @@ class Engine {
 					}
 					sceneUI.updateUI(now);
 
-
-
 					//	draw
+					glRenderer.sendSprites(sprites, now);
 					glRenderer.draw(now);
 
 					for (let i = 0; i < onLoopListener.length; i++) {
@@ -227,7 +264,6 @@ class Engine {
 					if (shouldResetScene) {
 						engine.resetScene(currentScene.nextScene);
 					}
-					glRenderer.resetPools();
 				}
 			}
 		}

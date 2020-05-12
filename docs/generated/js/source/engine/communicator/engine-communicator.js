@@ -125,43 +125,4 @@ class EngineCommunicator {
 		}
 		this.count += params.length;
 	}
-
-	// rawGLBufferBegin() {
-	// 	this.ensureBuffer();
-	// 	this.intBuffer[this.count++] = Commands.GL_UPDATE_BUFFER;
-	// }
-
-	// rawGLBufferSetType(type) {
-	// 	const index = this.count ++;
-	// 	this.intBuffer[index] = type;
-	// 	return index;
-	// }
-
-	// rawGLBufferOffset(offset) {
-	// 	const index = this.count ++;
-	// 	this.intBuffer[index] = offset;
-	// 	return index;
-	// }
-
-	// rawGLBufferSize(size) {
-	// 	const index = this.count ++;
-	// 	this.intBuffer[index] = size;
-	// 	return index;
-	// }
-
-	// rawGLBufferSet(index, value) {
-	// 	this.intBuffer[index] = value;
-	// }
-
-	// stepLoadRawGLBuffer(...params) {
-	// 	this.ensureBuffer();
-	// 	this.intBuffer[this.count++] = Commands.GL_UPDATE_BUFFER;
-	// 	this.intBuffer[this.count++] = type;
-	// 	this.intBuffer[this.count++] = offset;
-	// 	this.intBuffer[this.count++] = params.length;
-	// 	for (let i = 0; i < params.length; i++) {
-	// 		this.floatBuffer[this.count + i] = params[i];
-	// 	}
-	// 	this.count += params.length;
-	// }
 }
