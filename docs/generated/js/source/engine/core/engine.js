@@ -29,7 +29,7 @@ class Engine {
 		this.dataStore = new DataStore(localStorage);
 		this.workerManager = new WorkerManager(this, this.dataStore);
 		this.mediaManager = new MediaManager(this.data.generated);
-		this.textureManager = new TextureManager(this.gl, this.mediaManager);
+		this.textureManager = new TextureManager(this.gl, this.mediaManager, this.workerManager);
 		this.domManager = new DOMManager(document);
 		this.spritesheetManager = new SpritesheetManager(this.data.generated);
 		this.sceneRefresher = new SceneRefresher();
@@ -42,7 +42,7 @@ class Engine {
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
-		this.processGameInEngine = true;
+		this.processGameInEngine = false;
 		this.processSceneInEngine = true;
 
 		if (this.processSceneInEngine) {
@@ -50,7 +50,7 @@ class Engine {
 			this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
 			this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
 		}
-		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.engineCommunicator, this.spriteProvider, this.data.generated);
+		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
 		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, new Logger(), this.dataStore, this.mediaManager, this.newgrounds, this.glRenderer);
 
@@ -160,10 +160,18 @@ class Engine {
 		this.workerManager.askWorker(callback);
 	}
 
+	loopVideo() {
+		const { textureManager, mediaManager: { playingVideos }} = this;
+		if (playingVideos.length) {
+			textureManager.updateVideosTexture(playingVideos);
+		}
+	}
+
 	start() {
-		this.beginLooping();
+//		this.beginLooping();
 		this.onStartListener.forEach(listener => listener(this));
-		this.resetScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
+		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
+//		this.resetScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
 //		console.log("start scene:", this.currentScene.name);
 	}
 
@@ -241,6 +249,7 @@ class Engine {
 						const uiComponents = shouldResetScene ? EMPTY_ARRAY : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
 						uiRenderer.render(uiComponents, now);
 						sceneRenderer.render(currentScene);
+						glRenderer.sendSprites(sprites, now);
 						engine.communicator.applyBuffer(
 							engineCommunicator.getBuffer(),
 							engineCommunicator.getCount(),
@@ -253,7 +262,6 @@ class Engine {
 					sceneUI.updateUI(now);
 
 					//	draw
-					glRenderer.sendSprites(sprites, now);
 					glRenderer.draw(now);
 
 					for (let i = 0; i < onLoopListener.length; i++) {
@@ -270,10 +278,15 @@ class Engine {
 		requestAnimationFrame(animationFrame);		
 	}
 
-	refresh(buffer, count, extra) {
-		const { communicator, sceneGL, sceneRenderer, processGameInEngine } = this;
+	refresh(now, buffer, count, extra) {
+		const { communicator, sceneUI, glRenderer, sceneRenderer, processGameInEngine } = this;
 		if (!sceneRenderer || !processGameInEngine) {
-			communicator.applyBuffer(buffer, count, extra);
+			if (buffer && count) {
+				communicator.applyBuffer(buffer, count, extra);
+			}
+			this.loopVideo();
+			sceneUI.updateUI(now);
+			glRenderer.draw(now);
 		}
 	}
 

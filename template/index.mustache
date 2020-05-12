@@ -76,6 +76,7 @@
 		<script>
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, getData());
 			window.addEventListener("DOMContentLoaded", () => engine.start());
+			window.engine = engine;
 		</script>
 {{#obj.release}}
 		<script src="generated/js/editor/editor.min.js"></script>

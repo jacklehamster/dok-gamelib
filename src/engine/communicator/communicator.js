@@ -33,7 +33,7 @@ class Communicator {
 		let extraIndex = 0;
 		while (index < count) {
 			const command = intBuffer[index++];
-//			console.log(commandName(command));
+			// console.log(commandName(command));
 			switch (command) {
 				case Commands.SCENE_BACKGROUND: {
 					const color = floatBuffer[index++];
@@ -204,6 +204,11 @@ class Communicator {
 					const buffer = floatBuffer.subarray(index, index + size);
 					index += size;
 					glRenderer.sendBufferToGL(bufferType, offset, buffer);
+					break;
+				}
+				case Commands.GL_SET_VISIBLE_CHUNKS: {
+					const count = intBuffer[index++];
+					glRenderer.setVisibleChunks(count);
 					break;
 				}
 			}

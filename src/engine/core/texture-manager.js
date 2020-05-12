@@ -13,12 +13,12 @@
  */
 
 class TextureManager {
-	constructor(gl, mediaManager) {
+	constructor(gl, mediaManager, workerManager) {
 		this.gl = gl;
 		this.glTextures = [];
 		this.videoTextures = {};
 		this.mediaManager = mediaManager;
-		this.videoTextureIndex = this.glTextures.length - 1;
+		this.workerManager = workerManager;
 		this.videoCycle = 0;
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
@@ -47,11 +47,6 @@ class TextureManager {
 		gl.generateMipmap(gl.TEXTURE_2D);
 	}
 
-	getCurrentVideoTextureIndex() {
-		const { glTextures } = this;
-		return glTextures.length - 1;
-	}
-
 	getVideoTexture(src) {
 		if (!this.videoTextures[src] && this.mediaManager.getVideo(src)) {
 			const { videoWidth, videoHeight } = this.mediaManager.getVideo(src);
@@ -61,6 +56,7 @@ class TextureManager {
 					rect: [0, 0, size, size],
 					isVideo: true,
 				};
+				this.workerManager.updateVideoDimension(src, this.videoTextures[src].rect);
 			}
 		}
 		return this.videoTextures[src];
@@ -87,7 +83,7 @@ class TextureManager {
 		if (!videoInfo) {
 			return;
 		}
-		const index = this.getCurrentVideoTextureIndex();
+		const index = VIDEO_TEXTURE_INDEX;
 
 		const { rect: [ x, y, frameWidth, frameHeight ] } = videoInfo;
 

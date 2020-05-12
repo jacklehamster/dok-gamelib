@@ -25,6 +25,7 @@ if (typeof(window) === 'undefined') {
 		'../interfaces/newgrounds-interface.js',
 		'../interfaces/media-manager-interface.js',
 		'../interfaces/dom-manager-interface.js',
+		'../interfaces/sprite-renderer-interface.js',
 		'../common/constants.js',
 		'../communicator/engine-communicator.js',
 		'../communicator/engine-scene-renderer.js',
@@ -61,6 +62,8 @@ if (typeof(window) === 'undefined') {
 		'worker-logger.js',
 		'worker-media-manager.js',
 		'worker-dom-manager.js',
+		'worker-texture-manager.js',
+		'worker-sprite-renderer.js',
 	);
 
 	let workerEngine;
@@ -125,6 +128,11 @@ if (typeof(window) === 'undefined') {
 			case "askWorker": {
 				const {data: { callback }} = event;
 				eval(callback)(workerEngine);
+				break;
+			}
+			case "videoDimension": {
+				const {data: {src, rect}} = event;
+				workerEngine.textureManager.updateVideoDimension(src, rect);
 				break;
 			}
 		}

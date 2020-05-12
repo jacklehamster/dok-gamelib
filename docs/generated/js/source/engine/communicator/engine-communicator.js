@@ -70,6 +70,14 @@ class EngineCommunicator {
 		return this.extraData;
 	}
 
+	sendInt(...params) {
+		this.ensureBuffer();
+		for (let i = 0; i < params.length; i++) {
+			this.intBuffer[this.count + i] = params[i];		
+		}
+		this.count += params.length;
+	}
+
 	sendCommand(command, floatParams, extras) {
 		this.loadToBuffer(command, floatParams);
 		this.loadExtra(extras);

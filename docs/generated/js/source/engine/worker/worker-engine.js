@@ -35,6 +35,8 @@ class WorkerEngine {
 		this.engineUIRenderer = new EngineUIRenderer(this.engineCommunicator);
 		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
 		this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
+		this.textureManager = new WorkerTextureManager();
+		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 
 		this.logger = new WorkerLogger(this.engineCommunicator);
 		this.payload = {
@@ -93,7 +95,7 @@ class WorkerEngine {
 
 	loop(timeMillis) {
 		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor, mediaManager, timeScheduler,
-			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer } = this;
+			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer, glRenderer } = this;
 		if (!currentScene) {
 			return;
 		}
@@ -133,28 +135,11 @@ class WorkerEngine {
 			sceneRenderer.render(currentScene);
 			uiRenderer.render(uiComponents, now);
 			mediaManager.updatePlayingVideos(sprites, now);
+			glRenderer.sendSprites(sprites, now);
 
 			this.postBackPayload(now);
 			// glRenderer.setTime(now);
 			// glRenderer.clearScreen();
-
-			//	render uiComponents
-			// glRenderer.sendSprites(sprites, now);
-
-			//	remove unprocessed sprites
-			// if (shouldResetScene) {
-			// 	spriteProvider.getSprites().forEach(sprite => sprite.updated = 0);
-			// }
-			// spritesToRemove.length = 0;
-			// const hiddenSprites = spriteProvider.getSprites();
-			// for (let i = 0; i < hiddenSprites.length; i++) {
-			// 	const sprite = hiddenSprites[i];
-			// 	if (sprite.updated < now && !sprite.hidden) {
-			// 		sprite.setHidden(true, now);
-			// 		spritesToRemove.push(sprite);
-			// 	}
-			// }
-			// glRenderer.sendSprites(spritesToRemove, now);
 
 			//	draw
 			// glRenderer.draw(now);
@@ -174,14 +159,19 @@ class WorkerEngine {
 
 	postBackPayload(now) {
 		const { payload, engineCommunicator } = this;
+		payload.time = now;
 		if (engineCommunicator.getCount() && engineCommunicator.getBuffer().byteLength) {
-			payload.time = now;
 			payload.buffer = engineCommunicator.getBuffer();
 			payload.count = engineCommunicator.getCount();
 			payload.extra = engineCommunicator.getExtra();
 			//console.log(JSON.parse(JSON.stringify(engineCommunicator.getExtra())));
 			self.postMessage(payload, [payload.buffer]);
 			engineCommunicator.clear();
+		} else {
+			delete payload.buffer;
+			delete payload.count;
+			delete payload.extra;
+			self.postMessage(payload);
 		}
 	}
 
@@ -217,7 +207,7 @@ class WorkerEngine {
 		this.uiProvider.clear();
 		this.spriteProvider.clear();
 		this.uiRenderer.clear();
-//		this.glRenderer.clear();
+		this.glRenderer.clear();
 	}
 
 	gotoScene(sceneName) {

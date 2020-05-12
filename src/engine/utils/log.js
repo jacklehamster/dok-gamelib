@@ -22,7 +22,7 @@ class Log {
 			logStatusCount.style.marginLeft = "10px";
 			logStatusCount.style.color = "#007700";
 
-			window.game.engine.addEventListener("loop", now => {
+			window.engine.addEventListener("loop", now => {
 				logStatusText.innerText = "";
 				logStatusCount.innerText = "";
 				for (let msg in window.logStatus.messages) {

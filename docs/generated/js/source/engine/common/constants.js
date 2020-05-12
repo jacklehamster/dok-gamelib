@@ -58,6 +58,7 @@ const Commands = {
 	NG_UNLOCK_MEDAL: 24,
 	NG_POST_SCORE: 25,
 	GL_UPDATE_BUFFER: 26,
+	GL_SET_VISIBLE_CHUNKS: 27,
 };
 
 const BufferType = {
@@ -136,6 +137,7 @@ const ShaderConfig = {
 const MAX_SPRITE = 1000000;
 const TEXTURE_SIZE = 4096;
 const MAX_BUFFER_SIZE = 10000000 * Float32Array.BYTES_PER_ELEMENT;
+const VIDEO_TEXTURE_INDEX = 15;
 
 const ZERO_VEC3 = vec3.create();
 const IDENTITY_QUAT = quat.identity(quat.create());

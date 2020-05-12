@@ -110,7 +110,7 @@ class UIRenderer {
 	}
 
 	render(uiSprites, now) {
-		const { elements } = this;
+		const { elements, sceneUI } = this;
 
 		for (let i = 0; i < uiSprites.length; i++) {
 			const { type, id, classList, style, parent, innerText, instanceIndex, width, height, hidden, updateTimes, events: { onClick }, canvas } = uiSprites[i];
@@ -124,7 +124,7 @@ class UIRenderer {
 				const elementId = `${id}${indexSuffix}`;
 				if (updateTimes.id === now) {
 					const hasOnClick = onClick && onClick.dynamic;
-					this.sceneUI.createElement(elementId, instanceIndex, type, hasOnClick);
+					sceneUI.createElement(elementId, instanceIndex, type, hasOnClick);
 					if (hasOnClick) {
 						elements[id].onClick = onClick;
 					}
@@ -136,34 +136,34 @@ class UIRenderer {
 				// }
 
 				if (updateTimes.parent === now) {
-					this.sceneUI.setParent(elementId, parent);
+					sceneUI.setParent(elementId, parent);
 				}
 
 //				const dom = elements[elementId].dom;
 				if (updateTimes.classList === now) {
-					this.sceneUI.setClass(elementId, classList);
+					sceneUI.setClass(elementId, classList);
 				}
 
 				if (updateTimes.style === now || updateTimes.hidden === now) {
 					for (let s in style) {
 						if (s === "display") {
-							this.sceneUI.setStyle(elementId, s, hidden ? "none" : style[s]);
+							sceneUI.setStyle(elementId, s, hidden ? "none" : style[s]);
 						} else {
-							this.sceneUI.setStyle(elementId, s, style[s]);
+							sceneUI.setStyle(elementId, s, style[s]);
 						}
 					}
 				}
 
 				if (updateTimes.innerText === now) {
-					this.sceneUI.setText(elementId, innerText);
+					sceneUI.setText(elementId, innerText);
 				}
 
 				if (updateTimes.size === now) {
-					this.sceneUI.setSize(elementId, width, height);
+					sceneUI.setSize(elementId, width, height);
 				}
 
 				if (updateTimes.canvas === now) {
-					this.sceneUI.setCanvas(elementId, canvas);
+					sceneUI.setCanvas(elementId, canvas);
 				}
 
 				elements[elementId].updated = now;
@@ -174,6 +174,7 @@ class UIRenderer {
 			if (elements[id].updated !== now) {
 
 				delete elements[id];
+				sceneUI.removeElement(id);
 				// if (dom.parentElement) {
 				// 	dom.parentElement.removeChild(dom);
 				// 	delete elements[e];
@@ -183,8 +184,9 @@ class UIRenderer {
 	}
 
 	clear() {
-		const { elements } = this;
+		const { elements, sceneUI } = this;
 		for (let id in elements) {
+			sceneUI.removeElement(id);
 			delete elements[id];
 		}
 	}

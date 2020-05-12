@@ -8,9 +8,9 @@
  */
 
 class ISpriteRenderer {
-	constructor(gl, textureManager, engineCommunicator, spriteProvider, {imagedata, videos}) {
-		this.gl = gl;
+	constructor(textureManager, engineCommunicator, spriteProvider, spriteDataProcessor, {imagedata, videos}) {
 		this.engineCommunicator = engineCommunicator;
+		this.spriteDataProcessor = spriteDataProcessor;
 		this.imagedata = imagedata;
 		this.spriteProvider = spriteProvider;
 		this.videos = videos;
@@ -31,9 +31,9 @@ class ISpriteRenderer {
 	}
 
 	sendSprites(sprites, now) {
-		const { tempSprites, vec3pool, spriteProvider } = this;
+		const { tempSprites, vec3pool, spriteProvider, spriteDataProcessor } = this;
 
-		this.visibleChunks = 0;
+		let visibleChunks = 0;
 
 		//	ensure chunks
 		tempSprites.length = 0;
@@ -44,13 +44,13 @@ class ISpriteRenderer {
 			}
 			sprite.updated = now;
 			if (!sprite.hidden) {
-				this.visibleChunks = Math.max(sprite.chunkIndex + 1, this.visibleChunks);
+				visibleChunks = Math.max(sprite.chunkIndex + 1, visibleChunks);
 			}
 			if (!sprite.skipProcess) {
 				tempSprites.push(sprite);
 			}
 		}
-		tempSprites.sort(GLRenderer.compareSpriteChunk);
+		tempSprites.sort(ISpriteRenderer.compareSpriteChunk);
 
 		//	process types
 		for (let i = 0; i < tempSprites.length; i++) {
@@ -217,7 +217,7 @@ class ISpriteRenderer {
 				if (!src) {
 					this.setTexture(sprite, 0, 0, 0, 0, 0, scale, brightness, padding, now);
 				} else {
-					const spriteDataProcessorInfo = engine.spriteDataProcessor.data[src];
+					const spriteDataProcessorInfo = spriteDataProcessor.data[src];
 					const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src) || spriteDataProcessorInfo && imagedata.sprites[spriteDataProcessorInfo.src];
 					if (!spriteInfo) {
 						if (!videos[src]) {
@@ -233,7 +233,7 @@ class ISpriteRenderer {
 					}
 
 					const { rect: [ x, y, sheetWidth, sheetHeight ], isVideo } = spriteInfo;
-					const index = isVideo ? textureManager.getCurrentVideoTextureIndex() : spriteInfo.index;
+					const index = isVideo ? VIDEO_TEXTURE_INDEX : spriteInfo.index;
 					if (spriteDataProcessorInfo) {
 						const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;
 						this.setTexture(sprite, index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, now);
@@ -255,7 +255,7 @@ class ISpriteRenderer {
 				const { src, spriteData: { spriteSize, grid, padding }, circleRadius } = sprite;
 
 				if (src) {
-					const spriteDataProcessorInfo = engine.spriteDataProcessor.data[src];
+					const spriteDataProcessorInfo = spriteDataProcessor.data[src];
 					const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src) || spriteDataProcessorInfo && imagedata.sprites[spriteDataProcessorInfo.src];
 					if (!spriteInfo) {
 						if (!videos[src]) {
@@ -332,6 +332,11 @@ class ISpriteRenderer {
 				this.setInactive(sprite);
 			}
 		}
+
+		if (this.visibleChunks !== visibleChunks) {
+			this.visibleChunks = visibleChunks;
+	        this.engineCommunicator.sendInt(Commands.GL_SET_VISIBLE_CHUNKS, this.visibleChunks);
+		}
 	}
 
 	setTexture(sprite, texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, now) {
@@ -394,7 +399,6 @@ class ISpriteRenderer {
 		);
 		sprite.inactive = true;
 	}
-
 
 	applyNormal(sprite, vertices, curvature, i) {
 		const { vec3pool } = this;
@@ -511,5 +515,9 @@ class ISpriteRenderer {
 			Utils.set3(vec3pool.get(), C, - halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 			Utils.set3(vec3pool.get(), D, + halfWidth - hotspotX * width, + halfHeight - hotspotY * height),
 		);
+	}
+
+	setVisibleChunks(count) {
+		this.visibleChunks = count;
 	}
 }

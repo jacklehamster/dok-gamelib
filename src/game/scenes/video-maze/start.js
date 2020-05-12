@@ -300,7 +300,7 @@ SceneManager.add({
 			rotation: {
 				angle: [
 					0,
-					({game: { now }}) => now / 1000,
+					0,//({game: { now }}) => now / 1000,	//	PERFORMANCE HIT
 					0,
 				],
 				center: [

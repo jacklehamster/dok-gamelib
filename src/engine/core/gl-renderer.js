@@ -15,9 +15,10 @@ GLRenderer Engine
 */
 
 class GLRenderer extends ISpriteRenderer {
-	constructor(gl, textureManager, webgl, engineCommunicator, spriteProvider, configData) {
-		super(gl, textureManager, engineCommunicator, spriteProvider, configData);
+	constructor(gl, textureManager, webgl, engineCommunicator, spriteProvider, spriteDataProcessor, configData) {
+		super(textureManager, engineCommunicator, spriteProvider, spriteDataProcessor, configData);
 
+		this.gl = gl;
 		const { vertexShader, fragmentShader } = webgl;
 		this.shader = new Shader(this.gl, vertexShader, fragmentShader);
 
@@ -59,6 +60,9 @@ class GLRenderer extends ISpriteRenderer {
 
 	sendBufferToGL(type, offset, buffer) {
 		const { gl, bufferInfos } = this;
+		if (!bufferInfos[type]) {
+			console.error(type, offset);
+		}
 		this.bindBuffer(bufferInfos[type].shaderBuffer);
 		gl.bufferSubData(gl.ARRAY_BUFFER, offset * Float32Array.BYTES_PER_ELEMENT, buffer);
 	}

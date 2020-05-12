@@ -33,8 +33,10 @@ class WorkerManager {
 			}
 			case "payload": {
 				const {data: { time, buffer, count, extra}} = event;
-				this.engine.refresh(buffer, count, extra);
-				this.returnBuffer(buffer);
+				this.engine.refresh(time, buffer, count, extra);
+				if (buffer) {
+					this.returnBuffer(buffer);
+				}
 				break;
 			}
 		}
@@ -92,6 +94,14 @@ class WorkerManager {
 		this.worker.postMessage({
 			action: "gotoScene",
 			name,
+		});
+	}
+
+	updateVideoDimension(src, rect) {
+		this.worker.postMessage({
+			action: "videoDimension",
+			src,
+			rect,
 		});
 	}
 
