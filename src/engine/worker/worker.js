@@ -67,13 +67,19 @@ if (typeof(window) === 'undefined') {
 	);
 
 	let workerEngine;
+	const windowStatus = {};
+
+	const textureManager = new WorkerTextureManager();
+	const engineCommunicator = new EngineCommunicator();
+	const uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
 
 	self.addEventListener('message', function(event) {
 		const {data: { action }}  = event;
 		switch(action) {
 			case "init": {
 				const {data: { data, localStorageData }}  = event;
-				workerEngine = new WorkerEngine(SceneManager.instance, data, localStorageData);
+				workerEngine = new WorkerEngine(SceneManager.instance,
+					{ data, localStorageData, textureManager, engineCommunicator, uiRenderer, windowStatus });
 				break;
 			}
 			case "ping": {
@@ -112,17 +118,17 @@ if (typeof(window) === 'undefined') {
 			}
 			case "mouse": {
 				const {data: {x,y,mouseDown}} = event;
-				workerEngine.mouse.onMouse(x,y,mouseDown);
+				mouse.onMouse(x,y,mouseDown);
 				break;
 			}
 			case "returnBuffer": {
 				const {data: { buffer }} = event;
-				workerEngine.engineCommunicator.restoreBuffer(buffer);
+				engineCommunicator.restoreBuffer(buffer);
 				break;
 			}
 			case "clickUI": {
 				const {data: { id, instanceIndex }} = event;
-				workerEngine.uiRenderer.triggegClick(id, instanceIndex);
+				uiRenderer.triggegClick(id, instanceIndex);
 				break;				
 			}
 			case "askWorker": {
@@ -132,7 +138,12 @@ if (typeof(window) === 'undefined') {
 			}
 			case "videoDimension": {
 				const {data: {src, rect}} = event;
-				workerEngine.textureManager.updateVideoDimension(src, rect);
+				textureManager.updateVideoDimension(src, rect);
+				break;
+			}
+			case "visibilitychange": {
+				const {data: {hidden}} = event;
+				windowStatus.hidden = hidden;
 				break;
 			}
 		}

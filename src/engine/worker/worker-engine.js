@@ -13,14 +13,18 @@
  */
 
 class WorkerEngine {
-	constructor(sceneManager, data, localStorageData) {
+	constructor(sceneManager, { data, localStorageData, mouse, keyboard, textureManager, engineCommunicator, uiRenderer, windowStatus}) {
 		this.count = 0;
 		this.lastRefresh = 0;
 		this.currentScene = null;
 		this.data = data;
+		this.keyboard = keyboard;
+		this.mouse = mouse;
+		this.windowStatus = windowStatus;
+		this.textureManager = textureManager;
 		this.onSceneChangeListener = [];
 		this.sceneManager = sceneManager;
-		this.engineCommunicator = new EngineCommunicator();
+		this.engineCommunicator = engineCommunicator;
 		this.sceneRefresher = new SceneRefresher();
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
@@ -31,18 +35,12 @@ class WorkerEngine {
 		this.dataStore = new WorkerDataStore(this.engineCommunicator, localStorageData);
 		this.newgrounds = new WorkerNewgrounds(this.engineCommunicator);
 		this.domManager = new WorkerDOMManager(this.engineCommunicator);
-		this.timeScheduler = new TimeScheduler();
-		this.engineUIRenderer = new EngineUIRenderer(this.engineCommunicator);
 		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
 		this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
-		this.textureManager = new WorkerTextureManager();
 		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
-
 		this.logger = new WorkerLogger(this.engineCommunicator);
-		this.payload = {
-			action: "payload",
-			time: 0,
-		};
+		this.timeScheduler = new TimeScheduler();
+
 
 		this.keyboard = new Keyboard(null, null, {
 			onKeyPress: key => this.currentScene.keyboard.onKeyPress.run(key),
@@ -68,7 +66,7 @@ class WorkerEngine {
 			onMouseUp: mouseStatus => this.currentScene.mouse.onMouseUp.run(mouseStatus),
 			onMouseMove: mousePosition => this.currentScene.mouse.onMouseMove.run(mousePosition),			
 		});
-	
+
 
 		this.addEventListener("sceneChange", () => {
 			this.sceneRefresher.init(this.currentScene);
@@ -80,6 +78,13 @@ class WorkerEngine {
 			this.logger.log("Scene change:", this.currentScene.name);
 			this.postBackPayload(this.currentScene.now);
 		});
+
+		this.spriteCollector = [];
+		this.uiCollector = [];
+		this.payload = {
+			action: "payload",
+			time: 0,
+		};
 
 		const engine = this;
 		function animationFrame(time) {
@@ -95,7 +100,8 @@ class WorkerEngine {
 
 	loop(timeMillis) {
 		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor, mediaManager, timeScheduler,
-			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer, glRenderer } = this;
+			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer, glRenderer, windowStatus: { hidden },
+			uiCollector, spriteCollector } = this;
 		if (!currentScene) {
 			return;
 		}
@@ -118,18 +124,18 @@ class WorkerEngine {
 
 		const frameDuration = 1000 / currentScene.getFrameRate();
 
-		const spriteCollector = [], uiCollector = [];
-
-		if (time - this.lastRefresh >= frameDuration) {
+		if (time - this.lastRefresh >= frameDuration && !hidden) {
 			const shouldResetScene = currentScene.nextScene;
 			this.lastRefresh = now;
 
 			spriteDataProcessor.process(currentScene);
 
 			//	process UI
+			uiCollector.length = 0;
 			const uiComponents = shouldResetScene ? EMPTY_ARRAY : spriteDefinitionProcessor.process(currentScene.ui, currentScene, uiProvider, uiCollector);
 
 			//	show sprites to process
+			spriteCollector.length = 0;
 			const sprites = shouldResetScene ? EMPTY_ARRAY : spriteDefinitionProcessor.process(currentScene.sprites, currentScene, spriteProvider, spriteCollector);
 
 			sceneRenderer.render(currentScene);
@@ -138,22 +144,11 @@ class WorkerEngine {
 			glRenderer.sendSprites(sprites, now);
 
 			this.postBackPayload(now);
-			// glRenderer.setTime(now);
-			// glRenderer.clearScreen();
-
-			//	draw
-			// glRenderer.draw(now);
-
-			// for (let i = 0; i < onLoopListener.length; i++) {
-			// 	onLoopListener[i](now);
-			// }
 
 			//	resetpool
 			if (shouldResetScene) {
 				this.resetScene(this.currentScene.nextScene);
 			}
-
-			// glRenderer.resetPools();
 		}
 	}
 
@@ -179,10 +174,6 @@ class WorkerEngine {
 		switch(type) {
 			case "sceneChange":
 				return this.onSceneChangeListener;
-			case "loop":
-				return this.onLoopListener;
-			case "start":
-				return this.onStartListener;
 		}
 	}
 

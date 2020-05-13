@@ -105,6 +105,13 @@ class WorkerManager {
 		});
 	}
 
+	onVisibilityChange(hidden) {
+		this.worker.postMessage({
+			action: "visibilitychange",
+			hidden,
+		});
+	}
+
 	onKey(type, code) {
 		this.keyboardPayload.action = type;
 		this.keyboardPayload.code = code;

@@ -122,14 +122,14 @@ class SourceCode {
 		if (this.selectedCoderTab() === "code-tab") {
 			switch (this.selectedEditorTab()) {
 				case "scene-code":
-					SourceCode.instance.render(this.engine.currentScene);
+					SourceCode.instance.render(this.engine.makeScene(this.engine.currentSceneName));
 					break;
 				case "config":
 					SourceCode.instance.render(getData().generated.game);
 					break;
 				case "assets":
 					const { data: { generated: { imagedata, videos } }, spriteDataProcessor } = this.engine;
-					const sceneName = this.engine.currentScene.name;
+					const sceneName = this.engine.currentSceneName;
 					const  assets = [], videoArray = [];
 					const spriteDatas = this.engine.currentScene.spriteData.map(definition => {
 						return definition.src.get();
@@ -154,8 +154,8 @@ class SourceCode {
 
 		}
 
-		document.querySelector('#scene-code').innerText = `scenes/${this.engine.currentScene.name}/start.js`;
-		document.querySelector('#assets').innerText = `scenes/${this.engine.currentScene.name}/assets`;
+		document.querySelector('#scene-code').innerText = `scenes/${this.engine.currentSceneName}/start.js`;
+		document.querySelector('#assets').innerText = `scenes/${this.engine.currentSceneName}/assets`;
 	}
 
 	static formatCode(obj, beautify) {

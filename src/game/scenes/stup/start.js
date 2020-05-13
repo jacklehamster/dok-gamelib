@@ -56,7 +56,7 @@ SceneManager.add({Game: class extends Game {
 			},
 			lockedUntil: ({definition}, index) => definition.particles[index].lockedUntil,
 			src: "penguin",
-			gridSize: 200,
+			gridSize: 250,
 			pos: [
 				({definition}, index) => definition.particles[index].pos[0] * 5,
 				({definition}, index) => definition.particles[index].pos[1] * 5,
