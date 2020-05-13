@@ -22,8 +22,8 @@ class Game {
 		this.now = 0;
 		this.startTime = 0;
 		this.lastRefresh = 0;
-		this.lastKeys = 0;
-		this.lastMouse = 0;
+		this.lastKeys = -1;
+		this.lastMouse = -1;
 		this.keysCache = null;
 		this.mouseCache = null;
 		this.nextScene = null;

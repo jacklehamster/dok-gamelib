@@ -47,6 +47,9 @@ class Engine {
 			this.workerManager.onVisibilityChange(document.hidden);
 		});
 
+		window.addEventListener("blur", () => this.workerManager.onVisibilityChange(true));
+		window.addEventListener("focus", () => this.workerManager.onVisibilityChange(false));
+
 		this.currentSceneName = null;
 
 		//	load texture

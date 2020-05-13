@@ -102,7 +102,7 @@ class WorkerEngine {
 		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor, mediaManager, timeScheduler,
 			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer, glRenderer, windowStatus: { hidden },
 			uiCollector, spriteCollector } = this;
-		if (!currentScene) {
+		if (!currentScene || hidden) {
 			return;
 		}
 		const time = Math.round(timeMillis);
@@ -124,7 +124,7 @@ class WorkerEngine {
 
 		const frameDuration = 1000 / currentScene.getFrameRate();
 
-		if (time - this.lastRefresh >= frameDuration && !hidden) {
+		if (time - this.lastRefresh >= frameDuration) {
 			const shouldResetScene = currentScene.nextScene;
 			this.lastRefresh = now;
 
