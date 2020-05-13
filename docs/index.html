@@ -23,7 +23,7 @@
 		<meta name="apple-mobile-web-app-title" content="Hello World">
 
 		<script>
-			const numScenes = "8";
+			const numScenes = "9";
 			const numSources = "72"
 			const release = "true"
 			console.log({
@@ -35,6 +35,8 @@
 
 		<script src="generated/js/data.js"></script>
 		<script src="generated/js/engine/engine.min.js"></script>
+		<script>SceneManager.loadingSceneName = "cubot";</script>
+		<script src="generated/js/source/game/scenes/cubot/start.js"></script>
 		<script>SceneManager.loadingSceneName = "dobuki";</script>
 		<script src="generated/js/source/game/scenes/dobuki/start.js"></script>
 		<script>SceneManager.loadingSceneName = "keep-alive";</script>

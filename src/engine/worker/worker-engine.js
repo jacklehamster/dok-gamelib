@@ -88,8 +88,8 @@ class WorkerEngine {
 
 		const engine = this;
 		function animationFrame(time) {
-			requestAnimationFrame(animationFrame);
 			engine.loop(time);
+			requestAnimationFrame(animationFrame);
 		}
 		requestAnimationFrame(animationFrame);		
 	}

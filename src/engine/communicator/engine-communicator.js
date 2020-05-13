@@ -49,7 +49,14 @@ class EngineCommunicator {
 	clear() {
 		if (this.count > this.maxSize) {
 			this.maxSize = this.count;
-			console.log("Data buffer used:", (100 * (this.maxSize * Float32Array.BYTES_PER_ELEMENT) / MAX_BUFFER_SIZE).toFixed(2) + "%");
+			const percentUsed = (100 * (this.maxSize * Float32Array.BYTES_PER_ELEMENT) / MAX_BUFFER_SIZE);
+			if (percentUsed < 80) {
+				console.log(`Data buffer used: ${percentUsed.toFixed(2)}%`);
+			} else if (percentUsed < 100) {
+				console.warn(`Data buffer used: ${percentUsed.toFixed(2)}%`);
+			} else {
+				console.error(`Data buffer used: ${percentUsed.toFixed(2)}%`);
+			}
 		}
 
 		this.count = 0;
