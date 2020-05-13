@@ -42,66 +42,66 @@ class GLRenderer extends ISpriteRenderer {
 		bufferInfo.spriteType = new EngineBuffer(this.shader,
 				BufferType.SPRITE_TYPE,
 				"spriteType",
-				 SPRITE_TYPE_FLOAT_PER_VERTEX);
+				 SPRITE_TYPE_FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0, gl.STATIC_DRAW);
 
 		bufferInfo.vertex = new EngineBuffer(this.shader,
 				BufferType.VERTEX,
 				"vertex",
-				FLOAT_PER_VERTEX, gl.FLOAT, false, 24, 0);
+				FLOAT_PER_VERTEX, gl.FLOAT, false, 24, 0, gl.DYNAMIC_DRAW);
 		bufferInfo.normal = new EngineBuffer(this.shader,
 				BufferType.NORMAL,
 				"normal",
-				NORMAL_FLOAT_PER_VERTEX, gl.FLOAT, false, 24, 12, bufferInfo.vertex.shaderBuffer);
+				NORMAL_FLOAT_PER_VERTEX, gl.FLOAT, false, 24, 12, gl.DYNAMIC_DRAW, bufferInfo.vertex.shaderBuffer);
 
 		bufferInfo.offset = new EngineBuffer(this.shader,
 				BufferType.OFFSET,
 				"offset",
-				FLOAT_PER_VERTEX);
+				FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0, gl.DYNAMIC_DRAW);
 
 		bufferInfo.move = new EngineBuffer(this.shader,
 				BufferType.MOVE,
 				"move",
-				MOVE_FLOAT_PER_VERTEX, gl.FLOAT, false, 28, 0);
+				MOVE_FLOAT_PER_VERTEX, gl.FLOAT, false, 28, 0, gl.STREAM_DRAW);
 		bufferInfo.gravity = new EngineBuffer(this.shader,				
 				BufferType.GRAVITY,
 				"gravity",
-				GRAVITY_FLOAT_PER_VERTEX, gl.FLOAT, false, 28, 16, bufferInfo.move.shaderBuffer);
+				GRAVITY_FLOAT_PER_VERTEX, gl.FLOAT, false, 28, 16, gl.STREAM_DRAW, bufferInfo.move.shaderBuffer);
 
 		bufferInfo.texCoord = new EngineBuffer(this.shader,
 				BufferType.TEXCOORD,
 				"texCoord",
-				TEXTURE_FLOAT_PER_VERTEX, gl.FLOAT, false, 32, 0);
+				TEXTURE_FLOAT_PER_VERTEX, gl.FLOAT, false, 32, 0, gl.STREAM_DRAW);
 		bufferInfo.texCenter = new EngineBuffer(this.shader,
 				BufferType.TEXCENTER,
 				"texCenter",
-				TEXTURE_CENTER_PER_VERTEX, gl.FLOAT, false, 32, 16, bufferInfo.texCoord.shaderBuffer);
+				TEXTURE_CENTER_PER_VERTEX, gl.FLOAT, false, 32, 16, gl.STREAM_DRAW, bufferInfo.texCoord.shaderBuffer);
 
 		bufferInfo.animation = new EngineBuffer(this.shader,
 				BufferType.ANIMATION,
 				"animation",
-				ANIMATION_FLOAT_PER_VERTEX);
+				ANIMATION_FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0, gl.STREAM_DRAW);
 		bufferInfo.grid = new EngineBuffer(this.shader,
 				BufferType.GRID,
 				"grid",
-				GRID_FLOAT_PER_VERTEX);
+				GRID_FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0, gl.STATIC_DRAW);
 		bufferInfo.colorEffect = new EngineBuffer(this.shader,
 				BufferType.COLOR_EFFECT,
 				"colorEffect",
-				TINT_FLOAT_PER_VERTEX);
+				TINT_FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0, gl.STREAM_DRAW);
 
 		bufferInfo.blackholeCenter = new EngineBuffer(this.shader,
 				BufferType.BLACKHOLE_CENTER,
 				"blackholeCenter",
-				BLACKHOLE_CENTER_FLOAT_PER_VERTEX, false, 20, 0);
+				BLACKHOLE_CENTER_FLOAT_PER_VERTEX, gl.FLOAT, false, 20, 0, gl.STREAM_DRAW);
 		bufferInfo.blackholeInfo = new EngineBuffer(this.shader,
 				BufferType.BLACKHOLE_INFO,
 				"blackholeInfo",
-				BLACKHOLE_INFO_FLOAT_PER_VERTEX, false, 20, 12, bufferInfo.blackholeCenter.shaderBuffer);
+				BLACKHOLE_INFO_FLOAT_PER_VERTEX, gl.FLOAT, false, 20, 12, gl.STREAM_DRAW, bufferInfo.blackholeCenter.shaderBuffer);
 
 		bufferInfo.chromaKey = new EngineBuffer(this.shader,
 				BufferType.CHROMA_KEY,
 				"chromaKey",
-				CHROMA_KEY_FLOAT_PER_VERTEX);
+				CHROMA_KEY_FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0, gl.STREAM_DRAW);
 
 		this.bufferInfos = [];
 		for (let i in bufferInfo) {

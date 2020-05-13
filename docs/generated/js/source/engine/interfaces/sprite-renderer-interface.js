@@ -99,7 +99,7 @@ class ISpriteRenderer {
 		//	process move and gravity
 		for (let i = 0; i < tempSprites.length; i++) {
 			const sprite = tempSprites[i];
-			if (sprite.updateTimes.move === now) {
+			if (sprite.updateTimes.move === now || sprite.updateTimes.gravity === now) {
 				const {	motion: {mov: [ mx, my, mz ], time, gravity: [ gx, gy, gz ] } } = sprite;
 				this.engineCommunicator.loadGLBuffer(BufferType.MOVE,
 					sprite.chunkIndex * VERTICES_PER_SPRITE * (MOVE_FLOAT_PER_VERTEX + GRAVITY_FLOAT_PER_VERTEX),
@@ -145,7 +145,7 @@ class ISpriteRenderer {
 		//	process blackhole center
 		for (let i = 0; i < tempSprites.length; i++) {
 			const sprite = tempSprites[i];
-			if (sprite.updateTimes.blackholeCenter === now) {
+			if (sprite.updateTimes.blackholeCenter === now || sprite.updateTimes.blackholeInfo === now) {
 				const { effects: { blackhole: { strength, distance, center: [ gx, gy, gz ] } } } = sprite;
 				this.engineCommunicator.loadGLBuffer(BufferType.BLACKHOLE_CENTER,
 					sprite.chunkIndex * VERTICES_PER_SPRITE * (BLACKHOLE_CENTER_FLOAT_PER_VERTEX + BLACKHOLE_INFO_FLOAT_PER_VERTEX),

@@ -13,20 +13,20 @@
  */
 
 class EngineBuffer {
- 	constructor(shader, type, name, floatPerVertex, bufferType, normalized, stride, offset, buffer) {
+ 	constructor(shader, type, name, floatPerVertex, bufferType, normalized, stride, offset, usage, buffer) {
  		this.type = type;
  		this.floatPerVertex = floatPerVertex;
- 		this.shaderBuffer = this.initializeVertexBuffer(shader, name, bufferType, normalized, stride, offset, buffer);
+ 		this.shaderBuffer = this.initializeVertexBuffer(shader, name, bufferType, normalized, stride, offset, usage, buffer);
  	}
 
-	initializeVertexBuffer(shader, name, bufferType, normalized, stride, offset, buffer) {
+	initializeVertexBuffer(shader, name, bufferType, normalized, stride, offset, usage, buffer) {
 		const gl = shader.gl;
 		const vertexBuffer = buffer || gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 		const location = shader.getLocation(name);
 		gl.vertexAttribPointer(location, this.floatPerVertex, bufferType || gl.FLOAT, normalized||false, stride||0, offset||0);
 		gl.enableVertexAttribArray(location);
-		gl.bufferData(gl.ARRAY_BUFFER, (stride ? stride : this.floatPerVertex * VERTICES_PER_SPRITE ) * MAX_SPRITE * Float32Array.BYTES_PER_ELEMENT, gl.STREAM_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, (stride ? stride : this.floatPerVertex * VERTICES_PER_SPRITE ) * MAX_SPRITE * Float32Array.BYTES_PER_ELEMENT, usage || gl.STREAM_DRAW);
 		return vertexBuffer;
 	}
 }

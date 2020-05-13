@@ -1068,12 +1068,12 @@ function getData() {
             "index": 1
           },
           "blue-ground": {
-            "scenes": ["keep-alive"],
+            "scenes": ["cubot", "keep-alive"],
             "rect": [3152, 0, 32, 32],
             "index": 1
           },
           "dirt-ground": {
-            "scenes": ["keep-alive"],
+            "scenes": ["cubot", "keep-alive"],
             "rect": [3192, 0, 32, 32],
             "index": 1
           },
@@ -1153,11 +1153,13 @@ function getData() {
         "artic=bd39173160f9c80c55e2510a722334c3fe87916bf33c8f7490c8318143214486",
         "bear=d7f681e462f3b54243107d2a1aae4e0900eea049237a4f7981a8d0b4b1987b26",
         "blue-ground=de22e65b162132ac90aae0b99067aa15893f0686ab9cc32885bdb469fac7f06a",
+        "blue-ground=de22e65b162132ac90aae0b99067aa15893f0686ab9cc32885bdb469fac7f06a",
         "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
         "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
         "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
         "color-blocks=afee4762dd872c26c4efdc0c3e8d02c3e8ac72ae88864221f1efebc0ad8829a9",
         "creep-font=0e808d0bed7c48fb10add20f282dec512ac11e4268d27f01d3388c3d19f1e3fe",
+        "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
         "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
         "dok=028fc1f4466fa995e15d9060e146cc159674d3d49e0f01c5fe15f1b366500b92",
         "fruits=4a1341065fc6eca737babd36a4ed2ffd6eb8dd2e7cd070d53744d87353b29e1f",
