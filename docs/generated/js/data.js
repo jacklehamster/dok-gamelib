@@ -1006,7 +1006,7 @@ function getData() {
         },
         "editor": true,
         "newgrounds": {"id": "50263:05FmQQ7M", "key": "nN2kZpn0Hk1nQCqSRsXILw=="},
-        "firstScene": "dobuki"
+        "firstScene": "cubot"
       },
       "imagedata": {
         "size": [4096, 4096],
@@ -1057,39 +1057,46 @@ function getData() {
             "rect": [2936, 0, 64, 128],
             "index": 1
           },
+          "arm": {"scenes": ["cubot"], "rect": [3008, 0, 64, 64], "index": 1},
           "water-mix": {
             "scenes": ["keep-alive", "keep-alive-intro"],
-            "rect": [3008, 0, 64, 64],
+            "rect": [3080, 0, 64, 64],
             "index": 1
           },
           "water": {
             "scenes": ["penguin", "tp-boy"],
-            "rect": [3080, 0, 64, 64],
+            "rect": [3152, 0, 64, 64],
             "index": 1
           },
           "blue-ground": {
             "scenes": ["cubot", "keep-alive"],
-            "rect": [3152, 0, 32, 32],
+            "rect": [3224, 0, 32, 32],
             "index": 1
           },
           "dirt-ground": {
             "scenes": ["cubot", "keep-alive"],
-            "rect": [3192, 0, 32, 32],
+            "rect": [3264, 0, 32, 32],
+            "index": 1
+          },
+          "foot": {"scenes": ["cubot"], "rect": [3304, 0, 32, 32], "index": 1},
+          "roboface": {
+            "scenes": ["cubot"],
+            "rect": [3344, 0, 32, 32],
             "index": 1
           },
           "grass-ground": {
             "scenes": ["keep-alive"],
-            "rect": [3232, 0, 32, 32],
+            "rect": [3384, 0, 32, 32],
             "index": 1
           },
           "sand-ground": {
             "scenes": ["keep-alive", "keep-alive-intro"],
-            "rect": [3272, 0, 32, 32],
+            "rect": [3424, 0, 32, 32],
             "index": 1
           },
           "color-blocks": {
             "scenes": ["rogue-zombie"],
-            "rect": [3312, 0, 2, 2],
+            "rect": [3464, 0, 2, 2],
             "index": 1
           },
           "tp-boy": {"scenes": ["tp-boy"], "rect": [0, 0, 384, 512], "index": 2},
@@ -1129,9 +1136,9 @@ function getData() {
           }
         },
         "freeCells": [
-          {"rect": [3322, 0, 774, 10], "index": 1},
-          {"rect": [3312, 10, 784, 30], "index": 1},
-          {"rect": [3152, 40, 944, 32], "index": 1},
+          {"rect": [3474, 0, 622, 10], "index": 1},
+          {"rect": [3464, 10, 632, 30], "index": 1},
+          {"rect": [3224, 40, 872, 32], "index": 1},
           {"rect": [3008, 72, 1088, 64], "index": 1},
           {"rect": [2936, 136, 1160, 64], "index": 1},
           {"rect": [2600, 200, 1496, 64], "index": 1},
@@ -1150,6 +1157,7 @@ function getData() {
         ]
       },
       "sha": [
+        "arm=61c193706dfa5326fb3abebaea0a7f64d616fae125571f906fa2e7dc69375e7c",
         "artic=bd39173160f9c80c55e2510a722334c3fe87916bf33c8f7490c8318143214486",
         "bear=d7f681e462f3b54243107d2a1aae4e0900eea049237a4f7981a8d0b4b1987b26",
         "blue-ground=de22e65b162132ac90aae0b99067aa15893f0686ab9cc32885bdb469fac7f06a",
@@ -1162,6 +1170,7 @@ function getData() {
         "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
         "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
         "dok=028fc1f4466fa995e15d9060e146cc159674d3d49e0f01c5fe15f1b366500b92",
+        "foot=47a9f0253185026d820267f2bc9b26110b74e2132443d637a205c82a974951b3",
         "fruits=4a1341065fc6eca737babd36a4ed2ffd6eb8dd2e7cd070d53744d87353b29e1f",
         "grass-ground=7dbd71f6d728b7e8daddb5a06de61b1d707ae77f4a22322371dca4f5bbcf92e4",
         "grass-tile@16x=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
@@ -1170,6 +1179,7 @@ function getData() {
         "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "primary-font=e41888f5b7f2f9d6ee50748feb9d4782308594aaf86849390ceaf5ae737df0a5",
+        "roboface=31d99aa7644f88675309a791447feef0ce10b6f1b2b45ec580e94182662ec6f6",
         "sand-ground=195dbf2503d4cf4733ac04e566644b08cf8dfb83ce93b2238d21405ec05625b3",
         "sand-ground=195dbf2503d4cf4733ac04e566644b08cf8dfb83ce93b2238d21405ec05625b3",
         "selector=81e92c790618a40bdb64bf376475e8b574cd4a9f2d44c758cbdcc2ac2907e375",

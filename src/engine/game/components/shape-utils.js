@@ -10,7 +10,7 @@
 
 class ShapeUtils {
 	static cube(params) {
-		let { position, topSrc, sideSrc, scale, hidden, cubeCount, topAnimation, sideAnimation, fixed } = params;
+		let { position, topSrc, sideSrc, scale, hidden, cubeCount, topAnimation, sideAnimation, fixed, rotationAngle, } = params;
 
 		const SPRITE_TYPES = [
 			{ type: SpriteType.Floor, 		offset: [ 0, 1, 0] },
@@ -22,13 +22,26 @@ class ShapeUtils {
 
 		return {
 			toSourceCode: (_,editor) => `ShapeUtils.cube(${editor.formatCode(params)})`,
+			rotationAngle: rotationAngle || [ 0, 0, 0 ],
+			rotation: {
+				angle: [
+					({definition}, index) => definition.rotationAngle[0].get(Math.floor(index / SPRITE_TYPES.length)),
+					({definition}, index) => definition.rotationAngle[1].get(Math.floor(index / SPRITE_TYPES.length)),
+					({definition}, index) => definition.rotationAngle[2].get(Math.floor(index / SPRITE_TYPES.length)),
+				],
+				center: [
+					({definition}, index) => -SPRITE_TYPES[index % SPRITE_TYPES.length].offset[0] / 2,
+					({definition}, index) => -SPRITE_TYPES[index % SPRITE_TYPES.length].offset[1] / 2,
+					({definition}, index) => -SPRITE_TYPES[index % SPRITE_TYPES.length].offset[2] / 2,
+				],
+			},
 			topSrc,
 			sideSrc,
 			src: ({definition}, index) => SpriteType.Floor === definition.type.get(index) ? definition.topSrc.get(Math.floor(index / SPRITE_TYPES.length)) : definition.sideSrc.get(Math.floor(index / SPRITE_TYPES.length)),
 			type: (_, index) => SPRITE_TYPES[index % SPRITE_TYPES.length].type,
 			cubeHidden: hidden || false,
 			hidden: ({definition}, index) => definition.cubeHidden.get(Math.floor(index / SPRITE_TYPES.length)),
-			scale: scale || [ 0, 0 ],
+			scale: scale || [ 1, 1 ],
 			position: position || [ 0, 0, 0],
 			topAnimation: topAnimation || (() => null),
 			sideAnimation: sideAnimation || (() => null),

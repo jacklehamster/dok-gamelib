@@ -147,5 +147,8 @@ class SpriteDataProcessor {
 
 	destroy(scene) {
 		scene.spriteData.forEach(data => data.destroy.run());
+		for (let i in this.data) {
+			delete this.data[i];
+		}
 	}
 }

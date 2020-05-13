@@ -192,9 +192,9 @@ class ISpriteRenderer {
 					if (!spriteInfo) {
 						if (!videos[src]) {
 							const error = `Unknown sprite '${src}'.`;
-							if (engine.lastError !== error) {
-								engine.lastError = error;
-								console.warn(engine.lastError);
+							if (this.lastError !== error) {
+								this.lastError = error;
+								console.warn(this.lastError);
 							}
 						}
 						this.setTexture(sprite, 0, 0, 0, 0, 0, scale, brightness, padding, 0, now);

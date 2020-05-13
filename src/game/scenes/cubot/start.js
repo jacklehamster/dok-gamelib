@@ -26,6 +26,79 @@ SceneManager.add({Game: class extends Game {
 		this.levelMap = {};
 		this.levels.forEach(level => this.levelMap[level.name] = level);
 		this.exiting = 0;
+
+		this.robots = new Array(1).fill(null).map(_ => {
+			return {
+				command: {
+					turn: -1,
+					drive: 0,
+				},
+				motion: {
+					turn: 0,
+					mov: [0, 0, 0],
+				},
+				turn: 0,
+				pos: [(Math.random()-.5) * 5, 0, (Math.random()-.5) * 5],
+				nextCommand: 0,
+			};
+		});
+	}
+
+	handleRobot(robot) {
+		const { motion, command, nextCommand, pos } = robot;
+		if (this.now >= nextCommand) {
+			if (Math.random() < .5) {
+				command.turn = Math.sign(Math.random() - .5);
+				command.drive = 0;
+			} else {
+				command.drive = 1;
+				command.turn = 0;
+			}
+			robot.nextCommand += 500;
+		}
+		if (command.turn) {
+			motion.turn += Math.sign(command.turn) * .005;
+			motion.turn = Math.max(-.1, Math.min(.1, motion.turn));
+		} else {
+			motion.turn *= .9;
+		}
+
+		if (command.drive) {
+			let [ movX, movZ ] = MotionUtils.getNormalDirection(-robot.turn, 0, command.drive);
+			motion.mov[0] += movX * .03;
+			motion.mov[2] += movZ * .03;
+		} else {
+			motion.mov[0] *= .9;
+			motion.mov[2] *= .9;
+		}
+
+		let [ dx, _, dz ] = motion.mov;
+		const motionDist = Math.sqrt(dx * dx + dz * dz);
+		if (motionDist < .01) {
+			robot.turn += motion.turn;
+		}
+		if (Math.abs(motion.turn) < .01) {
+			const maxSpeed = .05;
+			if (motionDist > 0) {
+				dx = maxSpeed * dx / motionDist;
+				dz = maxSpeed * dz / motionDist;
+			}
+			const [ posX, posY, posZ ] = pos;
+			const diffHeight = this.diffHeight(posX, posZ, posX + dx, posZ + dz);
+			if (diffHeight >= 1) {
+				motion.mov[0] = -dx;
+				motion.mov[2] = -dz;
+			} else {
+				pos[0] = posX + dx;
+				pos[2] = posZ + dz;
+			}
+		}
+	}
+
+	diffHeight(fromX, fromZ, toX, toZ) {
+		const preHeight = this.getHeight(fromX, 0, fromZ);
+		const postHeight = this.getHeight(toX, 0, toZ);
+		return postHeight - preHeight;
 	}
 
 	tryMoveBy(dx, dz) {
@@ -40,7 +113,7 @@ SceneManager.add({Game: class extends Game {
 		if (diffHeight === 0) {
 			dok.pos[0] += shiftX;
 			dok.pos[2] += shiftZ;
-		} else if (diffHeight - dok.heightAboveGround < 0 || diffHeight - dok.heightAboveGround < 1 && dok.mov.y <= 0) {
+		} else if (diffHeight - dok.heightAboveGround < 0 || diffHeight - dok.heightAboveGround < 10 && dok.mov.y <= 0) {
 			dok.pos[0] += shiftX;
 			dok.pos[2] += shiftZ;
 			dok.heightAboveGround = dok.pos[1] + dok.heightAboveGround - postHeight;
@@ -85,6 +158,9 @@ SceneManager.add({Game: class extends Game {
 	}
 
 	loop() {
+		this.robots.forEach(robot => this.handleRobot(robot));
+
+
 		const { sceneData, keys: { actions: { mov, turn }, controls } } = this;
 		const { dok } = sceneData;
 
@@ -127,40 +203,6 @@ SceneManager.add({Game: class extends Game {
 			sceneData.dok.speed = 0;
 		}
 
-		if (dok.grounded || controls.action > 0 && !dok.flying) {
-			if (controls.action > 0) {
-				dok.mov.y = .25;
-				dok.grounded = false;
-				dok.flying = true;
-			}
-		} else {
-			dok.mov.y -= controls.action > 0 ? .01 : .025;
-			dok.heightAboveGround += dok.mov.y;
-			if (dok.heightAboveGround <= 0) {
-				dok.heightAboveGround = 0;
-				dok.flying = false;
-				if (dok.mov.y < -.35) {
-					dok.mov.y = -dok.mov.y * .5;
-				} else {
-					dok.mov.y = 0;
-					dok.grounded = true;
-				}
-			}
-		}
-
-		if (!dok.flying) {
-			const currentPlatform = this.getPlatform(...dok.pos);
-			if (currentPlatform.name !== this.currentLevel) {
-				this.currentLevel = currentPlatform.name;
-				this.onPlatform(this.currentLevel);
-			}
-			const closeElement = this.getCloseElement(...dok.pos);
-			if (closeElement.name !== this.closeElement) {
-				this.closeElement = closeElement.name;
-				this.onClosedTo(this.closeElement);
-			}
-		}
-
 		//	camera follow
 		MotionUtils.follow(sceneData.cam, dok.pos[0] + dx * 4, dok.pos[1] + dok.heightAboveGround / 2, dok.pos[2] + dz * 4, .05, 0);
 	}
@@ -201,7 +243,7 @@ SceneManager.add({Game: class extends Game {
 }}, {
 	settings: {
 		background: ({game: {now,exiting}}) => {
-			const color = 0x444422;
+			const color = 0x888888;
 			if (!exiting) {
 				return color;
 			}
@@ -211,7 +253,7 @@ SceneManager.add({Game: class extends Game {
 		}
 	},
 	view: {
-		tilt: ({game: { view: { pos } }}) => pos[1].get() / 20 + .4,
+		tilt: .5,
 		cameraDistance: 10,
 		turn: ({game}) => game.sceneData.turn,
 		pos: [
@@ -234,14 +276,18 @@ SceneManager.add({Game: class extends Game {
 		{
 			id: "wall",
 			src: "blue-ground",
-			padding: 2.5,
+			padding: 20,
 			grid: [10, 10],
 		},
 		{
-			id: "entrance-floor",
-			src: "blue-ground",
-			padding: 2.5,
-			grid: [5, 5],
+			id: "arm",
+			src: "arm",
+			grid: [2, 2],
+			frameRate: 24,
+			animations: [
+				[ "still", "1" ],
+				[ "moving", "0-3" ],
+			],
 		},
 	],
 	sprites: [
@@ -273,7 +319,7 @@ SceneManager.add({Game: class extends Game {
 		}),
 		{	//	upper level
 			id: "upper-level",
-			src: "home-floor",
+			src: "wall",
 			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size + .3,
 			type: SpriteType.Floor,
 			circleRadius: 1,
@@ -283,7 +329,6 @@ SceneManager.add({Game: class extends Game {
 				({definition}) => definition.size.get(),
 			],
 			effects: {
-				tintColor: 0x88995555,
 				brightness: 110,
 			},
 			fixed: true,
@@ -299,7 +344,6 @@ SceneManager.add({Game: class extends Game {
 				({game}) => game.getDefinition("upper-level").pos[2].get(),
 			],
 			scale: [ 1.3, 1 ],
-			tintColor: 0x88995555,
 			brightness: 110,
 			fixed: true,
 		}),
@@ -328,19 +372,18 @@ SceneManager.add({Game: class extends Game {
 		}),
 		{
 			id: "entrance",
-			src: "entrance-floor",
+			src: "wall",
 			type: SpriteType.Floor,
 			pos: [0, -3.155, 25],
 			scale: [6, 6],
 			effects: {
 				brightness: ({game}) => game.getDefinition("lower-level").effects.brightness.get(),
-				hue: ({game}) => game.getDefinition("lower-level").effects.hue.get(),
 			},
 			fixed: true,			
 		},
 		{	//	floor
 			id: "lower-level",
-			src: "home-floor",
+			src: "wall",
 			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size,
 			type: SpriteType.Floor,
 			circleRadius: 1,
@@ -351,9 +394,121 @@ SceneManager.add({Game: class extends Game {
 			],
 			effects: {
 				brightness: 50,
-				hue: 1.1,
 			},
 			fixed: true,
+		},
+
+		//	robot:
+		ShapeUtils.cube({
+			topSrc: "dirt-ground",
+			sideSrc: "dirt-ground",
+			position: [
+				({game}, index) => game.robots[index].pos[0],
+				({game, definition}, index) => -.3 + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
+				({game}, index) => game.robots[index].pos[2],
+			],
+			rotationAngle: [
+				0,
+				({game}, index) => game.robots[index].turn,
+				0,
+			],
+			cubeCount: ({game}) => game.robots.length,
+		}),
+		{
+			src: "roboface",
+			type: SpriteType.Front,
+			pos: [
+				({game}, index) => game.robots[index].pos[0],
+				({game, definition}, index) => -.3 + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
+				({game}, index) => game.robots[index].pos[2] + .501,
+			],
+			rotation: {
+				angle: [
+					0,
+					({game}, index) => game.robots[index].turn,
+					0,
+				],
+				center: [
+					0,
+					0,
+					-.501,
+				],
+			},
+			count: ({game}) => game.robots.length,
+		},
+		{
+			src: "arm",
+			type: SpriteType.RightWall,
+			pos: [
+				({game}, index) => game.robots[index].pos[0]-.51,
+				({game, definition}, index) => -.3 + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
+				({game}, index) => game.robots[index].pos[2],
+			],
+			animation: ({game},index) => game.robots[index].command.drive ? "moving" : "still",
+			rotation: {
+				angle: [
+					0,
+					({game}, index) => game.robots[index].turn,
+					0,
+				],
+				center: [
+					.51,
+					0,
+					0,
+				],
+			},
+			count: ({game}) => game.robots.length,
+		},
+		{
+			src: "arm",
+			type: SpriteType.LeftWall,
+			pos: [
+				({game}, index) => game.robots[index].pos[0]+.51,
+				({game, definition}, index) => -.3 + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
+				({game}, index) => game.robots[index].pos[2],
+			],
+			animation: ({game},index) => game.robots[index].command.drive ? "moving" : "still",
+			scale: [-1, 1],
+			rotation: {
+				angle: [
+					0,
+					({game}, index) => game.robots[index].turn,
+					0,
+				],
+				center: [
+					-.51,
+					0,
+					0,
+				],
+			},
+			count: ({game}) => game.robots.length,
+		},
+//			let [ movX, movZ ] = MotionUtils.getNormalDirection(-robot.turn, 0, command.drive);
+
+
+		{
+			src: "foot",
+			cos: ({game},index) => .2 * (game.robots[index].command.drive * Math.cos(game.now / 50)),
+			sin: ({game},index) => .2 * (game.robots[index].command.drive * Math.sin(game.now / 50)),
+			scale: [.5,1],
+			pos: [
+				({game}, index) => game.robots[index].pos[0] + .3 * MotionUtils.getNormalDirection(-game.robots[index].turn, -1, 0)[0],
+				({game, definition}, index) => - .8 + definition.cos.get(index) + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
+				({game}, index) => game.robots[index].pos[2] + .3 * MotionUtils.getNormalDirection(-game.robots[index].turn, -1, 0)[1],
+			],
+			count: ({game}) => game.robots.length,
+		},
+		{
+			src: "foot",
+			cos: ({game},index) => .2 * (game.robots[index].command.drive * Math.cos(game.now / 50)),
+			sin: ({game},index) => .2 * (game.robots[index].command.drive * Math.sin(game.now / 50)),
+			scale: [.5,1],
+			pos: [
+				({game}, index) => game.robots[index].pos[0] + .3 * MotionUtils.getNormalDirection(-game.robots[index].turn, 1, 0)[0],
+				({game, definition}, index) => - .8 + definition.sin.get(index) + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
+				({game}, index) => game.robots[index].pos[2] + .3 * MotionUtils.getNormalDirection(-game.robots[index].turn, 1, 0)[1],
+			],
+			count: ({game}) => game.robots.length,
 		},
 	],
 });
