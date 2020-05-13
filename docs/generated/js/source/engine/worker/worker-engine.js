@@ -86,12 +86,18 @@ class WorkerEngine {
 			time: 0,
 		};
 
-		const engine = this;
-		function animationFrame(time) {
-			engine.loop(time);
-			requestAnimationFrame(animationFrame);
+		if (typeof(requestAnimationFrame) !== 'undefined') {
+			const engine = this;
+			function animationFrame(time) {
+				engine.loop(time);
+				requestAnimationFrame(animationFrame);
+			}
+			requestAnimationFrame(animationFrame);		
+		} else {
+			setInterval(() => {
+				this.loop(Date.now());
+			}, 16);
 		}
-		requestAnimationFrame(animationFrame);		
 	}
 
 	notifySceneChange(name) {
