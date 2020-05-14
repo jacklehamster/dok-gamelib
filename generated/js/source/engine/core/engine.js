@@ -21,16 +21,6 @@ class Engine {
 		this.onLoopListener = [];
 		this.onStartListener = [];
 		this.onLoadListener = [];
-	}
-
-	start() {
-		this.init();
-		this.onStartListener.forEach(listener => listener(this));
-		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
-//		console.log("start scene:", this.currentScene.name);
-	}
-
-	init() {
 		this.canvas.focus();
 		this.gl = this.initCanvasGL(canvas);
 		this.dataStore = new DataStore(localStorage);
@@ -62,17 +52,29 @@ class Engine {
 		window.addEventListener("focus", () => this.workerManager.onVisibilityChange(false));
 
 		this.currentSceneName = null;
+		this.loaded = false;
 
+		this.init();
+	}
+
+	start() {
+		this.onStartListener.forEach(listener => listener(this));
+		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
+//		console.log("start scene:", this.currentScene.name);
+	}
+
+	init() {
 		//	load texture
 		this.spritesheetManager.fetchImages(
 			progress => console.log(progress.toFixed(2) + "%"),
-			images => images.forEach((image, index) => {
-				this.textureManager.setImage(index, image);
-				this.onLoadListener.forEach(callback => callback());
-			}),
+			images => {
+				images.forEach((image, index) => {
+					this.textureManager.setImage(index, image);
+				});
+			},
 			errors => console.error(errors)
 		);
-		this.addEventListener("start", () => this.importScenes());		
+		this.addEventListener("start", () => this.importScenes());
 	}
 
 	initCanvasGL(canvas) {
@@ -174,6 +176,10 @@ class Engine {
 		glRenderer.draw(now);
 		for (let i = 0; i < onLoopListener.length; i++) {
 			onLoopListener[i](now);
+		}
+		if (!this.loaded) {
+			this.onLoadListener.forEach(callback => callback());
+			this.loaded = true;			
 		}
 	}
 
