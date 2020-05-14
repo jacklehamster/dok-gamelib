@@ -186,11 +186,6 @@ app.get('/fonts', (req, res) => {
 	});
 });
 
-app.get('/download', (req, res) => {
-	res.setHeader('Content-disposition', 'attachment; filename=game.zip');
-    res.download(`${__dirname}/build/archive.zip`);
-});
-
 app.use(express.static(`${__dirname}/${webDir}`));
 
 const httpServer = app.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));
