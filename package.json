@@ -33,14 +33,14 @@
     "is-var-name": "^2.0.0",
     "js-beautify": "^1.11.0",
     "json-stringify-pretty-compact": "^2.0.0",
+    "lodash.template": "^4.5.0",
     "mustache": "^4.0.1",
     "node-minify": "^3.6.0",
     "pngquant-bin": "^5.0.2",
     "rimraf": "^3.0.2",
     "sha256-file": "^1.0.0",
     "spritesheet-js": "^1.2.6",
-    "trim-image": "^1.0.3",
-    "lodash.template": ">=4.5.0"
+    "trim-image": "^1.0.3"
   },
   "devDependencies": {
     "compress-images": "^1.7.8",
