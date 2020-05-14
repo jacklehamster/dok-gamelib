@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--
+	Dok-gamelib engine
+
+	Description: Game engine for producing web games easily using JavaScript and WebGL
+	Author: jacklehamster
+	Sourcode: https://github.com/jacklehamster/dok-gamelib
+	Year: 2020
+ -->
+<html lang="en">
+	<head>
+        <title>Hello World</title>
+		<meta charset="utf-8"/>
+		<meta name="description" content="Description">
+
+		<link rel="stylesheet" type="text/css" href="css/game.css" media="print" onload="this.media='all'">
+		<link rel="stylesheet" type="text/css" href="css/night-owl.css" media="print" onload="this.media='all'">
+
+
+
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="icons/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="icons/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="icons/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="icons/apple-touch-icon-60x60.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="icons/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="icons/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="icons/apple-touch-icon-152x152.png" />
+		<link rel="icon" type="image/png" href="icons/favicon-196x196.png" sizes="196x196" />
+		<link rel="icon" type="image/png" href="icons/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/png" href="icons/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="icons/favicon-16x16.png" sizes="16x16" />
+		<link rel="icon" type="image/png" href="icons/favicon-128.png" sizes="128x128" />
+		<meta name="application-name" content="Hello World"/>
+		<meta name="msapplication-TileColor" content="#FFFFFF" />
+		<meta name="msapplication-TileImage" content="icons/mstile-144x144.png" />
+		<meta name="msapplication-square70x70logo" content="icons/mstile-70x70.png" />
+		<meta name="msapplication-square150x150logo" content="icons/mstile-150x150.png" />
+		<meta name="msapplication-wide310x150logo" content="icons/mstile-310x150.png" />
+		<meta name="msapplication-square310x310logo" content="icons/mstile-310x310.png" />
+
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="viewport" content="minimal-ui, user-scalable=no, initial-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="Hello World">
+
+		<script>
+			const numScenes = "9";
+			const numSources = "72"
+			const release = "true"
+			console.log({
+				numScenes,
+				numSources,
+				release,
+			});
+		</script>
+
+		<script src="generated/js/data.js"></script>
+		<script src="generated/js/engine/engine.min.js"></script>
+		<script>SceneManager.loadingSceneName = "cubot";</script>
+		<script src="generated/js/source/game/scenes/cubot/start.js"></script>
+		<script>SceneManager.loadingSceneName = "dobuki";</script>
+		<script src="generated/js/source/game/scenes/dobuki/start.js"></script>
+		<script>SceneManager.loadingSceneName = "keep-alive";</script>
+		<script src="generated/js/source/game/scenes/keep-alive/start.js"></script>
+		<script>SceneManager.loadingSceneName = "keep-alive-intro";</script>
+		<script src="generated/js/source/game/scenes/keep-alive-intro/start.js"></script>
+		<script>SceneManager.loadingSceneName = "penguin";</script>
+		<script src="generated/js/source/game/scenes/penguin/start.js"></script>
+		<script>SceneManager.loadingSceneName = "rogue-zombie";</script>
+		<script src="generated/js/source/game/scenes/rogue-zombie/start.js"></script>
+		<script>SceneManager.loadingSceneName = "stup";</script>
+		<script src="generated/js/source/game/scenes/stup/start.js"></script>
+		<script>SceneManager.loadingSceneName = "tp-boy";</script>
+		<script src="generated/js/source/game/scenes/tp-boy/start.js"></script>
+		<script>SceneManager.loadingSceneName = "video-maze";</script>
+		<script src="generated/js/source/game/scenes/video-maze/start.js"></script>
+	</head>
+
+	<body class="container" style="background-color: black">
+		<div id="editor" style="display: none" class="editor hidden">
+			<div class="tab-container">
+				<div id="editor-tabs" class="tab-container">
+					<div id="config" class="tab">game.json</div>
+					<div id="scene-code" class="tab selected">scenes//start.js</div>
+					<div id="assets" class="tab">scenes//assets</div>
+				</div>
+				<div style="width: 100%"></div>
+				<div id="code-tabs" class="tab-container">
+					<div id="design-tab" class="tab">🛠️ DESIGN</div>
+					<div id="code-tab" class="tab selected">📝 CODE</div>
+				</div>
+				<div id="panel-exit-button" class="panel-button" onclick="SceneThumbnail.instance.shiftPanel()">
+					SPLIT ➡️
+				</div>
+			</div>
+			<div class="editor-container">
+				<div id="source-code" class="source-code"></div>
+				<div id="assets-container" class="assets-container"></div>
+			</div>
+		</div>
+		<div id="panel" class="panel loading">
+			<canvas id="canvas" width=800 height=500></canvas>
+		</div>
+		<script>
+			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, getData());
+			window.addEventListener("DOMContentLoaded", () => engine.start());
+			window.engine = engine;
+		</script>
+		<script src="generated/js/editor/editor.min.js"></script>
+	</body>
+</html>
