@@ -40,6 +40,7 @@ class WorkerEngine {
 		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 		this.logger = new WorkerLogger(this.engineCommunicator);
 		this.timeScheduler = new TimeScheduler();
+		this.pauseTime = 0;
 
 
 		this.keyboard = new Keyboard(null, null, {
@@ -109,6 +110,9 @@ class WorkerEngine {
 			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer, glRenderer, windowStatus: { hidden },
 			uiCollector, spriteCollector } = this;
 		if (!currentScene || hidden) {
+			if (!this.pauseTime) {
+				this.pauseTime = Math.round(timeMillis);
+			}
 			return;
 		}
 		const time = Math.round(timeMillis);
@@ -116,6 +120,12 @@ class WorkerEngine {
 			currentScene.startTime = time;
 			return;
 		}
+		if (this.pauseTime) {
+			const diff = time - this.pauseTime;
+			currentScene.startTime += diff;
+			this.pauseTime = 0;
+		}
+
 		const now = time - currentScene.startTime;
 		currentScene.now = now;
 
