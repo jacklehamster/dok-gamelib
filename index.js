@@ -20,7 +20,7 @@ const minify = require('@node-minify/core');
 const uglifyES = require('@node-minify/uglify-es');
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 const TEXTURE_SIZE = 4096;
 
 const webDir = "docs";
