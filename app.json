@@ -2,6 +2,6 @@
   "name": "Dok gamelib",
   "description": "Library for creating Dobuki games.",
   "repository": "https://github.com/jacklehamster/dok-gamelib",
-  "logo": "https://jacklehamster.github.io/dok-gamelib/docs/icons/icon.png",
+  "logo": "https://jacklehamster.github.io/dok-gamelib/icons/icon.png",
   "keywords": ["dobuki", "game", "library"]
 }
