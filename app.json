@@ -3,5 +3,8 @@
   "description": "Library for creating Dobuki games.",
   "repository": "https://github.com/jacklehamster/dok-gamelib",
   "logo": "https://jacklehamster.github.io/dok-gamelib/icons/icon.png",
-  "keywords": ["dobuki", "game", "library"]
+  "keywords": ["dobuki", "game", "library"],
+  "engines": {
+    "node": "12.x"
+  }
 }
