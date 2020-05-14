@@ -107,7 +107,7 @@ function build(webDir, dirname) {
 		.then(() => zipGame(webDir, dirname))
 		.then(ziplocation => {
 			fs.mkdirSync(`${webDir}/archive`, { recursive: true });
-			fs.promises.copyFile(ziplocation, `${webDir}/archive/game.zip`);
+			return fs.promises.copyFile(ziplocation, `${webDir}/archive/game.zip`);
 		})
 		.then(() => console.log(`Done game building: ${Date.now() - startTime}ms`));
 }
