@@ -7,8 +7,9 @@
     "create-dir": "npx mkdirp generated/lib",
     "browserify": "npm run create-dir && browserify main.js -o generated/lib/json-compact.js",
     "forever": "forever --minUptime 1000 --spinSleepTime 1000 -w index.js",
-    "start": "npm run browserify && npm run forever",
-    "build": "npm run browserify && node build.js"
+    "serve": "npm run browserify && npm run forever",
+    "build": "npm run browserify && node build.js",
+    "start": "node index.js"
   },
   "author": "jacklehamster",
   "repository": {
