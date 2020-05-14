@@ -2,7 +2,7 @@
 Dok game library.
 
 ![](https://github.com/jacklehamster/dok-gamelib/workflows/.github/workflows/main.yaml/badge.svg)
-![](https://github.com/jacklehamster/dok-gamelib/workflows/.github/workflows/gh-pages.yml/badge.svg)
+![](https://github.com/jacklehamster/dok-gamelib/workflows/github%20pages/badge.svg)
 
 
 
