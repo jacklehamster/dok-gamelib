@@ -2,6 +2,10 @@ name: Hello
 
 on: [push]
 
+branding:
+  icon: 'sun'  
+  color: 'yellow'
+
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest

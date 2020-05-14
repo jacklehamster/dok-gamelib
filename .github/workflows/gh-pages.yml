@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+branding:
+  icon: 'star'  
+  color: 'green'
+
 jobs:
   deploy:
     runs-on: ubuntu-18.04

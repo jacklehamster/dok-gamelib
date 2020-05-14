@@ -442,7 +442,7 @@ function build() {
 	console.log(`Build game: ${new Date()}`);
 	const startTime = Date.now();
 	const release = true;
-	getSpritesheets()
+	return getSpritesheets()
 	.then(() => Promise.all([
 		copyVideos(),
 		copySounds(),
