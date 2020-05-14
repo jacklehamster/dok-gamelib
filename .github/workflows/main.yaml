@@ -2,14 +2,13 @@ name: Hello
 
 on: [push]
 
-branding:
-  icon: 'sun'  
-  color: 'yellow'
-
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
     name: A job to say hello
+    branding:
+      icon: 'sun'  
+      color: 'yellow'
     steps:
     - name: Hello world action step
       id: hello
