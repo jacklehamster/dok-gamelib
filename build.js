@@ -192,11 +192,10 @@ function copySource() {
 function minifyEngine() {
 	console.log("Start minifying.");
 	const startTime = Date.now();
+	fs.mkdirSync(`docs/generated/js/engine`, { recursive: true });
+	fs.mkdirSync(`docs/generated/js/editor`, { recursive: true });
+
 	return Promise.all([
-		fs.promises.mkdir(`docs/generated/js/engine`, { recursive: true }),
-		fs.promises.mkdir(`docs/generated/js/editor`, { recursive: true }),
-	])
-	.then(Promise.all([
 		minify({
 			compressor: uglifyES,
 			input: sourceFolders,
@@ -213,7 +212,7 @@ function minifyEngine() {
 				sourceMap: true,
 			},
 	  	}),
-	]))
+	])
 	.then(() => {
 		console.log("Done minifying. Time:", Date.now() - startTime);
 	});
