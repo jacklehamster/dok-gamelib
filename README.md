@@ -1,6 +1,11 @@
 # dok-gamelib
 Dok game library.
 
+![](https://github.com/jacklehamster/dok-gamelib/workflows//workflows/.github/workflows/main.yaml/badge.svg)
+![](https://github.com/jacklehamster/dok-gamelib/workflows//workflows/.github/workflows/gh-pages.yml/badge.svg)
+
+
+
 To build a game, add files to game folder:
 - config.json
 Set basic information such as:
