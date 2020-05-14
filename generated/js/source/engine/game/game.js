@@ -111,7 +111,7 @@ class Game {
 		this.engine.sendScore(score);
 	}
 
-	toSourceCode(_, editor) {
+	toSourceCode() {
 		const { classes, config } = this;
 		const classesParam = {
 			... classes,
@@ -122,6 +122,6 @@ class Game {
 		if (classesParam.SpriteDefinition === SpriteDefinition) {
 			delete classesParam.SpriteDefinition;
 		}
-		return `SceneManager.add(${editor.formatCode(classesParam)}, ${editor.formatCode(config)});`;
+		return `SceneManager.add(${EditorUtils.formatCode(classesParam)}, ${EditorUtils.formatCode(config)});`;
 	}	
 }

@@ -16,6 +16,37 @@
 		<link rel="stylesheet" type="text/css" href="css/game.css" media="print" onload="this.media='all'">
 		<link rel="stylesheet" type="text/css" href="css/night-owl.css" media="print" onload="this.media='all'">
 
+		<style type="text/css">
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  border-left: 16px solid #54a8eb;
+  border-right: 16px solid #84b8fb;
+  border-bottom: 16px solid #a4d8fb;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin .3s linear infinite;
+	width: 100px;
+	height: 100px;
+	margin-top: -50px;
+	margin-left: -50px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	position: fixed;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}			
+	    </style>
 
 
 		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="icons/apple-touch-icon-57x57.png" />
@@ -79,6 +110,9 @@
 	</head>
 
 	<body class="container" style="background-color: black">
+		<div>
+			<div class="loader"></div>
+		</div>
 		<div id="editor" style="display: none" class="editor hidden">
 			<div class="tab-container">
 				<div id="editor-tabs" class="tab-container">
@@ -100,13 +134,17 @@
 				<div id="assets-container" class="assets-container"></div>
 			</div>
 		</div>
-		<div id="panel" class="panel loading">
+		<div id="panel" class="panel loading">			
 			<canvas id="canvas" width=800 height=500></canvas>
 		</div>
 		<script>
 			const engine = new Engine(document.getElementById("canvas"), SceneManager.instance, getData());
 			window.addEventListener("DOMContentLoaded", () => engine.start());
 			window.engine = engine;
+		</script>
+		<script>
+			engine.addEventListener("load", () =>
+				document.querySelector(".loader").style.display = "none");
 		</script>
 		<script src="generated/js/editor/editor.min.js"></script>
 	</body>

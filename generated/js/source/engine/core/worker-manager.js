@@ -21,6 +21,8 @@ class WorkerManager {
 		this.engine.addEventListener("start", e => this.init());
 		this.keyboardPayload = {};
 		this.mousePayload = { type: "mouse" };
+		this.callbackIds = {};
+		this.nextCallbackId = 0;
 	}
 
 	handleMessage(event) {
@@ -39,7 +41,24 @@ class WorkerManager {
 				}
 				break;
 			}
+			case "beautifyCode": {
+				const {data: { callbackId, code }} = event;
+				const callback = this.callbackIds[callbackId];
+				delete this.callbackIds[callbackId];
+				callback(code);
+				break;
+			}
 		}
+	}
+
+	beautifyCode(code, callback) {
+		const callbackId = this.nextCallbackId++;
+		this.callbackIds[callbackId] = callback;		
+		this.worker.postMessage({
+			action: "beautifyCode",
+			callbackId,
+			code,
+		});
 	}
 
 	askWorker(callback) {
@@ -86,7 +105,7 @@ class WorkerManager {
 			action: "import",
 			name: game.name,
 			data: this.engine.data,
-			gameBlob: SourceCode.codeToBlob(game),
+			gameBlob: EditorUtils.codeToBlob(game),
 		});
 	}
 

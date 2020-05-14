@@ -21,7 +21,7 @@ class ShapeUtils {
 		];
 
 		return {
-			toSourceCode: (_,editor) => `ShapeUtils.cube(${editor.formatCode(params)})`,
+			toSourceCode: () => `ShapeUtils.cube(${EditorUtils.formatCode(params)})`,
 			rotationAngle: rotationAngle || [ 0, 0, 0 ],
 			rotation: {
 				angle: [
@@ -60,7 +60,7 @@ class ShapeUtils {
 	static cylinder(params) {
 		const { src, type, cols, rows, radius, center, scale, brightness, tintColor, hue, hidden, spherical, fixed } = params;
 		return {
-			toSourceCode: (_,editor) => `ShapeUtils.cylinder(${editor.formatCode(params)})`,
+			toSourceCode: () => `ShapeUtils.cylinder(${EditorUtils.formatCode(params)})`,
 			src,
 			type: type || SpriteType.Front,
 			cols,

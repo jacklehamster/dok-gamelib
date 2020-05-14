@@ -158,58 +158,12 @@ class SourceCode {
 		document.querySelector('#assets').innerText = `scenes/${this.engine.currentSceneName}/assets`;
 	}
 
-	static formatCode(obj, beautify) {
-		const code = SourceCode.instance.formatCode(obj);
-		return beautify ? Tools.beautify(code, {"wrap_line_length": 100}) : code;
-	}
-
-	static codeToBlob(obj) {
-		const code = SourceCode.instance.formatCode(obj);
-		return URL.createObjectURL( new Blob([code], {type: 'application/javascript'}));
-	}
-
- 	formatCode(obj) {
- 		switch(typeof(obj)) {
- 			case "function":
- 				return obj.toString();
-			case "string":
-				return JSON.stringify(obj);
-			case "object":
-				if (obj.toSourceCode) {
-					return obj.toSourceCode(null, this);
-				}
-				break;
-			case "number":
-				if (obj % 1 === 0 && obj >= 10) {
-					return `${JSON.stringify(obj)} /*0x${obj.toString(16)}*/`;
-				} else {
-					return JSON.stringify(obj);
-				}
-				break;
-			default:
-				return `${obj}`;
- 		}
-
- 		const isArray = Array.isArray(obj);
- 		const result = isArray ? [] : {};
- 		if (isArray) {
- 			const subValues = obj.map((value, index) => `${this.formatCode(value)}\n`).join(",");
- 			return `[ ${subValues} ]`;
- 		} else {
- 			let subValues = "";
-	 		for (let o in obj) {
-	 			if (obj.hasOwnProperty(o)) {
-		 			subValues += `${Tools.isVarName(o)?o:`"${o}"`}: ${this.formatCode(obj[o],)},\n`;
-	 			}
-	 		}
-	 		return `{ ${subValues} }`;
- 		}
- 	}
-
 	render(config) {
 		const sourceCode = document.getElementById("source-code");
-		sourceCode.innerHTML = Tools.highlight("javascript", SourceCode.formatCode(config, true), true).value;
-		sourceCode.style.display = "";
+		this.engine.workerManager.beautifyCode(EditorUtils.formatCode(config, true), code => {
+			sourceCode.innerHTML = code;
+			sourceCode.style.display = "";
+		});
 	}
 
 	renderAssets(assets, videos) {
