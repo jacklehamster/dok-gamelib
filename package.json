@@ -44,6 +44,7 @@
     "trim-image": "^1.0.3"
   },
   "devDependencies": {
+    "browserify": "^16.5.1",
     "compress-images": "^1.7.8",
     "electron": "^8.2.5",
     "forever": "^2.0.0"
