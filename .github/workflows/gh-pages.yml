@@ -7,9 +7,6 @@ on:
 
 jobs:
   deploy:
-    branding:
-      icon: 'star'  
-      color: 'green'
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
