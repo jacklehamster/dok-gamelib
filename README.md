@@ -49,3 +49,5 @@ game
 ## Deploy
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/jacklehamster/dok-gamelib)
+
+Game produced: https://jacklehamster.github.io/dok-gamelib/archive/game.zip
