@@ -13,6 +13,7 @@
   */
 
 if (typeof(window) === 'undefined') {
+	var window = self;
 
 	self.importScripts(
 		'../lib/gl-matrix.js',
@@ -56,6 +57,8 @@ if (typeof(window) === 'undefined') {
 		'../game/game.js',
 		"../scene-manager/scene-manager.js",
 		"../ui/ui-renderer.js",
+		'../../lib/json-compact.js',
+		'../../editor/editor/editor-utils.js',
 		'worker-data-store.js',
 		'worker-engine.js',
 		'worker-newgrounds.js',
@@ -144,6 +147,16 @@ if (typeof(window) === 'undefined') {
 			case "visibilitychange": {
 				const {data: {hidden}} = event;
 				windowStatus.hidden = hidden;
+				break;
+			}
+			case "beautifyCode": {
+				const {data: {code, callbackId}} = event;
+				const newCode = Tools.highlight("javascript", code, true).value;
+				self.postMessage({
+					action: "beautifyCode",
+					code: newCode,
+					callbackId,
+				});				
 				break;
 			}
 		}

@@ -14,13 +14,24 @@
 
 class Engine {
 	constructor(canvas, sceneManager, data) {
-		canvas.focus();
 		this.canvas = canvas;
 		this.sceneManager = sceneManager;
 		this.data = data;
 		this.onSceneChangeListener = [];
 		this.onLoopListener = [];
 		this.onStartListener = [];
+		this.onLoadListener = [];
+	}
+
+	start() {
+		this.init();
+		this.onStartListener.forEach(listener => listener(this));
+		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
+//		console.log("start scene:", this.currentScene.name);
+	}
+
+	init() {
+		this.canvas.focus();
 		this.gl = this.initCanvasGL(canvas);
 		this.dataStore = new DataStore(localStorage);
 		this.workerManager = new WorkerManager(this, this.dataStore);
@@ -55,11 +66,13 @@ class Engine {
 		//	load texture
 		this.spritesheetManager.fetchImages(
 			progress => console.log(progress.toFixed(2) + "%"),
-			images => images.forEach((image, index) => this.textureManager.setImage(index, image)),
+			images => images.forEach((image, index) => {
+				this.textureManager.setImage(index, image);
+				this.onLoadListener.forEach(callback => callback());
+			}),
 			errors => console.error(errors)
 		);
-
-		this.addEventListener("start", () => this.importScenes());
+		this.addEventListener("start", () => this.importScenes());		
 	}
 
 	initCanvasGL(canvas) {
@@ -129,12 +142,6 @@ class Engine {
 		}
 	}
 
-	start() {
-		this.onStartListener.forEach(listener => listener(this));
-		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
-//		console.log("start scene:", this.currentScene.name);
-	}
-
 	isEditor() {
 		const match = location.search.match(/\beditor=([a-zA-Z0-9_]+)\b/);
 		return match && match[1] ? match[1] === 1 || match[1] === "true" : this.data.generated.game.editor;
@@ -178,6 +185,8 @@ class Engine {
 				return this.onLoopListener;
 			case "start":
 				return this.onStartListener;
+			case "load":
+				return this.onLoadListener;
 		}
 	}
 

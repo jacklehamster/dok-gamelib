@@ -35,7 +35,7 @@ class TextUtils {
 		const linePositions = [];
 		const indices = [];
 		return {
-			toSourceCode: (_,editor) => `TextUtils.makeSprite(${editor.formatCode(params)})`,
+			toSourceCode: () => `TextUtils.makeSprite(${EditorUtils.formatCode(params)})`,
 			fontId : fontId || (({game}) => game.getFirstFontName()),
 			src: ({definition}) => definition.fontId.get(),
 			effects,

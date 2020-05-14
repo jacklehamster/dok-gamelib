@@ -57,7 +57,7 @@ class SpriteUtils {
 		];
 
 		return {
-			toSourceCode: (_,editor) => `SpriteUtils.makeSprite(${editor.formatCode(params)})`,
+			toSourceCode: () => `SpriteUtils.makeSprite(${EditorUtils.formatCode(params)})`,
 			id,
 			init,
 			refresh,
