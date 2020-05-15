@@ -291,32 +291,6 @@ SceneManager.add({Game: class extends Game {
 		},
 	],
 	sprites: [
-		// ShapeUtils.cylinder({
-		// 	src: "wall",
-		// 	type: SpriteType.Front,
-		// 	cols: 40, rows: 15,
-		// 	radius: ({game: { levelMap }, definition: {id}}) => levelMap['upper-level'].size / 2 + .05,
-		// 	center: [
-		// 		({game}) => game.getDefinition("upper-level").pos[0].get(),
-		// 		-1,
-		// 		({game}) => game.getDefinition("upper-level").pos[2].get(),
-		// 	],
-		// 	scale: [ 1.4, 1 ],
-		// 	brightness: 80,
-		// 	spherical: true,
-		// 	fixed: true,
-		// 	hidden: ({game, definition}, index) => {
-		// 		const floorDefinition = game.getDefinition("lower-level");
-		// 		if (floorDefinition) {
-		// 			const posX = definition.pos[0].get(index);
-		// 			const posZ = definition.pos[2].get(index);
-		// 			if (SpriteUtils.overlap(posX, posZ, floorDefinition, 0, .95)) {
-		// 				return true;
-		// 			}
-		// 		}
-		// 		return false;
-		// 	},
-		// }),
 		{	//	upper level
 			id: "upper-level",
 			src: "wall",
@@ -347,29 +321,6 @@ SceneManager.add({Game: class extends Game {
 			brightness: 110,
 			fixed: true,
 		}),
-		// ShapeUtils.cylinder({
-		// 	src: "wall",
-		// 	type: SpriteType.Front,
-		// 	cols: 80, rows: 10,
-		// 	radius: ({game}) => game.getDefinition("lower-level").size.get() / 2 - .2,
-		// 	center: [
-		// 		({game}) => game.getDefinition("lower-level").pos[0].get(),
-		// 		-2.65,
-		// 		({game}) => game.getDefinition("lower-level").pos[2].get(),
-		// 	],
-		// 	scale: [ .8, 1 ],
-		// 	brightness: 80,
-		// 	hidden: ({game, definition}, index) => {
-		// 		const posX = definition.pos[0].get(index);
-		// 		const posZ = definition.pos[2].get(index);
-		// 		if (SpriteUtils.overlap(posX, posZ, game.getDefinition("upper-level"), 0, .97)
-		// 			|| SpriteUtils.overlap(posX, posZ, game.getDefinition("entrance"), 0, .5)) {
-		// 			return true;
-		// 		}
-		// 		return false;
-		// 	},			
-		// 	fixed: true,
-		// }),
 		{
 			id: "entrance",
 			src: "wall",

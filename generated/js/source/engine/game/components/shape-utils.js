@@ -10,7 +10,8 @@
 
 class ShapeUtils {
 	static cube(params) {
-		let { position, topSrc, sideSrc, scale, hidden, cubeCount, topAnimation, sideAnimation, fixed, rotationAngle, } = params;
+		let { position, topSrc, sideSrc, scale, hidden, cubeCount, topAnimation, sideAnimation, fixed, rotationAngle,
+			brightness, tintColor, hue } = params;
 
 		const SPRITE_TYPES = [
 			{ type: SpriteType.Floor, 		offset: [ 0, 1, 0] },
@@ -37,6 +38,14 @@ class ShapeUtils {
 			},
 			topSrc,
 			sideSrc,
+			cubeTintColor: !tintColor ? 0 : tintColor,
+			cubeBrightness: !brightness ? 100 : brightness,
+			cubeHue: !hue ? 0 : hue,
+			effects: {
+				tintColor: ({definition}, index) => definition.cubeTintColor.get(Math.floor(index / SPRITE_TYPES.length)),
+				brightness: ({definition}, index) => definition.cubeBrightness.get(Math.floor(index / SPRITE_TYPES.length)),
+				hue: ({definition}, index) => definition.cubeHue.get(Math.floor(index / SPRITE_TYPES.length)),
+			},
 			src: ({definition}, index) => SpriteType.Floor === definition.type.get(index) ? definition.topSrc.get(Math.floor(index / SPRITE_TYPES.length)) : definition.sideSrc.get(Math.floor(index / SPRITE_TYPES.length)),
 			type: (_, index) => SPRITE_TYPES[index % SPRITE_TYPES.length].type,
 			cubeHidden: hidden || false,

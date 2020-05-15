@@ -1405,6 +1405,7 @@ SceneManager.add({Game: class extends Game {
 				const { active } = sceneData.cells[index];
 				return active <= 0 && now + active > 1000;
 			},
+			brightness: ({definition}, index) => 120 + 15 * definition.position[1].get(index),
 		}),
 		ShapeUtils.cube({
 			topSrc: "selector",
