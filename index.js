@@ -11,6 +11,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
 const assets = require('./lib/assets');
 const zip = require('./lib/zip');
 const template = require('./lib/template');
@@ -189,6 +190,16 @@ app.get('/fonts', (req, res) => {
 });
 
 app.use(express.static(`${__dirname}/${webDir}`));
+
+
+
+app.all('/', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+ });
+app.use(cors());
+
 
 const { io, server } = socket.serveSocket(app);
 
