@@ -50,30 +50,45 @@ class SceneUI extends ISceneUI {
 
 	setParent(elementId, parent) {
 		const { elements } = this;
+		if (!elements[elementId]) {
+			return;
+		}
 		elements[elementId].parent = parent;
 		elements[elementId].needReparent = true;		
 	}
 
 	setClass(elementId, classList) {
 		const { elements } = this;
+		if (!elements[elementId]) {
+			return;
+		}
 		const { dom } = elements[elementId];
 		dom.classList.add(...classList.split(" "));
 	}
 
 	setStyle(elementId, s, value) {
 		const { elements } = this;
+		if (!elements[elementId]) {
+			return;
+		}
 		const { dom } = elements[elementId];
 		dom.style[s] = value;		
 	}
 
 	setText(elementId, text) {
 		const { elements } = this;
+		if (!elements[elementId]) {
+			return;
+		}
 		const { dom } = elements[elementId];
 		dom.innerText = text;		
 	}
 
 	setSize(elementId, width, height) {
 		const { elements } = this;
+		if (!elements[elementId]) {
+			return;
+		}
 		const { dom } = elements[elementId];
 		if (width) {
 			dom.width = width;
@@ -85,11 +100,17 @@ class SceneUI extends ISceneUI {
 
 	setCanvas(elementId, canvas) {
 		const { elements } = this;
+		if (!elements[elementId]) {
+			return;
+		}
 		elements[elementId].canvas = canvas;
 	}
 
 	removeElement(elementId) {
 		const { elements } = this;
+		if (!elements[elementId]) {
+			return;
+		}
 		const { dom } = elements[elementId];
 		if (dom.parentElement) {
 			dom.parentElement.removeChild(dom);

@@ -289,6 +289,11 @@ SceneManager.add({Game: class extends Game {
 				[ "moving", "0-3" ],
 			],
 		},
+		{
+			id: "robo",
+			src: "roboface",
+			grid: [10, 1],
+		}
 	],
 	sprites: [
 		{	//	upper level
@@ -349,7 +354,6 @@ SceneManager.add({Game: class extends Game {
 			fixed: true,
 		},
 
-		//	robot:
 		ShapeUtils.cube({
 			topSrc: "dirt-ground",
 			sideSrc: "dirt-ground",
@@ -365,6 +369,7 @@ SceneManager.add({Game: class extends Game {
 			],
 			cubeCount: ({game}) => game.robots.length,
 		}),
+
 		{
 			src: "roboface",
 			type: SpriteType.Front,
