@@ -14,6 +14,7 @@ const fs = require('fs');
 const assets = require('./lib/assets');
 const zip = require('./lib/zip');
 const template = require('./lib/template');
+const socket = require('./lib/socket');
 const stringify = require("json-stringify-pretty-compact");
 const colors = require('colors');
 const minify = require('@node-minify/core');
@@ -61,14 +62,15 @@ const editorFolders = [
 	'src/editor/**/*.js',
 ];
 
-//	SOCKET IO
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
-
 
 const TEXTURE_SIZE = 4096;
 
-
+//ENABLE CORS
+app.all('/', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+ });
 
 app.get('/', function (req, res) {
 	const release = req.query.release && req.query.release !== 'false';
@@ -188,6 +190,9 @@ app.get('/fonts', (req, res) => {
 
 app.use(express.static(`${__dirname}/${webDir}`));
 
-const httpServer = app.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));
+const { io, server } = socket.serveSocket(app);
+
+
+const httpServer = server.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));
 httpServer.timeout = 5 * 60 * 1000;
 

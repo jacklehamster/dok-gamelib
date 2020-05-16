@@ -111,17 +111,23 @@ if (typeof(window) === 'undefined') {
 			}
 			case "keydown": {
 				const {data: { code }} = event;
-				workerEngine.keyboard.onKeyDown(code);
+				if (workerEngine) {
+					workerEngine.keyboard.onKeyDown(code);
+				}
 				break;
 			}
 			case "keyup": {
 				const {data: { code }} = event;
-				workerEngine.keyboard.onKeyUp(code);
+				if (workerEngine) {
+					workerEngine.keyboard.onKeyUp(code);
+				}
 				break;
 			}
 			case "mouse": {
 				const {data: {x,y,mouseDown}} = event;
-				mouse.onMouse(x,y,mouseDown);
+				if (workerEngine) {
+					mouse.onMouse(x,y,mouseDown);
+				}
 				break;
 			}
 			case "returnBuffer": {
