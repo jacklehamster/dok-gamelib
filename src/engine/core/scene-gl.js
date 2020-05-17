@@ -48,6 +48,7 @@ class SceneGL extends ISceneGL {
 		const aspect = gl.canvas.width / gl.canvas.height;
 		mat4.perspective(projectionMatrix, fieldOfView, aspect, near, far);
 		gl.uniformMatrix4fv(shader.programInfo.projection, false, projectionMatrix);
+		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 	}
 
 	setViewPosition(x, y, z, tilt, turn, cameraDistance) {

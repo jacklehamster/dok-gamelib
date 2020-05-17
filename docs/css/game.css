@@ -17,6 +17,10 @@ html, body {
     overflow: hidden;
 }
 
+canvas {
+  transition: width .2s ease-in, height .2s ease-in;  
+}
+
 .container {
   display: flex;
   flex-direction: column;

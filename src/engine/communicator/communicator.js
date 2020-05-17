@@ -211,6 +211,11 @@ class Communicator {
 					glRenderer.setVisibleChunks(count);
 					break;
 				}
+				case Commands.VIEW_RESIZE: {
+					const width = floatBuffer[index++];
+					const height = floatBuffer[index++];
+					engine.resize(width, height);
+				}
 			}
 		}
 

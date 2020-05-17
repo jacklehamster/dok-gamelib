@@ -61,6 +61,7 @@ class SpriteDefinitionProcessor {
 			const sprite = spriteProvider.getSprite(definitionIndex, i);
 			if (sprite.shouldEvaluate(scene.now)) {
 				sprite.getEvaluated(scene, definition);
+				sprite.forceAll = false;
 			} else {
 				sprite.skipProcess = true;
 			}

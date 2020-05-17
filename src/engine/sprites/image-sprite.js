@@ -43,31 +43,31 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 		const { instanceIndex, updateTimes } = this;
 		const { now } = game;
 		const spriteSrc = src.get(instanceIndex);
-		if (spriteSrc !== this.src) {
+		if (this.forceAll || spriteSrc !== this.src) {
 			this.src = spriteSrc;
 			updateTimes.src = now;
 		}
 
 		const newBrightness = brightness.get(instanceIndex);
-		if (newBrightness !== this.effects.brightness) {
+		if (this.forceAll || newBrightness !== this.effects.brightness) {
 			this.effects.brightness = newBrightness;
 			updateTimes.brightness = now;
 		}
 
 		const newTintColor = tintColor.get(instanceIndex);
-		if (newTintColor !== this.effects.tintColor) {
+		if (this.forceAll || newTintColor !== this.effects.tintColor) {
 			this.effects.tintColor = newTintColor;
 			updateTimes.tintColor = now;
 		}
 
 		const newCurvature = curvature.get(instanceIndex);
-		if (newCurvature !== this.effects.curvature) {
+		if (this.forceAll || newCurvature !== this.effects.curvature) {
 			this.effects.curvature = newCurvature;
 			updateTimes.curvature = now;
 		}
 
 		const newHue = hue.get(instanceIndex);
-		if (newHue !== this.effects.hue) {
+		if (this.forceAll || newHue !== this.effects.hue) {
 			this.effects.hue = newHue;
 			updateTimes.hue = now;
 		}
@@ -75,14 +75,14 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 		const newBlackholeCenterX = blackhole.center[0].get(instanceIndex);
 		const newBlackholeCenterY = blackhole.center[1].get(instanceIndex);
 		const newBlackholeCenterZ = blackhole.center[2].get(instanceIndex);
-		if (!Utils.equal3(this.effects.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ)) {
+		if (this.forceAll || !Utils.equal3(this.effects.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ)) {
 			Utils.set3(this.effects.blackhole.center, newBlackholeCenterX, newBlackholeCenterY, newBlackholeCenterZ);
 			updateTimes.blackholeCenter = now;
 		}
 
 		const newBlackholeStrength = blackhole.strength.get(instanceIndex);
 		const newBlackholeDistance = blackhole.distance.get(instanceIndex);
-		if (this.effects.blackhole.strength !== newBlackholeStrength || this.effects.blackhole.distance !== newBlackholeDistance) {
+		if (this.forceAll || this.effects.blackhole.strength !== newBlackholeStrength || this.effects.blackhole.distance !== newBlackholeDistance) {
 			this.effects.blackhole.strength = newBlackholeStrength;
 			this.effects.blackhole.distance = newBlackholeDistance;
 			updateTimes.blackholeInfo = now;
@@ -91,7 +91,7 @@ class ImageSpriteInstance extends BaseSpriteInstance {
 		const newChromaKeyLow = chromaKey.range[0].get(instanceIndex);
 		const newChromaKeyHigh = chromaKey.range[1].get(instanceIndex);
 		const newChromaKeyColor = chromaKey.color.get(instanceIndex);
-		if (this.effects.chromaKey.range[0] !== newChromaKeyLow || this.effects.chromaKey.range[1] !== newChromaKeyHigh ||
+		if (this.forceAll || this.effects.chromaKey.range[0] !== newChromaKeyLow || this.effects.chromaKey.range[1] !== newChromaKeyHigh ||
 			this.effects.chromaKey.color !== newChromaKeyColor) {
 			this.effects.chromaKey.range[0] = newChromaKeyLow;
 			this.effects.chromaKey.range[1] = newChromaKeyHigh;

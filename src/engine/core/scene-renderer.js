@@ -25,6 +25,7 @@ class SceneRenderer {
 			cameraDistance: 0,
 			range: [0, 0],
 			curvature: 0,
+			viewPort: [0, 0],
 			depthEffect: {
 				fading: 0,
 				saturation: [0, 0],
@@ -49,7 +50,7 @@ class SceneRenderer {
 	render(scene) {
 		const { renderer, background, domManager, mediaManager } = this;
 		const { settings, view, light } = scene;
-		const { depthEffect } = view;
+		const { depthEffect, viewPort } = view;
 
 		const newBackground = settings.background.get();
 		if (newBackground !== background) {
@@ -115,10 +116,20 @@ class SceneRenderer {
 			renderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newTilt, newTurn, -newCameraDistance);
 		}
 
+		let didChangeViewport = false;
+		const newViewportWidth = viewPort[0].get();
+		const newViewportHeight = viewPort[1].get();
+		if (this.view.viewPort[0] !== newViewportWidth || this.view.viewPort[1] !== newViewportHeight) {
+			this.view.viewPort[0] = newViewportWidth;
+			this.view.viewPort[1] = newViewportHeight;
+			renderer.setViewport(this.view.viewPort[0], this.view.viewPort[1]);
+			didChangeViewport = true;
+		}
+
 		const newNear = view.range[0].get();
 		const newFar = view.range[1].get();
 		const newViewAngle = view.viewAngle.get();
-		if (this.view.viewAngle !== newViewAngle || this.view.range[0] !== newNear || this.view.range[1] !== newFar) {
+		if (this.view.viewAngle !== newViewAngle || this.view.range[0] !== newNear || this.view.range[1] !== newFar || didChangeViewport) {
 			this.view.range[0] = newNear;
 			this.view.range[1] = newFar;
 			this.view.viewAngle = newViewAngle;

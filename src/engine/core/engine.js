@@ -79,13 +79,7 @@ class Engine {
 	}
 
 	initCanvasGL(canvas) {
-		const { width, height } = this.data.generated.game;
-		const resolution = devicePixelRatio;
-		canvas.width = width * resolution;
-		canvas.height = height * resolution;
-		canvas.style.width = `${canvas.width / resolution}px`;
-		canvas.style.height = `${canvas.height / resolution}px`;
-
+		this.resize(canvas.width, canvas.height);
 		const webGLOptions = {
 			antialias: false,
 			preserveDrawingBuffer: false,
@@ -109,6 +103,14 @@ class Engine {
 		gl.depthFunc(gl.LEQUAL);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);	
 		return gl;
+	}
+
+	resize(width, height) {
+		const resolution = devicePixelRatio;
+		canvas.width = Math.round(width * resolution);
+		canvas.height = Math.round(height * resolution);
+		canvas.style.width = `${Math.round(canvas.width / resolution)}px`;
+		canvas.style.height = `${Math.round(canvas.height / resolution)}px`;		
 	}
 
 	applyExtensions(gl) {

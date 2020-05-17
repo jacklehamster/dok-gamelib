@@ -36,6 +36,10 @@ class EngineSceneRenderer {
 		this.loadToBuffer(Commands.SCENE_LIGHT, x, y, z, ambient, diffusionStrength, specularStrength, shininess);
 	}
 
+	setViewport(width, height) {
+		this.loadToBuffer(Commands.VIEW_RESIZE, width, height);
+	}
+
 	setDepthEffect(fading, closeSaturation, farSaturation) {
 		this.loadToBuffer(Commands.SCENE_DEPTHEFFECT, fading, closeSaturation, farSaturation);
 	}	

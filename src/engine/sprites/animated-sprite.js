@@ -41,7 +41,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		const { now } = game;
 
 		const newCircleRadius = circleRadius.get(instanceIndex);
-		if (newCircleRadius !== this.circleRadius) {
+		if (this.forceAll || newCircleRadius !== this.circleRadius) {
 			this.circleRadius = newCircleRadius;
 			updateTimes.circleRadius = now;
 		}
@@ -52,32 +52,32 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		if (spriteDataProcessorInfo) {
 			const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, frameRate, animations, first } = spriteDataProcessorInfo;
 			const newPadding = padding;
-			if (newPadding !== spriteData.padding) {
+			if (this.forceAll || newPadding !== spriteData.padding) {
 				spriteData.padding = newPadding;
 				updateTimes.padding = now;
 			}
 
-			if (spriteData.spriteSize[0] !== spriteWidth || spriteData.spriteSize[1] !== spriteHeight) {
+			if (this.forceAll || spriteData.spriteSize[0] !== spriteWidth || spriteData.spriteSize[1] !== spriteHeight) {
 				spriteData.spriteSize[0] = spriteWidth;
 				spriteData.spriteSize[1] = spriteHeight;
 				updateTimes.spriteSize = now;
 			}
 
-			if (spriteData.grid[0] !== cols || spriteData.grid[1] !== rows) {
+			if (this.forceAll || spriteData.grid[0] !== cols || spriteData.grid[1] !== rows) {
 				spriteData.grid[0] = cols;
 				spriteData.grid[1] = rows;
 				updateTimes.grid = now;
 			}
 
 			const newFrameRate = animationOverrideActive ? animationOverride.frameRate.get(instanceIndex) : frameRate;
-			if (spriteData.frameRate !== newFrameRate) {
+			if (this.forceAll || spriteData.frameRate !== newFrameRate) {
 				spriteData.frameRate = newFrameRate;
 				updateTimes.frameRate = now;
 				this.animationUpdateTime = now;
 			}
 
 			for (let a in animations) {
-				if (!spriteData.animations[a] || animations[a].timeUpdated === now) {
+				if (this.forceAll || !spriteData.animations[a] || animations[a].timeUpdated === now) {
 					spriteData.animations[a] = animations[a];
 					updateTimes.animations = now;
 				}
@@ -90,19 +90,19 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 				}
 			}
 
-			if (spriteData.first !== first) {
+			if (this.forceAll || spriteData.first !== first) {
 				spriteData.first = first;
 				updateTimes.first = now;
 			}
 		} else {
 			const newPadding = 0;
-			if (newPadding !== spriteData.padding) {
+			if (this.forceAll || newPadding !== spriteData.padding) {
 				spriteData.padding = newPadding;
 				updateTimes.padding = now;
 			}
 
 			const spriteWidth = 0, spriteHeight = 0;
-			if (spriteData.spriteSize[0] !== spriteWidth || spriteData.spriteSize[1] !== spriteHeight) {
+			if (this.forceAll || spriteData.spriteSize[0] !== spriteWidth || spriteData.spriteSize[1] !== spriteHeight) {
 				spriteData.spriteSize[0] = spriteWidth;
 				spriteData.spriteSize[1] = spriteHeight;
 				updateTimes.spriteSize = now;
@@ -110,14 +110,14 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 
 			const animCols = 1;
 			const animRows = 1;
-			if (spriteData.grid[0] !== animCols || spriteData.grid[1] !== animRows) {
+			if (this.forceAll || spriteData.grid[0] !== animCols || spriteData.grid[1] !== animRows) {
 				spriteData.grid[0] = animCols;
 				spriteData.grid[1] = animRows;
 				updateTimes.grid = now;
 			}
 
 			const newFrameRate = animationOverrideActive ? animationOverride.frameRate.get(instanceIndex) : 0;
-			if (spriteData.frameRate !== newFrameRate) {
+			if (this.forceAll || spriteData.frameRate !== newFrameRate) {
 				spriteData.frameRate = newFrameRate;
 				updateTimes.frameRate = now;
 				this.animationUpdateTime = now;
@@ -131,14 +131,14 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 		if (animationOverrideActive) {
 			const newAnimationStart = animationOverride.start.get(instanceIndex);
 			const newAnimationLength = animationOverride.range.get(instanceIndex);
-			if (newAnimationStart !== this.animationRange[0] || newAnimationLength !== this.animationRange[1]) {
+			if (this.forceAll || newAnimationStart !== this.animationRange[0] || newAnimationLength !== this.animationRange[1]) {
 				this.animationRange[0] = newAnimationStart;
 				this.animationRange[1] = newAnimationLength;
 				updateTimes.animationRange = now;
 			}
 		} else {
 			const newAnimation = animation.get(instanceIndex) || this.spriteData.first;
-			if (newAnimation !== this.animation) {
+			if (this.forceAll || newAnimation !== this.animation) {
 				this.singleFrameAnimation = !isNaN(newAnimation);
 				this.animation = newAnimation;
 				this.animationUpdateTime = now;
@@ -147,7 +147,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 			if (this.singleFrameAnimation) {
 				const newAnimationStart = parseInt(this.animation || frame.get(instanceIndex));
 				const newAnimationLength = 1;
-				if (newAnimationStart !== this.animationRange[0] || newAnimationLength !== this.animationRange[1]) {
+				if (this.forceAll || newAnimationStart !== this.animationRange[0] || newAnimationLength !== this.animationRange[1]) {
 					this.animationRange[0] = newAnimationStart;
 					this.animationRange[1] = newAnimationLength;
 					updateTimes.animationRange = now;
@@ -158,7 +158,7 @@ class AnimatedSpriteInstance extends ImageSpriteInstance {
 				const range = animationList ? animationList[animationFrame % animationList.length] : null;
 				const newAnimationStart = range ? range[0] : 0;
 				const newAnimationLength = range ? range[1] : 1;
-				if (newAnimationStart !== this.animationRange[0] || newAnimationLength !== this.animationRange[1]) {
+				if (this.forceAll || newAnimationStart !== this.animationRange[0] || newAnimationLength !== this.animationRange[1]) {
 					this.animationRange[0] = newAnimationStart;
 					this.animationRange[1] = newAnimationLength;
 					updateTimes.animationRange = now;

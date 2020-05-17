@@ -43,7 +43,7 @@ class SpriteUtils {
 
 	static makeSprite(params) {
 		const { id, position, heightAboveGround, shadowColor, spriteTint, scale, spriteSize, src,
-			animation, init, refresh, refreshRate, hidden, spriteCount, fixed } = params;
+			animation, init, refresh, refreshRate, hidden, spriteCount, fixed, data } = params;
 
 		const zoomValue = ({definition}) => {
 			const spriteWidth = definition.spriteSize[0].get(),
@@ -67,6 +67,7 @@ class SpriteUtils {
 		return {
 			toSourceCode: () => `SpriteUtils.makeSprite(${EditorUtils.formatCode(params)})`,
 			id,
+			data,
 			init,
 			refresh,
 			refreshRate,

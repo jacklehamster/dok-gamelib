@@ -1,8 +1,6 @@
 {
 	"title": "Hello World",
 	"description": "Description",
-	"width": 800,
-	"height": 500,
 	"fonts": {
 		"primary-font": {
 			"name": "Arctic",
