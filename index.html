@@ -146,6 +146,13 @@
 		<script>
 			engine.addEventListener("load", () =>
 				document.querySelector(".loader").style.display = "none");
+			engine.addEventListener("pause", paused => {
+				if (paused) {
+					document.querySelector(".panel").classList.add("paused");
+				} else {
+					document.querySelector(".panel").classList.remove("paused");					
+				}
+			});
 		</script>
 		<script src="generated/js/editor/editor.min.js"></script>
 	</body>
