@@ -100,6 +100,7 @@
 		<script>SceneManager.loadingSceneName = "{{.}}";</script>
 		<script src="generated/js/source/game/scenes/{{.}}/start.js"></script>
 {{/obj.scenes}}		
+		<script src="https://dobuki.herokuapp.com/socket.io/socket.io.js"></script>
 	</head>
 
 	<body class="container" style="background-color: black">
@@ -149,12 +150,12 @@
 {{/obj.release}}
 	</body>
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-  const socket = io();
+{{! <script>
+  const socket = io.connect('https://dobuki.herokuapp.com/');
 	socket.on('chat message', function(msg){
 		console.log(msg);
-    });  
+    });
+	socket.on('error', e => { console.log('error', e); });
 </script>
-
+ }}
 </html>

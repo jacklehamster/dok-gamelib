@@ -18,7 +18,7 @@ SceneManager.add({Game: class extends Game {
 		this.currentLevel = null;
 		this.closeElement = null;
 		this.levels = [
-			{ name: "tree", height: 2, size: 1.5 },
+			{ name: "tree", height: 0, size: 1.5 },
 			{ name:"bed", height: 1.2, size: 6 },
 			{ name:"upper-level", height: 0, size: 16 },
 			{ name:"lower-level", height:-2, size: 20 },
@@ -83,7 +83,7 @@ SceneManager.add({Game: class extends Game {
 	}
 
 	onClosedTo(name) {
-		console.log("close to", name)
+//		console.log("close to", name)
 	}
 
 	loop() {
@@ -178,13 +178,19 @@ SceneManager.add({Game: class extends Game {
 			}
 			const definition = this.getDefinition(name);
 			if (definition) {
-				const centerX = definition.pos[0].get();
-				const centerZ = definition.pos[2].get();
-				const dx = centerX - px;
-				const dz = centerZ - pz;
-				const dist = Math.sqrt(dx * dx + dz * dz);
-				if (dist < size / 2 + distance) {
-					return this.levels[i];
+				const count = definition.count ? definition.count.get() : 1;
+				for (let instanceIndex = 0; instanceIndex < count; instanceIndex++) {
+					if (definition.shadow && definition.shadow.get(instanceIndex)) {
+						continue;
+					}
+					const centerX = definition.pos[0].get(instanceIndex);
+					const centerZ = definition.pos[2].get(instanceIndex);
+					const dx = centerX - px;
+					const dz = centerZ - pz;
+					const dist = Math.sqrt(dx * dx + dz * dz);
+					if (dist < size / 2 + distance) {
+						return this.levels[i];
+					}
 				}
 			}
 		}
@@ -454,10 +460,52 @@ SceneManager.add({Game: class extends Game {
 			// 	}
 			// },
 		}),
+		SpriteUtils.makeSprite({
+			init: ({game}) => {
+				game.trees = [
+					{
+						position: [-8, -2, 17],
+					},
+					{
+						position: [-6, -2, 14],
+					},
+					{
+						position: [-6, -2, 20],
+					},
+				];
+			},
+			id: "tree",
+			src: "tree",
+			position: [
+				({game}, index) => game.trees[index].position[0],
+				({game}, index) => game.trees[index].position[1],
+				({game}, index) => game.trees[index].position[2],
+			],
+			scale: [3, 3],
+			shadowColor: 0xFF333333,
+			fixed: true,
+			spriteCount: ({game}) => game.trees.length,
+		}),
 		// SpriteUtils.makeSprite({
 		// 	id: "tree",
 		// 	src: "tree",
-		// 	position: [-1, 0, -1],
+		// 	position: [
+		// 		-6,
+		// 		-2,
+		// 		15-1,
+		// 	],
+		// 	scale: [3, 3],
+		// 	shadowColor: 0xFF333333,
+		// 	fixed: true,
+		// }),
+		// SpriteUtils.makeSprite({
+		// 	id: "tree",
+		// 	src: "tree",
+		// 	position: [
+		// 		-6,
+		// 		-2,
+		// 		21-1,
+		// 	],
 		// 	scale: [3, 3],
 		// 	shadowColor: 0xFF333333,
 		// 	fixed: true,

@@ -183,21 +183,21 @@ class ISpriteRenderer {
 			if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
 				|| updateTimes.spriteSize === now || updateTimes.circleRadius === now || updateTimes.grid === now || updateTimes.padding === now
 			) {
-				const { src, spriteData: { spriteSize, grid, padding }, scale, effects: { brightness }, circleRadius } = sprite;
+				const { src, spriteData: { spriteSize, grid, padding }, scale, effects: { brightness }, circleRadius, hidden } = sprite;
 				if (!src) {
 					this.setTexture(sprite, 0, 0, 0, 0, 0, scale, brightness, padding, 0, now);
 				} else {
 					const spriteDataProcessorInfo = spriteDataProcessor.data[src];
 					const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src) || spriteDataProcessorInfo && imagedata.sprites[spriteDataProcessorInfo.src];
 					if (!spriteInfo) {
-						if (!videos[src]) {
+						if (!videos[src] && !hidden) {
 							const error = `Unknown sprite '${src}'.`;
 							if (this.lastError !== error) {
 								this.lastError = error;
 								console.warn(this.lastError);
 							}
 						}
-						this.setTexture(sprite, 0, 0, 0, 0, 0, scale, brightness, padding, 0, now);
+//						this.setTexture(sprite, 0, 0, 0, 0, 0, scale, brightness, padding, 0, now);
 						sprite.src = null;
 						continue;
 					}

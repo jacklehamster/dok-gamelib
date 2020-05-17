@@ -25,6 +25,8 @@ const KEY_UP = "ArrowUp";
 const KEY_DOWN = "ArrowDown";
 const KEY_TURN_RIGHT_E = 'KeyE';
 const KEY_TURN_LEFT_Q = 'KeyQ';
+const KEY_TURN_LEFT_METARIGHT = 'MetaRight';
+const KEY_TURN_RIGHT_ALTRIGHT = 'AltRight';
 const KEY_TURN_LEFT_BRACKET = 'BracketLeft';
 const KEY_TURN_RIGHT_BRACKET = 'BracketRight';
 
@@ -157,7 +159,7 @@ class Keyboard {
 		const { keyboard: { controls }, listener, active } = this;
 		switch(key) {
 			case KEY_TURN_LEFT_Q:
-			case KEY_TURN_LEFT_BRACKET:
+			case KEY_TURN_LEFT_METARIGHT:
 				if (down && controls.turnLeft <= 0) {
 					controls.turnLeft = now;
 					if (active) {
@@ -173,7 +175,7 @@ class Keyboard {
 				}
 				break;
 			case KEY_TURN_RIGHT_E:
-			case KEY_TURN_RIGHT_BRACKET:
+			case KEY_TURN_RIGHT_ALTRIGHT:
 				if (down && controls.turnRight <= 0) {
 					controls.turnRight = now;
 					if (active) {

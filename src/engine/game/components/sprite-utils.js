@@ -9,6 +9,14 @@
 
 
 class SpriteUtils {
+	static getOrientationCycle(spriteAngle, viewTurn, cycleCount) {
+		const angleCycle = Math.PI * 2;
+		const rotation = spriteAngle - viewTurn;
+		const dir = Math.round(((rotation % angleCycle + angleCycle) % angleCycle) * cycleCount / angleCycle) % cycleCount;
+		return dir;
+	}
+
+
 	static overlap(x, z, definition, instanceIndex, multiplier) {
 		const mul = multiplier || 1;
 		const index = instanceIndex || 0;
@@ -92,6 +100,7 @@ class SpriteUtils {
 			],
 			fixed,
 			spriteCount: spriteCount || 1,
+			shadow: (_,index) => index % 2 === 1,
 			count: ({definition}) => definition.spriteCount.get() * 2,
 		};
 	}

@@ -35,6 +35,7 @@ class Engine {
 		this.sceneUI = new SceneUI(this.canvas, this.workerManager, this.canvasRenderer);
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
+		this.socket = new Socket();
 		this.focusFixer = new FocusFixer(canvas);
 
 		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
@@ -44,12 +45,12 @@ class Engine {
 		this.keyboard = new Keyboard(this.workerManager, document, {});
 		this.mouse = new Mouse(this.workerManager, canvas, document, {});
 
-		document.addEventListener("visibilitychange", (event) => {
+		document.addEventListener("visibilitychange", () => {
 			this.workerManager.onVisibilityChange(document.hidden);
 		});
 
 		window.addEventListener("blur", () => this.workerManager.onVisibilityChange(true));
-		window.addEventListener("focus", () => this.workerManager.onVisibilityChange(false));
+		window.addEventListener("focus", () => this.workerManager.onVisibilityChange(document.hidden));
 
 		this.currentSceneName = null;
 		this.loaded = false;

@@ -136,8 +136,8 @@ app.get('/videos', function(req, res) {
 
 app.get('/spritesheet', function(req, res) {
 	saveFontMap(__dirname).then(() => {
-		getSpritesheets().then(({spritesheets}) => {
-			generateDataCode(path.join(webDir, 'generated', 'js', 'data.js')).then(code => {
+		getSpritesheets(webDir, __dirname).then(({spritesheets}) => {
+			generateDataCode(path.join(webDir, 'generated', 'js', 'data.js'), __dirname).then(code => {
 				res.writeHeader(200, {"Content-Type": "text/html"}); 
 				spritesheets.forEach(({url}) => {
 			        res.write(`<a href="${url}"><img style='background-color: #ddddee; border: 1px solid black' src="${url}" width=200></a>`);  
@@ -167,7 +167,7 @@ app.get('/get-from-files', function(req, res) {
 });
 
 app.get('/data', (req, res) => {
-	generateDataCode(path.join(webDir, 'generated', 'js', 'data.js'))
+	generateDataCode(path.join(webDir, 'generated', 'js', 'data.js'), __dirname)
 		.then(code => {
 			res.writeHeader(200, {"Content-Type": "javascript:application"}); 
 			res.write(code);
@@ -189,10 +189,6 @@ app.get('/fonts', (req, res) => {
 	});
 });
 
-app.use(express.static(`${__dirname}/${webDir}`));
-
-
-
 app.all('/', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -202,6 +198,14 @@ app.use(cors());
 
 
 const { io, server } = socket.serveSocket(app);
+
+if (io !== null && server !== null) {
+	app.get('/socket.info', (req, res) => {
+		res.send("ok");
+	});
+}
+
+app.use(express.static(`${__dirname}/${webDir}`));
 
 
 const httpServer = server.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));
