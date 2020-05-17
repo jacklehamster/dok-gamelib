@@ -1039,9 +1039,7 @@ SceneManager.add({Game: class extends Game {
 			],
 			scale: [
 				({game, definition}, index) => {
-					const angleCycle = Math.PI * 2;
-					const rotation = game.sceneData.bears[index].bearDirection - game.view.turn.get();
-					const dir = Math.round(((rotation % angleCycle + angleCycle) % angleCycle) * 8 / angleCycle) % 8;
+					const dir = SpriteUtils.getOrientationCycle(game.sceneData.bears[index].bearDirection, game.view.turn.get(), definition.walkAnim.length);
 					return definition.walkAnim[dir][1] * 6;
 				},
 				({game, definition}, index) => {
@@ -1056,9 +1054,7 @@ SceneManager.add({Game: class extends Game {
 					return "drown";
 				}
 				const { bearAI, bearDirection } = game.sceneData.bears[index];
-				const angleCycle = Math.PI * 2;
-				const rotation = bearDirection - game.view.turn.get();
-				const dir = Math.round(((rotation % angleCycle + angleCycle) % angleCycle) * 8 / angleCycle) % 8;
+				const dir = SpriteUtils.getOrientationCycle(bearDirection, game.view.turn.get(), definition.walkAnim.length);
 				
 				if (bearAI.action === "sick") {
 					return "eat-wrong";

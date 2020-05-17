@@ -253,7 +253,7 @@ SceneManager.add({Game: class extends Game {
 		}
 	},
 	view: {
-		tilt: .5,
+		tilt: .7,
 		cameraDistance: 10,
 		turn: ({game}) => game.sceneData.turn,
 		pos: [
@@ -293,9 +293,53 @@ SceneManager.add({Game: class extends Game {
 			id: "robo",
 			src: "roboface",
 			grid: [10, 1],
-		}
+		},
+		{
+			src: "robot",
+			grid: [6, 6],
+			frameRate: 10,
+			animations: [
+				["idle-down", "0"],
+				["walk-down","0-3"],
+				["idle-down-right", "4"],
+				["walk-down-right","4-7"],
+				["idle-right", "8"],
+				["walk-right","8-11"],
+				["idle-up-right", "12"],
+				["walk-up-right","12-15"],
+				["idle-up", "16"],
+				["walk-up","16-19"],
+				["idle-up-left", "20"],
+				["walk-up-left","20-23"],
+				["idle-left", "24"],
+				["walk-left","24-27"],
+				["idle-down-left", "28"],
+				["walk-down-left","28-31"],
+			],
+		},
 	],
 	sprites: [
+		{
+			id: "robot",
+			src: "robot",
+			init: ({game}) => {
+				game.robotDirections = [
+					"down",
+					"down-left",
+					"left",
+					"up-left",
+					"up",
+					"up-right",
+					"right",
+					"down-right",
+				];
+			},
+			scale: [1, 1],
+			animation: ({game, definition}, index) => {
+				const dir = SpriteUtils.getOrientationCycle(0, game.view.turn.get(), game.robotDirections.length);
+				return `idle-${game.robotDirections[dir]}`;
+			},
+		},
 		{	//	upper level
 			id: "upper-level",
 			src: "wall",

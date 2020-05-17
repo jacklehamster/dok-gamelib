@@ -22,20 +22,6 @@ class GLRenderer extends ISpriteRenderer {
 		const { vertexShader, fragmentShader } = webgl;
 		this.shader = new Shader(this.gl, vertexShader, fragmentShader);
 
-
-		// const gl = shader.gl;
-		// const stride = (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT;
-		// const vertexBuffer = gl.createBuffer();
-		// gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-		// const vertexLocation = this.shader.getLocation("vertex");
-		// gl.vertexAttribPointer(vertexLocation, FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0);
-		// gl.enableVertexAttribArray(vertexLocation);
-		// const normalLocation = this.shader.getLocation("normal");
-		// gl.vertexAttribPointer(normalLocation, NORMAL_FLOAT_PER_VERTEX, gl.FLOAT, false, 0, FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT);
-		// gl.enableVertexAttribArray(normalLocation);
-
-		// gl.bufferData(gl.ARRAY_BUFFER, this.floatPerVertex * MAX_SPRITE * VERTICES_PER_SPRITE * Float32Array.BYTES_PER_ELEMENT, gl.STREAM_DRAW);
-
 		const bufferInfo = {};
 
 

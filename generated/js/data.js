@@ -1161,37 +1161,38 @@ function getData() {
           },
           "tp-boy": {"scenes": ["tp-boy"], "rect": [0, 0, 384, 512], "index": 2},
           "tp": {"scenes": ["tp-boy"], "rect": [392, 0, 384, 512], "index": 2},
+          "robot": {"scenes": ["cubot"], "rect": [784, 0, 450, 450], "index": 2},
           "creep-font": {
             "scenes": [null],
-            "rect": [784, 0, 320, 288],
+            "rect": [1242, 0, 320, 288],
             "index": 2,
             "font": true
           },
           "primary-font": {
             "scenes": [null],
-            "rect": [1112, 0, 320, 288],
+            "rect": [1570, 0, 320, 288],
             "index": 2,
             "font": true
           },
           "home-floor": {
             "scenes": ["dobuki"],
-            "rect": [1440, 0, 165, 175],
+            "rect": [1898, 0, 165, 175],
             "index": 2
           },
-          "tree": {"scenes": ["dobuki"], "rect": [1613, 0, 143, 156], "index": 2},
+          "tree": {"scenes": ["dobuki"], "rect": [2071, 0, 143, 156], "index": 2},
           "gun": {
             "scenes": ["rogue-zombie"],
-            "rect": [1764, 0, 128, 128],
+            "rect": [2222, 0, 128, 128],
             "index": 2
           },
           "water.jpg": {
             "scenes": ["stup"],
-            "rect": [1900, 0, 182, 118],
+            "rect": [2358, 0, 182, 118],
             "index": 2
           },
           "grass-tile": {
             "scenes": ["tp-boy"],
-            "rect": [2090, 0, 64, 96],
+            "rect": [2548, 0, 64, 96],
             "index": 2
           }
         },
@@ -1205,13 +1206,14 @@ function getData() {
           {"rect": [1296, 264, 2800, 64], "index": 1},
           {"rect": [1032, 328, 3064, 3768], "index": 1},
           {"rect": [0, 1032, 1032, 3064], "index": 1},
-          {"rect": [2162, 0, 1934, 104], "index": 2},
-          {"rect": [2090, 104, 2006, 22], "index": 2},
-          {"rect": [1900, 126, 2196, 10], "index": 2},
-          {"rect": [1764, 136, 2332, 28], "index": 2},
-          {"rect": [1613, 164, 2483, 19], "index": 2},
-          {"rect": [1440, 183, 2656, 113], "index": 2},
-          {"rect": [784, 296, 3312, 224], "index": 2},
+          {"rect": [2620, 0, 1476, 104], "index": 2},
+          {"rect": [2548, 104, 1548, 22], "index": 2},
+          {"rect": [2358, 126, 1738, 10], "index": 2},
+          {"rect": [2222, 136, 1874, 28], "index": 2},
+          {"rect": [2071, 164, 2025, 19], "index": 2},
+          {"rect": [1898, 183, 2198, 113], "index": 2},
+          {"rect": [1242, 296, 2854, 162], "index": 2},
+          {"rect": [784, 458, 3312, 62], "index": 2},
           {"rect": [392, 520, 3704, 3576], "index": 2},
           {"rect": [0, 520, 392, 3576], "index": 2}
         ]
@@ -1240,6 +1242,7 @@ function getData() {
         "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "primary-font=c3f2ed2e34492ce6ecc2f4adb3acbc7ba769d81eb13442b6aba27b0051a4b903",
         "roboface=31d99aa7644f88675309a791447feef0ce10b6f1b2b45ec580e94182662ec6f6",
+        "robot@4x=ad184f3413ac848f83a90057116d5b20586dcbcdeb666de348ff5fb4195f955a",
         "sand-ground=195dbf2503d4cf4733ac04e566644b08cf8dfb83ce93b2238d21405ec05625b3",
         "sand-ground=195dbf2503d4cf4733ac04e566644b08cf8dfb83ce93b2238d21405ec05625b3",
         "selector=81e92c790618a40bdb64bf376475e8b574cd4a9f2d44c758cbdcc2ac2907e375",

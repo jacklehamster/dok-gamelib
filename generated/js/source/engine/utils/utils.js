@@ -47,6 +47,26 @@ class Utils {
 	static getFromArray(array, index) {
 		return array[(index % array.length + array.length) % array.length];
 	}
+
+	static get(url) {
+		return new Promise((resolve, reject) => {
+		    const req = cache[url] ? cache[url].req : new XMLHttpRequest();
+		    if (!cache[url]) {
+		    	cache[url] = { req };
+		    }
+		    req.open('GET', url);
+
+		    req.addEventListener('load', e => {
+				if (req.status === 200) {
+					resolve(req.response);
+				}
+		    });
+		    req.addEventListener('error', e => {
+		    	reject(e);
+		    });
+		    req.send();
+		});
+	}
 	
 	static load(urls, {progress, complete, error}) {
 		const progresses = urls.map(() => 0);
@@ -64,9 +84,11 @@ class Utils {
 				}
 			}
 			if (errors.filter(a => a).length > 0) {
-				error(errors.filter(a => a));
+				if (error)
+					error(errors.filter(a => a));
 			} else {
-				complete(images);
+				if (complete)
+					complete(images);
 			}
 		};
 
@@ -117,7 +139,8 @@ class Utils {
 		    });
 		    req.addEventListener('progress', e => {
 		    	progresses[index] = e.loaded / e.total;
-		    	progress(progresses.reduce((avg, num, _, {length}) => avg + 100 * num / length, 0));
+		    	if (progress)
+			    	progress(progresses.reduce((avg, num, _, {length}) => avg + 100 * num / length, 0));
 		    });
 
 		    if (shouldLoad) {

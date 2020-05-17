@@ -74,7 +74,7 @@ if (typeof(window) === 'undefined') {
 
 	const textureManager = new WorkerTextureManager();
 	const engineCommunicator = new EngineCommunicator();
-	const uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
+	const uiRenderer = new UIRenderer(new EngineUIRenderer(engineCommunicator));
 
 	self.addEventListener('message', function(event) {
 		const {data: { action }}  = event;
@@ -126,7 +126,7 @@ if (typeof(window) === 'undefined') {
 			case "mouse": {
 				const {data: {x,y,mouseDown}} = event;
 				if (workerEngine) {
-					mouse.onMouse(x,y,mouseDown);
+					workerEngine.mouse.onMouse(x,y,mouseDown);
 				}
 				break;
 			}
@@ -152,7 +152,10 @@ if (typeof(window) === 'undefined') {
 			}
 			case "visibilitychange": {
 				const {data: {hidden}} = event;
-				windowStatus.hidden = hidden;
+				if (windowStatus.hidden !== hidden) {
+					windowStatus.hidden = hidden;
+					console.log(hidden ? "Worker paused." : "Worker resumed.");
+				}
 				break;
 			}
 			case "beautifyCode": {

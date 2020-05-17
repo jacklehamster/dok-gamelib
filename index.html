@@ -78,7 +78,7 @@
 
 		<script>
 			const numScenes = "9";
-			const numSources = "72"
+			const numSources = "73"
 			const release = "true"
 			console.log({
 				numScenes,
@@ -107,6 +107,7 @@
 		<script src="generated/js/source/game/scenes/tp-boy/start.js"></script>
 		<script>SceneManager.loadingSceneName = "video-maze";</script>
 		<script src="generated/js/source/game/scenes/video-maze/start.js"></script>
+		<script src="https://dobuki.herokuapp.com/socket.io/socket.io.js"></script>
 	</head>
 
 	<body class="container" style="background-color: black">
@@ -148,13 +149,5 @@
 		</script>
 		<script src="generated/js/editor/editor.min.js"></script>
 	</body>
-
-<script src="/socket.io/socket.io.js"></script>
-<script>
-  const socket = io();
-	socket.on('chat message', function(msg){
-		console.log(msg);
-    });  
-</script>
 
 </html>

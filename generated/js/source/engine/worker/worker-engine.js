@@ -36,7 +36,7 @@ class WorkerEngine {
 		this.newgrounds = new WorkerNewgrounds(this.engineCommunicator);
 		this.domManager = new WorkerDOMManager(this.engineCommunicator);
 		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager);
-		this.uiRenderer = new UIRenderer(new EngineUIRenderer(this.engineCommunicator));
+		this.uiRenderer = uiRenderer;
 		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 		this.logger = new WorkerLogger(this.engineCommunicator);
 		this.timeScheduler = new TimeScheduler();
