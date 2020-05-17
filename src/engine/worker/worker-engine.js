@@ -228,10 +228,6 @@ class WorkerEngine {
 	resetScene(sceneName) {
 		const { sceneManager, dataStore, configProcessor } = this;
 		if (sceneManager.hasScene(sceneName)) {
-			if (this.currentScene && this.currentScene.name === sceneName) {
-				this.currentScene.nextScene = null;
-				return;
-			}
 			this.clearScene();
 			const scene = sceneManager.createScene(sceneName, dataStore, configProcessor, this);
 			this.currentScene = scene;
