@@ -25,6 +25,10 @@ class WorkerManager {
 		this.nextCallbackId = 0;
 	}
 
+	terminate() {
+		this.worker.terminate();
+	}
+
 	handleMessage(event) {
 		const {data : {action}} = event;
 		switch(action) {
