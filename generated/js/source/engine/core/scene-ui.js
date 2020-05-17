@@ -20,6 +20,19 @@ class SceneUI extends ISceneUI {
 		this.canvasRenderer = canvasRenderer;
 		this.elements = {};
 		this.root = null;
+		this.canvasOffset = { left: 0, top: 0 };
+	}
+
+	adjustSize() {
+		if (this.root) {
+			const { canvas } = this;
+			if (canvas.offsetLeft !== this.canvasOffset.left || canvas.offsetTop !== this.canvasOffset.top) {
+				this.canvasOffset.left = canvas.offsetLeft;
+				this.canvasOffset.top = canvas.offsetTop;
+				this.root.style.top = `${this.canvasOffset.top}px`;
+				this.root.style.left = `${this.canvasOffset.left}px`;			
+			}
+		}		
 	}
 
 	ensureRoot() {
@@ -28,9 +41,8 @@ class SceneUI extends ISceneUI {
 			this.root = canvas.parentElement.appendChild(document.createElement("div"));
 			this.root.style.position = "absolute";
 			this.root.classList.add("unselectable");
-			this.root.style.top = `${canvas.offsetTop}px`;
-			this.root.style.left = `${canvas.offsetLeft}px`;
 			this.root.style.display = "flex";
+			this.adjustSize();
 		}
 		return this.root;
 	}
@@ -190,5 +202,6 @@ class SceneUI extends ISceneUI {
 				}
 			}
 		}
+		this.adjustSize();
 	}
 }

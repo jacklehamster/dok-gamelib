@@ -90,8 +90,12 @@ class SceneManager {
 		return null;
 	}
 
-	static add(classes, scene) {
-		SceneManager.instance.add(SceneManager.loadingSceneName, classes, scene);
+	static add(classesOrscene, scene) {
+		if (typeof(scene) === 'undefined') {
+			SceneManager.instance.add(SceneManager.loadingSceneName, {}, classesOrscene);
+		} else {
+			SceneManager.instance.add(SceneManager.loadingSceneName, classesOrscene, scene);
+		}
 	}
 }
 SceneManager.instance = new SceneManager({Game, SpriteDefinition, AnimationDefinition});

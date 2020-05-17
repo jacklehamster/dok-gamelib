@@ -46,20 +46,20 @@ class UISpriteInstance extends BaseSpriteInstance {
 
 		const newType = type.get(instanceIndex);
 		const newId = id.get(instanceIndex);
-		if (this.id !== newId || this.type !== newType) {
+		if (this.forceAll || this.id !== newId || this.type !== newType) {
 			this.id = newId;
 			this.type = newType;
 			updateTimes.id = now;
 		}
 
 		const newParent = parent.get(instanceIndex);
-		if (this.parent !== newParent) {
+		if (this.forceAll || this.parent !== newParent) {
 			this.parent = newParent;
 			updateTimes.parent = now;
 		}
 
 		const newClassList = classList.get(instanceIndex);
-		if (this.classList !== newClassList) {
+		if (this.forceAll || this.classList !== newClassList) {
 			this.classList = newClassList;
 			updateTimes.classList = now;
 		}
@@ -73,21 +73,21 @@ class UISpriteInstance extends BaseSpriteInstance {
 
 		for (let s in style) {
 			const newStyle = style[s].get(instanceIndex);
-			if (this.style[s] !== newStyle) {
+			if (this.forceAll || this.style[s] !== newStyle) {
 				this.style[s] = newStyle;
 				updateTimes.style = now;
 			}
 		}
 
 		const newInnerText = innerText.get(instanceIndex);
-		if (this.innerText !== newInnerText) {
+		if (this.forceAll || this.innerText !== newInnerText) {
 			this.innerText = newInnerText;
 			updateTimes.innerText = now;
 		}
 
 		const newWidth = width.get(instanceIndex);
 		const newHeight = height.get(instanceIndex);
-		if (this.width !== newWidth || this.height !== newHeight) {
+		if (this.forceAll || this.width !== newWidth || this.height !== newHeight) {
 			this.width = newWidth;
 			this.height = newHeight;
 			updateTimes.size = now;
@@ -100,12 +100,12 @@ class UISpriteInstance extends BaseSpriteInstance {
 
 		if (this.type === "canvas") {
 			const canvasRefresh = canvas.refreshRate.get(instanceIndex);
-			if (this.canvas.refreshRate !== canvasRefresh) {
+			if (this.forceAll || this.canvas.refreshRate !== canvasRefresh) {
 				this.canvas.refreshRate = canvasRefresh;
 				updateTimes.canvas = now;
 			}
 
-			if (this.canvas.draw.length !== canvas.draw.length) {
+			if (this.forceAll || this.canvas.draw.length !== canvas.draw.length) {
 				this.canvas.draw.length = canvas.draw.length;
 				updateTimes.canvas = now;
 			}
@@ -115,7 +115,7 @@ class UISpriteInstance extends BaseSpriteInstance {
 					this.canvas.draw[i] = [];
 				}
 				const count = canvas.draw[i].count.get(instanceIndex);
-				if (this.canvas.draw[i].length !== count) {
+				if (this.forceAll || this.canvas.draw[i].length !== count) {
 					this.canvas.draw[i].length = count;
 					updateTimes.canvas = now;
 				}
@@ -136,14 +136,14 @@ class UISpriteInstance extends BaseSpriteInstance {
 									thisDraw.phase = [];
 									updateTimes.canvas = now;
 								}
-								if (thisDraw.phase.length !== phase.length) {
+								if (this.forceAll || thisDraw.phase.length !== phase.length) {
 									thisDraw.phase.length = phase.length;
 									updateTimes.canvas = now;
 								}
 								let phaseChanged = false;
 								for (let z = 0; z < phase.length; z++) {
 									const phaseStep = phase[z].get(c, instanceIndex);
-									if (phaseStep !== thisDraw.phase[z]) {
+									if (this.forceAll || phaseStep !== thisDraw.phase[z]) {
 										thisDraw.phase[z] = phaseStep;
 										phaseChanged = true;
 										updateTimes.canvas = now;
@@ -163,7 +163,7 @@ class UISpriteInstance extends BaseSpriteInstance {
 							}
 							default:
 								const propValue = drawDefinition[prop].get(c, instanceIndex);
-								if (thisDraw[prop] !== propValue) {
+								if (this.forceAll || thisDraw[prop] !== propValue) {
 									thisDraw[prop] = propValue;
 									updateTimes.canvas = now;
 								}

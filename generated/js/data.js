@@ -1046,8 +1046,6 @@ function getData() {
       "game": {
         "title": "Hello World",
         "description": "Description",
-        "width": 800,
-        "height": 500,
         "fonts": {
           "primary-font": {
             "name": "Arctic",
@@ -1316,6 +1314,7 @@ function getData() {
         },
         "view": {
           "pos": [0, 0, 0],
+          "viewPort": [800, 500],
           "viewAngle": 45,
           "range": [1, 60],
           "tilt": 0,

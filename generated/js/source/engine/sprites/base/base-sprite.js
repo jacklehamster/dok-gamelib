@@ -45,13 +45,13 @@ class BaseSpriteInstance {
 		}
 
 		const newType = type.get(instanceIndex) || 0;
-		if (this.type !== newType) {
+		if (this.forceAll || this.type !== newType) {
 			this.type = newType;
 			updateTimes.type = now;
 		}
 
 		const newLockedUntil = !dynamic || fixed.get(instanceIndex) ? -1 : lockedUntil.get(instanceIndex);
-		if (newLockedUntil !== this.lockedUntil) {
+		if (this.forceAll || newLockedUntil !== this.lockedUntil) {
 			this.lockedUntil = newLockedUntil;
 		}
 		this.skipProcess = false;
@@ -63,6 +63,10 @@ class BaseSpriteInstance {
 			this.lockedUntil = 0;
 			this.skipProcess = false;
 			this.updateTimes.hidden = now;
+
+			if (!this.hidden) {	//	force reinitialize
+				this.forceAll = true;
+			}
 		}		
 	}
 }
