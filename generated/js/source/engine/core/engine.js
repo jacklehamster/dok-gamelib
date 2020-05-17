@@ -52,6 +52,8 @@ class Engine {
 		window.addEventListener("blur", () => this.workerManager.onVisibilityChange(true));
 		window.addEventListener("focus", () => this.workerManager.onVisibilityChange(document.hidden));
 
+		window.addEventListener("beforeunload", () => this.workerManager.terminate());
+
 		this.currentSceneName = null;
 		this.loaded = false;
 
