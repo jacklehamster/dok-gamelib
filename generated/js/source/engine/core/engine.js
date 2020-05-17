@@ -211,9 +211,6 @@ class Engine {
 	}
 
 	gotoScene(sceneName) {
-		if (this.processGameInEngine) {
-			this.currentScene.gotoScene(sceneName);
-		}
 		this.workerManager.gotoScene(sceneName);
 	}
 
