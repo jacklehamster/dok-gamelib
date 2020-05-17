@@ -49,6 +49,7 @@ const sourceFolders = [
 	'src/engine/sprites/ui-sprite.js',
 	'src/engine/core/*.js',
 	'src/engine/communicator/*.js',
+	'src/engine/socket/*.js',
 	'src/engine/controls/*.js',
 	'src/engine/ui/*.js',
 	'src/engine/debug/*.js',
