@@ -21,6 +21,7 @@ class Engine {
 		this.onLoopListener = [];
 		this.onStartListener = [];
 		this.onLoadListener = [];
+		this.onPauseListener = [];
 		this.canvas.focus();
 		this.gl = this.initCanvasGL(canvas);
 		this.dataStore = new DataStore(localStorage);
@@ -45,13 +46,26 @@ class Engine {
 		this.keyboard = new Keyboard(this.workerManager, document, {});
 		this.mouse = new Mouse(this.workerManager, canvas, document, {});
 
+		this.paused = false;
+
 		document.addEventListener("visibilitychange", () => {
-			this.workerManager.onVisibilityChange(document.hidden);
+			if (document.hidden !== this.paused) {
+				this.paused = document.hidden;
+				this.onPauseListener.forEach(callback => callback(this.paused));
+			}
 		});
-
-		window.addEventListener("blur", () => this.workerManager.onVisibilityChange(true));
-		window.addEventListener("focus", () => this.workerManager.onVisibilityChange(document.hidden));
-
+		window.addEventListener("blur", () => {
+			if (!this.paused) {
+				this.paused = true;
+				this.onPauseListener.forEach(callback => callback(this.paused));
+			}
+		});
+		window.addEventListener("focus", () => {
+			if (document.hidden !== this.paused) {
+				this.paused = document.hidden;
+				this.onPauseListener.forEach(callback => callback(this.paused));
+			}
+		});
 		window.addEventListener("beforeunload", () => this.workerManager.terminate());
 
 		this.currentSceneName = null;
@@ -78,6 +92,7 @@ class Engine {
 			errors => console.error(errors)
 		);
 		this.addEventListener("start", () => this.importScenes());
+		this.addEventListener("pause", paused => this.workerManager.onVisibilityChange(paused));
 	}
 
 	initCanvasGL(canvas) {
@@ -198,6 +213,8 @@ class Engine {
 				return this.onStartListener;
 			case "load":
 				return this.onLoadListener;
+			case "pause":
+				return this.onPauseListener;
 		}
 	}
 

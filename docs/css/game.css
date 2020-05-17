@@ -68,7 +68,7 @@ canvas {
 }
 
 .panel {
-  transition: transform .3s ease-in-out;
+  transition: opacity 0.2s linear, transform .3s ease-in-out;
 }
 
 .panel.shifted {
@@ -77,6 +77,10 @@ canvas {
 
 .panel.split {
   transform: perspective(1000px) translate3d(-240px, -40px, -340px) rotate3d(0, 1, 0, 60deg);
+}
+
+.panel.paused {
+  opacity: .5;
 }
 
 .editor-container {
