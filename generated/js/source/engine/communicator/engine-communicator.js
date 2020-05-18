@@ -15,6 +15,12 @@ class EngineCommunicator {
 		this.pool = new Pool(() => new ArrayBuffer(MAX_BUFFER_SIZE));
 		this.lastError = null;
 		this.maxSize = 0;
+		this.lastGLBuffer = {
+			type: null,
+			offset: 0,
+			size: 0,
+			bufferStartIndex: 0,
+		};
 		this.clear();
 
 		console.log("TODO", "restore lastGLBuffer info (To batch buffers into one)");
@@ -29,6 +35,7 @@ class EngineCommunicator {
 			this.arrayBuffer = this.pool.get();
 			this.dataView = new DataView(this.arrayBuffer);
 			this.byteCount = 0;
+			this.lastGLBuffer.type = null;
 		}
 	}
 
@@ -47,6 +54,7 @@ class EngineCommunicator {
 
 		this.byteCount = 0;
 		this.extraData.length = 0;
+		this.lastGLBuffer.type = null;
 	}
 
 	getBuffer() {
@@ -100,8 +108,27 @@ class EngineCommunicator {
 	}
 
 	loadGLBuffer(type, offset, ...params) {
+		if (this.lastGLBuffer.type === type
+			&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
+			&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
+		) {	//	append to previous buffer
+			this.writeFloat32(...params);
+			this.lastGLBuffer.size += params.length * Float32Array.BYTES_PER_ELEMENT;
+			this.dataView.setInt32(
+				this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
+				this.lastGLBuffer.size,
+				true
+			);
+			return;
+		}
+
+
 		this.ensureBuffer();
-		this.writeInt32(Commands.GL_UPDATE_BUFFER, type, offset, params.length);
+		this.lastGLBuffer.type = type;
+		this.lastGLBuffer.offset = offset;
+		this.lastGLBuffer.size = params.length * Float32Array.BYTES_PER_ELEMENT;
+		this.writeInt32(Commands.GL_UPDATE_BUFFER, type, offset, this.lastGLBuffer.size);
+		this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		this.writeFloat32(...params);
 	}
 }

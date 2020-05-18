@@ -58,7 +58,7 @@ class ISpriteRenderer {
 			if (sprite.updateTimes.type === now) {
 				const { type } = sprite;
 				this.engineCommunicator.loadGLBuffer(BufferType.SPRITE_TYPE,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * SPRITE_TYPE_FLOAT_PER_VERTEX,
+					sprite.chunkIndex * VERTICES_PER_SPRITE * SPRITE_TYPE_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
 					type, type, type, type,
 				);
 			}
@@ -70,7 +70,7 @@ class ISpriteRenderer {
 			if (sprite.updateTimes.pos === now) {
 				const {	pos: [ offsetX, offsetY, offsetZ ] } = sprite;
 				this.engineCommunicator.loadGLBuffer(BufferType.OFFSET,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX,
+					sprite.chunkIndex * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
 					offsetX, offsetY, offsetZ,
 					offsetX, offsetY, offsetZ,
 					offsetX, offsetY, offsetZ,
@@ -87,7 +87,7 @@ class ISpriteRenderer {
 				const color = tintColor & 0xFFFFFF;
 				const mixRatio = Math.max(0, (tintColor / 0xFFFFFF) / 255);
 				this.engineCommunicator.loadGLBuffer(BufferType.COLOR_EFFECT,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * TINT_FLOAT_PER_VERTEX,
+					sprite.chunkIndex * VERTICES_PER_SPRITE * TINT_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
 					color, mixRatio, hue,
 					color, mixRatio, hue,
 					color, mixRatio, hue,
@@ -102,7 +102,7 @@ class ISpriteRenderer {
 			if (sprite.updateTimes.move === now || sprite.updateTimes.gravity === now) {
 				const {	motion: {mov: [ mx, my, mz ], time, gravity: [ gx, gy, gz ] } } = sprite;
 				this.engineCommunicator.loadGLBuffer(BufferType.MOVE,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * (MOVE_FLOAT_PER_VERTEX + GRAVITY_FLOAT_PER_VERTEX),
+					sprite.chunkIndex * VERTICES_PER_SPRITE * (MOVE_FLOAT_PER_VERTEX + GRAVITY_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
 					mx, my, mz, time, gx, gy, gz,
 					mx, my, mz, time, gx, gy, gz,
 					mx, my, mz, time, gx, gy, gz,
@@ -117,7 +117,7 @@ class ISpriteRenderer {
 			if (sprite.updateTimes.grid === now) {
 				const { grid: [ cols, rows ] } = sprite.spriteData;
 				this.engineCommunicator.loadGLBuffer(BufferType.GRID,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * GRID_FLOAT_PER_VERTEX,
+					sprite.chunkIndex * VERTICES_PER_SPRITE * GRID_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
 					cols, rows,
 					cols, rows,
 					cols, rows,
@@ -132,7 +132,7 @@ class ISpriteRenderer {
 			if (sprite.updateTimes.frameRate === now || sprite.updateTimes.animationRange === now) {
 				const { animationRange: [ start, range ], spriteData: { frameRate } } = sprite;
 				this.engineCommunicator.loadGLBuffer(BufferType.ANIMATION,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * ANIMATION_FLOAT_PER_VERTEX,
+					sprite.chunkIndex * VERTICES_PER_SPRITE * ANIMATION_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
 					now, start, range, frameRate,
 					now, start, range, frameRate,
 					now, start, range, frameRate,
@@ -148,7 +148,7 @@ class ISpriteRenderer {
 			if (sprite.updateTimes.blackholeCenter === now || sprite.updateTimes.blackholeInfo === now) {
 				const { effects: { blackhole: { strength, distance, center: [ gx, gy, gz ] } } } = sprite;
 				this.engineCommunicator.loadGLBuffer(BufferType.BLACKHOLE_CENTER,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * (BLACKHOLE_CENTER_FLOAT_PER_VERTEX + BLACKHOLE_INFO_FLOAT_PER_VERTEX),
+					sprite.chunkIndex * VERTICES_PER_SPRITE * (BLACKHOLE_CENTER_FLOAT_PER_VERTEX + BLACKHOLE_INFO_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
 					gx, gy, gz, strength, distance,
 					gx, gy, gz, strength, distance,
 					gx, gy, gz, strength, distance,
@@ -165,7 +165,7 @@ class ISpriteRenderer {
 				const a = ((color >> 24) % 256) / 255;
 				const rgb = color & 0xFFFFFF;
 				this.engineCommunicator.loadGLBuffer(BufferType.CHROMA_KEY,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * CHROMA_KEY_FLOAT_PER_VERTEX,
+					sprite.chunkIndex * VERTICES_PER_SPRITE * CHROMA_KEY_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
 					low, high, rgb, a,
 					low, high, rgb, a,
 					low, high, rgb, a,
@@ -303,7 +303,7 @@ class ISpriteRenderer {
 		const cheight = circleRadius * Math.abs(up - down);
 
 		this.engineCommunicator.loadGLBuffer(BufferType.TEXCOORD,
-			sprite.chunkIndex * VERTICES_PER_SPRITE * (TEXTURE_FLOAT_PER_VERTEX + TEXTURE_CENTER_PER_VERTEX),
+			sprite.chunkIndex * VERTICES_PER_SPRITE * (TEXTURE_FLOAT_PER_VERTEX + TEXTURE_CENTER_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
 			left,	up,		texWidth, texHeight, cx, cy, cwidth, cheight,
 			left,	down,	texWidth, texHeight, cx, cy, cwidth, cheight,
 			right,	down,	texWidth, texHeight, cx, cy, cwidth, cheight,
@@ -313,7 +313,7 @@ class ISpriteRenderer {
 
 	setInactive(sprite) {
 		this.engineCommunicator.loadGLBuffer(BufferType.VERTEX,
-			sprite.chunkIndex * VERTICES_PER_SPRITE * (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX),
+			sprite.chunkIndex * VERTICES_PER_SPRITE * (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
 			0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0,
@@ -355,7 +355,7 @@ class ISpriteRenderer {
  			vertices[i] = newVec3;
  		}
 		this.engineCommunicator.loadGLBuffer(BufferType.VERTEX,
-			sprite.chunkIndex * VERTICES_PER_SPRITE * (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX),
+			sprite.chunkIndex * VERTICES_PER_SPRITE * (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
 			... vertices[0], ... this.getNormal(vertices, curvature, 0),
 			... vertices[1], ... this.getNormal(vertices, curvature, 1),
 			... vertices[2], ... this.getNormal(vertices, curvature, 2),
