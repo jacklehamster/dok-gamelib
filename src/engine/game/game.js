@@ -87,6 +87,10 @@ class Game {
 		this.nextScene = name;
 	}
 
+	restart() {
+		this.nextScene = this.name;
+	}
+
 	getFrameRate() {
 		return this.settings.frameRate.get();
 	}

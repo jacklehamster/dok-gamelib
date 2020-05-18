@@ -1,4 +1,104 @@
-SceneManager.add({
+SceneManager.add({Game: class extends Game {
+	constructor() {
+		super();
+	}
+
+	tryMoveBy(dx, dz) {
+		const { sceneData: { dok } } = this;
+		const shiftX = dx * dok.speed * (dok.flying ? .8 : .5);
+		const shiftZ = dz * dok.speed * (dok.flying ? .8 : .5);
+
+		const preHeight = this.getHeight(dok.pos[0], dok.pos[1], dok.pos[2]);
+		const postHeight = this.getHeight(dok.pos[0] + shiftX, dok.pos[1], dok.pos[2] + shiftZ);
+
+		const diffHeight = postHeight - preHeight;
+		if (diffHeight === 0) {
+			dok.pos[0] += shiftX;
+			dok.pos[2] += shiftZ;
+		} else if (diffHeight - dok.heightAboveGround < 0 || diffHeight - dok.heightAboveGround < .4 && dok.mov.y <= 0) {
+			dok.pos[0] += shiftX;
+			dok.pos[2] += shiftZ;
+			dok.heightAboveGround = dok.pos[1] + dok.heightAboveGround - postHeight;
+			dok.pos[1] = postHeight;
+			dok.flying = true;
+			dok.grounded = false;
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	tryAngled(dx, dz) {
+		const angle = Math.atan2(dz, dx);
+		{
+			const cos = Math.cos(angle + 20);
+			const sin = Math.sin(angle + 20);
+			const dist = Math.sqrt(dx*dx + dz*dz);
+			if (this.tryMoveBy(cos * dist, sin * dist)) {
+				return true;
+			}
+		}
+		{
+			const cos = Math.cos(angle - 20);
+			const sin = Math.sin(angle - 20);
+			const dist = Math.sqrt(dx*dx + dz*dz);
+			if (this.tryMoveBy(cos * dist, sin * dist)) {
+				return true;
+			}			
+		}
+		return false;
+	}
+
+	getHeight(px, py, pz) {
+		const cell = this.getCell(px, pz);
+		if (cell) {
+			if (cell === "X") {
+				return .5 + .8;
+			}
+		// game.barrel = { x: 0, y: 0 };
+		// game.bot = { x: 0, y: 0 };
+			// const barrelX = Math.round(game.barrel);
+			// const barrelY = Math.round(game.barrel);
+			for (let i = 0; i < this.barrels.length; i++) {
+				const barrelDx = this.barrels[i].x + this.leftShift - px;
+				const barrelDy = this.barrels[i].y + this.topShift - pz;
+				const barrelDist = Math.sqrt(barrelDx * barrelDx + barrelDy * barrelDy);
+				if (barrelDist < .5) {
+					return .5 + .5;
+				}
+			}
+
+			const botDx = this.bot.x + this.leftShift - px;
+			const botDy = this.bot.y + this.topShift - pz;
+			const botDist = Math.sqrt(botDx * botDx + botDy * botDy);
+			if (botDist < .5) {
+				return .5 + .5;
+			}
+
+			// if (cell === "B") {
+			// 	return .5 + .5;
+			// }
+			if (cell === ".") {
+				return .5;
+			}
+			if (cell === " ") {
+				return -100;
+			}
+			return .5;
+		}
+		return -100;
+	}
+
+	getCell(x, z) {
+		const ix = Math.round(x - this.leftShift);
+		const iz = Math.round(z - this.topShift);
+		if (this.maps[iz]) {
+			return this.maps[iz][ix];
+		}
+		return null;
+	}
+
+}} , {
 	settings: {
 		background: ({game: {now,exiting}}) => {
 			const color = 0x333333;
@@ -50,21 +150,34 @@ SceneManager.add({
 			padding: 20,
 			grid: [10, 10],
 		},
-		// {
-		// 	id: "arm",
-		// 	src: "arm",
-		// 	grid: [2, 2],
-		// 	frameRate: 24,
-		// 	animations: [
-		// 		[ "still", "1" ],
-		// 		[ "moving", "0-3" ],
-		// 	],
-		// },
-		// {
-		// 	id: "robo",
-		// 	src: "roboface",
-		// 	grid: [10, 1],
-		// },
+		{
+			src: "dok",
+			spriteSize: [292, 362],
+			grid: [14, 8],
+			padding: 1,
+			frameRate: 24,
+			animations: [
+				[ "idle", "still*100,blink" ],
+				[ "still", "2" ],
+				[ "blink", "0*3,0-2,2*3" ],
+				[ "talk", "2-5" ],
+				[ "talk-mad", "6-7" ],
+				[ "talk-surprised", "8-9" ],
+				[ "talk-sad", "10-11" ],
+				[ "talk-4th-wall", "12-15" ],
+				[ "walk", "16-25" ],
+				[ "idle-up", "26"],
+				[ "walk-up", "27-37" ],
+				[ "knocked-up", "38-53" ],
+				[ "birds", "54-58" ],
+				[ "cast-spell", "59-68" ],
+				[ "pick-up", "69-79" ],
+				[ "fly", "80-87" ],
+				[ "dancing", "88-95" ],
+				[ "jump", "16" ],
+				[ "jump-up", "27" ],
+			],
+		},
 		{
 			src: "robot",
 			grid: [6, 6],
@@ -106,12 +219,73 @@ SceneManager.add({
 				sceneData.turn = sceneData.turnGoal = sceneData.turnGoal % (Math.PI * 2);
 			}
 		}
+
+		const { dok } = sceneData;
+
+		//	move dobuki
+		if (mov.dist > 0) {
+			dok.speed += .02;
+			if (mov.x) {
+				dok.mov.x = mov.x;
+				if (!mov.y) {
+					dok.mov.z = 0;
+				}
+			}
+			if (mov.y) {
+				dok.mov.z = mov.y;
+			}
+		}
+		dok.speed *= .8;
+
+		const [ dx, dz ] = MotionUtils.getNormalDirection(sceneData.turn, mov.x, mov.y);
+		if (dok.speed > .0001) {
+			if (!game.tryMoveBy(dx, dz)) {
+				game.tryAngled(dx, dz);
+			}
+		} else {
+			sceneData.dok.speed = 0;
+		}
+
+		if (dok.grounded || controls.action > 0 && !dok.flying) {
+			if (controls.action > 0) {
+				dok.mov.y = .14;
+				dok.grounded = false;
+				dok.flying = true;
+			}
+		} else {
+			dok.mov.y -= controls.action > 0 ? .01 : .025;
+			dok.heightAboveGround += dok.mov.y;
+			if (dok.heightAboveGround <= 0) {
+				dok.heightAboveGround = 0;
+				dok.flying = false;
+				if (dok.mov.y < -.35) {
+					dok.mov.y = -dok.mov.y * .5;
+				} else {
+					dok.mov.y = 0;
+					dok.grounded = true;
+				}
+				if (dok.pos[1] <= -100) {
+					game.restart();
+				}
+			}
+		}
+
+		//	camera follow
+		MotionUtils.follow(sceneData.cam, dok.pos[0] + dx, Math.max(-1, dok.pos[1] + dok.heightAboveGround / 2), dok.pos[2] + dz, .05, 0);
 	},
 	init: ({game}) => {
 		game.sceneData = {
 			turn: 0,
 			turnGoal: 0,
 			cam: [ 0, 0, 0 ],
+			dok: {
+				pos: [0, 0.5, 0],
+				mov: { x: 0, y: 0, z: 0 },
+				heightAboveGround: 0,
+				speed: 0,
+				grounded: true,
+				flying: false,
+			},
 		};
 		game.maps = `
 			...........
@@ -122,17 +296,18 @@ SceneManager.add({
 			....X_X....
 			.XXXX_XXXX.
 			.X _____EX.
-			.XXXXXXXXX.
-			...........
-			...........
+			.XXXXoXXXX.
+			....X_X....
+			....XXX....
 			...........
 		`.trim().split("\n").map(line => {
 			return line.trim().split("");
 		});
+		game.barrels = [];
 		game.bot = { x: 0, y: 0 };
 		game.exit = { x: 0, y: 0 };
 
-		const { maps, bot, exit } = game;
+		const { maps, bot, exit, barrels } = game;
 
 
 		for (let y = 0; y < maps.length; y++) {
@@ -145,6 +320,9 @@ SceneManager.add({
 				if (indic === 'E') {
 					exit.x = x;
 					exit.y = y;
+				}
+				if (indic === "o") {
+					barrels.push({x, y});
 				}
 			}
 		}
@@ -190,12 +368,12 @@ SceneManager.add({
 					const dy = mapY.get(index) - maps.length / 2;
 					const dist = Math.sqrt(dx * dx + dy * dy);
 
-					return indic === "E" ? 200 : indic === "_" ? 160 : indic === "B" ? 200 : 200 - dist * 20;
+					return indic === "E" ? 200 : indic === "_" || indic === "o" ? 160 : indic === "B" ? 200 : 200 - dist * 20;
 				},
 				curvature: 1,
 				hue: ({game: {maps}, definition: {mapX, mapY}}, index) => {
 					const indic = maps[mapY.get(index)][mapX.get(index)];
-					return indic === "E" ? 1.1 : indic === "_" ? .75 : indic === "B" ? .5 : 1;
+					return indic === "E" ? 1.1 : indic === "_" || indic === "o" ? .75 : indic === "B" ? .5 : 1;
 				},
 			},
 			mapX: ({game: {maps}}, index) => index % maps[0].length,
@@ -207,8 +385,38 @@ SceneManager.add({
 			],
 			count: ({game}) => {
 				return game.maps.length * game.maps[0].length;
-			}
+			},
 		},
+
+		{
+			src: "wall",
+			size: .8,
+			type: SpriteType.Floor,
+			circleRadius: 1,
+			pos: [
+				({game}, index) => game.barrels[index].x + game.leftShift,
+				.45,
+				({game}, index) => game.barrels[index].y + game.topShift,
+			],
+			scale: [
+				({definition}) => definition.size.get(),
+				({definition}) => definition.size.get(),
+			],
+			count: ({game}) => game.barrels.length,
+		},
+		ShapeUtils.cylinder({
+			src: "wall",
+			type: SpriteType.Back,
+			cols: 40, rows: 1,
+			radius: ({game}) => .4,
+			center: [
+				({game},index) => game.barrels[0].x + game.leftShift,
+				0,
+				({game},index) => game.barrels[0].y + game.topShift,
+			],
+			scale: [ .1, 1 ],
+			count: ({game}) => game.barrels.length,
+		}),
 		ShapeUtils.cube({
 			topSrc: ({game: {sceneData}}, index) => "dirt-ground",
 			sideSrc: "dirt-ground",
@@ -226,175 +434,32 @@ SceneManager.add({
 			brightness: ({definition}, index) => 120 + 15 * definition.position[1].get(index),
 		}),
 
-// 		{	//	upper level
-// 			id: "upper-level",
-// 			src: "wall",
-// 			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size + .3,
-// 			type: SpriteType.Floor,
-// 			circleRadius: 1,
-// 			pos: [0, -1.15, 0],
-// 			scale: [
-// 				({definition}) => definition.size.get(),
-// 				({definition}) => definition.size.get(),
-// 			],
-// 			effects: {
-// 				brightness: 110,
-// 			},
-// 			fixed: true,
-// 		},
-// 		ShapeUtils.cylinder({
-// 			src: "wall",
-// 			type: SpriteType.Back,
-// 			cols: 40, rows: 2,
-// 			radius: 8,
-// 			center: [
-// 				({game}) => game.getDefinition("upper-level").pos[0].get(),
-// 				-2.65,
-// 				({game}) => game.getDefinition("upper-level").pos[2].get(),
-// 			],
-// 			scale: [ 1.3, 1 ],
-// 			brightness: 110,
-// 			fixed: true,
-// 		}),
-// 		{
-// 			id: "entrance",
-// 			src: "wall",
-// 			type: SpriteType.Floor,
-// 			pos: [0, -3.155, 25],
-// 			scale: [6, 6],
-// 			effects: {
-// 				brightness: ({game}) => game.getDefinition("lower-level").effects.brightness.get(),
-// 			},
-// 			fixed: true,			
-// 		},
-// 		{	//	floor
-// 			id: "lower-level",
-// 			src: "wall",
-// 			size: ({game: { levelMap }, definition: {id}}) => levelMap[id.get()].size,
-// 			type: SpriteType.Floor,
-// 			circleRadius: 1,
-// 			pos: [0, -3.15, 15],
-// 			scale: [
-// 				({definition}) => definition.size.get(),
-// 				({definition}) => definition.size.get(),
-// 			],
-// 			effects: {
-// 				brightness: 50,
-// 			},
-// 			fixed: true,
-// 		},
 
-// 		ShapeUtils.cube({
-// 			topSrc: "dirt-ground",
-// 			sideSrc: "dirt-ground",
-// 			position: [
-// 				({game}, index) => game.robots[index].pos[0],
-// 				({game, definition}, index) => -.3 + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
-// 				({game}, index) => game.robots[index].pos[2],
-// 			],
-// 			rotationAngle: [
-// 				0,
-// 				({game}, index) => game.robots[index].turn,
-// 				0,
-// 			],
-// 			cubeCount: ({game}) => game.robots.length,
-// 		}),
+		SpriteUtils.makeSprite({
+			src: "dok",
+			position: [
+				({game: { sceneData: { dok: { pos } }}}) => pos[0],
+				({game: { sceneData: { dok: { pos } }}}) => pos[1],
+				({game: { sceneData: { dok: { pos } }}}) => pos[2],
+			],
+			scale: [
+				({game: {sceneData: { dok: { mov } }}}) => (mov.x || 1),
+				1,
+			],
+			heightAboveGround: ({game: { sceneData: { dok: { heightAboveGround } }}}) => heightAboveGround,
+			animation: ({game: { active, keys: { actions }, sceneData: { dok: { speed, mov, flying, grounded } }}}) => {
+				if (flying) {
+					return actions.mov.y < 0 ? "jump-up" : "jump";
+				}
 
-// 		{
-// 			src: "roboface",
-// 			type: SpriteType.Front,
-// 			pos: [
-// 				({game}, index) => game.robots[index].pos[0],
-// 				({game, definition}, index) => -.3 + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
-// 				({game}, index) => game.robots[index].pos[2] + .501,
-// 			],
-// 			rotation: {
-// 				angle: [
-// 					0,
-// 					({game}, index) => game.robots[index].turn,
-// 					0,
-// 				],
-// 				center: [
-// 					0,
-// 					0,
-// 					-.501,
-// 				],
-// 			},
-// 			count: ({game}) => game.robots.length,
-// 		},
-// 		{
-// 			src: "arm",
-// 			type: SpriteType.RightWall,
-// 			pos: [
-// 				({game}, index) => game.robots[index].pos[0]-.51,
-// 				({game, definition}, index) => -.3 + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
-// 				({game}, index) => game.robots[index].pos[2],
-// 			],
-// 			animation: ({game},index) => game.robots[index].command.drive ? "moving" : "still",
-// 			rotation: {
-// 				angle: [
-// 					0,
-// 					({game}, index) => game.robots[index].turn,
-// 					0,
-// 				],
-// 				center: [
-// 					.51,
-// 					0,
-// 					0,
-// 				],
-// 			},
-// 			count: ({game}) => game.robots.length,
-// 		},
-// 		{
-// 			src: "arm",
-// 			type: SpriteType.LeftWall,
-// 			pos: [
-// 				({game}, index) => game.robots[index].pos[0]+.51,
-// 				({game, definition}, index) => -.3 + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
-// 				({game}, index) => game.robots[index].pos[2],
-// 			],
-// 			animation: ({game},index) => game.robots[index].command.drive ? "moving" : "still",
-// 			scale: [-1, 1],
-// 			rotation: {
-// 				angle: [
-// 					0,
-// 					({game}, index) => game.robots[index].turn,
-// 					0,
-// 				],
-// 				center: [
-// 					-.51,
-// 					0,
-// 					0,
-// 				],
-// 			},
-// 			count: ({game}) => game.robots.length,
-// 		},
-// //			let [ movX, movZ ] = MotionUtils.getNormalDirection(-robot.turn, 0, command.drive);
+				if (speed > .01 || !grounded) {
+					return actions.mov.y < 0 || (mov.z < 0 && !actions.mov.x) ? "walk-up" : "walk";
+				}
 
-
-// 		{
-// 			src: "foot",
-// 			cos: ({game},index) => .2 * (game.robots[index].command.drive * Math.cos(game.now / 50)),
-// 			sin: ({game},index) => .2 * (game.robots[index].command.drive * Math.sin(game.now / 50)),
-// 			scale: [.5,1],
-// 			pos: [
-// 				({game}, index) => game.robots[index].pos[0] + .3 * MotionUtils.getNormalDirection(-game.robots[index].turn, -1, 0)[0],
-// 				({game, definition}, index) => - .8 + definition.cos.get(index) + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
-// 				({game}, index) => game.robots[index].pos[2] + .3 * MotionUtils.getNormalDirection(-game.robots[index].turn, -1, 0)[1],
-// 			],
-// 			count: ({game}) => game.robots.length,
-// 		},
-// 		{
-// 			src: "foot",
-// 			cos: ({game},index) => .2 * (game.robots[index].command.drive * Math.cos(game.now / 50)),
-// 			sin: ({game},index) => .2 * (game.robots[index].command.drive * Math.sin(game.now / 50)),
-// 			scale: [.5,1],
-// 			pos: [
-// 				({game}, index) => game.robots[index].pos[0] + .3 * MotionUtils.getNormalDirection(-game.robots[index].turn, 1, 0)[0],
-// 				({game, definition}, index) => - .8 + definition.sin.get(index) + game.getHeight(game.robots[index].pos[0],0,game.robots[index].pos[2]),
-// 				({game}, index) => game.robots[index].pos[2] + .3 * MotionUtils.getNormalDirection(-game.robots[index].turn, 1, 0)[1],
-// 			],
-// 			count: ({game}) => game.robots.length,
-// 		},
+				return actions.mov.y < 0 || (mov.z < 0 && !actions.mov.x) ? "idle-up" : "idle";
+			},
+			shadowColor: 0xFF777777,
+			spriteSize: [292, 362],
+		}),
 	],
 });
