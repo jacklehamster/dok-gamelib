@@ -11,8 +11,6 @@ class EngineCommunicator {
 	constructor() {
 		this.byteCount = 0;
 		this.arrayBuffer = null;
-		this.intBuffer = null;
-		this.floatBuffer = null;
 		this.extraData = [];
 		this.pool = new Pool(() => new ArrayBuffer(MAX_BUFFER_SIZE));
 		this.lastError = null;
@@ -28,8 +26,6 @@ class EngineCommunicator {
 		if (!this.arrayBuffer || this.arrayBuffer.byteLength === 0) {
 			this.arrayBuffer = this.pool.get();
 			this.dataView = new DataView(this.arrayBuffer);
-			this.intBuffer = new Int32Array(this.arrayBuffer);
-			this.floatBuffer = new Float32Array(this.arrayBuffer);
 			this.byteCount = 0;
 		}
 	}

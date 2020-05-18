@@ -18,6 +18,26 @@ class Communicator {
 		this.mediaManager = mediaManager;
 		this.newgrounds = newgrounds;
 		this.glRenderer = glRenderer;
+		this.offset = 0;
+		this.dataView = null;
+	}
+
+	readFloat32() {
+		const value = this.dataView.getFloat32(this.offset, true);
+		this.offset += Float32Array.BYTES_PER_ELEMENT;
+		return value;
+	}
+
+	readInt32() {
+		const value = this.dataView.getInt32(this.offset, true);
+		this.offset += Int32Array.BYTES_PER_ELEMENT;
+		return value;
+	}
+
+	readFloat32SubArray(size) {
+		const value = new Float32Array(this.dataView.buffer, this.offset, size);
+		this.offset += Float32Array.BYTES_PER_ELEMENT * size;
+		return value;
 	}
 
 	applyBuffer(arrayBuffer, byteCount, extra) {
@@ -25,70 +45,70 @@ class Communicator {
 			return;
 		}
 		const { sceneGL, sceneUI, engine, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = this;
-		const intBuffer = new Int32Array(arrayBuffer);
-		const floatBuffer = new Float32Array(arrayBuffer);
+
+		this.offset = 0;
+		this.dataView = new DataView(arrayBuffer);
 
 		let updatedScene = false;
-		let index = 0;
 		let extraIndex = 0;
-		while (index * Int32Array.BYTES_PER_ELEMENT < byteCount) {
-			const command = intBuffer[index++];
+		while (this.offset < byteCount) {
+			const command = this.readInt32();
 			// console.log(commandName(command));
 			switch (command) {
 				case Commands.SCENE_BACKGROUND: {
-					const color = floatBuffer[index++];
+					const color = this.readFloat32();
 					sceneGL.setBackground(color);
 					updatedScene = true;
 					break;
 				}
 				case Commands.SCENE_VIEWANGLE: {
-					const viewAngle = floatBuffer[index++];
-					const near = floatBuffer[index++];
-					const far = floatBuffer[index++];
+					const viewAngle = this.readFloat32();
+					const near = this.readFloat32();
+					const far = this.readFloat32();
 					sceneGL.setViewAngle(viewAngle, near, far);
 					updatedScene  = true;
 					break;
 				}
 				case Commands.SCENE_VIEW_POSITION: {
-					const x = floatBuffer[index++];
-					const y = floatBuffer[index++];
-					const z = floatBuffer[index++];
-					const tilt = floatBuffer[index++];
-					const turn = floatBuffer[index++];
-					const cameraDistance = floatBuffer[index++];
+					const x = this.readFloat32();
+					const y = this.readFloat32();
+					const z = this.readFloat32();
+					const tilt = this.readFloat32();
+					const turn = this.readFloat32();
+					const cameraDistance = this.readFloat32();
 					sceneGL.setViewPosition(x, y, z, tilt, turn, cameraDistance);
 					updatedScene = true;
 					break;
 				}
 				case Commands.SCENE_CURVATURE: {
-					const curvature = floatBuffer[index++];
+					const curvature = this.readFloat32();
 					sceneGL.setCurvature(curvature);
 					updatedScene = true;
 					break;
 				}
 				case Commands.SCENE_LIGHT: {
-					const x = floatBuffer[index++];
-					const y = floatBuffer[index++];
-					const z = floatBuffer[index++];
-					const ambient = floatBuffer[index++];
-					const diffusionStrength = floatBuffer[index++];
-					const specularStrength = floatBuffer[index++];
-					const shininess = floatBuffer[index++];
+					const x = this.readFloat32();
+					const y = this.readFloat32();
+					const z = this.readFloat32();
+					const ambient = this.readFloat32();
+					const diffusionStrength = this.readFloat32();
+					const specularStrength = this.readFloat32();
+					const shininess = this.readFloat32();
 					sceneGL.setLight(x, y, z, ambient, diffusionStrength, specularStrength, shininess);
 					updatedScene = true;
 					break;
 				}
 				case Commands.SCENE_DEPTHEFFECT: {
-					const fading = floatBuffer[index++];
-					const closeSaturation = floatBuffer[index++];
-					const farSaturation = floatBuffer[index++];
+					const fading = this.readFloat32();
+					const closeSaturation = this.readFloat32();
+					const farSaturation = this.readFloat32();
 					sceneGL.setDepthEffect(fading, closeSaturation, farSaturation);
 					updatedScene = true;
 					break;
 				}
 				case Commands.UI_CREATE_ELEMENT: {
-					const instanceIndex = floatBuffer[index++];
-					const hasOnClick = floatBuffer[index++];
+					const instanceIndex = this.readFloat32();
+					const hasOnClick = this.readFloat32();
 					const elementId = extra[extraIndex++];
 					const type = extra[extraIndex++];
 					sceneUI.createElement(elementId, instanceIndex, type, hasOnClick);
@@ -121,8 +141,8 @@ class Communicator {
 				}
 				case Commands.UI_SET_SIZE: {
 					const elementId = extra[extraIndex++];
-					const width = floatBuffer[index++];
-					const height = floatBuffer[index++];
+					const width = this.readFloat32();
+					const height = this.readFloat32();
 					sceneUI.setSize(elementId, width, height);
 					break;
 				}
@@ -160,7 +180,7 @@ class Communicator {
 				case Commands.MEDIA_PLAY_MUSIC: {
 					const id = extra[extraIndex++];
 					const url = extra[extraIndex++];
-					const reset = floatBuffer[index++];
+					const reset = this.readFloat32();
 					mediaManager.playMusic(id, reset, url);
 					break;
 				}
@@ -172,7 +192,7 @@ class Communicator {
 				case Commands.MEDIA_PLAY_VIDEO: {
 					const id = extra[extraIndex++];
 					const url = extra[extraIndex++];
-					const reset = floatBuffer[index++];
+					const reset = this.readFloat32();
 					mediaManager.playVideo(id, reset, url);
 					break;
 				}
@@ -183,7 +203,7 @@ class Communicator {
 				}
 				case Commands.MEDIA_SET_MUSIC_VOLUME: {
 					const id = extra[extraIndex++];
-					const volume = floatBuffer[index++];					
+					const volume = this.readFloat32();					
 					mediaManager.setMusicVolume(id, volume);
 					break;
 				}
@@ -193,31 +213,32 @@ class Communicator {
 					break;
 				}
 				case Commands.NG_POST_SCORE: {
-					const score = floatBuffer[index++];
+					const score = this.readFloat32();
 					newgrounds.postScore(score).then(console.log).catch(console.error);
 					break;
 				}
 				case Commands.GL_UPDATE_BUFFER: {
-					const bufferType = intBuffer[index++];
-					const offset = intBuffer[index++];
-					const size = intBuffer[index++];
-					const buffer = floatBuffer.subarray(index, index + size);
-					index += size;
+					const bufferType = this.readInt32();
+					const offset = this.readInt32();
+					const size = this.readInt32();
+					const buffer = this.readFloat32SubArray(size);
 					glRenderer.sendBufferToGL(bufferType, offset, buffer);
 					break;
 				}
 				case Commands.GL_SET_VISIBLE_CHUNKS: {
-					const count = intBuffer[index++];
+					const count = this.readInt32();
 					glRenderer.setVisibleChunks(count);
 					break;
 				}
 				case Commands.VIEW_RESIZE: {
-					const width = floatBuffer[index++];
-					const height = floatBuffer[index++];
+					const width = this.readFloat32();
+					const height = this.readFloat32();
 					engine.resize(width, height);
 				}
 			}
 		}
+		this.offset = 0;
+		this.dataView = null;
 
 		if (updatedScene) {
 			sceneGL.resetPools();
