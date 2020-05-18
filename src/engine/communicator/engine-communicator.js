@@ -16,6 +16,8 @@ class EngineCommunicator {
 		this.lastError = null;
 		this.maxSize = 0;
 		this.clear();
+
+		console.log("TODO", "restore lastGLBuffer info (To batch buffers into one)");
 	}
 
 	restoreBuffer(arrayBuffer) {
