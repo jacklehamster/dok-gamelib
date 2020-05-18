@@ -22,6 +22,12 @@ class Communicator {
 		this.dataView = null;
 	}
 
+	readUnsignedByte() {
+		const value = this.dataView.getUint8(this.offset);
+		this.offset += Uint8Array.BYTES_PER_ELEMENT;
+		return value;		
+	}
+
 	readFloat32() {
 		const value = this.dataView.getFloat32(this.offset, true);
 		this.offset += Float32Array.BYTES_PER_ELEMENT;
@@ -52,8 +58,8 @@ class Communicator {
 		let updatedScene = false;
 		let extraIndex = 0;
 		while (this.offset < byteCount) {
-			const command = this.readInt32();
-			// console.log(commandName(command));
+			const command = this.readUnsignedByte();
+			//console.log(commandName(command));
 			switch (command) {
 				case Commands.SCENE_BACKGROUND: {
 					const color = this.readFloat32();

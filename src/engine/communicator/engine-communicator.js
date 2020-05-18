@@ -69,6 +69,16 @@ class EngineCommunicator {
 		return this.extraData;
 	}
 
+	writeUnsignedByte(...values) {
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] >= 256) {
+				console.error("Byte out of bound: ", values[i]);
+			}
+			this.dataView.setUint8(this.byteCount, values[i]);
+			this.byteCount += Uint8Array.BYTES_PER_ELEMENT;
+		}		
+	}
+
 	writeInt32(...values) {
 		for (let i = 0; i < values.length; i++) {
 			this.dataView.setInt32(this.byteCount, values[i], true);
@@ -83,9 +93,10 @@ class EngineCommunicator {
 		}		
 	}
 
-	sendInt(...params) {
+	sendCommandThenInt(command, ...params) {
 		this.ensureBuffer();
-		this.writeInt32(...params);
+		this.writeUnsignedByte(command);
+		this.writeInt32(...params);		
 	}
 
 	sendCommand(command, floatParams, extras) {
@@ -95,7 +106,7 @@ class EngineCommunicator {
 
 	loadToBuffer(command, params) {
 		this.ensureBuffer();
-		this.writeInt32(command);
+		this.writeUnsignedByte(command);
 		if (params) {
 			this.writeFloat32(...params);
 		}
@@ -127,7 +138,8 @@ class EngineCommunicator {
 		this.lastGLBuffer.type = type;
 		this.lastGLBuffer.offset = offset;
 		this.lastGLBuffer.size = params.length * Float32Array.BYTES_PER_ELEMENT;
-		this.writeInt32(Commands.GL_UPDATE_BUFFER, type, offset, this.lastGLBuffer.size);
+		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
+		this.writeInt32(type, offset, this.lastGLBuffer.size);
 		this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		this.writeFloat32(...params);
 	}
