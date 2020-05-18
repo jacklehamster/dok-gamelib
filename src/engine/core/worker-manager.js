@@ -38,8 +38,8 @@ class WorkerManager {
 				break;
 			}
 			case "payload": {
-				const {data: { time, buffer, count, extra}} = event;
-				this.engine.refresh(time, buffer, count, extra);
+				const {data: { time, buffer, byteCount, extra}} = event;
+				this.engine.refresh(time, buffer, byteCount, extra);
 				if (buffer) {
 					this.returnBuffer(buffer);
 				}

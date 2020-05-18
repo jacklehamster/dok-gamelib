@@ -186,10 +186,10 @@ class Engine {
 		this.workerManager.gotoScene(name);
 	}
 
-	refresh(now, buffer, count, extra) {
+	refresh(now, buffer, byteCount, extra) {
 		const { communicator, sceneUI, glRenderer, onLoopListener } = this;
-		if (buffer && count) {
-			communicator.applyBuffer(buffer, count, extra);
+		if (buffer && byteCount) {
+			communicator.applyBuffer(buffer, byteCount, extra);
 		}
 		this.loopVideo();
 		sceneUI.updateUI(now);

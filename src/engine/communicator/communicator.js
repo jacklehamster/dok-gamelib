@@ -20,8 +20,8 @@ class Communicator {
 		this.glRenderer = glRenderer;
 	}
 
-	applyBuffer(arrayBuffer, count, extra) {
-		if (!count) {
+	applyBuffer(arrayBuffer, byteCount, extra) {
+		if (!byteCount) {
 			return;
 		}
 		const { sceneGL, sceneUI, engine, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = this;
@@ -31,7 +31,7 @@ class Communicator {
 		let updatedScene = false;
 		let index = 0;
 		let extraIndex = 0;
-		while (index < count) {
+		while (index * Int32Array.BYTES_PER_ELEMENT < byteCount) {
 			const command = intBuffer[index++];
 			// console.log(commandName(command));
 			switch (command) {
