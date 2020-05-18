@@ -270,7 +270,7 @@ class ISpriteRenderer {
 
 		if (this.visibleChunks !== visibleChunks) {
 			this.visibleChunks = visibleChunks;
-	        this.engineCommunicator.sendInt(Commands.GL_SET_VISIBLE_CHUNKS, this.visibleChunks);
+	        this.engineCommunicator.sendCommandThenInt(Commands.GL_SET_VISIBLE_CHUNKS, this.visibleChunks);
 		}
 	}
 
