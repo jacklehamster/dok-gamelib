@@ -171,16 +171,16 @@ class WorkerEngine {
 	postBackPayload(now) {
 		const { payload, engineCommunicator } = this;
 		payload.time = now;
-		if (engineCommunicator.getCount() && engineCommunicator.getBuffer().byteLength) {
+		if (engineCommunicator.getByteCount() && engineCommunicator.getBuffer().byteLength) {
 			payload.buffer = engineCommunicator.getBuffer();
-			payload.count = engineCommunicator.getCount();
+			payload.byteCount = engineCommunicator.getByteCount();
 			payload.extra = engineCommunicator.getExtra();
 			//console.log(JSON.parse(JSON.stringify(engineCommunicator.getExtra())));
 			self.postMessage(payload, [payload.buffer]);
 			engineCommunicator.clear();
 		} else {
 			delete payload.buffer;
-			delete payload.count;
+			delete payload.byteCount;
 			delete payload.extra;
 			self.postMessage(payload);
 		}

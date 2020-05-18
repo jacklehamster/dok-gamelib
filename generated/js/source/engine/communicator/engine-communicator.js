@@ -9,7 +9,7 @@
 
 class EngineCommunicator {
 	constructor() {
-		this.count = 0;
+		this.byteCount = 0;
 		this.arrayBuffer = null;
 		this.intBuffer = null;
 		this.floatBuffer = null;
@@ -27,16 +27,17 @@ class EngineCommunicator {
 	ensureBuffer() {
 		if (!this.arrayBuffer || this.arrayBuffer.byteLength === 0) {
 			this.arrayBuffer = this.pool.get();
+			this.dataView = new DataView(this.arrayBuffer);
 			this.intBuffer = new Int32Array(this.arrayBuffer);
 			this.floatBuffer = new Float32Array(this.arrayBuffer);
-			this.count = 0;
+			this.byteCount = 0;
 		}
 	}
 
 	clear() {
-		if (this.count > this.maxSize) {
-			this.maxSize = this.count;
-			const percentUsed = (100 * (this.maxSize * Float32Array.BYTES_PER_ELEMENT) / MAX_BUFFER_SIZE);
+		if (this.byteCount > this.maxSize) {
+			this.maxSize = this.byteCount;
+			const percentUsed = (100 * this.maxSize / MAX_BUFFER_SIZE);
 			if (percentUsed < 80) {
 				console.log(`Data buffer used: ${percentUsed.toFixed(2)}%`);
 			} else if (percentUsed < 100) {
@@ -46,7 +47,7 @@ class EngineCommunicator {
 			}
 		}
 
-		this.count = 0;
+		this.byteCount = 0;
 		this.extraData.length = 0;
 	}
 
@@ -54,20 +55,31 @@ class EngineCommunicator {
 		return this.arrayBuffer;
 	}
 
-	getCount() {
-		return this.count;
+	getByteCount() {
+		return this.byteCount;
 	}
 
 	getExtra() {
 		return this.extraData;
 	}
 
+	writeInt32(...values) {
+		for (let i = 0; i < values.length; i++) {
+			this.dataView.setInt32(this.byteCount, values[i], true);
+			this.byteCount += Int32Array.BYTES_PER_ELEMENT;
+		}
+	}
+
+	writeFloat32(...values) {
+		for (let i = 0; i < values.length; i++) {
+			this.dataView.setFloat32(this.byteCount, values[i], true);
+			this.byteCount += Float32Array.BYTES_PER_ELEMENT;
+		}		
+	}
+
 	sendInt(...params) {
 		this.ensureBuffer();
-		for (let i = 0; i < params.length; i++) {
-			this.intBuffer[this.count + i] = params[i];		
-		}
-		this.count += params.length;
+		this.writeInt32(...params);
 	}
 
 	sendCommand(command, floatParams, extras) {
@@ -77,32 +89,21 @@ class EngineCommunicator {
 
 	loadToBuffer(command, params) {
 		this.ensureBuffer();
-		this.intBuffer[this.count++] = command;
+		this.writeInt32(command);
 		if (params) {
-			for (let i = 0; i < params.length; i++) {
-				this.floatBuffer[this.count++] = params[i];
-			}
+			this.writeFloat32(...params);
 		}
 	}
 
 	loadExtra(params) {
 		if (params) {
-			for (let i = 0; i < params.length; i++) {
-				this.extraData.push(params[i]);
-			}
+			this.extraData.push(...params);
 		}
 	}
 
 	loadGLBuffer(type, offset, ...params) {
 		this.ensureBuffer();
-
-		this.intBuffer[this.count++] = Commands.GL_UPDATE_BUFFER;
-		this.intBuffer[this.count++] = type;
-		this.intBuffer[this.count++] = offset;
-		this.intBuffer[this.count++] = params.length;
-		for (let i = 0; i < params.length; i++) {
-			this.floatBuffer[this.count + i] = params[i];
-		}
-		this.count += params.length;
+		this.writeInt32(Commands.GL_UPDATE_BUFFER, type, offset, params.length);
+		this.writeFloat32(...params);
 	}
 }
