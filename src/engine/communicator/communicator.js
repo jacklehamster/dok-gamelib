@@ -34,9 +34,9 @@ class Communicator {
 		return value;
 	}
 
-	readFloat32SubArray(size) {
-		const value = new Float32Array(this.dataView.buffer, this.offset, size);
-		this.offset += Float32Array.BYTES_PER_ELEMENT * size;
+	readSubArray(size) {
+		const value = new DataView(this.dataView.buffer, this.offset, size);
+		this.offset += size;
 		return value;
 	}
 
@@ -221,7 +221,7 @@ class Communicator {
 					const bufferType = this.readInt32();
 					const offset = this.readInt32();
 					const size = this.readInt32();
-					const buffer = this.readFloat32SubArray(size);
+					const buffer = this.readSubArray(size);
 					glRenderer.sendBufferToGL(bufferType, offset, buffer);
 					break;
 				}

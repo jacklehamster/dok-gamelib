@@ -114,7 +114,7 @@ class GLRenderer extends ISpriteRenderer {
 			console.error(type, offset);
 		}
 		this.bindBuffer(bufferInfos[type].shaderBuffer);
-		gl.bufferSubData(gl.ARRAY_BUFFER, offset * Float32Array.BYTES_PER_ELEMENT, buffer);
+		gl.bufferSubData(gl.ARRAY_BUFFER, offset, buffer);
 	}
 
 	draw(now) {
