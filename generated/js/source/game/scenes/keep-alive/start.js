@@ -1043,7 +1043,7 @@ SceneManager.add({Game: class extends Game {
 					return definition.walkAnim[dir][1] * 6;
 				},
 				({game, definition}, index) => {
-					return (game.sceneData.bears[index].size || 1) * 6;
+					return (game.sceneData.bears[index] ? game.sceneData.bears[index].size || 1 : 1) * 6;
 				},
 			],
 			shadowColor: 0xFF333333,
