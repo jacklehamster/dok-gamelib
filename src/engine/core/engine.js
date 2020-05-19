@@ -138,7 +138,7 @@ class Engine {
 
 	checkSupport(gl) {
 		const settings = {
-			maxVertexAttributes: gl.getParameter(gl.MAX_VERTEX_ATTRIBS),
+			usedVertexAttributes: `${Object.keys(ShaderConfig.attributes).length} / ${gl.getParameter(gl.MAX_VERTEX_ATTRIBS)}`,
 			maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
 			maxTextureUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
 			maxVarying: gl.getParameter(gl.MAX_VARYING_VECTORS),

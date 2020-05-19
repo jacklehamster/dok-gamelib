@@ -28,7 +28,7 @@ class GLRenderer extends ISpriteRenderer {
 		bufferInfo.spriteType = new EngineBuffer(this.shader,
 				BufferType.SPRITE_TYPE,
 				"spriteType",
-				 SPRITE_TYPE_FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0, gl.STATIC_DRAW);
+				 SPRITE_TYPE_BYTE_PER_VERTEX, gl.BYTE, false, 0, 0, gl.STATIC_DRAW);
 
 		bufferInfo.vertex = new EngineBuffer(this.shader,
 				BufferType.VERTEX,

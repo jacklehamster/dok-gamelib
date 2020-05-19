@@ -14,7 +14,7 @@ const NORMAL_FLOAT_PER_VERTEX 		= 3;	//	3 normal
 const MOVE_FLOAT_PER_VERTEX 		= 4;	//	x,y,z,time
 const GRAVITY_FLOAT_PER_VERTEX 		= 3;	//	x,y,z
 
-const SPRITE_TYPE_FLOAT_PER_VERTEX	= 1;	//	type
+const SPRITE_TYPE_BYTE_PER_VERTEX	= 1;	//	type
 
 const TEXTURE_FLOAT_PER_VERTEX 		= 4;	//	x,y,w,h
 const TEXTURE_CENTER_PER_VERTEX 	= 4;	//	x,y,w,h
