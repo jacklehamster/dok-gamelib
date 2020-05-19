@@ -57,8 +57,8 @@ class ISpriteRenderer {
 			const sprite = tempSprites[i];
 			if (sprite.updateTimes.type === now) {
 				const { type } = sprite;
-				this.engineCommunicator.loadGLBuffer(BufferType.SPRITE_TYPE,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * SPRITE_TYPE_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
+				this.engineCommunicator.loadGLBufferByte(BufferType.SPRITE_TYPE,
+					sprite.chunkIndex * VERTICES_PER_SPRITE * SPRITE_TYPE_BYTE_PER_VERTEX * Uint8Array.BYTES_PER_ELEMENT,
 					type, type, type, type,
 				);
 			}

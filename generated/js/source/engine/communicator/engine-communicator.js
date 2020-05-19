@@ -118,6 +118,31 @@ class EngineCommunicator {
 		}
 	}
 
+	loadGLBufferByte(type, offset, ...params) {
+		if (this.lastGLBuffer.type === type
+			&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
+			&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
+		) {	//	append to previous buffer
+			this.writeUnsignedByte(...params);
+			this.lastGLBuffer.size += params.length * Uint8Array.BYTES_PER_ELEMENT;
+			this.dataView.setInt32(
+				this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
+				this.lastGLBuffer.size,
+				true
+			);
+			return;
+		}
+
+		this.ensureBuffer();
+		this.lastGLBuffer.type = type;
+		this.lastGLBuffer.offset = offset;
+		this.lastGLBuffer.size = params.length * Uint8Array.BYTES_PER_ELEMENT;
+		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
+		this.writeInt32(type, offset, this.lastGLBuffer.size);
+		this.lastGLBuffer.bufferStartIndex = this.byteCount;
+		this.writeUnsignedByte(...params);
+	}
+
 	loadGLBuffer(type, offset, ...params) {
 		if (this.lastGLBuffer.type === type
 			&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
@@ -132,7 +157,6 @@ class EngineCommunicator {
 			);
 			return;
 		}
-
 
 		this.ensureBuffer();
 		this.lastGLBuffer.type = type;
