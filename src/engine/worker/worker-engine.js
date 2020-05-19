@@ -87,17 +87,39 @@ class WorkerEngine {
 			time: 0,
 		};
 
-		if (typeof(requestAnimationFrame) !== 'undefined') {
-			const engine = this;
-			function animationFrame(time) {
-				engine.loop(time);
-				requestAnimationFrame(animationFrame);
+		this.refreshId = 0;
+		this.interval = 0;
+		this.setPaused(false);
+	}
+
+	setPaused(paused) {
+		console.log(paused ? "Worker paused." : "Worker resumed.");
+		if (paused) {
+			if (this.refreshId) {
+				cancelAnimationFrame(this.refreshId);
+				this.refreshId = 0;
 			}
-			requestAnimationFrame(animationFrame);		
+			if (this.interval) {
+				clearInterval(this.interval);
+				this.interval = 0;
+			}
 		} else {
-			setInterval(() => {
-				this.loop(Date.now());
-			}, 16);
+			if (typeof(requestAnimationFrame) !== 'undefined') {
+				if (!this.refreshId) {
+					const engine = this;
+					function animationFrame(time) {
+						engine.loop(time);
+						engine.refreshId = requestAnimationFrame(animationFrame);
+					}
+					this.refreshId = requestAnimationFrame(animationFrame);
+				}
+			} else {
+				if (!this.interval) {
+					this.interval = setInterval(() => {
+						this.loop(Date.now());
+					}, 16);
+				}
+			}
 		}
 	}
 

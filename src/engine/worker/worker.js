@@ -154,7 +154,7 @@ if (typeof(window) === 'undefined') {
 				const {data: {hidden}} = event;
 				if (windowStatus.hidden !== hidden) {
 					windowStatus.hidden = hidden;
-					console.log(hidden ? "Worker paused." : "Worker resumed.");
+					workerEngine.setPaused(windowStatus.hidden);
 				}
 				break;
 			}
