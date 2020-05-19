@@ -147,8 +147,8 @@ class EngineCommunicator {
 		this.lastGLBuffer.type = type;
 		this.lastGLBuffer.offset = offset;
 		this.lastGLBuffer.size = params.length * Uint8Array.BYTES_PER_ELEMENT;
-		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
-		this.writeInt32(type, offset, this.lastGLBuffer.size);
+		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER, type);
+		this.writeInt32(offset, this.lastGLBuffer.size);
 		this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		this.writeUnsignedByte(...params);
 	}
@@ -172,8 +172,8 @@ class EngineCommunicator {
 		this.lastGLBuffer.type = type;
 		this.lastGLBuffer.offset = offset;
 		this.lastGLBuffer.size = params.length * Uint16Array.BYTES_PER_ELEMENT;
-		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
-		this.writeInt32(type, offset, this.lastGLBuffer.size);
+		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER, type);
+		this.writeInt32(offset, this.lastGLBuffer.size);
 		this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		this.writeShort(...params);
 	}
@@ -197,8 +197,8 @@ class EngineCommunicator {
 		this.lastGLBuffer.type = type;
 		this.lastGLBuffer.offset = offset;
 		this.lastGLBuffer.size = params.length * Float32Array.BYTES_PER_ELEMENT;
-		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
-		this.writeInt32(type, offset, this.lastGLBuffer.size);
+		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER, type);
+		this.writeInt32(offset, this.lastGLBuffer.size);
 		this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		this.writeFloat32(...params);
 	}

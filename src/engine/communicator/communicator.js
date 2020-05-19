@@ -230,7 +230,7 @@ class Communicator {
 					break;
 				}
 				case Commands.GL_UPDATE_BUFFER: {
-					const bufferType = this.readInt32();
+					const bufferType = this.readUnsignedByte();
 					const offset = this.readInt32();
 					const size = this.readInt32();
 					const buffer = this.readSubArray(size);
