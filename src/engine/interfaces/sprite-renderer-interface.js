@@ -125,12 +125,12 @@ class ISpriteRenderer {
 
 		{
 			//	process grid
-			const bytesPerSprite = VERTICES_PER_SPRITE * GRID_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT;
+			const bytesPerSprite = VERTICES_PER_SPRITE * GRID_FLOAT_PER_VERTEX * Uint16Array.BYTES_PER_ELEMENT;
 			for (let i = 0; i < tempSprites.length; i++) {
 				const sprite = tempSprites[i];
 				if (sprite.updateTimes.grid === now) {
 					const { grid: [ cols, rows ] } = sprite.spriteData;
-					this.engineCommunicator.loadGLBuffer(BufferType.GRID,
+					this.engineCommunicator.loadGLBufferShort(BufferType.GRID,
 						sprite.chunkIndex * bytesPerSprite,
 						cols, rows,
 						cols, rows,

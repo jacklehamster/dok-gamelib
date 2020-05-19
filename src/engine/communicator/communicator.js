@@ -29,7 +29,7 @@ class Communicator {
 	}
 
 	readShort() {
-		const value = this.dataView.getUint16(this.offset);
+		const value = this.dataView.getUint16(this.offset, true);
 		this.offset += Uint16Array.BYTES_PER_ELEMENT;
 		return value;		
 	}

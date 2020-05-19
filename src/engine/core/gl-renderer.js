@@ -69,7 +69,7 @@ class GLRenderer extends ISpriteRenderer {
 		bufferInfo.grid = new EngineBuffer(this.shader,
 				BufferType.GRID,
 				"grid",
-				GRID_FLOAT_PER_VERTEX, gl.FLOAT, false, 0, 0, gl.STATIC_DRAW);
+				GRID_FLOAT_PER_VERTEX, gl.UNSIGNED_SHORT, false, 0, 0, gl.STATIC_DRAW);
 		bufferInfo.colorEffect = new EngineBuffer(this.shader,
 				BufferType.COLOR_EFFECT,
 				"colorEffect",

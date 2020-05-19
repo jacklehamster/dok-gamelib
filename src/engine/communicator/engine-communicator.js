@@ -84,7 +84,7 @@ class EngineCommunicator {
 			if (values[i] > 0xFFFF) {
 				console.error("Int16 out of bound: ", values[i]);
 			}
-			this.dataView.setUint16(this.byteCount, values[i]);
+			this.dataView.setUint16(this.byteCount, values[i], true);
 			this.byteCount += Uint16Array.BYTES_PER_ELEMENT;
 		}		
 	}
