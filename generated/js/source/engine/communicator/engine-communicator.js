@@ -71,11 +71,21 @@ class EngineCommunicator {
 
 	writeUnsignedByte(...values) {
 		for (let i = 0; i < values.length; i++) {
-			if (values[i] >= 256) {
+			if (values[i] > 0xFF) {
 				console.error("Byte out of bound: ", values[i]);
 			}
 			this.dataView.setUint8(this.byteCount, values[i]);
 			this.byteCount += Uint8Array.BYTES_PER_ELEMENT;
+		}		
+	}
+
+	writeShort(...values) {
+		for (let i = 0; i < values.length; i++) {
+			if (values[i] > 0xFFFF) {
+				console.error("Int16 out of bound: ", values[i]);
+			}
+			this.dataView.setUint16(this.byteCount, values[i]);
+			this.byteCount += Uint16Array.BYTES_PER_ELEMENT;
 		}		
 	}
 
@@ -141,6 +151,31 @@ class EngineCommunicator {
 		this.writeInt32(type, offset, this.lastGLBuffer.size);
 		this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		this.writeUnsignedByte(...params);
+	}
+
+	loadGLBufferShort(type, offset, ...params) {
+		if (this.lastGLBuffer.type === type
+			&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
+			&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
+		) {	//	append to previous buffer
+			this.writeShort(...params);
+			this.lastGLBuffer.size += params.length * Uint16Array.BYTES_PER_ELEMENT;
+			this.dataView.setInt32(
+				this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
+				this.lastGLBuffer.size,
+				true
+			);
+			return;
+		}
+
+		this.ensureBuffer();
+		this.lastGLBuffer.type = type;
+		this.lastGLBuffer.offset = offset;
+		this.lastGLBuffer.size = params.length * Uint16Array.BYTES_PER_ELEMENT;
+		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
+		this.writeInt32(type, offset, this.lastGLBuffer.size);
+		this.lastGLBuffer.bufferStartIndex = this.byteCount;
+		this.writeShort(...params);
 	}
 
 	loadGLBuffer(type, offset, ...params) {

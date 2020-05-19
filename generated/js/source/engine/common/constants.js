@@ -17,12 +17,12 @@ const GRAVITY_FLOAT_PER_VERTEX 		= 3;	//	x,y,z
 const SPRITE_TYPE_BYTE_PER_VERTEX	= 1;	//	type
 
 const TEXTURE_FLOAT_PER_VERTEX 		= 4;	//	x,y,w,h
-const TEXTURE_CENTER_PER_VERTEX 	= 4;	//	x,y,w,h
+const TEXTURE_CENTER_PER_VERTEX 	= 4;	//	x,y,circleRatio,textureSlot
 
 const ANIMATION_FLOAT_PER_VERTEX 	= 4;	//	time,start,count,frameRate
 const GRID_FLOAT_PER_VERTEX 		= 2;	//	cols,rows
 
-const TINT_FLOAT_PER_VERTEX			= 3;	//	tint color, mix percentage, hue, 0
+const TINT_FLOAT_PER_VERTEX			= 4;	//	tintColor, mix percentage, hue, brightness
 
 const BLACKHOLE_CENTER_FLOAT_PER_VERTEX = 3;	//	x,y,z
 const BLACKHOLE_INFO_FLOAT_PER_VERTEX	= 2;	//	strength, distance
