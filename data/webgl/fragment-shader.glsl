@@ -98,9 +98,6 @@ void main(void) {
 		float dy = (uv.y - textureCenter.y) / vTextureSize[1];
 		float textureDist = sqrt(dx * dx + dy * dy);
 
-		// uv.x = 1.6 * dx * pow(abs(dx), .4) * vTextureSize[0] + vTextureCenter.x;
-		// uv.y = 1.6 * dy * pow(abs(dy), .4) * vTextureSize[1] + vTextureCenter.y;
-
 		color = getTextureColor(uTextures, vTextureSlot, uv);		
 		color.a *= (.992 - textureDist);
 	} else {

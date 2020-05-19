@@ -28,6 +28,12 @@ class Communicator {
 		return value;		
 	}
 
+	readShort() {
+		const value = this.dataView.getUint16(this.offset);
+		this.offset += Uint16Array.BYTES_PER_ELEMENT;
+		return value;		
+	}
+
 	readFloat32() {
 		const value = this.dataView.getFloat32(this.offset, true);
 		this.offset += Float32Array.BYTES_PER_ELEMENT;

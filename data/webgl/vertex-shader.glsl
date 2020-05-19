@@ -18,10 +18,10 @@ attribute vec3 aVertexGravity;			//	[ x, y, z ]
 attribute float aType;					//	wall/floor=0, sprite=1, water=2, ...
 
 attribute vec4 aVertexTextureCoord;		//	[ x, y, spritewidth, spriteheight ]
-attribute vec4 aVertexTextureCenter;	//	[ x, y, texWidth, texHeight ]
+attribute vec4 aVertexTextureCenter;	//	[ x, y, circleRadiusFactor, textureSlot ]
 attribute vec4 aAnimationData; 			//	[ time, start, total, frameRate ]
 attribute vec2 aGrid;					//	[ cols, rows ]
-attribute vec4 aColorEffect;			//	[ tint color, mix, hue change ]
+attribute vec4 aColorEffect;			//	[ tint color, mix, hue change, brightness ]
 
 attribute vec3 aBlackholeCenter;		//	[ x, y, z ]
 attribute vec2 aBlackholeInfo;			//	[ strength, distance ]
@@ -100,20 +100,22 @@ void main(void) {
 	float index = mod(max(0.0, start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, abs(total)) * sign(total)), cols * rows);
 	float texRow = floor(index / cols);
 	float texCol = floor(mod(index + .4, cols));
+	float textureXShift = texCol * aVertexTextureCoord[2];
+	float textureYShift = texRow * aVertexTextureCoord[3];
+	float circleRadiusFactor = aVertexTextureCenter.z;
 	vTextureData.xy = aVertexTextureCoord.xy;
 	vTextureData.x = mod(vTextureData.x, 2.0);
 	vTextureData.y = mod(vTextureData.y, 2.0);
-	vTextureData.x += texCol * aVertexTextureCoord[2];
-	vTextureData.y += texRow * aVertexTextureCoord[3];
 	vTextureData.zw = aVertexTextureCenter.xy;
-	vTextureData.z += texCol * aVertexTextureCoord[2];
-	vTextureData.w += texRow * aVertexTextureCoord[3];
-	vTextureSize = aVertexTextureCenter.zw;
-
-	vTextureSlot = floor(aVertexTextureCoord.x * .5);
-	vBrightness = floor(aVertexTextureCoord.y * .5);
+	vTextureData.x += textureXShift;
+	vTextureData.y += textureYShift;
+	vTextureData.z += textureXShift;
+	vTextureData.w += textureYShift;
+	vTextureSize = aVertexTextureCoord.zw * circleRadiusFactor;
+	vTextureSlot = aVertexTextureCenter.w;	
 	vTintColor = aColorEffect.y == 0.0 ? vec4(0.0) : makeColorFromRGB(aColorEffect.x, aColorEffect.y);
 	vHue = aColorEffect.z;
+	vBrightness = aColorEffect.w;
 
 	vChromaKeyLowColor = makeColorFromRGB(aChromaKey[0], 1.0).rgb;
 	vChromaKeyHighColor = makeColorFromRGB(aChromaKey[1], 1.0).rgb;

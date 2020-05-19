@@ -20,6 +20,7 @@ const stringify = require("json-stringify-pretty-compact");
 const colors = require('colors');
 const minify = require('@node-minify/core');
 const uglifyES = require('@node-minify/uglify-es');
+const { webDir, sourceFolders, editorFolders } = require('./common');
 const {
 	getSpritesheets,
 	copyVideos,
@@ -34,36 +35,6 @@ const {
 const app = express();
 
 const port = process.env.PORT || 8000;
-const webDir = "docs";
-
-const sourceFolders = [
-	'generated/lib/*.js',
-	'src/engine/interfaces/*.js',
-	'src/engine/lib/*.js',
-	'src/engine/common/*.js',
-	'src/engine/utils/*.js',
-	'src/engine/sprites/base/base-sprite.js',
-	'src/engine/sprites/image-sprite.js',
-	'src/engine/sprites/animated-sprite.js',
-	'src/engine/sprites/sprite.js',
-	'src/engine/sprites/ui-sprite.js',
-	'src/engine/core/*.js',
-	'src/engine/communicator/*.js',
-	'src/engine/socket/*.js',
-	'src/engine/controls/*.js',
-	'src/engine/ui/*.js',
-	'src/engine/debug/*.js',
-	'src/engine/worker/*.js',
-	'src/engine/game/components/*.js',
-	'src/engine/game/base/*.js',
-	'src/engine/game/*.js',
-	'src/engine/scene-manager/*.js',
-];
-
-const editorFolders = [
-	'src/editor/**/*.js',
-];
-
 
 const TEXTURE_SIZE = 4096;
 

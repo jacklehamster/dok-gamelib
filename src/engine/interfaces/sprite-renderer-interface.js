@@ -52,210 +52,237 @@ class ISpriteRenderer {
 		}
 		tempSprites.sort(ISpriteRenderer.compareSpriteChunk);
 
-		//	process types
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			if (sprite.updateTimes.type === now) {
-				const { type } = sprite;
-				this.engineCommunicator.loadGLBufferByte(BufferType.SPRITE_TYPE,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * SPRITE_TYPE_BYTE_PER_VERTEX * Uint8Array.BYTES_PER_ELEMENT,
-					type, type, type, type,
-				);
+		{
+			//	process types
+			const bytesPerSprite = VERTICES_PER_SPRITE * SPRITE_TYPE_BYTE_PER_VERTEX * Uint8Array.BYTES_PER_ELEMENT;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				if (sprite.updateTimes.type === now) {
+					const { type } = sprite;
+					this.engineCommunicator.loadGLBufferByte(BufferType.SPRITE_TYPE,
+						sprite.chunkIndex * bytesPerSprite,
+						type, type, type, type,
+					);
+				}
 			}
 		}
 
-		//	process offset
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			if (sprite.updateTimes.pos === now) {
-				const {	pos: [ offsetX, offsetY, offsetZ ] } = sprite;
-				this.engineCommunicator.loadGLBuffer(BufferType.OFFSET,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
-					offsetX, offsetY, offsetZ,
-					offsetX, offsetY, offsetZ,
-					offsetX, offsetY, offsetZ,
-					offsetX, offsetY, offsetZ,
-				);
+		{
+			//	process offset
+			const bytesPerSprite = VERTICES_PER_SPRITE * FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				if (sprite.updateTimes.pos === now) {
+					const {	pos: [ offsetX, offsetY, offsetZ ] } = sprite;
+					this.engineCommunicator.loadGLBuffer(BufferType.OFFSET,
+						sprite.chunkIndex * bytesPerSprite,
+						offsetX, offsetY, offsetZ,
+						offsetX, offsetY, offsetZ,
+						offsetX, offsetY, offsetZ,
+						offsetX, offsetY, offsetZ,
+					);
+				}
 			}
 		}
 
-		//	process tint color
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			if (sprite.updateTimes.tintColor === now || sprite.updateTimes.hue === now) {
-				const { effects: { tintColor, hue } } = sprite;
-				const color = tintColor & 0xFFFFFF;
-				const mixRatio = Math.max(0, (tintColor / 0xFFFFFF) / 255);
-				this.engineCommunicator.loadGLBuffer(BufferType.COLOR_EFFECT,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * TINT_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
-					color, mixRatio, hue,
-					color, mixRatio, hue,
-					color, mixRatio, hue,
-					color, mixRatio, hue,
-				);
+		{
+			//	process tint color
+			const bytesPerSprite = VERTICES_PER_SPRITE * TINT_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				if (sprite.updateTimes.tintColor === now || sprite.updateTimes.hue === now || sprite.updateTimes.brightness === now) {
+					const { effects: { tintColor, hue, brightness } } = sprite;
+					const color = tintColor & 0xFFFFFF;
+					const mixRatio = Math.max(0, (tintColor / 0xFFFFFF) / 255);
+					this.engineCommunicator.loadGLBuffer(BufferType.COLOR_EFFECT,
+						sprite.chunkIndex * bytesPerSprite,
+						color, mixRatio, hue, brightness,
+						color, mixRatio, hue, brightness,
+						color, mixRatio, hue, brightness,
+						color, mixRatio, hue, brightness,
+					);
+				}
 			}
 		}
 
-		//	process move and gravity
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			if (sprite.updateTimes.move === now || sprite.updateTimes.gravity === now) {
-				const {	motion: {mov: [ mx, my, mz ], time, gravity: [ gx, gy, gz ] } } = sprite;
-				this.engineCommunicator.loadGLBuffer(BufferType.MOVE,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * (MOVE_FLOAT_PER_VERTEX + GRAVITY_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
-					mx, my, mz, time, gx, gy, gz,
-					mx, my, mz, time, gx, gy, gz,
-					mx, my, mz, time, gx, gy, gz,
-					mx, my, mz, time, gx, gy, gz,
-				);
+		{
+			//	process move and gravity
+			const bytesPerSprite = VERTICES_PER_SPRITE * (MOVE_FLOAT_PER_VERTEX + GRAVITY_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				if (sprite.updateTimes.move === now || sprite.updateTimes.gravity === now) {
+					const {	motion: {mov: [ mx, my, mz ], time, gravity: [ gx, gy, gz ] } } = sprite;
+					this.engineCommunicator.loadGLBuffer(BufferType.MOVE,
+						sprite.chunkIndex * bytesPerSprite,
+						mx, my, mz, time, gx, gy, gz,
+						mx, my, mz, time, gx, gy, gz,
+						mx, my, mz, time, gx, gy, gz,
+						mx, my, mz, time, gx, gy, gz,
+					);
+				}
 			}
 		}
 
-		//	process grid
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			if (sprite.updateTimes.grid === now) {
-				const { grid: [ cols, rows ] } = sprite.spriteData;
-				this.engineCommunicator.loadGLBuffer(BufferType.GRID,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * GRID_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
-					cols, rows,
-					cols, rows,
-					cols, rows,
-					cols, rows,
-				);
+		{
+			//	process grid
+			const bytesPerSprite = VERTICES_PER_SPRITE * GRID_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				if (sprite.updateTimes.grid === now) {
+					const { grid: [ cols, rows ] } = sprite.spriteData;
+					this.engineCommunicator.loadGLBuffer(BufferType.GRID,
+						sprite.chunkIndex * bytesPerSprite,
+						cols, rows,
+						cols, rows,
+						cols, rows,
+						cols, rows,
+					);
+				}
 			}
 		}
 
-		//	process animation
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			if (sprite.updateTimes.frameRate === now || sprite.updateTimes.animationRange === now) {
-				const { animationRange: [ start, range ], spriteData: { frameRate } } = sprite;
-				this.engineCommunicator.loadGLBuffer(BufferType.ANIMATION,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * ANIMATION_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
-					now, start, range, frameRate,
-					now, start, range, frameRate,
-					now, start, range, frameRate,
-					now, start, range, frameRate,
-				);
+		{
+			//	process animation
+			const bytesPerSprite = VERTICES_PER_SPRITE * ANIMATION_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				if (sprite.updateTimes.frameRate === now || sprite.updateTimes.animationRange === now) {
+					const { animationRange: [ start, range ], spriteData: { frameRate } } = sprite;
+					this.engineCommunicator.loadGLBuffer(BufferType.ANIMATION,
+						sprite.chunkIndex * bytesPerSprite,
+						now, start, range, frameRate,
+						now, start, range, frameRate,
+						now, start, range, frameRate,
+						now, start, range, frameRate,
+					);
 
+				}
 			}
 		}
 
-		//	process blackhole center
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			if (sprite.updateTimes.blackholeCenter === now || sprite.updateTimes.blackholeInfo === now) {
-				const { effects: { blackhole: { strength, distance, center: [ gx, gy, gz ] } } } = sprite;
-				this.engineCommunicator.loadGLBuffer(BufferType.BLACKHOLE_CENTER,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * (BLACKHOLE_CENTER_FLOAT_PER_VERTEX + BLACKHOLE_INFO_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
-					gx, gy, gz, strength, distance,
-					gx, gy, gz, strength, distance,
-					gx, gy, gz, strength, distance,
-					gx, gy, gz, strength, distance,
-				);
+		{
+			//	process blackhole center
+			const bytesPerSprite = VERTICES_PER_SPRITE * (BLACKHOLE_CENTER_FLOAT_PER_VERTEX + BLACKHOLE_INFO_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				if (sprite.updateTimes.blackholeCenter === now || sprite.updateTimes.blackholeInfo === now) {
+					const { effects: { blackhole: { strength, distance, center: [ gx, gy, gz ] } } } = sprite;
+					this.engineCommunicator.loadGLBuffer(BufferType.BLACKHOLE_CENTER,
+						sprite.chunkIndex * bytesPerSprite,
+						gx, gy, gz, strength, distance,
+						gx, gy, gz, strength, distance,
+						gx, gy, gz, strength, distance,
+						gx, gy, gz, strength, distance,
+					);
+				}
 			}
 		}
 
-		//	process chroma key
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			if (sprite.updateTimes.chromaKey === now) {
-				const { effects: { chromaKey: { range: [low, high], color }}} = sprite;
-				const a = ((color >> 24) % 256) / 255;
-				const rgb = color & 0xFFFFFF;
-				this.engineCommunicator.loadGLBuffer(BufferType.CHROMA_KEY,
-					sprite.chunkIndex * VERTICES_PER_SPRITE * CHROMA_KEY_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT,
-					low, high, rgb, a,
-					low, high, rgb, a,
-					low, high, rgb, a,
-					low, high, rgb, a,
-				);						
-			}					
+		{
+			//	process chroma key
+			const bytesPerSprite = VERTICES_PER_SPRITE * CHROMA_KEY_FLOAT_PER_VERTEX * Float32Array.BYTES_PER_ELEMENT;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				if (sprite.updateTimes.chromaKey === now) {
+					const { effects: { chromaKey: { range: [low, high], color }}} = sprite;
+					const a = ((color >> 24) % 256) / 255;
+					const rgb = color & 0xFFFFFF;
+					this.engineCommunicator.loadGLBuffer(BufferType.CHROMA_KEY,
+						sprite.chunkIndex * bytesPerSprite,
+						low, high, rgb, a,
+						low, high, rgb, a,
+						low, high, rgb, a,
+						low, high, rgb, a,
+					);						
+				}					
+			}
 		}
 
-		//	process texture
-		const { imagedata, textureManager, videos } = this;
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			const { updateTimes } = sprite;
+		{
+			//	process texture
+			const { imagedata, textureManager, videos } = this;
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				const { updateTimes } = sprite;
 
-			if (updateTimes.src === now || updateTimes.scale === now || updateTimes.brightness === now
-				|| updateTimes.spriteSize === now || updateTimes.circleRadius === now || updateTimes.grid === now || updateTimes.padding === now
-			) {
-				const { src, spriteData: { spriteSize, grid, padding }, scale, effects: { brightness }, circleRadius, hidden } = sprite;
-				if (!src) {
-					this.setTexture(sprite, 0, 0, 0, 0, 0, scale, brightness, padding, 0, now);
-				} else {
-					const spriteDataProcessorInfo = spriteDataProcessor.data[src];
-					const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src) || spriteDataProcessorInfo && imagedata.sprites[spriteDataProcessorInfo.src];
-					if (!spriteInfo) {
-						if (!videos[src] && !hidden) {
-							const error = `Unknown sprite '${src}'.`;
-							if (this.lastError !== error) {
-								this.lastError = error;
-								console.warn(this.lastError);
-							}
-						}
-//						this.setTexture(sprite, 0, 0, 0, 0, 0, scale, brightness, padding, 0, now);
-						sprite.src = null;
-						continue;
-					}
-
-					const { rect: [ x, y, sheetWidth, sheetHeight ], isVideo } = spriteInfo;
-					const index = isVideo ? VIDEO_TEXTURE_INDEX : spriteInfo.index;
-					if (spriteDataProcessorInfo) {
-						const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;
-						this.setTexture(sprite, index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, circleRadius, now);
+				if (updateTimes.src === now || updateTimes.scale === now || updateTimes.spriteSize === now
+					|| updateTimes.circleRadius === now || updateTimes.grid === now || updateTimes.padding === now
+				) {
+					const { src, spriteData: { spriteSize, grid, padding }, scale, circleRadius, hidden } = sprite;
+					if (!src) {
+						this.setTexture(sprite, 0, 0, 0, 0, 0, scale, padding, 0, now);
 					} else {
-						const [ cols, rows ] = grid;
-						const [ spriteWidth, spriteHeight ] = spriteSize;
-						this.setTexture(sprite, index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, brightness, padding, circleRadius, now);
+						const spriteDataProcessorInfo = spriteDataProcessor.data[src];
+						const spriteInfo = imagedata.sprites[src] || textureManager.getVideoTexture(src) || spriteDataProcessorInfo && imagedata.sprites[spriteDataProcessorInfo.src];
+						if (!spriteInfo) {
+							if (!videos[src] && !hidden) {
+								const error = `Unknown sprite '${src}'.`;
+								if (this.lastError !== error) {
+									this.lastError = error;
+									console.warn(this.lastError);
+								}
+							}
+							sprite.src = null;
+							continue;
+						}
+
+						const { rect: [ x, y, sheetWidth, sheetHeight ], isVideo } = spriteInfo;
+						const index = isVideo ? VIDEO_TEXTURE_INDEX : spriteInfo.index;
+						if (spriteDataProcessorInfo) {
+							const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;
+							this.setTexture(sprite, index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, padding, circleRadius, now);
+						} else {
+							const [ cols, rows ] = grid;
+							const [ spriteWidth, spriteHeight ] = spriteSize;
+							this.setTexture(sprite, index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, padding, circleRadius, now);
+						}
 					}
 				}
 			}
 		}
 
-		//	process wall
-		for (let i = 0; i < tempSprites.length; i++) {
-			const sprite = tempSprites[i];
-			const { updateTimes } = sprite;
-			if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.curvature === now
-				|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now) {
-				const { scale, hotspot, hidden, corners, rotation, effects, type } = sprite;
-				if (hidden) {
-					this.setInactive(sprite);
-				} else {
-					sprite.inactive = false;
-					const spriteWidth = Math.abs(scale[0]);
-					const spriteHeight = Math.abs(scale[1]);
-					switch (type) {
-						case SpriteType.Ceiling:
-							this.setCeiling(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-							break;
-						case SpriteType.Water:		
-						case SpriteType.Floor:
-						case SpriteType.Shadow:
-							this.setFloor(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-							break;
-						case SpriteType.LeftWall:
-							this.setLeftWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-							break;
-						case SpriteType.RightWall:
-							this.setRightWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-							break;
-						case SpriteType.Sprite:
-						case SpriteType.Front:
-							this.setWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);			
-							break;
-						case SpriteType.Back:
-							this.setBackWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
-							break;
-						default:
-							console.error("invalid type");
-					}
-					vec3pool.reset();					
-				}				
+		{
+			//	process wall
+			for (let i = 0; i < tempSprites.length; i++) {
+				const sprite = tempSprites[i];
+				const { updateTimes } = sprite;
+				if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.curvature === now
+					|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now) {
+					const { scale, hotspot, hidden, corners, rotation, effects, type } = sprite;
+					if (hidden) {
+						this.setInactive(sprite);
+					} else {
+						sprite.inactive = false;
+						const spriteWidth = Math.abs(scale[0]);
+						const spriteHeight = Math.abs(scale[1]);
+						switch (type) {
+							case SpriteType.Ceiling:
+								this.setCeiling(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+								break;
+							case SpriteType.Water:		
+							case SpriteType.Floor:
+							case SpriteType.Shadow:
+								this.setFloor(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+								break;
+							case SpriteType.LeftWall:
+								this.setLeftWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+								break;
+							case SpriteType.RightWall:
+								this.setRightWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+								break;
+							case SpriteType.Sprite:
+							case SpriteType.Front:
+								this.setWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);			
+								break;
+							case SpriteType.Back:
+								this.setBackWall(sprite, spriteWidth, spriteHeight, hotspot, corners, rotation, effects, now);
+								break;
+							default:
+								console.error("invalid type");
+						}
+						vec3pool.reset();					
+					}				
+				}
 			}
 		}
 
@@ -274,17 +301,15 @@ class ISpriteRenderer {
 		}
 	}
 
-	setTexture(sprite, texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, brightness, padding, circleRadius, now) {
+	setTexture(sprite, texIndex, spriteX, spriteY, spriteWidth, spriteHeight, scale, padding, circleRadius, now) {
 		const texWidth = spriteWidth / TEXTURE_SIZE, texHeight = spriteHeight / TEXTURE_SIZE;
 		const texX = spriteX / TEXTURE_SIZE, texY = spriteY / TEXTURE_SIZE;
 		const [ scaleH, scaleV ] = scale;
-		const horizontalShift = texIndex * 2;
-		const verticalShift = Math.round(brightness) * 2;
 
-		let left = horizontalShift + texX + (padding * texWidth / 100),
-			right = horizontalShift + texX + texWidth - (padding * texWidth / 100);
-		let up = verticalShift + texY + (padding * texHeight / 100),
-			down = verticalShift + texY + texHeight - (padding * texHeight / 100);
+		let left = texX + (padding * texWidth / 100),
+			right = texX + texWidth - (padding * texWidth / 100);
+		let up = texY + (padding * texHeight / 100),
+			down = texY + texHeight - (padding * texHeight / 100);
 
 		if (scaleH < 0) {
 			const temp = left;
@@ -299,15 +324,16 @@ class ISpriteRenderer {
 
 		const cx = (left % 2 + right % 2) / 2;
 		const cy = (up % 2 + down % 2) / 2;
-		const cwidth = circleRadius * Math.abs(left - right);
-		const cheight = circleRadius * Math.abs(up - down);
+		const circleRadiusFactor = circleRadius * (1 - 2 * padding / 100);
+		const cwidth = texWidth * circleRadiusFactor;
+		const cheight = texHeight * circleRadiusFactor;
 
 		this.engineCommunicator.loadGLBuffer(BufferType.TEXCOORD,
 			sprite.chunkIndex * VERTICES_PER_SPRITE * (TEXTURE_FLOAT_PER_VERTEX + TEXTURE_CENTER_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
-			left,	up,		texWidth, texHeight, cx, cy, cwidth, cheight,
-			left,	down,	texWidth, texHeight, cx, cy, cwidth, cheight,
-			right,	down,	texWidth, texHeight, cx, cy, cwidth, cheight,
-			right,	up,		texWidth, texHeight, cx, cy, cwidth, cheight,
+			left,	up,		texWidth, texHeight, cx, cy, circleRadiusFactor, texIndex,
+			left,	down,	texWidth, texHeight, cx, cy, circleRadiusFactor, texIndex,
+			right,	down,	texWidth, texHeight, cx, cy, circleRadiusFactor, texIndex,
+			right,	up,		texWidth, texHeight, cx, cy, circleRadiusFactor, texIndex,
 		);
 	}
 
