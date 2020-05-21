@@ -4,7 +4,7 @@ SceneManager.add({Game: class extends Game {
 	}
 
 	tryMoveBy(dx, dz) {
-		const { sceneData: { dok } } = this;
+		const { sceneData: { doks: [ dok ] } } = this;
 		const shiftX = dx * dok.speed * (dok.flying ? .8 : .5);
 		const shiftZ = dz * dok.speed * (dok.flying ? .8 : .5);
 
@@ -201,6 +201,13 @@ SceneManager.add({Game: class extends Game {
 				["walk-down-left","28-31"],
 			],
 		},
+		{
+			src: "penguin",
+			grid: [4, 5],
+			animations: [
+				["anim", "0-3"],
+			],
+		},
 	],
 	refresh: ({game}) => {
 		const { sceneData, keys: { actions: { mov, turn }, controls } } = game;
@@ -220,7 +227,7 @@ SceneManager.add({Game: class extends Game {
 			}
 		}
 
-		const { dok } = sceneData;
+		const { doks: [dok] } = sceneData;
 
 		//	move dobuki
 		if (mov.dist > 0) {
@@ -243,7 +250,7 @@ SceneManager.add({Game: class extends Game {
 				game.tryAngled(dx, dz);
 			}
 		} else {
-			sceneData.dok.speed = 0;
+			dok.speed = 0;
 		}
 
 		if (dok.grounded || controls.action > 0 && !dok.flying) {
@@ -278,14 +285,16 @@ SceneManager.add({Game: class extends Game {
 			turn: 0,
 			turnGoal: 0,
 			cam: [ 0, 0, 0 ],
-			dok: {
-				pos: [0, 0.5, 0],
-				mov: { x: 0, y: 0, z: 0 },
-				heightAboveGround: 0,
-				speed: 0,
-				grounded: true,
-				flying: false,
-			},
+			doks: [
+				{
+					pos: [0, 0.5, 0],
+					mov: { x: 0, y: 0, z: 0 },
+					heightAboveGround: 0,
+					speed: 0,
+					grounded: true,
+					flying: false,
+				},
+			],
 		};
 		game.maps = `
 			...........
@@ -434,20 +443,67 @@ SceneManager.add({Game: class extends Game {
 			brightness: ({definition}, index) => 120 + 15 * definition.position[1].get(index),
 		}),
 
+		{
+			init: ({game, definition}) => {
+				const count = 1000;
+				definition.particles = new Array(count).fill(null).map(() => {
+					const time = game.now + Math.random() * 20000;
+					const dist = (Math.cos(time / 137) + 1) / 2;
+					return {
+						time,
+						pos: [ Math.cos(time / 20) * dist, 0, Math.sin(time / 20) * dist ],
+						mov: [ -Math.cos(time / 20) * .00002, .001, -Math.sin(time / 20) * .00002 ],
+						lockedUntil: time + 20000,
+					};
+				});
+			},
+			refresh: ({game, definition}) => {
+				for (let i = 0; i < definition.particles.length; i++) {
+					const expiration = definition.particles[i].time + 20000;
+					if (game.now > expiration) {
+						definition.particles[i].time += 20000;
+						definition.particles[i].lockedUntil = expiration + 20000;
+					}
+				}
+			},
+			lockedUntil: ({definition}, index) => definition.particles[index].lockedUntil,
+			src: "penguin",
+			pos: [
+				({game,definition}, index) => game.exit.x + .5 * definition.particles[index].pos[0] + game.leftShift,
+				({game,definition}, index) => definition.particles[index].pos[1],
+				({game,definition}, index) => game.exit.y + .5 * definition.particles[index].pos[2] + game.topShift,
+			],
+			scale: [ .08, .08 ],
+			motion: {
+				time: ({definition}, index) => definition.particles[index].time,
+				mov: [
+					({definition}, index) => definition.particles[index].mov[0],
+					({definition}, index) => definition.particles[index].mov[1],
+					({definition}, index) => definition.particles[index].mov[2],
+				],
+			},
+			effects: {
+				tintColor: 0x88FF99FF,
+				brightness: 150,
+			},
+			animation: "anim",
+			count: ({definition}) => definition.particles.length,
+		},
 
 		SpriteUtils.makeSprite({
 			src: "dok",
 			position: [
-				({game: { sceneData: { dok: { pos } }}}) => pos[0],
-				({game: { sceneData: { dok: { pos } }}}) => pos[1],
-				({game: { sceneData: { dok: { pos } }}}) => pos[2],
+				({game: { sceneData: { doks }}}, index) => doks[index].pos[0],
+				({game: { sceneData: { doks }}}, index) => doks[index].pos[1],
+				({game: { sceneData: { doks }}}, index) => doks[index].pos[2],
 			],
 			scale: [
-				({game: {sceneData: { dok: { mov } }}}) => (mov.x || 1),
+				({game: {sceneData: { doks }}}, index) => (doks[index].mov.x || 1),
 				1,
 			],
-			heightAboveGround: ({game: { sceneData: { dok: { heightAboveGround } }}}) => heightAboveGround,
-			animation: ({game: { active, keys: { actions }, sceneData: { dok: { speed, mov, flying, grounded } }}}) => {
+			heightAboveGround: ({game: { sceneData: { doks }}}, index) => doks[index].heightAboveGround,
+			animation: ({game: { active, keys: { actions }, sceneData: { doks }}}, index) => {
+				const { speed, mov, flying, grounded } = doks[index];
 				if (flying) {
 					return actions.mov.y < 0 ? "jump-up" : "jump";
 				}
@@ -460,6 +516,7 @@ SceneManager.add({Game: class extends Game {
 			},
 			shadowColor: 0xFF777777,
 			spriteSize: [292, 362],
+			spriteCount: ({game: { sceneData: { doks } } }) => doks.length,
 		}),
 	],
 });

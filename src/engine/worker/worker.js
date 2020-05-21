@@ -152,7 +152,7 @@ if (typeof(window) === 'undefined') {
 			}
 			case "visibilitychange": {
 				const {data: {hidden}} = event;
-				if (windowStatus.hidden !== hidden) {
+				if (workerEngine && windowStatus.hidden !== hidden) {
 					windowStatus.hidden = hidden;
 					workerEngine.setPaused(windowStatus.hidden);
 				}
