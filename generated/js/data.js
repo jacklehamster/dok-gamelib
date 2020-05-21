@@ -1081,7 +1081,7 @@ function getData() {
             "index": 1
           },
           "penguin": {
-            "scenes": ["penguin", "stup"],
+            "scenes": ["cubot", "penguin", "stup"],
             "rect": [1032, 0, 256, 320],
             "index": 1
           },
@@ -1236,6 +1236,7 @@ function getData() {
         "grass-tile@16x=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
         "gun@8x=7d3022ea52208a926b49ef7adf2517fec0dc069fbe77676c98809bd0f1d1313d",
         "home-floor@2x=670a8e1fad53b113865fec6e0fc6d146114678bebd8d1ae779cf7e453864e886",
+        "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "primary-font=c3f2ed2e34492ce6ecc2f4adb3acbc7ba769d81eb13442b6aba27b0051a4b903",
