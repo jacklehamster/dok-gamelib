@@ -1311,7 +1311,8 @@ function getData() {
           "docBackground": null,
           "background": 0,
           "frameRate": 60,
-          "music": {"src": null, "volume": 0.5, "muted": false}
+          "music": {"src": null, "volume": 0.5, "muted": false},
+          "room": null
         },
         "view": {
           "pos": [0, 0, 0],

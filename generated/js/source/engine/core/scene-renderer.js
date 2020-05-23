@@ -13,10 +13,11 @@
   */
 
 class SceneRenderer {
-	constructor(renderer, mediaManager, domManager) {
+	constructor(renderer, mediaManager, domManager, socket) {
 		this.mediaManager = mediaManager;
 		this.renderer = renderer;
 		this.domManager = domManager;
+		this.socket = socket;
 		this.view = {
 			pos: [0, 0, 0],
 			viewAngle: 0,
@@ -38,6 +39,7 @@ class SceneRenderer {
 				src: null,
 				volume: 1,
 			},
+			room: null,
 		};
 		this.light = {
 			pos: [0, 0, 0],
@@ -48,9 +50,9 @@ class SceneRenderer {
 	}
 
 	render(scene) {
-		const { renderer, background, domManager, mediaManager } = this;
+		const { renderer, background, domManager, mediaManager, socket } = this;
 		const { settings, view, light } = scene;
-		const { depthEffect, viewPort } = view;
+		const { depthEffect, viewPort, curvature, range, viewAngle, pos, tilt, turn, cameraDistance } = view;
 
 		const newBackground = settings.background.get();
 		if (newBackground !== background) {
@@ -68,6 +70,17 @@ class SceneRenderer {
 			this.settings.music.src = newMusicSrc;
 			this.settings.music.volume = newVolume;
 			mediaManager.setTheme(this.settings.music.src, this.settings.music.volume);
+		}
+
+		const newRoom = settings.room.get();
+		if (newRoom !== this.settings.room) {
+			if (this.settings.room) {
+				socket.leave(this.settings.room);
+			}
+			this.settings.room = newRoom;
+			if (this.settings.room) {
+				socket.join(this.settings.room);
+			}
 		}
 
 		const newLightPosX = light.pos[0].get();
@@ -101,12 +114,12 @@ class SceneRenderer {
 			renderer.setDepthEffect(newDepthFading, closeStaturation, farSaturation);
 		}
 
-		const newViewPosX = view.pos[0].get();
-		const newViewPosY = view.pos[1].get();
-		const newViewPosZ = view.pos[2].get();
-		const newTilt = view.tilt.get();
-		const newTurn = view.turn.get();
-		const newCameraDistance = view.cameraDistance.get();
+		const newViewPosX = pos[0].get();
+		const newViewPosY = pos[1].get();
+		const newViewPosZ = pos[2].get();
+		const newTilt = tilt.get();
+		const newTurn = turn.get();
+		const newCameraDistance = cameraDistance.get();
 		if (!Utils.equal3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ)
 			|| newTilt !== this.view.tilt || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
 			Utils.set3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ);
@@ -126,9 +139,9 @@ class SceneRenderer {
 			didChangeViewport = true;
 		}
 
-		const newNear = view.range[0].get();
-		const newFar = view.range[1].get();
-		const newViewAngle = view.viewAngle.get();
+		const newNear = range[0].get();
+		const newFar = range[1].get();
+		const newViewAngle = viewAngle.get();
 		if (this.view.viewAngle !== newViewAngle || this.view.range[0] !== newNear || this.view.range[1] !== newFar || didChangeViewport) {
 			this.view.range[0] = newNear;
 			this.view.range[1] = newFar;
@@ -136,7 +149,7 @@ class SceneRenderer {
 			renderer.setViewAngle(newViewAngle, newNear, newFar);
 		}
 
-		const newCurvature = view.curvature.get();
+		const newCurvature = curvature.get();
 		if (this.view.curvature !== newCurvature) {
 			this.view.curvature = newCurvature;
 			renderer.setCurvature(newCurvature);

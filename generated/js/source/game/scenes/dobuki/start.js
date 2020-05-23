@@ -216,7 +216,8 @@ SceneManager.add({Game: class extends Game {
 			const coef = exiting ? (1 - (now - exiting) / 500) : 1;
 			const [ r, g, b ] = ColorUtils.toRGB(color);
 			return ColorUtils.fromRGB(r * coef, g * coef, b * coef);
-		}
+		},
+		room: "dobuki",
 	},
 	view: {
 		tilt: ({game: { view: { pos } }}) => pos[1].get() / 20 + .4,
