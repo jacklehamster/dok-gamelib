@@ -36,7 +36,8 @@
 			"src": null,
 			"volume": 0.5,
 			"muted": false
-		}
+		},
+		"room": null
 	},
 	"view": {
 		"pos": [

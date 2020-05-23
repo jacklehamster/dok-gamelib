@@ -38,6 +38,7 @@ if (typeof(window) === 'undefined') {
 		'../core/sprite-provider.js',
 		'../core/scene-renderer.js',
 		'../core/game-property.js',
+		'../socket/socket.js',
 		'../controls/keyboard.js',
 		'../controls/mouse.js',
 		'../sprites/base/base-sprite.js',
