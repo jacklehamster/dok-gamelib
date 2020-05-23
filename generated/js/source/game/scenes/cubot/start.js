@@ -55,10 +55,6 @@ SceneManager.add({Game: class extends Game {
 			if (cell === "X") {
 				return .5 + .8;
 			}
-		// game.barrel = { x: 0, y: 0 };
-		// game.bot = { x: 0, y: 0 };
-			// const barrelX = Math.round(game.barrel);
-			// const barrelY = Math.round(game.barrel);
 			for (let i = 0; i < this.barrels.length; i++) {
 				const barrelDx = this.barrels[i].x + this.leftShift - px;
 				const barrelDy = this.barrels[i].y + this.topShift - pz;
@@ -75,9 +71,6 @@ SceneManager.add({Game: class extends Game {
 				return .5 + .5;
 			}
 
-			// if (cell === "B") {
-			// 	return .5 + .5;
-			// }
 			if (cell === ".") {
 				return .5;
 			}

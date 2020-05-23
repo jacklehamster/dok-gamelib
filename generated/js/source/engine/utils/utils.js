@@ -12,6 +12,14 @@
 const cache = {};
 
 class Utils {
+	static count(obj) {
+		let num = 0;
+		for (let i in obj) {
+			num++;
+		}
+		return num;
+	}
+
 	static clear3(vector) {
 		vector[0] = vector[1] = vector[2] = 0;
 		return vector;

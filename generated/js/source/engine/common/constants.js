@@ -139,9 +139,9 @@ const ShaderConfig = {
 
 
 
-const MAX_SPRITE = 1000000;
+const MAX_SPRITE = 100000;
 const TEXTURE_SIZE = 4096;
-const MAX_BUFFER_SIZE = 20000000 * Float32Array.BYTES_PER_ELEMENT;
+const MAX_BUFFER_SIZE = 2000000 * Float32Array.BYTES_PER_ELEMENT;
 const VIDEO_TEXTURE_INDEX = 15;
 
 const ZERO_VEC3 = vec3.create();
