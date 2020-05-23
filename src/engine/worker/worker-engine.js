@@ -86,6 +86,10 @@ class WorkerEngine {
 			action: "payload",
 			time: 0,
 		};
+		this.emptyPayload = {
+			action: "payload",
+			time: 0,
+		};
 
 		this.refreshId = 0;
 		this.interval = 0;
@@ -93,7 +97,6 @@ class WorkerEngine {
 	}
 
 	setPaused(paused) {
-		console.log(paused ? "Worker paused." : "Worker resumed.");
 		if (paused) {
 			if (this.refreshId) {
 				cancelAnimationFrame(this.refreshId);
@@ -180,7 +183,6 @@ class WorkerEngine {
 			uiRenderer.render(uiComponents, now);
 			mediaManager.updatePlayingVideos(sprites, now);
 			glRenderer.sendSprites(sprites, now);
-
 			this.postBackPayload(now);
 
 			//	resetpool
@@ -192,19 +194,16 @@ class WorkerEngine {
 
 	postBackPayload(now) {
 		const { payload, engineCommunicator } = this;
-		payload.time = now;
 		if (engineCommunicator.getByteCount() && engineCommunicator.getBuffer().byteLength) {
+			payload.time = now;
 			payload.buffer = engineCommunicator.getBuffer();
 			payload.byteCount = engineCommunicator.getByteCount();
 			payload.extra = engineCommunicator.getExtra();
-			//console.log(JSON.parse(JSON.stringify(engineCommunicator.getExtra())));
 			self.postMessage(payload, [payload.buffer]);
 			engineCommunicator.clear();
 		} else {
-			delete payload.buffer;
-			delete payload.byteCount;
-			delete payload.extra;
-			self.postMessage(payload);
+			this.emptyPayload.time = now;
+			self.postMessage(this.emptyPayload);
 		}
 	}
 
