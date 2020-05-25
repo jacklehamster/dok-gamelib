@@ -1,6 +1,6 @@
 class Socket {
-	constructor() {
-		this.backupServer = 'https://dobuki.herokuapp.com/';
+	constructor(origin) {
+		this.backupServer = 'https://dobuki.herokuapp.com';
 		this.onConnectListener = [];
 		this.onUpdateListener = [];
 		this.sockets = {};
@@ -12,8 +12,8 @@ class Socket {
 		this.ids = [];
 		this.pool = new Pool(() => [], array => array.length = 0);
 
-		Utils.get('socket.info').then(response => {
-			this.importScript(response === "ok" ? "/socket.io/socket.io.js" : "https://dobuki.herokuapp.com/socket.io/socket.io.js");
+		Utils.get(`${origin}/socket.info`).then(response => {
+			this.importScript(response === "ok" ? "/socket.io/socket.io.js" : `${this.backupServer}/socket.io/socket.io.js`);
 		});
 	}
 
@@ -192,15 +192,11 @@ class Socket {
 		} else {
 			this.connections[namespace] = Socket.CONNECTING;
 			this.addEventListener("connect", callback);
-			Utils.get('socket.info').then(response => {
-				const socket = this.sockets[namespace] = response === "ok" ? io(`/${namespace||""}`) : io.connect(`${this.backupServer}${namespace||""}`);
+			Utils.get(`${origin}/socket.info`).then(response => {
+				const socket = this.sockets[namespace] = response === "ok" ? io(`/${namespace||""}`) : io(`${this.backupServer}/${namespace||""}`);
 				this.onConnectListener.forEach(listener => listener(socket, namespace));
 				this.onConnectListener.length = 0;
 				this.connections[namespace] = Socket.CONNECTED;
-
-				socket.on('chat message', msg => {
-					console.log(msg);
-			    });
 
 			    socket.on('update', (id, updates) => {
 			    	if (this.sharedData[id]) {
@@ -249,12 +245,6 @@ class Socket {
 			    socket.on('connected', () => console.log("Connected."));
 			});
 		}
-	}
-
-	send(msg) {
-		this.connect(null, socket => {
-			socket.emit('chat message', msg);
-		});
 	}
 }
 

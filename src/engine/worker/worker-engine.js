@@ -24,7 +24,7 @@ class WorkerEngine {
 		this.textureManager = textureManager;
 		this.onSceneChangeListener = [];
 		this.sceneManager = sceneManager;
-		this.socket = new Socket();
+		this.socket = new Socket(self.origin);
 		this.engineCommunicator = engineCommunicator;
 		this.sceneRefresher = new SceneRefresher();
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
