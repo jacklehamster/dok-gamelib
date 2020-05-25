@@ -44,6 +44,7 @@
     "lodash.template": "^4.5.0",
     "mustache": "^4.x",
     "node-minify": "^3.6.0",
+    "os": "^0.1.1",
     "pngquant-bin": "^5.0.2",
     "rimraf": "^3.0.2",
     "sha256-file": "^1.0.0",

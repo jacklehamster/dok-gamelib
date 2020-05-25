@@ -81,9 +81,9 @@ if (typeof(window) === 'undefined') {
 		const {data: { action }}  = event;
 		switch(action) {
 			case "init": {
-				const {data: { data, localStorageData }}  = event;
+				const {data: { data, localStorageData, pathname }}  = event;
 				workerEngine = new WorkerEngine(SceneManager.instance,
-					{ data, localStorageData, textureManager, engineCommunicator, uiRenderer, windowStatus });
+					{ pathname, data, localStorageData, textureManager, engineCommunicator, uiRenderer, windowStatus });
 				break;
 			}
 			case "ping": {
