@@ -7,6 +7,7 @@ SceneManager.add({Game: class extends Game {
 			dok: {
 				pos: [0, 1.5, 0],
 				mov: { x: 0, y: 0, z: 0 },
+				actionMov: { x: 0, y: 0, z: 0},
 				heightAboveGround: 0,
 				speed: 0,
 				grounded: true,
@@ -87,7 +88,7 @@ SceneManager.add({Game: class extends Game {
 	}
 
 	loop() {
-		const { sceneData, keys: { actions: { mov, turn }, controls } } = this;
+		const { sceneData, keys: { actions: { mov, turn }, controls }, socket } = this;
 		const { dok } = sceneData;
 
 		//	turn camera
@@ -162,6 +163,12 @@ SceneManager.add({Game: class extends Game {
 				this.onClosedTo(this.closeElement);
 			}
 		}
+
+		dok.actionMov.x = mov.x;
+		dok.actionMov.y = mov.y;
+		dok.actionMov.z = mov.z;
+
+		socket.update(dok);		
 
 		//	camera follow
 		MotionUtils.follow(sceneData.cam, dok.pos[0] + dx * 4, dok.pos[1] + dok.heightAboveGround / 2, dok.pos[2] + dz * 4, .05, 0);
@@ -428,29 +435,36 @@ SceneManager.add({Game: class extends Game {
 		},
 		SpriteUtils.makeSprite({
 			src: "dok",
+			data: {
+				currentDok: ({game}, index) => {
+					return game.socket.getSharedData(index);
+				},
+			},
 			position: [
-				({game: { sceneData: { dok: { pos } }}}) => pos[0],
-				({game: { sceneData: { dok: { pos } }}}) => pos[1],
-				({game: { sceneData: { dok: { pos } }}}) => pos[2],
+				({definition: {data: {currentDok}}}, index) => currentDok.get(index).pos[0],
+				({definition: {data: {currentDok}}}, index) => currentDok.get(index).pos[1],
+				({definition: {data: {currentDok}}}, index) => currentDok.get(index).pos[2],
 			],
 			scale: [
-				({game: {sceneData: { dok: { mov } }}}) => (mov.x || 1) * 2.4,
+				({definition: {data: {currentDok}}}, index) => (currentDok.get(index).mov.x || 1) * 2.4,
 				2.4,
 			],
-			heightAboveGround: ({game: { sceneData: { dok: { heightAboveGround } }}}) => heightAboveGround,
-			animation: ({game: { active, keys: { actions }, sceneData: { dok: { speed, mov, flying, grounded } }}}) => {
+			heightAboveGround: ({definition: {data: {currentDok}}}, index) => currentDok.get(index).heightAboveGround,
+			animation: ({game: { active }, definition: {data: {currentDok}}}, index) => {
+				const { flying, speed, grounded, mov, actionMov } = currentDok.get(index);
 				if (flying) {
-					return actions.mov.y < 0 ? "jump-up" : "jump";
+					return actionMov.y < 0 ? "jump-up" : "jump";
 				}
 
 				if (speed > .01 || !grounded) {
-					return actions.mov.y < 0 || (mov.z < 0 && !actions.mov.x) ? "walk-up" : "walk";
+					return actionMov.y < 0 || (mov.z < 0 && !actionMov.x) ? "walk-up" : "walk";
 				}
 
-				return actions.mov.y < 0 || (mov.z < 0 && !actions.mov.x) ? "idle-up" : "idle";
+				return actionMov.y < 0 || (mov.z < 0 && !actionMov.x) ? "idle-up" : "idle";
 			},
 			shadowColor: 0xFF333333,
 			spriteSize: [292, 362],
+			spriteCount: ({game: { socket }}) => socket.dataCount(),
 			// refresh: ({definition}) => {
 			// 	if (typeof(window)==="undefined") {
 			// 		const anim = definition.animation.get();
