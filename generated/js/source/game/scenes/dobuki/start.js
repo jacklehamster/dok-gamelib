@@ -245,6 +245,9 @@ SceneManager.add({Game: class extends Game {
 	keyboard: {
 		active: ({game}) => !game.exiting,
 	},
+	init: ({game}) => {
+		game.socket.update(game.sceneData.dok);
+	},
 	refresh: ({game}) => game.loop(),
 	spriteData: [
 		{
