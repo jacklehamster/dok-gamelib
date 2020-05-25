@@ -79,7 +79,7 @@ class SceneRenderer {
 			}
 			this.settings.room = newRoom;
 			if (this.settings.room) {
-				socket.join(this.settings.room);
+				socket.join(this.settings.room, scene.now);
 			}
 		}
 

@@ -81,6 +81,13 @@ class WorkerEngine {
 			this.postBackPayload(this.currentScene.now);
 		});
 
+		this.socket.addEventListener("update", (id, data) => {
+			if (this.windowStatus.hidden) {
+				this.setPaused(false);
+				this.lastUpdateTime = Date.now();
+			}
+		});
+
 		this.spriteCollector = [];
 		this.uiCollector = [];
 		this.payload = {
@@ -92,9 +99,14 @@ class WorkerEngine {
 			time: 0,
 		};
 
+		this.lastUpdateTime = 0;
 		this.refreshId = 0;
 		this.interval = 0;
 		this.setPaused(false);
+	}
+
+	isPaused() {
+		return !this.refreshId && !this.interval;
 	}
 
 	setPaused(paused) {
@@ -135,10 +147,11 @@ class WorkerEngine {
 		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor, mediaManager, timeScheduler,
 			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer, glRenderer, windowStatus: { hidden },
 			uiCollector, spriteCollector } = this;
-		if (!currentScene || hidden) {
+		if (!currentScene || (hidden && Date.now() - this.lastUpdateTime > 1000)) {
 			if (!this.pauseTime) {
 				this.pauseTime = Math.round(timeMillis);
 			}
+			this.setPaused(true);
 			return;
 		}
 		const time = Math.round(timeMillis);
@@ -233,6 +246,7 @@ class WorkerEngine {
 			this.spriteDataProcessor.destroy(this.currentScene);
 			this.currentScene.destroy.run();
 		}
+		this.socket.clear();
 		this.uiProvider.clear();
 		this.spriteProvider.clear();
 		this.uiRenderer.clear();

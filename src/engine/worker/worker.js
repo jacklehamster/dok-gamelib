@@ -155,7 +155,9 @@ if (typeof(window) === 'undefined') {
 				const {data: {hidden}} = event;
 				if (workerEngine && windowStatus.hidden !== hidden) {
 					windowStatus.hidden = hidden;
-					workerEngine.setPaused(windowStatus.hidden);
+					if (!windowStatus.hidden) {
+						workerEngine.setPaused(false);
+					}
 				}
 				break;
 			}

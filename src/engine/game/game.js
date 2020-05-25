@@ -51,6 +51,10 @@ class Game {
 		return null;
 	}
 
+	get socket() {
+		return this.engine.socket;
+	}
+
 	get data() {
 		return this.dataStore.getData();
 	}
