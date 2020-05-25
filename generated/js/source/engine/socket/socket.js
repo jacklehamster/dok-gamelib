@@ -1,5 +1,5 @@
 class Socket {
-	constructor(origin) {
+	constructor(pathname) {
 		this.backupServer = 'https://dobuki.herokuapp.com';
 		this.onConnectListener = [];
 		this.onUpdateListener = [];
@@ -11,9 +11,10 @@ class Socket {
 		this.sharedData = {};
 		this.ids = [];
 		this.pool = new Pool(() => [], array => array.length = 0);
+		this.pathname = pathname;
 
-		Utils.get(`${origin}/socket.info`).then(response => {
-			this.importScript(response === "ok" ? "/socket.io/socket.io.js" : `${this.backupServer}/socket.io/socket.io.js`);
+		Utils.get(`${this.pathname}socket.info`).then(response => {
+			this.importScript(response === "ok"? "/socket.io/socket.io.js" : `${this.backupServer}/socket.io/socket.io.js`);
 		});
 	}
 
@@ -192,8 +193,9 @@ class Socket {
 		} else {
 			this.connections[namespace] = Socket.CONNECTING;
 			this.addEventListener("connect", callback);
-			Utils.get(`${origin}/socket.info`).then(response => {
-				const socket = this.sockets[namespace] = response === "ok" ? io(`/${namespace||""}`) : io(`${this.backupServer}/${namespace||""}`);
+
+			Utils.get(`${this.pathname}socket.info`).then(response => {
+				const socket = this.sockets[namespace] = this.localSocketAvailable ? io(`/${namespace||""}`) : io(`${this.backupServer}/${namespace||""}`);
 				this.onConnectListener.forEach(listener => listener(socket, namespace));
 				this.onConnectListener.length = 0;
 				this.connections[namespace] = Socket.CONNECTED;

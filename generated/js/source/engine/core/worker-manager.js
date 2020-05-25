@@ -86,7 +86,8 @@ class WorkerManager {
 			action: "init",
 			data: this.engine.data,
 			localStorageData: this.dataStore.getData(),
-		});		
+			pathname: location.pathname,
+		});
 	}
 
 	ping(message) {
