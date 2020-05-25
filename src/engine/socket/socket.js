@@ -12,18 +12,21 @@ class Socket {
 		this.ids = [];
 		this.pool = new Pool(() => [], array => array.length = 0);
 
-		Utils.get('/socket.info').then(response => {
+		Utils.get('socket.info').then(response => {
 			this.importScript(response === "ok" ? "/socket.io/socket.io.js" : "https://dobuki.herokuapp.com/socket.io/socket.io.js");
 		});
 	}
 
 	getSharedData(index) {
-		const id = this.ids[index];
+		if (index === 0) {
+			return this.data;
+		}
+		const id = this.ids[index - 1];
 		return this.sharedData[id];
 	}
 
 	dataCount() {
-		return this.ids.length;
+		return this.ids.length + 1;
 	}
 
 	join(room, now) {
@@ -189,7 +192,7 @@ class Socket {
 		} else {
 			this.connections[namespace] = Socket.CONNECTING;
 			this.addEventListener("connect", callback);
-			Utils.get('/socket.info').then(response => {
+			Utils.get('socket.info').then(response => {
 				const socket = this.sockets[namespace] = response === "ok" ? io(`/${namespace||""}`) : io.connect(`${this.backupServer}${namespace||""}`);
 				this.onConnectListener.forEach(listener => listener(socket, namespace));
 				this.onConnectListener.length = 0;
@@ -226,12 +229,7 @@ class Socket {
 
 			    socket.on('self-joined', id => {
 			    	console.log("self-joined", id);
-			    	if (!this.sharedData[id]) {
-				    	this.id = id;
-				    	this.ids.push(id);
-			    	}
-			    	this.sharedData[this.id] = this.data;
-			    	this.onDataUpdated(this.id);
+			    	this.id = id;
 			    });
 
 			    socket.on('left', id => {
