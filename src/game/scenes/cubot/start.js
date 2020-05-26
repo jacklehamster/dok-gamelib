@@ -507,7 +507,7 @@ SceneManager.add({Game: class extends Game {
 
 				return actions.mov.y < 0 || (mov.z < 0 && !actions.mov.x) ? "idle-up" : "idle";
 			},
-			shadowColor: 0xFF777777,
+			shadowColor: 0xFF555555,
 			spriteSize: [292, 362],
 			spriteCount: ({game: { sceneData: { doks } } }) => doks.length,
 		}),

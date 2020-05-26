@@ -20,7 +20,7 @@ const stringify = require("json-stringify-pretty-compact");
 const colors = require('colors');
 const minify = require('@node-minify/core');
 const uglifyES = require('@node-minify/uglify-es');
-const { webDir, sourceFolders, editorFolders } = require('./common');
+const { webDir, sourceFolders, editorFolders, releaseFolders } = require('./common');
 const {
 	getSpritesheets,
 	copyVideos,
@@ -30,6 +30,8 @@ const {
 	generateDataCode,
 	zipGame,
 	saveFontMap,
+	getFiles,
+	preProcess,
 } = require('./lib/main');
 
 const app = express();
@@ -49,19 +51,10 @@ app.get('/', function (req, res) {
 	const release = req.query.release && req.query.release !== 'false';
 	console.log(`Processing game: ${new Date()}`);
 	const startTime = Date.now();
-	getSpritesheets(webDir, __dirname)
-	.then(() => Promise.all([
-		copyVideos(webDir, __dirname),
-		copySounds(webDir, __dirname),
-		copySource(webDir, __dirname),
-		release ? minifyEngine(sourceFolders, editorFolders) : assets.deleteFolders(`docs/generated/js/engine`, `docs/generated/js/editor`),
-		fs.promises.copyFile(`${__dirname}/src/game/game.json`, `${__dirname}/data/generated/game.json`),
-	]))
-	.then(() => console.log(`Done processing assets: ${Date.now() - startTime}ms`))
-	.then(() => Promise.all([
-		template.getFolderAsData(path.join(__dirname, 'src/game/scenes')),
-		template.getFolderAsData(path.join(__dirname, 'docs/generated/js/source')),
-	]))
+	const dirname = __dirname;
+	console.log("Web directory:", webDir);
+
+	return preProcess(dirname, release)
 	.then(([sceneItems, allSource]) => {
 		//	filter out game scenes and editor scenes
 		const source = allSource.filter(src => !src.startsWith("game/scenes") && !src.startsWith("editor/editor"));
@@ -177,7 +170,19 @@ if (io !== null && server !== null) {
 	});
 }
 
-app.use(express.static(`${__dirname}/${webDir}`));
+app.use(express.static(`${__dirname}/${webDir}`, {
+	etag: true,
+	lastModified: true,
+	setHeaders: (res, path) => {
+		if (path.endsWith('.html')) {
+			// All of the project's HTML files end in .html
+			res.setHeader('Cache-Control', 'no-cache');
+		} else if (path.endsWith('.png')) {
+			// If the RegExp matched, then we have a versioned URL.
+			res.setHeader('Cache-Control', 'max-age=31536000');	//	1 year
+		}
+	},
+}));
 
 
 const httpServer = server.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));

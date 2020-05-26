@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "create-dir": "npx mkdirp generated/lib",
-    "browserify": "npm run create-dir && browserify main.js -o generated/lib/json-compact.js",
+    "browserify": "npm run create-dir && browserify browserify/main.js -o generated/lib/json-compact.js",
     "forever": "forever --minUptime 1000 --spinSleepTime 1000 -w index.js",
     "serve": "npm run browserify && npm run forever",
     "build": "npm run browserify && node build.js",
@@ -32,6 +32,7 @@
     "express": "^4.17.1",
     "forever": "^2.0.0",
     "fs-readdir-recursive": "^1.1.0",
+    "glob": "^7.1.6",
     "highlight.js": "^10.x",
     "image-size": "^0.8.3",
     "imagemin": "^7.0.1",

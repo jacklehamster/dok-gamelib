@@ -17,7 +17,7 @@ const stringify = require("json-stringify-pretty-compact");
 const colors = require('colors');
 const minify = require('@node-minify/core');
 const uglifyES = require('@node-minify/uglify-es');
-const { webDir, sourceFolders, editorFolders } = require('./common');
+const { webDir, sourceFolders, editorFolders, releaseFolders } = require('./common');
 const {
 	getSpritesheets,
 	copyVideos,
@@ -26,62 +26,52 @@ const {
 	minifyEngine,
 	generateDataCode,
 	zipGame,
+	preProcess,
 } = require('./lib/main');
 
 const app = express();
 const port = 8000;
 
 function build(webDir, dirname) {
+	console.log("Web directory:", webDir);
 	console.log(`Build game: ${new Date()}`);
 	const startTime = Date.now();
 	const release = true;
-	return getSpritesheets(webDir, dirname)
-		.then(() => Promise.all([
-			copyVideos(webDir, dirname),
-			copySounds(webDir, dirname),
-			copySource(webDir, dirname),
-			release ? minifyEngine(sourceFolders, editorFolders) : assets.deleteFolders(`docs/generated/js/engine`, `docs/generated/js/editor`),
-			fs.promises.copyFile(`${dirname}/src/game/game.json`, `${dirname}/data/generated/game.json`),
-		]))
-		.then(() => console.log(`Done processing assets: ${Date.now() - startTime}ms`))
-		.then(() => Promise.all([
-			template.getFolderAsData(path.join(dirname, 'src/game/scenes')),
-			template.getFolderAsData(path.join(dirname, 'docs/generated/js/source')),
-		]))
-		.then(([sceneItems, allSource]) => {
-			//	filter out game scenes and editor scenes
-			const source = allSource.filter(src => !src.startsWith("game/scenes") && !src.startsWith("editor/editor"));
-			const editor = allSource.filter(src => src.startsWith("editor/editor"));
-			//	sort source
-			const trimmedSourceFolders = sourceFolders.map(src => src.split("*")[0]).map(src => src.split("/").slice(1).join("/"));
-			function getIndex(file) {
-				for (let i = 0; i < trimmedSourceFolders.length; i++) {
-					if (file.startsWith(trimmedSourceFolders[i])) {
-						return i;
-					}
+	return preProcess(dirname, release)
+	.then(([sceneItems, allSource]) => {
+		//	filter out game scenes and editor scenes
+		const source = allSource.filter(src => !src.startsWith("game/scenes") && !src.startsWith("editor/editor"));
+		const editor = allSource.filter(src => src.startsWith("editor/editor"));
+		//	sort source
+		const trimmedSourceFolders = sourceFolders.map(src => src.split("*")[0]).map(src => src.split("/").slice(1).join("/"));
+		function getIndex(file) {
+			for (let i = 0; i < trimmedSourceFolders.length; i++) {
+				if (file.startsWith(trimmedSourceFolders[i])) {
+					return i;
 				}
-				return -1;
 			}
-			source.sort((a, b) => getIndex(a) - getIndex(b));
+			return -1;
+		}
+		source.sort((a, b) => getIndex(a) - getIndex(b));
 
-			const scenes = sceneItems.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
-			return template.renderTemplateFromFile('index', path.join(dirname, 'src/game/game.json'), {
-				scenes: scenes.map(fileName => path.parse(fileName).name),
-				source,
-				editor,
-				release,
-			});
-		})
-		.then(html => generateDataCode(path.join(webDir, 'generated/js/data.js'), dirname).then(() => html))
-		.then(html => {
-			return release ? fs.promises.writeFile(`${webDir}/index.html`, html).then(() => html) : Promise.resolve();
-		})
-		.then(() => zipGame(webDir, dirname))
-		.then(ziplocation => {
-			fs.mkdirSync(`${webDir}/archive`, { recursive: true });
-			return fs.promises.copyFile(ziplocation, `${webDir}/archive/game.zip`);
-		})
-		.then(() => console.log(`Done game building: ${Date.now() - startTime}ms`));
+		const scenes = sceneItems.filter(file => path.basename(file)==="start.js").map(file => path.dirname(file));
+		return template.renderTemplateFromFile('index', path.join(dirname, 'src/game/game.json'), {
+			scenes: scenes.map(fileName => path.parse(fileName).name),
+			source,
+			editor,
+			release,
+		});
+	})
+	.then(html => generateDataCode(path.join(webDir, 'generated/js/data.js'), dirname).then(() => html))
+	.then(html => {
+		return release ? fs.promises.writeFile(`${webDir}/index.html`, html).then(() => html) : Promise.resolve();
+	})
+	.then(() => zipGame(webDir, dirname))
+	.then(ziplocation => {
+		fs.mkdirSync(`${webDir}/archive`, { recursive: true });
+		return fs.promises.copyFile(ziplocation, `${webDir}/archive/game.zip`);
+	})
+	.then(() => console.log(`Done game building: ${Date.now() - startTime}ms`));
 }
 build(webDir, __dirname);
 

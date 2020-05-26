@@ -16,7 +16,7 @@ class WorkerManager {
 	constructor(engine, dataStore) {
 		this.engine = engine;
 		this.dataStore = dataStore;
-		this.worker = new Worker(`generated/js/source/engine/worker/worker.js`);
+		this.worker = new Worker(`generated/js/source/worker/worker.js`);
 		this.worker.addEventListener("message", e => this.handleMessage(e));
 		this.engine.addEventListener("start", e => this.init());
 		this.keyboardPayload = {};

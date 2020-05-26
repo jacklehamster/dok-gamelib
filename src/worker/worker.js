@@ -15,60 +15,18 @@
 if (typeof(window) === 'undefined') {
 	var window = self;
 
-	self.importScripts(
-		'../lib/gl-matrix.js',
-		'../utils/utils.js',
-		'../utils/pool.js',
-		'../utils/time-scheduler.js',
-		'../interfaces/scene-gl-interface.js',
-		'../interfaces/data-store-interface.js',
-		'../interfaces/logger-interface.js',
-		'../interfaces/newgrounds-interface.js',
-		'../interfaces/media-manager-interface.js',
-		'../interfaces/dom-manager-interface.js',
-		'../interfaces/sprite-renderer-interface.js',
-		'../common/constants.js',
-		'../communicator/engine-communicator.js',
-		'../communicator/engine-scene-renderer.js',
-		'../communicator/engine-ui-renderer.js',
-		'../core/config-processor.js',
-		'../core/scene-refresher.js',
-		'../core/sprite-definition-processor.js',
-		'../core/sprite-data-processor.js',
-		'../core/sprite-provider.js',
-		'../core/scene-renderer.js',
-		'../core/game-property.js',
-		'../socket/socket.js',
-		'../controls/keyboard.js',
-		'../controls/mouse.js',
-		'../sprites/base/base-sprite.js',
-		'../sprites/ui-sprite.js',
-		'../sprites/image-sprite.js',
-		'../sprites/animated-sprite.js',
-		'../sprites/sprite.js',
-		'../game/components/color-utils.js',
-		'../game/components/motion-utils.js',
-		'../game/components/shape-utils.js',
-		'../game/components/sprite-utils.js',
-		'../game/components/text-utils.js',
-		'../game/base/base-definition.js',
-		'../game/animation-definition.js',
-		'../game/ui-definition.js',
-		'../game/sprite-definition.js',
-		'../game/game.js',
-		"../scene-manager/scene-manager.js",
-		"../ui/ui-renderer.js",
-		'../../lib/json-compact.js',
-		'../../editor/editor/editor-utils.js',
-		'worker-data-store.js',
-		'worker-engine.js',
-		'worker-newgrounds.js',
-		'worker-logger.js',
-		'worker-media-manager.js',
-		'worker-dom-manager.js',
-		'worker-texture-manager.js',
-		'worker-sprite-renderer.js',
-	);
+	self.importScripts('../../sources.js');
+	console.log(sources);
+	const { mini } = sources;
+
+	if (mini.engine && mini.editor) {
+		self.importScripts(`../../${mini.engine}`);
+		self.importScripts('../editor/editor/editor-utils.js');
+	} else {
+		self.importScripts('../editor/editor/editor-utils.js');
+		self.importScripts(...sources.engine.map(src => `../engine/${src}`));
+		self.importScripts(...sources.lib.map(src => `../lib/${src}`));
+	}
 
 	let workerEngine;
 	const windowStatus = {};

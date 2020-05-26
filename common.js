@@ -9,6 +9,10 @@
 
 const webDir = "docs";
 
+const releaseFolders = [
+	'release/release.js',
+];
+
 const sourceFolders = [
 	'generated/lib/*.js',
 	'src/engine/interfaces/*.js',
@@ -40,6 +44,7 @@ const editorFolders = [
 
 module.exports = {
 	webDir,
+	releaseFolders,
 	sourceFolders,
 	editorFolders,
 };

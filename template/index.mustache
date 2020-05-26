@@ -88,6 +88,7 @@
 		</script>
 
 		<script src="generated/js/data.js"></script>
+
 {{#obj.release}}
 		<script src="generated/js/engine/engine.min.js"></script>
 {{/obj.release}}
@@ -96,6 +97,7 @@
 			<script src="generated/js/source/{{{.}}}"></script>
 		{{/obj.source}}
 {{/obj.release}}
+
 {{#obj.scenes}}
 		<script>SceneManager.loadingSceneName = "{{.}}";</script>
 		<script src="generated/js/source/game/scenes/{{.}}/start.js"></script>
