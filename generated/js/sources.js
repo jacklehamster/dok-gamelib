@@ -80,6 +80,17 @@ const sources = {
 	"lib": [
 		"json-compact.js"
 	],
+	"game": [
+		"scenes/cubot/start.js",
+		"scenes/dobuki/start.js",
+		"scenes/keep-alive/start.js",
+		"scenes/keep-alive-intro/start.js",
+		"scenes/penguin/start.js",
+		"scenes/rogue-zombie/start.js",
+		"scenes/stup/start.js",
+		"scenes/tp-boy/start.js",
+		"scenes/video-maze/start.js"
+	],
 	"mini": {
 		"engine": "engine/engine.min.js",
 		"editor": "editor/editor.min.js"
