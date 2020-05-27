@@ -148,3 +148,11 @@ const ZERO_VEC3 = vec3.create();
 const IDENTITY_QUAT = quat.identity(quat.create());
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+
+/**
+ *	Libraries imported from npm.
+ */
+const { Tools, Dok: {
+	Pool,
+	TimeScheduler,
+} } = dokLib;

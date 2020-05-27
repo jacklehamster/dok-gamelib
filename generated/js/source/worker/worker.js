@@ -23,9 +23,9 @@ if (typeof(window) === 'undefined') {
 		self.importScripts(`../../${mini.engine}`);
 		self.importScripts('../editor/editor/editor-utils.js');
 	} else {
-		self.importScripts('../editor/editor/editor-utils.js');
-		self.importScripts(...sources.engine.map(src => `../engine/${src}`));
 		self.importScripts(...sources.lib.map(src => `../lib/${src}`));
+		self.importScripts(...sources.engine.map(src => `../engine/${src}`));
+		self.importScripts('../editor/editor/editor-utils.js');
 	}
 
 	let workerEngine;

@@ -24,8 +24,10 @@ class Game {
 		this.lastRefresh = 0;
 		this.lastKeys = -1;
 		this.lastMouse = -1;
+		this.lastGamepad = -1;
 		this.keysCache = null;
 		this.mouseCache = null;
+		this.gamepadCache = null;
 		this.nextScene = null;
 		this.classes = { Game, SpriteDefinition };
 		this.definitions = {};
@@ -81,6 +83,14 @@ class Game {
 			this.mouseCache = this.engine.mouse.getMouse(this.now);
 		}
 		return this.mouseCache;
+	}
+
+	get gamepad() {
+		if (this.lastGamepad !== this.now) {
+			this.lastGamepad = this.now;
+			this.gamepadCache = this.engine.gamepad.getGamePad(this.now);
+		}
+		return this.gamepadCache;
 	}
 
 	runAfter(delay, action) {

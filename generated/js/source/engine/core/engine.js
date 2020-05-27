@@ -44,6 +44,7 @@ class Engine {
 
 		this.keyboard = new Keyboard(this.workerManager, document, {});
 		this.mouse = new Mouse(this.workerManager, canvas, document, {});
+		this.gamepad = new Gamepad(window);
 
 		this.paused = false;
 
