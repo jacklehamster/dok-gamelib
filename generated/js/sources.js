@@ -13,8 +13,6 @@ const sources = {
 		"lib/ng.js",
 		"common/constants.js",
 		"utils/log.js",
-		"utils/surface-allocator.js",
-		"utils/utils.js",
 		"sprites/base/base-sprite.js",
 		"sprites/image-sprite.js",
 		"sprites/animated-sprite.js",
