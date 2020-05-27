@@ -155,4 +155,5 @@ const EMPTY_ARRAY = [];
 const { Tools, Dok: {
 	Pool,
 	TimeScheduler,
+	Utils,
 } } = dokLib;
