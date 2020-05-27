@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "create-dir": "npx mkdirp generated/lib",
-    "browserify": "npm run create-dir && browserify browserify/main.js -o generated/lib/json-compact.js",
+    "browserify": "npm run create-dir && browserify browserify/main.js --standalone dok-lib > generated/lib/json-compact.js",
     "forever": "forever --minUptime 1000 --spinSleepTime 1000 -w index.js",
     "serve": "npm run browserify && npm run forever",
     "build": "npm run browserify && node build.js",
@@ -28,6 +28,8 @@
     "compress-images": "^1.7.8",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "dok-pool": "^1.0.0",
+    "dok-timescheduler": "^1.0.0",
     "electron": "^8.2.5",
     "express": "^4.17.1",
     "forever": "^2.0.0",
