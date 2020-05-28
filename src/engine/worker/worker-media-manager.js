@@ -19,12 +19,18 @@ class WorkerMediaManager extends IMediaManager {
 	}
 
 	playMusic(id, reset, url) {
-		this.engineCommunicator.sendCommand(Commands.MEDIA_PLAY_MUSIC, [reset?1:0], [id, url||null]);
+		this.engineCommunicator.sendCommandInt(Commands.MEDIA_PLAY_MUSIC);
+		this.engineCommunicator.loadExtra([id]);
+		this.engineCommunicator.writeBool(reset);
+		this.engineCommunicator.loadExtra([url||null]);
 	}
 
 	playVideo(id, reset, url) {
 		super.playVideo(id, reset, url);
-		this.engineCommunicator.sendCommand(Commands.MEDIA_PLAY_VIDEO, [reset?1:0], [id, url||null]);
+		this.engineCommunicator.sendCommandInt(Commands.MEDIA_PLAY_VIDEO);
+		this.engineCommunicator.loadExtra([id]);
+		this.engineCommunicator.writeBool(reset);
+		this.engineCommunicator.loadExtra([url||null]);
 	}
 
 	setMusicVolume(id, volume) {

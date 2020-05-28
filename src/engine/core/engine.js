@@ -37,10 +37,11 @@ class Engine {
 		this.newgrounds = new NewgroundsWrapper(this.data.generated.game.newgrounds);
 		this.configProcessor = new ConfigProcessor(this.data);
 		this.focusFixer = new FocusFixer(canvas);
+		this.logger = new Logger();
 
 		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
-		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, new Logger(), this.dataStore, this.mediaManager, this.newgrounds, this.glRenderer);
+		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, this.logger, this.dataStore, this.mediaManager, this.newgrounds, this.glRenderer);
 		configCommunicator(this.communicator, this);
 
 		this.keyboard = new Keyboard(this.workerManager, document, {});

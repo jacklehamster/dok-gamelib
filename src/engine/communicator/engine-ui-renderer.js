@@ -49,8 +49,9 @@ class EngineUIRenderer {
 	}
 
 	setSize(elementId, width, height) {
-		this.loadToBuffer(Commands.UI_SET_SIZE, width, height);
+		this.engineCommunicator.sendCommandInt(Commands.UI_SET_SIZE);
 		this.loadExtra(elementId);
+		this.engineCommunicator.writeShort(width, height);
 	}
 
 	setCanvas(elementId, canvas) {
