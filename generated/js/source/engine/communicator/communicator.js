@@ -87,6 +87,9 @@ class Communicator {
 				const result = this.arrayPool.get();
 				result.length = readMethods.length;
 				for (let i = 0; i < readMethods.length; i++) {
+					if (!readMethods[i]) {
+						console.error(`${types} <= invalid types.`);
+					}
 					result[i] = readMethods[i]();
 				}
 				return result;
@@ -137,118 +140,8 @@ class Communicator {
 			if (this.registry[command]) {
 				const { readBuffer, apply } = this.registry[command];
 				apply(...readBuffer());
-				continue;
-			}
-			switch (command) {
-				case Commands.UI_SET_STYLE: {
-					const elementId = this.readExtra();
-					const style = this.readExtra();
-					const value = this.readExtra();
-					sceneUI.setStyle(elementId, style, value);
-					break;
-				}
-				case Commands.UI_SET_TEXT: {
-					const elementId = this.readExtra();
-					const text = this.readExtra();
-					sceneUI.setText(elementId, text);
-					break;
-				}
-				case Commands.UI_SET_SIZE: {
-					const elementId = this.readExtra();
-					const width = this.readFloat32();
-					const height = this.readFloat32();
-					sceneUI.setSize(elementId, width, height);
-					break;
-				}
-				case Commands.UI_SET_CANVAS: {
-					const elementId = this.readExtra();
-					const canvas = this.readExtra();
-					sceneUI.setCanvas(elementId, canvas);
-					break;
-				}
-				case Commands.UI_REMOVE_ELEMENT: {
-					const elementId = this.readExtra();
-					sceneUI.removeElement(elementId);
-					break;
-				}
-				case Commands.ENG_NOTIFY_SCENE_CHANGE: {
-					const name = this.readExtra();
-					engine.notifySceneChange(name);
-					break;
-				}
-				case Commands.DOM_BG_COLOR: {
-					const color = this.readExtra();
-					domManager.setBackgroundColor(color);
-					break;
-				}
-				case Commands.LOGGER_LOG_MESSAGE: {
-					const message = this.readExtra();
-					logger.log(...message);
-					break;
-				}
-				case Commands.DATA_SAVE: {
-					const data = this.readExtra();
-					dataStore.sync(data);
-					break;
-				}
-				case Commands.MEDIA_PLAY_MUSIC: {
-					const id = this.readExtra();
-					const url = this.readExtra();
-					const reset = this.readFloat32();
-					mediaManager.playMusic(id, reset, url);
-					break;
-				}
-				case Commands.MEDIA_PAUSE_MUSIC: {
-					const id = this.readExtra();
-					mediaManager.pauseMusic(id);
-					break;					
-				}
-				case Commands.MEDIA_PLAY_VIDEO: {
-					const id = this.readExtra();
-					const url = this.readExtra();
-					const reset = this.readFloat32();
-					mediaManager.playVideo(id, reset, url);
-					break;
-				}
-				case Commands.MEDIA_PAUSE_VIDEO: {
-					const id = this.readExtra();
-					mediaManager.pauseVideo(id);					
-					break;
-				}
-				case Commands.MEDIA_SET_MUSIC_VOLUME: {
-					const id = this.readExtra();
-					const volume = this.readFloat32();					
-					mediaManager.setMusicVolume(id, volume);
-					break;
-				}
-				case Commands.NG_UNLOCK_MEDAL: {
-					const medal = this.readExtra();
-					newgrounds.unlockMedal(medal).then(console.log).catch(console.error);
-					break;
-				}
-				case Commands.NG_POST_SCORE: {
-					const score = this.readFloat32();
-					newgrounds.postScore(score).then(console.log).catch(console.error);
-					break;
-				}
-				case Commands.GL_UPDATE_BUFFER: {
-					const bufferType = this.readUnsignedByte();
-					const offset = this.readInt32();
-					const buffer = this.readSubArray();
-					glRenderer.sendBufferToGL(bufferType, offset, buffer);
-					break;
-				}
-				case Commands.GL_SET_VISIBLE_CHUNKS: {
-					const count = this.readInt32();
-					glRenderer.setVisibleChunks(count);
-					break;
-				}
-				case Commands.VIEW_RESIZE: {
-					const width = this.readFloat32();
-					const height = this.readFloat32();
-					engine.resize(width, height);
-					break;
-				}
+			} else {
+				console.error(`Unknown command: ${commandName(command)} (${command})`);
 			}
 		}
 		this.offset = 0;
