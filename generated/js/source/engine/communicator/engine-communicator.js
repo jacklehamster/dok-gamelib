@@ -92,6 +92,13 @@ class EngineCommunicator {
 		return this.extraData;
 	}
 
+	writeBool(...values) {
+		for (let i = 0; i < values.length; i++) {
+			this.dataView.setUint8(this.byteCount, values[i] ? 1 : 0);
+			this.byteCount += Uint8Array.BYTES_PER_ELEMENT;
+		}		
+	}
+
 	writeUnsignedByte(...values) {
 		for (let i = 0; i < values.length; i++) {
 			if (values[i] > 0xFF) {
