@@ -36,6 +36,7 @@ const sources = {
 		"core/spritesheet-manager.js",
 		"core/texture-manager.js",
 		"core/worker-manager.js",
+		"communicator/communicator-config.js",
 		"communicator/communicator.js",
 		"communicator/engine-communicator.js",
 		"communicator/engine-scene-renderer.js",

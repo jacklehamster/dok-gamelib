@@ -52,6 +52,10 @@ class Communicator {
 		return value;
 	}
 
+	register(... actions) {
+
+	}
+
 	applyBuffer(arrayBuffer, byteCount, extra) {
 		if (!byteCount) {
 			return;
@@ -68,7 +72,7 @@ class Communicator {
 			//console.log(commandName(command));
 			switch (command) {
 				case Commands.SCENE_BACKGROUND: {
-					const color = this.readFloat32();
+					const color = this.readInt32();
 					sceneGL.setBackground(color);
 					updatedScene = true;
 					break;

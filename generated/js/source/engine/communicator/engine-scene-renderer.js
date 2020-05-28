@@ -17,7 +17,7 @@ class EngineSceneRenderer {
 	}
 
 	setBackground(color) {
-		this.loadToBuffer(Commands.SCENE_BACKGROUND, color);
+		this.engineCommunicator.sendCommandInt(Commands.SCENE_BACKGROUND, color);
 	}
 
 	setViewAngle(viewAngle, near, far) {
