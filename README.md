@@ -1,8 +1,8 @@
 # dok-gamelib
 Dok game library.
 
-![](https://github.com/jacklehamster/dok-gamelib/workflows/.github/workflows/main.yaml/badge.svg)
-![](https://github.com/jacklehamster/dok-gamelib/workflows/github%20pages/badge.svg)
+![Create Release](https://github.com/jacklehamster/dok-gamelib/workflows/Create%20Release/badge.svg)
+![gh-pages](https://github.com/jacklehamster/dok-gamelib/workflows/github%20pages/badge.svg)
 
 
 
