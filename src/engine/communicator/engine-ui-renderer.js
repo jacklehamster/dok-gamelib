@@ -21,8 +21,11 @@ class EngineUIRenderer {
 	}
 
 	createElement(elementId, instanceIndex, type, hasOnClick) {
-		this.loadToBuffer(Commands.UI_CREATE_ELEMENT, instanceIndex, hasOnClick?1:0);
-		this.loadExtra(elementId, type);
+		this.engineCommunicator.sendCommandInt(Commands.UI_CREATE_ELEMENT);
+		this.loadExtra(elementId);
+		this.engineCommunicator.writeInt32(instanceIndex);
+		this.loadExtra(type);
+		this.engineCommunicator.writeBool(hasOnClick);
 	}
 
 	setParent(elementId, parent) {

@@ -87,8 +87,8 @@ class SceneGL extends ISceneGL {
 	}
 
 	resetPools() {
-		for (let p in this.pool) {
-			this.pool[p].reset();
-		}
+		this.pool.vec3.reset();
+		this.pool.quat.reset();
+		this.pool.mat4.reset();
 	}
 }
