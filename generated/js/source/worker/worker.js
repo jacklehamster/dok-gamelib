@@ -32,7 +32,7 @@ if (typeof(window) === 'undefined') {
 	const windowStatus = {};
 
 	const textureManager = new WorkerTextureManager();
-	const engineCommunicator = new EngineCommunicator();
+	const engineCommunicator = new EngineCommunicator(self);
 	const uiRenderer = new UIRenderer(new EngineUIRenderer(engineCommunicator));
 
 	self.addEventListener('message', function(event) {

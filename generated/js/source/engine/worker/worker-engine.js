@@ -90,14 +90,6 @@ class WorkerEngine {
 
 		this.spriteCollector = [];
 		this.uiCollector = [];
-		this.payload = {
-			action: "payload",
-			time: 0,
-		};
-		this.emptyPayload = {
-			action: "payload",
-			time: 0,
-		};
 
 		this.lastUpdateTime = 0;
 		this.refreshId = 0;
@@ -207,18 +199,7 @@ class WorkerEngine {
 	}
 
 	postBackPayload(now) {
-		const { payload, engineCommunicator } = this;
-		if (engineCommunicator.getByteCount() && engineCommunicator.getBuffer().byteLength) {
-			payload.time = now;
-			payload.buffer = engineCommunicator.getBuffer();
-			payload.byteCount = engineCommunicator.getByteCount();
-			payload.extra = engineCommunicator.getExtra();
-			self.postMessage(payload, [payload.buffer]);
-			engineCommunicator.clear();
-		} else {
-			this.emptyPayload.time = now;
-			self.postMessage(this.emptyPayload);
-		}
+		this.engineCommunicator.sendPayload(now);
 	}
 
 	getListeners(type) {
