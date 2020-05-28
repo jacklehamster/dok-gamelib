@@ -140,18 +140,6 @@ class Communicator {
 				continue;
 			}
 			switch (command) {
-				case Commands.UI_SET_PARENT: {
-					const elementId = this.readExtra();
-					const parent = this.readExtra();
-					sceneUI.setParent(elementId, parent);
-					break;
-				}
-				case Commands.UI_SET_CLASS: {
-					const elementId = this.readExtra();
-					const classList = this.readExtra();
-					sceneUI.setClass(elementId, classList);
-					break;
-				}
 				case Commands.UI_SET_STYLE: {
 					const elementId = this.readExtra();
 					const style = this.readExtra();

@@ -42,6 +42,9 @@ function configCommunicator(communicator, { sceneGL, sceneUI }) {
 			parameters: "string,string",
 			apply: (elementId, parent) => sceneUI.setParent(elementId, parent),
 		}, {
+			id: Commands.UI_SET_CLASS,
+			parameters: "string,string",
+			apply: (elementId, classList) => sceneUI.setClass(elementId, classList),
 		}
 	);
 }
