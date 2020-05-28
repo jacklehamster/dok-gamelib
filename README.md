@@ -1,4 +1,7 @@
 # dok-gamelib
+
+[![npm version](https://badge.fury.io/js/dok-gamelib.svg)](https://badge.fury.io/js/dok-gamelib)
+
 Dok game library.
 
 ![Create Release](https://github.com/jacklehamster/dok-gamelib/workflows/Create%20Release/badge.svg)
