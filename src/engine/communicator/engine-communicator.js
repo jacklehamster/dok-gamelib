@@ -8,7 +8,8 @@
  */
 
 class EngineCommunicator {
-	constructor() {
+	constructor(worker) {
+		this.worker = worker;
 		this.byteCount = 0;
 		this.arrayBuffer = null;
 		this.extraData = [];
@@ -21,7 +22,31 @@ class EngineCommunicator {
 			size: 0,
 			bufferStartIndex: 0,
 		};
+		this.payload = {
+			action: "payload",
+			time: 0,
+		};
+		this.emptyPayload = {
+			action: "payload",
+			time: 0,
+		};
+
 		this.clear();
+	}
+
+	sendPayload(now) {
+		if (this.getByteCount() && this.getBuffer().byteLength) {
+			this.payload.time = now;
+			this.payload.buffer = this.getBuffer();
+			this.payload.byteCount = this.getByteCount();
+			this.payload.extra = this.getExtra();
+			this.worker.postMessage(this.payload, [this.payload.buffer]);
+			this.clear();
+		} else {
+			this.emptyPayload.time = now;
+			this.worker.postMessage(this.emptyPayload);
+		}
+
 	}
 
 	restoreBuffer(arrayBuffer) {
@@ -101,7 +126,7 @@ class EngineCommunicator {
 		}		
 	}
 
-	sendCommandThenInt(command, ...params) {
+	sendCommandInt(command, ...params) {
 		this.ensureBuffer();
 		this.writeUnsignedByte(command);
 		this.writeInt32(...params);		
