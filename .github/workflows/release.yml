@@ -22,9 +22,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+            Releasing to https://www.npmjs.com/package/dok-gamelib
           draft: false
           prerelease: false
 
