@@ -125,4 +125,8 @@ function configCommunicator(communicator, engine) {
 			apply: count => glRenderer.setVisibleChunks(count),
 		}
 	);
+
+	communicator.addEventListener("apply", () => {
+		sceneGL.resetPools();
+	});
 }

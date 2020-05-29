@@ -11,9 +11,9 @@ class EngineCommunicator {
 	constructor(worker) {
 		this.worker = worker;
 		this.byteCount = 0;
-		this.arrayBuffer = null;
+		this.dataView = null;
 		this.extraData = [];
-		this.pool = new Pool(() => new ArrayBuffer(MAX_BUFFER_SIZE));
+		this.pool = new Pool(() => new DataView(new ArrayBuffer(MAX_BUFFER_SIZE)));
 		this.lastError = null;
 		this.maxSize = 0;
 		this.lastGLBuffer = {
@@ -35,12 +35,12 @@ class EngineCommunicator {
 	}
 
 	sendPayload(now) {
-		if (this.getByteCount() && this.getBuffer().byteLength) {
+		if (this.getByteCount() && this.getDataView().byteLength) {
 			this.payload.time = now;
-			this.payload.buffer = this.getBuffer();
+			this.payload.dataView = this.getDataView();
 			this.payload.byteCount = this.getByteCount();
 			this.payload.extra = this.getExtra();
-			this.worker.postMessage(this.payload, [this.payload.buffer]);
+			this.worker.postMessage(this.payload, [this.payload.dataView.buffer]);
 			this.clear();
 		} else {
 			this.emptyPayload.time = now;
@@ -49,14 +49,13 @@ class EngineCommunicator {
 
 	}
 
-	restoreBuffer(arrayBuffer) {
-		this.pool.recycle(arrayBuffer);
+	restoreDataView(dataView) {
+		this.pool.recycle(dataView);
 	}
 
 	ensureBuffer() {
-		if (!this.arrayBuffer || this.arrayBuffer.byteLength === 0) {
-			this.arrayBuffer = this.pool.get();
-			this.dataView = new DataView(this.arrayBuffer);
+		if (!this.dataView || this.dataView.byteLength === 0) {
+			this.dataView = this.pool.get();
 			this.byteCount = 0;
 			this.lastGLBuffer.type = null;
 		}
@@ -80,8 +79,8 @@ class EngineCommunicator {
 		this.lastGLBuffer.type = null;
 	}
 
-	getBuffer() {
-		return this.arrayBuffer;
+	getDataView() {
+		return this.dataView;
 	}
 
 	getByteCount() {

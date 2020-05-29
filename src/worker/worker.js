@@ -90,8 +90,8 @@ if (typeof(window) === 'undefined') {
 				break;
 			}
 			case "returnBuffer": {
-				const {data: { buffer }} = event;
-				engineCommunicator.restoreBuffer(buffer);
+				const {data: { dataView }} = event;
+				engineCommunicator.restoreDataView(dataView);
 				break;
 			}
 			case "clickUI": {

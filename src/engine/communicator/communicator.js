@@ -17,16 +17,7 @@
 */
 
 class Communicator {
-	constructor(engine, sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer) {
-		this.sceneGL = sceneGL;
-		this.sceneUI = sceneUI;
-		this.engine = engine;
-		this.domManager = domManager;
-		this.logger = logger;
-		this.dataStore = dataStore;
-		this.mediaManager = mediaManager;
-		this.newgrounds = newgrounds;
-		this.glRenderer = glRenderer;
+	constructor() {
 		this.offset = 0;
 		this.dataView = null;
 		this.registry = [];
@@ -43,6 +34,28 @@ class Communicator {
 			array: this.readExtra.bind(this),
 			buffer: this.readSubArray.bind(this),
 		};
+		this.onApplyListener = [];
+		this.addEventListener("apply", () => {
+			this.arrayPool.reset();
+		});
+	}
+
+	getListeners(type) {
+		switch(type) {
+			case "apply":
+				return this.onApplyListener;
+		}
+	}
+
+	addEventListener(type, callback) {
+		const listener = this.getListeners(type);
+		listener.push(callback);
+	}
+
+	removeEventListener(type, callback) {
+		const listener = this.getListeners(type);
+		const index = listener.indexOf(callback);
+		listener.splice(index, 1);
 	}
 
 	readUnsignedByte() {
@@ -122,21 +135,19 @@ class Communicator {
 		});
 	}
 
-	applyBuffer(arrayBuffer, byteCount, extra) {
+	applyBuffer({dataView, byteCount, extra}) {
 		if (!byteCount) {
 			return;
 		}
-		const { sceneGL, sceneUI, engine, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = this;
 
 		this.offset = 0;
-		this.dataView = new DataView(arrayBuffer);
+		this.dataView = dataView;
 
 		this.extraIndex = 0;
 		this.extra = extra;
 
 		while (this.offset < byteCount) {
 			const command = this.readUnsignedByte();
-			//console.log(commandName(command));
 			if (this.registry[command]) {
 				const { readBuffer, apply } = this.registry[command];
 				apply(...readBuffer());
@@ -146,8 +157,9 @@ class Communicator {
 		}
 		this.offset = 0;
 		this.dataView = null;
+		this.extraIndex = 0;
+		this.exrta = null;
 
-		sceneGL.resetPools();
-		this.arrayPool.reset();
+		this.onApplyListener.forEach(callback => callback());
 	}
 }
