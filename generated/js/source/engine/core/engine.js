@@ -188,16 +188,19 @@ class Engine {
 		this.workerManager.gotoScene(name);
 	}
 
-	refresh(now, buffer, byteCount, extra) {
+	refresh(payload) {
+		const {time, byteCount } = payload;
 		const { communicator, sceneUI, glRenderer, onLoopListener } = this;
-		if (buffer && byteCount) {
-			communicator.applyBuffer(buffer, byteCount, extra);
+		if (byteCount) {
+			const { dataView, extra } = payload;
+			communicator.setup(dataView, byteCount, extra);
+			communicator.apply();
 		}
 		this.loopVideo();
-		sceneUI.updateUI(now);
-		glRenderer.draw(now);
+		sceneUI.updateUI(time);
+		glRenderer.draw(time);
 		for (let i = 0; i < onLoopListener.length; i++) {
-			onLoopListener[i](now);
+			onLoopListener[i](time);
 		}
 		if (!this.loaded) {
 			this.onLoadListener.forEach(callback => callback());
@@ -237,13 +240,5 @@ class Engine {
 
 	notifySceneChange(sceneName) {
 		this.onSceneChangeListener.forEach(callback => callback(sceneName));
-	}
-
-	sendScore(score) {
-//		this.newgrounds.postScore(score);
-	}
-
-	unlockMedal(medalName) {
-//		this.newgrounds.unlockMedal(medalName);
 	}
 }

@@ -32,7 +32,7 @@ if (typeof(window) === 'undefined') {
 	const windowStatus = {};
 
 	const textureManager = new WorkerTextureManager();
-	const engineCommunicator = new EngineCommunicator(self);
+	const engineCommunicator = new EngineCommunicator(self, new Communicator());
 	const uiRenderer = new UIRenderer(new EngineUIRenderer(engineCommunicator));
 
 	self.addEventListener('message', function(event) {
@@ -64,10 +64,6 @@ if (typeof(window) === 'undefined') {
 				URL.revokeObjectURL(gameBlob);
 				break;
 			}
-			case "payload": {
-				workerEngine.processPayload(event.data);
-				break;
-			}
 			case "keydown": {
 				const {data: { code }} = event;
 				if (workerEngine) {
@@ -90,8 +86,8 @@ if (typeof(window) === 'undefined') {
 				break;
 			}
 			case "returnBuffer": {
-				const {data: { buffer }} = event;
-				engineCommunicator.restoreBuffer(buffer);
+				const {data: { dataView }} = event;
+				engineCommunicator.restoreDataView(dataView);
 				break;
 			}
 			case "clickUI": {

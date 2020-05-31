@@ -38,10 +38,10 @@ class WorkerManager {
 				break;
 			}
 			case "payload": {
-				const {data: { time, buffer, byteCount, extra}} = event;
-				this.engine.refresh(time, buffer, byteCount, extra);
-				if (buffer) {
-					this.returnBuffer(buffer);
+				const { data } = event;
+				this.engine.refresh(data);
+				if (data.dataView) {
+					this.returnBuffer(data.dataView);
 				}
 				break;
 			}
@@ -74,11 +74,11 @@ class WorkerManager {
 		}
 	}
 
-	returnBuffer(buffer) {
+	returnBuffer(dataView) {
 		this.worker.postMessage({
 			action: "returnBuffer",
-			buffer,
-		}, [ buffer ]);
+			dataView,
+		}, [ dataView.buffer ]);
 	}
 
 	init() {

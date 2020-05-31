@@ -41,6 +41,7 @@ const sources = {
 		"communicator/engine-communicator.js",
 		"communicator/engine-scene-renderer.js",
 		"communicator/engine-ui-renderer.js",
+		"communicator/payload.js",
 		"socket/socket.js",
 		"controls/gamepad.js",
 		"controls/keyboard.js",

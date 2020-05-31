@@ -17,7 +17,7 @@ function configCommunicator(communicator, engine) {
 			apply: color => sceneGL.setBackground(color),
 		}, {
 			id: Commands.SCENE_VIEW_POSITION,
-			parameters: "float,float,float,float,float,float",
+			parameters: "float*6",
 			apply: (...params) => sceneGL.setViewPosition(...params),
 		}, {
 			id: Commands.SCENE_VIEWANGLE,
@@ -29,7 +29,7 @@ function configCommunicator(communicator, engine) {
 			apply: curvature => sceneGL.setCurvature(curvature),
 		}, {
 			id: Commands.SCENE_LIGHT,
-			parameters: "float,float,float,float,float,float,float",
+			parameters: "float*7",
 			apply: (...params) => sceneGL.setLight(...params),
 		}, {
 			id: Commands.SCENE_DEPTHEFFECT,
@@ -116,13 +116,34 @@ function configCommunicator(communicator, engine) {
 			parameters: "float",
 			apply: medal => newgrounds.postScore(score).then(console.log).catch(console.error),
 		}, {
-			id: Commands.GL_UPDATE_BUFFER,
-			parameters: "byte,int,buffer",
-			apply: (bufferType, offset, buffer) => glRenderer.sendBufferToGL(bufferType, offset, buffer),
-		}, {
 			id: Commands.GL_SET_VISIBLE_CHUNKS,
-			parameters: "int",
+			parameters: "uint",
 			apply: count => glRenderer.setVisibleChunks(count),
+		}, {
+			id: Commands.GL_UPDATE_BUFFER,
+//			id: Commands.GL_UPDATE_BUFFER + BufferType.SPRITE_TYPE,
+			parameters: "byte,uint,[byte,byte,byte,byte]",
+			apply: (bufferType, offset, dataView) => glRenderer.sendBufferToGL(bufferType, offset, dataView),
 		}
 	);
+
+
+	// VERTEX: 2,
+	// OFFSET: 3,
+	// NORMAL: 4,
+	// MOVE: 5,
+	// GRAVITY: 6,
+	// TEXCOORD: 7,
+	// TEXCENTER: 8,
+	// ANIMATION: 9,
+	// GRID: 10,
+	// COLOR_EFFECT: 11,
+	// BLACKHOLE_CENTER: 12,
+	// BLACKHOLE_INFO: 13,
+	// CHROMA_KEY: 14,
+
+
+	communicator.addEventListener("apply", () => {
+		sceneGL.resetPools();
+	});
 }
