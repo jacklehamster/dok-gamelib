@@ -32,7 +32,7 @@ if (typeof(window) === 'undefined') {
 	const windowStatus = {};
 
 	const textureManager = new WorkerTextureManager();
-	const engineCommunicator = new EngineCommunicator(self);
+	const engineCommunicator = new EngineCommunicator(self, new Communicator());
 	const uiRenderer = new UIRenderer(new EngineUIRenderer(engineCommunicator));
 
 	self.addEventListener('message', function(event) {
@@ -62,10 +62,6 @@ if (typeof(window) === 'undefined') {
 				SceneManager.loadingSceneName = name;
 				self.importScripts(gameBlob);
 				URL.revokeObjectURL(gameBlob);
-				break;
-			}
-			case "payload": {
-				workerEngine.processPayload(event.data);
 				break;
 			}
 			case "keydown": {

@@ -189,10 +189,12 @@ class Engine {
 	}
 
 	refresh(payload) {
-		const {time, byteCount} = payload;
+		const {time, byteCount } = payload;
 		const { communicator, sceneUI, glRenderer, onLoopListener } = this;
 		if (byteCount) {
-			communicator.applyBuffer(payload);
+			const { dataView, extra } = payload;
+			communicator.setup(dataView, byteCount, extra);
+			communicator.apply();
 		}
 		this.loopVideo();
 		sceneUI.updateUI(time);
@@ -238,13 +240,5 @@ class Engine {
 
 	notifySceneChange(sceneName) {
 		this.onSceneChangeListener.forEach(callback => callback(sceneName));
-	}
-
-	sendScore(score) {
-//		this.newgrounds.postScore(score);
-	}
-
-	unlockMedal(medalName) {
-//		this.newgrounds.unlockMedal(medalName);
 	}
 }

@@ -145,8 +145,8 @@ SceneManager.add({Game: class extends Game {
 		},
 		{
 			src: "dok",
-			spriteSize: [292, 362],
-			grid: [14, 8],
+			spriteSize: [266, 311],
+			grid: [15, 11],
 			padding: 1,
 			frameRate: 24,
 			animations: [

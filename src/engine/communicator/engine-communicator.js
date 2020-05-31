@@ -8,8 +8,9 @@
  */
 
 class EngineCommunicator {
-	constructor(worker) {
+	constructor(worker, communicator) {
 		this.worker = worker;
+		this.communicator = communicator;
 		this.byteCount = 0;
 		this.dataView = null;
 		this.extraData = [];
@@ -89,6 +90,10 @@ class EngineCommunicator {
 
 	getExtra() {
 		return this.extraData;
+	}
+	
+	sendCommand(command, ...params) {
+		
 	}
 
 	writeBool(...values) {

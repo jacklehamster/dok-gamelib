@@ -12,28 +12,24 @@ class EngineSceneRenderer {
 		this.engineCommunicator = engineCommunicator;
 	}
 
-	loadToBuffer(commandId, ...params) {
-		this.engineCommunicator.loadToBuffer(commandId, params);
-	}
-
 	setBackground(color) {
 		this.engineCommunicator.sendCommandInt(Commands.SCENE_BACKGROUND, color);
 	}
 
 	setViewAngle(viewAngle, near, far) {
-		this.loadToBuffer(Commands.SCENE_VIEWANGLE, viewAngle, near, far);
+		this.engineCommunicator.loadToBuffer(Commands.SCENE_VIEWANGLE, [viewAngle, near, far]);
 	}
 
 	setViewPosition(x, y, z, tilt, turn, cameraDistance) {
-		this.loadToBuffer(Commands.SCENE_VIEW_POSITION, x, y, z, tilt, turn, cameraDistance);
+		this.engineCommunicator.loadToBuffer(Commands.SCENE_VIEW_POSITION, [x, y, z, tilt, turn, cameraDistance]);
 	}
 
 	setCurvature(curvature) {
-		this.loadToBuffer(Commands.SCENE_CURVATURE, curvature);
+		this.engineCommunicator.loadToBuffer(Commands.SCENE_CURVATURE, [curvature]);
 	}
 
 	setLight(x, y, z, ambient, diffusionStrength, specularStrength, shininess) {
-		this.loadToBuffer(Commands.SCENE_LIGHT, x, y, z, ambient, diffusionStrength, specularStrength, shininess);
+		this.engineCommunicator.loadToBuffer(Commands.SCENE_LIGHT, [x, y, z, ambient, diffusionStrength, specularStrength, shininess]);
 	}
 
 	setViewport(width, height) {
@@ -42,6 +38,6 @@ class EngineSceneRenderer {
 	}
 
 	setDepthEffect(fading, closeSaturation, farSaturation) {
-		this.loadToBuffer(Commands.SCENE_DEPTHEFFECT, fading, closeSaturation, farSaturation);
+		this.engineCommunicator.loadToBuffer(Commands.SCENE_DEPTHEFFECT, [fading, closeSaturation, farSaturation]);
 	}	
 }
