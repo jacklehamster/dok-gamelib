@@ -13,21 +13,17 @@
 	- bytes, short, ints, floats can be passed into ArrayBuffer.
 	- objects, arrays, strings have to be passed into an array.
  */
+const MAX_BUFFER_SIZE = 2000000 * Float32Array.BYTES_PER_ELEMENT;
 
 class Payload {
 	constructor(options) {
 		if (!options) {
 			options = {};
 		}
-		this.emptyArray = [];
 		this.arrayPool = new Pool(() => [], array => array.length = 0);
-		this.glPool = new Pool(() => {
-			return {
-				type: 0,
-				offset: 0,
-				dataView: null,
-			};
-		});
+		this.dataViewPool = new Pool(() => new DataView(new ArrayBuffer(MAX_BUFFER_SIZE)));
+		this.maxSize = 0;
+
 		this.setup();
 
 		this.readBufferMethods = {};
@@ -148,10 +144,18 @@ class Payload {
 		return this.readBufferMethods[types];
 	}
 
+	ensure() {
+		if (!this.dataView || !this.dataView.byteLength) {
+			this.dataView = this.dataViewPool.get();
+			this.byteCount = 0;
+			this.extra.length = 0;
+		}
+	}
+
 	setup(dataView, byteCount, extra) {
 		this.dataView = dataView || null;
 		this.byteCount = byteCount || 0;
-		this.extra = extra || this.emptyArray;
+		this.extra = extra || [];
 		this.reset();
 	}
 
@@ -160,14 +164,29 @@ class Payload {
 		this.extraIndex = 0;
 	}
 
+	ready() {
+		return this.dataView && this.dataView.byteLength;
+	}
+
 	hasData() {
 		return this.offset < this.byteCount;
 	}
 
 	clear() {
+		if (this.byteCount > this.maxSize) {
+			this.maxSize = this.byteCount;
+			const percentUsed = (100 * this.maxSize / MAX_BUFFER_SIZE);
+			if (percentUsed < 80) {
+				console.log(`Data buffer used: ${percentUsed.toFixed(2)}%`);
+			} else if (percentUsed < 100) {
+				console.warn(`Data buffer used: ${percentUsed.toFixed(2)}%`);
+			} else {
+				console.error(`Data buffer used: ${percentUsed.toFixed(2)}%`);
+			}
+		}
+
 		this.byteCount = 0;
 		this.arrayPool.reset();
-		this.glPool.reset();
 	}
 
 	//	READ FUNCTIONS
@@ -269,20 +288,23 @@ class Payload {
 	}
 
 	writeExtra(value) {
-		this.extra[this.extraIndex++] = value;
+		this.extra.push(value);
 	}
 
 	getByteCount() {
 		return this.byteCount;
 	}
 
-	retrievePayload() {
-		this.payload.dataView = this.dataView;
-		this.payload.byteCount = this.byteCount;
-		this.payload.extra = this.extra;
+	retrievePayload(payload) {
+		payload.dataView = this.dataView;
+		payload.byteCount = this.byteCount;
+		payload.extra = this.extra;
+		return this.payload;
+	}
+
+	clear() {
 		this.dataView = null;
 		this.byteCount = 0;
-		this.extra.length = 0;
-		return this.payload;
+		this.extra.length = 0;		
 	}
 }
