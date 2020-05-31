@@ -32,7 +32,8 @@ if (typeof(window) === 'undefined') {
 	const windowStatus = {};
 
 	const textureManager = new WorkerTextureManager();
-	const engineCommunicator = new EngineCommunicator(self, new Communicator());
+	const communicator = new Communicator();
+	const engineCommunicator = new EngineCommunicator(self, communicator);
 	const uiRenderer = new UIRenderer(new EngineUIRenderer(engineCommunicator));
 
 	self.addEventListener('message', function(event) {
@@ -87,7 +88,7 @@ if (typeof(window) === 'undefined') {
 			}
 			case "returnBuffer": {
 				const {data: { dataView }} = event;
-				engineCommunicator.restoreDataView(dataView);
+				communicator.payload.dataViewPool.recycle(dataView);
 				break;
 			}
 			case "clickUI": {

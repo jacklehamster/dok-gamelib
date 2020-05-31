@@ -69,6 +69,12 @@ class Payload {
 		const { commandType }  = options;
 
 		this.readCommand = this.readMethods[commandType] || this.readUnsignedByte.bind(this);
+
+		const writeCommandMethod = this.writeMethods[commandType] || this.writeUnsignedByte.bind(this);
+		this.writeCommand = command => {
+			this.ensure();
+			writeCommandMethod(command);
+		};
 	}
 
 	static typeWithMul(type) {
