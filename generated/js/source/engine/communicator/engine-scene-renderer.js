@@ -34,7 +34,8 @@ class EngineSceneRenderer {
 
 	setViewport(width, height) {
 		this.engineCommunicator.sendCommandInt(Commands.VIEW_RESIZE);
-		this.engineCommunicator.writeShort(width, height);
+		this.engineCommunicator.communicator.payload.writeUnsignedShort(width);
+		this.engineCommunicator.communicator.payload.writeUnsignedShort(height);
 	}
 
 	setDepthEffect(fading, closeSaturation, farSaturation) {

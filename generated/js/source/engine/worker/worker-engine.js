@@ -13,7 +13,7 @@
  */
 
 class WorkerEngine {
-	constructor(sceneManager, { pathname, data, localStorageData, mouse, keyboard, textureManager, engineCommunicator, uiRenderer, windowStatus}) {
+	constructor(sceneManager, { pathname, data, localStorageData, mouse, keyboard, textureManager, engineCommunicator, communicator, uiRenderer, windowStatus}) {
 		this.count = 0;
 		this.lastRefresh = 0;
 		this.currentScene = null;
@@ -25,6 +25,7 @@ class WorkerEngine {
 		this.onSceneChangeListener = [];
 		this.sceneManager = sceneManager;
 		this.socket = new Socket(pathname);
+		this.communicator = communicator;
 		this.engineCommunicator = engineCommunicator;
 		this.sceneRefresher = new SceneRefresher();
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();

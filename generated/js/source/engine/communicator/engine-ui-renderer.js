@@ -25,7 +25,7 @@ class EngineUIRenderer {
 		this.loadExtra(elementId);
 		this.engineCommunicator.writeInt32(instanceIndex);
 		this.loadExtra(type);
-		this.engineCommunicator.writeBool(hasOnClick);
+		this.engineCommunicator.communicator.payload.writeUnsignedByte(hasOnClick ? 1 : 0);
 	}
 
 	setParent(elementId, parent) {
@@ -51,7 +51,8 @@ class EngineUIRenderer {
 	setSize(elementId, width, height) {
 		this.engineCommunicator.sendCommandInt(Commands.UI_SET_SIZE);
 		this.loadExtra(elementId);
-		this.engineCommunicator.writeShort(width, height);
+		this.engineCommunicator.communicator.payload.writeUnsignedShort(width);
+		this.engineCommunicator.communicator.payload.writeUnsignedShort(height);
 	}
 
 	setCanvas(elementId, canvas) {

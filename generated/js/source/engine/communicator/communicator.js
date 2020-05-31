@@ -79,7 +79,7 @@ class Communicator {
 
 	}
 
-	retrievePayload() {
-		return this.payload.retrievePayload();
+	retrievePayload(payload) {
+		return this.payload.retrievePayload(payload);
 	}
 }

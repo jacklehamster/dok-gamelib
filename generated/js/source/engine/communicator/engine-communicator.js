@@ -11,18 +11,14 @@ class EngineCommunicator {
 	constructor(worker, communicator) {
 		this.worker = worker;
 		this.communicator = communicator;
-		this.byteCount = 0;
-		this.dataView = null;
-		this.extraData = [];
-		this.pool = new Pool(() => new DataView(new ArrayBuffer(MAX_BUFFER_SIZE)));
 		this.lastError = null;
 		this.maxSize = 0;
-		this.lastGLBuffer = {
-			type: null,
-			offset: 0,
-			size: 0,
-			bufferStartIndex: 0,
-		};
+		// this.lastGLBuffer = {
+		// 	type: null,
+		// 	offset: 0,
+		// 	size: 0,
+		// 	bufferStartIndex: 0,
+		// };
 		this.payload = {
 			action: "payload",
 			time: 0,
@@ -36,11 +32,9 @@ class EngineCommunicator {
 	}
 
 	sendPayload(now) {
-		if (this.getByteCount() && this.getDataView().byteLength) {
+		if (this.communicator.payload.hasData()) {
 			this.payload.time = now;
-			this.payload.dataView = this.getDataView();
-			this.payload.byteCount = this.getByteCount();
-			this.payload.extra = this.getExtra();
+			this.communicator.payload.retrievePayload(this.payload);
 			this.worker.postMessage(this.payload, [this.payload.dataView.buffer]);
 			this.clear();
 		} else {
@@ -51,66 +45,15 @@ class EngineCommunicator {
 	}
 
 	restoreDataView(dataView) {
-		this.pool.recycle(dataView);
+		this.communicator.payload.dataViewPool.recycle(dataView);
 	}
 
 	ensureBuffer() {
-		if (!this.dataView || this.dataView.byteLength === 0) {
-			this.dataView = this.pool.get();
-			this.byteCount = 0;
-			this.lastGLBuffer.type = null;
-		}
+		this.communicator.payload.ensure();
 	}
 
 	clear() {
-		if (this.byteCount > this.maxSize) {
-			this.maxSize = this.byteCount;
-			const percentUsed = (100 * this.maxSize / MAX_BUFFER_SIZE);
-			if (percentUsed < 80) {
-				console.log(`Data buffer used: ${percentUsed.toFixed(2)}%`);
-			} else if (percentUsed < 100) {
-				console.warn(`Data buffer used: ${percentUsed.toFixed(2)}%`);
-			} else {
-				console.error(`Data buffer used: ${percentUsed.toFixed(2)}%`);
-			}
-		}
-
-		this.byteCount = 0;
-		this.extraData.length = 0;
-		this.lastGLBuffer.type = null;
-	}
-
-	getDataView() {
-		return this.dataView;
-	}
-
-	getByteCount() {
-		return this.byteCount;
-	}
-
-	getExtra() {
-		return this.extraData;
-	}
-	
-	sendCommand(command, ...params) {
-		
-	}
-
-	writeBool(...values) {
-		for (let i = 0; i < values.length; i++) {
-			this.dataView.setUint8(this.byteCount, values[i] ? 1 : 0);
-			this.byteCount += Uint8Array.BYTES_PER_ELEMENT;
-		}		
-	}
-
-	writeUnsignedByte(...values) {
-		for (let i = 0; i < values.length; i++) {
-			if (values[i] > 0xFF) {
-				console.error("Byte out of bound: ", values[i]);
-			}
-			this.dataView.setUint8(this.byteCount, values[i]);
-			this.byteCount += Uint8Array.BYTES_PER_ELEMENT;
-		}		
+		this.communicator.payload.clear();
 	}
 
 	writeShort(...values) {
@@ -118,28 +61,25 @@ class EngineCommunicator {
 			if (values[i] > 0xFFFF) {
 				console.error("Int16 out of bound: ", values[i]);
 			}
-			this.dataView.setUint16(this.byteCount, values[i], true);
-			this.byteCount += Uint16Array.BYTES_PER_ELEMENT;
+			this.communicator.payload.writeUnsignedShort(values[i]);
 		}		
 	}
 
 	writeInt32(...values) {
 		for (let i = 0; i < values.length; i++) {
-			this.dataView.setInt32(this.byteCount, values[i], true);
-			this.byteCount += Int32Array.BYTES_PER_ELEMENT;
+			this.communicator.payload.writeInt(values[i]);
 		}
 	}
 
 	writeFloat32(...values) {
 		for (let i = 0; i < values.length; i++) {
-			this.dataView.setFloat32(this.byteCount, values[i], true);
-			this.byteCount += Float32Array.BYTES_PER_ELEMENT;
+			this.communicator.payload.writeFloat(values[i]);
 		}		
 	}
 
 	sendCommandInt(command, ...params) {
 		this.ensureBuffer();
-		this.writeUnsignedByte(command);
+		this.communicator.payload.writeUnsignedByte(command);
 		this.writeInt32(...params);		
 	}
 
@@ -150,7 +90,7 @@ class EngineCommunicator {
 
 	loadToBuffer(command, params) {
 		this.ensureBuffer();
-		this.writeUnsignedByte(command);
+		this.communicator.payload.writeUnsignedByte(command);
 		if (params) {
 			this.writeFloat32(...params);
 		}
@@ -158,82 +98,94 @@ class EngineCommunicator {
 
 	loadExtra(params) {
 		if (params) {
-			this.extraData.push(...params);
+			for (let i = 0; i < params.length; i++) {
+				this.communicator.payload.writeExtra(params[i]);
+			}
 		}
 	}
 
 	loadGLBufferByte(type, offset, ...params) {
-		if (this.lastGLBuffer.type === type
-			&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
-			&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
-		) {	//	append to previous buffer
-			this.writeUnsignedByte(...params);
-			this.lastGLBuffer.size += params.length * Uint8Array.BYTES_PER_ELEMENT;
-			this.dataView.setInt32(
-				this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
-				this.lastGLBuffer.size,
-				true
-			);
-			return;
-		}
+		// if (this.lastGLBuffer.type === type
+		// 	&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
+		// 	&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
+		// ) {	//	append to previous buffer
+		// 	this.writeUnsignedByte(...params);
+		// 	this.lastGLBuffer.size += params.length * Uint8Array.BYTES_PER_ELEMENT;
+		// 	this.dataView.setInt32(
+		// 		this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
+		// 		this.lastGLBuffer.size,
+		// 		true
+		// 	);
+		// 	return;
+		// }
 
 		this.ensureBuffer();
-		this.lastGLBuffer.type = type;
-		this.lastGLBuffer.offset = offset;
-		this.lastGLBuffer.size = params.length * Uint8Array.BYTES_PER_ELEMENT;
-		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER, type);
-		this.writeInt32(offset, this.lastGLBuffer.size);
-		this.lastGLBuffer.bufferStartIndex = this.byteCount;
-		this.writeUnsignedByte(...params);
+		// this.lastGLBuffer.type = type;
+		// this.lastGLBuffer.offset = offset;
+		// this.lastGLBuffer.size = params.length * Uint8Array.BYTES_PER_ELEMENT;
+		this.communicator.payload.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
+		this.communicator.payload.writeUnsignedByte(type);
+		this.writeInt32(offset, params.length * Uint8Array.BYTES_PER_ELEMENT);
+		// this.lastGLBuffer.bufferStartIndex = this.byteCount;
+		for (let i = 0; i < params.length; i++) {
+			this.communicator.payload.writeUnsignedByte(params[i]);
+		}
 	}
 
 	loadGLBufferShort(type, offset, ...params) {
-		if (this.lastGLBuffer.type === type
-			&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
-			&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
-		) {	//	append to previous buffer
-			this.writeShort(...params);
-			this.lastGLBuffer.size += params.length * Uint16Array.BYTES_PER_ELEMENT;
-			this.dataView.setInt32(
-				this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
-				this.lastGLBuffer.size,
-				true
-			);
-			return;
-		}
+		// if (this.lastGLBuffer.type === type
+		// 	&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
+		// 	&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
+		// ) {	//	append to previous buffer
+		// 	this.writeShort(...params);
+		// 	this.lastGLBuffer.size += params.length * Uint16Array.BYTES_PER_ELEMENT;
+		// 	this.dataView.setInt32(
+		// 		this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
+		// 		this.lastGLBuffer.size,
+		// 		true
+		// 	);
+		// 	return;
+		// }
 
 		this.ensureBuffer();
-		this.lastGLBuffer.type = type;
-		this.lastGLBuffer.offset = offset;
-		this.lastGLBuffer.size = params.length * Uint16Array.BYTES_PER_ELEMENT;
-		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER, type);
-		this.writeInt32(offset, this.lastGLBuffer.size);
-		this.lastGLBuffer.bufferStartIndex = this.byteCount;
-		this.writeShort(...params);
+		// this.lastGLBuffer.type = type;
+		// this.lastGLBuffer.offset = offset;
+		// this.lastGLBuffer.size = params.length * Uint16Array.BYTES_PER_ELEMENT;
+		this.communicator.payload.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
+		this.communicator.payload.writeUnsignedByte(type);
+		this.writeInt32(offset, params.length * Uint16Array.BYTES_PER_ELEMENT);
+
+		for (let i = 0; i < params.length; i++) {
+			if (params[i] > 0xFFFF) {
+				console.error("Int16 out of bound: ", params[i]);
+			}
+			this.communicator.payload.writeUnsignedShort(params[i]);
+		}
 	}
 
 	loadGLBuffer(type, offset, ...params) {
-		if (this.lastGLBuffer.type === type
-			&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
-			&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
-		) {	//	append to previous buffer
-			this.writeFloat32(...params);
-			this.lastGLBuffer.size += params.length * Float32Array.BYTES_PER_ELEMENT;
-			this.dataView.setInt32(
-				this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
-				this.lastGLBuffer.size,
-				true
-			);
-			return;
-		}
+		// if (this.lastGLBuffer.type === type
+		// 	&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size
+		// 	&& this.byteCount === this.lastGLBuffer.bufferStartIndex + this.lastGLBuffer.size
+		// ) {	//	append to previous buffer
+		// 	this.writeFloat32(...params);
+		// 	this.lastGLBuffer.size += params.length * Float32Array.BYTES_PER_ELEMENT;
+		// 	this.dataView.setInt32(
+		// 		this.lastGLBuffer.bufferStartIndex - Int32Array.BYTES_PER_ELEMENT,
+		// 		this.lastGLBuffer.size,
+		// 		true
+		// 	);
+		// 	return;
+		// }
 
 		this.ensureBuffer();
-		this.lastGLBuffer.type = type;
-		this.lastGLBuffer.offset = offset;
-		this.lastGLBuffer.size = params.length * Float32Array.BYTES_PER_ELEMENT;
-		this.writeUnsignedByte(Commands.GL_UPDATE_BUFFER, type);
-		this.writeInt32(offset, this.lastGLBuffer.size);
-		this.lastGLBuffer.bufferStartIndex = this.byteCount;
+		// this.lastGLBuffer.type = type;
+		// this.lastGLBuffer.offset = offset;
+		// this.lastGLBuffer.size = params.length * Float32Array.BYTES_PER_ELEMENT;
+		this.communicator.payload.writeUnsignedByte(Commands.GL_UPDATE_BUFFER);
+		this.communicator.payload.writeUnsignedByte(type);
+		this.writeInt32(offset, params.length * Float32Array.BYTES_PER_ELEMENT);
+		// this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		this.writeFloat32(...params);
 	}
 }
