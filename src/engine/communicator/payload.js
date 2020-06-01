@@ -26,6 +26,9 @@ class Payload {
 
 		this.setup();
 
+		this.encoder = new TextEncoder();
+		this.decoder = new TextDecoder();
+
 		this.readBufferMethods = {};
 		this.readMethods = {
 			boolean: () => this.readUnsignedByte() !== 0,
@@ -36,9 +39,9 @@ class Payload {
 			ushort: this.readUnsignedShort.bind(this),
 			int: this.readInt.bind(this),
 			uint: this.readUnsignedInt.bind(this),
-			string: this.readExtra.bind(this),
-			object: this.readExtra.bind(this),
-			array: this.readExtra.bind(this),
+			string: this.readString.bind(this),
+			object: this.readObject.bind(this),
+			array: this.readObject.bind(this),
 			dataView: this.readDataView.bind(this),
 		};
 
@@ -52,9 +55,9 @@ class Payload {
 			ushort: this.writeUnsignedShort.bind(this),
 			int: this.writeInt.bind(this),
 			uint: this.writeUnsignedInt.bind(this),
-			string: this.writeExtra.bind(this),
-			object: this.writeExtra.bind(this),
-			array: this.writeExtra.bind(this),
+			string: this.writeString.bind(this),
+			object: this.writeObject.bind(this),
+			array: this.writeObject.bind(this),
 			dataView: this.writeDataView.bind(this),
 		}
 
@@ -159,10 +162,8 @@ class Payload {
 				return this.writeMethods[type];
 			});
 
-			const infiniteParams = types[types.length-1] === "...";
 			this.writeBufferMethods[types] = (...params) => {
-				const maxParams = infiniteParams ? params.length : writeMethods.length;
-				for (let i = 0; i < maxParams; i++) {
+				for (let i = 0; i < writeMethods.length; i++) {
 					const writeMethod = writeMethods[Math.min(writeMethods.length-1, i)];
 					if (!writeMethod) {
 						console.error(`${types} <= invalid types.`);
@@ -274,6 +275,14 @@ class Payload {
 		return this.extra[this.extraIndex++];
 	}
 
+	readString() {
+		return this.decoder.decode(this.readDataView());
+	}
+
+	readObject() {
+		return this.readExtra();
+	}
+
 	//	WRITE FUNCTIONS
 
 	writeByte(value) {
@@ -313,12 +322,20 @@ class Payload {
 
 	writeDataView(dataView) {
 		this.writeUnsignedInt(dataView.byteLength);
-		new Uint8Array(this.dataView.buffer, this.byteCount).set(new Uint8Array(dataView.buffer, dataView.byteOffset, dataView.byteLength));
+		new Uint8Array(this.dataView.buffer).set(new Uint8Array(dataView.buffer, dataView.byteOffset, dataView.byteLength), this.byteCount);
 		this.byteCount += dataView.byteLength;
 	}
 
 	writeExtra(value) {
 		this.extra.push(value);
+	}
+
+	writeString(value) {
+		this.writeDataView(this.encoder.encode(value||""));
+	}
+
+	writeObject(value) {
+		this.writeExtra(value);
 	}
 
 	retrievePayload(payload) {
