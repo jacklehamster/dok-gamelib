@@ -27,15 +27,16 @@ class EngineCommunicator {
 			action: "payload",
 			time: 0,
 		};
-		this.communicator.payload.clear();
+		this.communicator.payloadProducer.clear();
 	}
 
 	sendPayload(now) {
-		if (this.communicator.payload.hasData()) {
+		const payload = this.communicator.payloadProducer.getPayload();
+		if (payload) {
 			this.payload.time = now;
-			this.communicator.payload.retrievePayload(this.payload);
-			this.worker.postMessage(this.payload, [this.payload.dataView.buffer]);
-			this.communicator.payload.clear();
+			this.payload.payload = payload;
+			this.worker.postMessage(this.payload, [payload.dataView.buffer]);
+			this.communicator.payloadProducer.clear();
 		} else {
 			this.emptyPayload.time = now;
 			this.worker.postMessage(this.emptyPayload);
@@ -60,15 +61,15 @@ class EngineCommunicator {
 		// this.lastGLBuffer.type = type;
 		// this.lastGLBuffer.offset = offset;
 		// this.lastGLBuffer.size = params.length * Uint8Array.BYTES_PER_ELEMENT;
-		this.communicator.payload.writeCommand(Commands.GL_UPDATE_BUFFER);
-		this.communicator.payload.writeUnsignedByte(type);
-		this.communicator.payload.writeInt(offset);
-		this.communicator.payload.writeInt(params.length * Uint8Array.BYTES_PER_ELEMENT);
+		this.communicator.payloadProducer.writeCommand(Commands.GL_UPDATE_BUFFER);
+		this.communicator.payloadProducer.writeUnsignedByte(type);
+		this.communicator.payloadProducer.writeInt(offset);
+		this.communicator.payloadProducer.writeInt(params.length * Uint8Array.BYTES_PER_ELEMENT);
 
 
 		// this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		for (let i = 0; i < params.length; i++) {
-			this.communicator.payload.writeUnsignedByte(params[i]);
+			this.communicator.payloadProducer.writeUnsignedByte(params[i]);
 		}
 	}
 
@@ -90,16 +91,16 @@ class EngineCommunicator {
 		// this.lastGLBuffer.type = type;
 		// this.lastGLBuffer.offset = offset;
 		// this.lastGLBuffer.size = params.length * Uint16Array.BYTES_PER_ELEMENT;
-		this.communicator.payload.writeCommand(Commands.GL_UPDATE_BUFFER);
-		this.communicator.payload.writeUnsignedByte(type);
-		this.communicator.payload.writeInt(offset);
-		this.communicator.payload.writeInt(params.length * Uint16Array.BYTES_PER_ELEMENT);
+		this.communicator.payloadProducer.writeCommand(Commands.GL_UPDATE_BUFFER);
+		this.communicator.payloadProducer.writeUnsignedByte(type);
+		this.communicator.payloadProducer.writeInt(offset);
+		this.communicator.payloadProducer.writeInt(params.length * Uint16Array.BYTES_PER_ELEMENT);
 
 		for (let i = 0; i < params.length; i++) {
 			if (params[i] > 0xFFFF) {
 				console.error("Int16 out of bound: ", params[i]);
 			}
-			this.communicator.payload.writeUnsignedShort(params[i]);
+			this.communicator.payloadProducer.writeUnsignedShort(params[i]);
 		}
 	}
 
@@ -121,13 +122,13 @@ class EngineCommunicator {
 		// this.lastGLBuffer.type = type;
 		// this.lastGLBuffer.offset = offset;
 		// this.lastGLBuffer.size = params.length * Float32Array.BYTES_PER_ELEMENT;
-		this.communicator.payload.writeCommand(Commands.GL_UPDATE_BUFFER);
-		this.communicator.payload.writeUnsignedByte(type);
-		this.communicator.payload.writeInt(offset);
-		this.communicator.payload.writeInt(params.length * Float32Array.BYTES_PER_ELEMENT);
+		this.communicator.payloadProducer.writeCommand(Commands.GL_UPDATE_BUFFER);
+		this.communicator.payloadProducer.writeUnsignedByte(type);
+		this.communicator.payloadProducer.writeInt(offset);
+		this.communicator.payloadProducer.writeInt(params.length * Float32Array.BYTES_PER_ELEMENT);
 		// this.lastGLBuffer.bufferStartIndex = this.byteCount;
 		for (let i = 0; i < params.length; i++) {
-			this.communicator.payload.writeFloat(params[i]);
+			this.communicator.payloadProducer.writeFloat(params[i]);
 		}
 	}
 }

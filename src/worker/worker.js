@@ -88,7 +88,7 @@ if (typeof(window) === 'undefined') {
 			}
 			case "returnBuffer": {
 				const {data: { dataView }} = event;
-				communicator.payload.dataViewPool.recycle(dataView);
+				communicator.payloadProducer.dataViewPool.recycle(dataView);
 				break;
 			}
 			case "clickUI": {
