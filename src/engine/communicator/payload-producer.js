@@ -148,51 +148,119 @@ class PayloadProducer {
 		return result;
 	}
 
+	static totalSize(typeArray) {
+		let size = 0;
+		for (let i = 0; i < typeArray.length; i++) {
+			switch(typeArray[i]) {
+				case "boolean":
+				case "ubyte":
+					size += Uint8Array.BYTES_PER_ELEMENT;
+					break;
+				case "byte":
+					size += Int8Array.BYTES_PER_ELEMENT;
+					break;
+				case "float":
+					size += Float32Array.BYTES_PER_ELEMENT;
+					break;
+				case "short":
+					size += Int16Array.BYTES_PER_ELEMENT;
+					break;
+				case "ushort":
+					size += Uint16Array.BYTES_PER_ELEMENT;
+					break;
+				case "int":
+					size += Int32Array.BYTES_PER_ELEMENT;
+					break;
+				case "uint":
+					size += Uint32Array.BYTES_PER_ELEMENT;
+					break;
+			}
+		}
+		return size;
+	}
+
+	//	Produce a writer prefixed with writing a size of the dataview
+	makeWriterPrefixedWithSize(typeArray, dataWriter) {
+		const dataViewSize = PayloadProducer.totalSize(typeArray);
+		return (value) => {
+			this.lastDataViewOffset = this.byteCount;
+			this.writeUnsignedInt(dataViewSize);
+			dataWriter(value);
+		};
+	}
+
 	//	given parameter, return a function designed for loading those params.
 	//	ex: getReadBufferMethod("int,float") => fun
 	//	This creates a function that can read an int and a float from the paylod.
 	//	const [ anInt, aFloat ] = fun()
-	getReadBufferMethod(types) {
-		if (!this.readBufferMethods[types]) {
-			const readMethods = PayloadProducer.getTypes(types).map(type => {
-				return Array.isArray(type) ? this.readMethods.dataView.bind(this) : this.readMethods[type];
+	getReadBufferMethod(parameters) {
+		if (!this.readBufferMethods[parameters]) {
+			const readers = [];
+			PayloadProducer.getTypes(parameters).forEach(type => {
+				if (Array.isArray(type)) {
+					readers.push(this.readMethods.dataView);
+				} else {
+					readers.push(this.readMethods[type]);
+				}
 			});
 
-			this.readBufferMethods[types] = () => {
+			this.readBufferMethods[parameters] = () => {
 				const result = this.arrayPool.get();
-				result.length = readMethods.length;
-				for (let i = 0; i < readMethods.length; i++) {
-					if (!readMethods[i]) {
-						console.error(`${types} <= invalid types.`);
+				result.length = readers.length;
+				for (let i = 0; i < readers.length; i++) {
+					if (!readers[i]) {
+						console.error(`${parameters} <= invalid parameters.`);
 					}
-					result[i] = readMethods[i]();
+					result[i] = readers[i]();
 				}
 				return result;
 			};
 		}
-		return this.readBufferMethods[types];
+		return this.readBufferMethods[parameters];
 	}
 
-	getWriteBufferMethod(types) {
-		if (!this.writeBufferMethods[types]) {
-			const writeMethods = PayloadProducer.getTypes(types).map(type => {
+	getWriteBufferMethod(parameters, merge) {
+		const tag = `${parameters}/${merge?"merge":""}`;
+		if (!this.writeBufferMethods[tag]) {
+			const writers = [];
+			let dataViewIndex = -1;
+			PayloadProducer.getTypes(parameters).forEach(type => {
 				if (Array.isArray(type)) {
-					return this.writeMethods.dataView.bind(this);
+					if (dataViewIndex < 0) {
+						dataViewIndex = writers.length;
+					}
+					type.forEach((t, index) => {
+						if (index === 0) {
+							writers.push(this.makeWriterPrefixedWithSize(type, this.writeMethods[t]));
+						} else {
+							writers.push(this.writeMethods[t]);
+						}
+					});
+				} else {
+					writers.push(this.writeMethods[type]);
 				}
-				return this.writeMethods[type];
 			});
 
-			this.writeBufferMethods[types] = params => {
-				for (let i = 0; i < writeMethods.length; i++) {
-					const writeMethod = writeMethods[Math.min(writeMethods.length-1, i)];
-					if (!writeMethod) {
-						console.error(`${types} <= invalid types.`);
+			this.writeBufferMethods[tag] = (command, params) => {
+				if (merge) {
+					//	try to merge dataview
+					if (!this.showedLog) {
+						this.showedLog = true;
+						console.warn("TODO: merge dataview.");
 					}
-					writeMethod(params[i]);
+				}
+
+				this.writeCommand(command);
+				for (let i = 0; i < writers.length; i++) {
+					const writer = writers[Math.min(writers.length-1, i)];
+					if (!writer) {
+						console.error(`${tag} <= invalid parameters.`);
+					}
+					writer(params[i]);
 				}
 			};
 		}
-		return this.writeBufferMethods[types];
+		return this.writeBufferMethods[tag];
 	}
 
 	ensure() {
@@ -205,6 +273,7 @@ class PayloadProducer {
 	setup(dataView, byteCount, extra) {
 		this.dataView = dataView || null;
 		this.byteCount = byteCount || 0;
+		this.lastDataViewOffset = -1;
 		this.reset();
 	}
 
@@ -469,5 +538,6 @@ class PayloadProducer {
 	clear() {
 		this.dataView = null;
 		this.byteCount = 0;
+		this.lastDataViewOffset = -1;
 	}
 }

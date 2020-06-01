@@ -42,16 +42,17 @@ class Communicator {
 	}
 
 	register(... actions) {
-		actions.forEach(({ id, parameters, apply}) => {
+		actions.forEach(({ id, parameters, apply, merge}) => {
 			const ids = Array.isArray(id) ? id : [id];
 			ids.forEach(_id => {
 				if (_id && apply) {
-					this.registry[_id] = {
+					const registryEntry = {
 						id: _id,
 						readBuffer: this.payloadProducer.getReadBufferMethod(parameters||""),
 						apply,
-						writeBuffer: this.payloadProducer.getWriteBufferMethod(parameters||""),
+						writeBuffer: this.payloadProducer.getWriteBufferMethod(parameters||"", merge),
 					};
+					this.registry[_id] = registryEntry;				
 				}
 			});
 		});
@@ -85,10 +86,13 @@ class Communicator {
 	sendCommand(command, ...params) {
 		const { registry } = this;
 		if (registry[command]) {
-			this.payloadProducer.writeCommand(command);
-			registry[command].writeBuffer(params);
+			registry[command].writeBuffer(command, params);
 		} else {
 			console.error(`Unknown command ${command}.`);			
 		}
+	}
+
+	clear() {
+		this.payloadProducer.clear();
 	}
 }

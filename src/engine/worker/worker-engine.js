@@ -13,7 +13,7 @@
  */
 
 class WorkerEngine {
-	constructor(sceneManager, { pathname, data, localStorageData, mouse, keyboard, textureManager, engineCommunicator, communicator, uiRenderer, windowStatus}) {
+	constructor(sceneManager, { pathname, data, localStorageData, mouse, keyboard, textureManager, communicator, uiRenderer, windowStatus}) {
 		this.count = 0;
 		this.lastRefresh = 0;
 		this.currentScene = null;
@@ -28,7 +28,6 @@ class WorkerEngine {
 		this.communicator = communicator;
 		configCommunicator(this.communicator);
 
-		this.engineCommunicator = engineCommunicator;
 		this.sceneRefresher = new SceneRefresher();
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
 		this.spriteDataProcessor = new SpriteDataProcessor();
@@ -41,7 +40,7 @@ class WorkerEngine {
 		this.domManager = new WorkerDOMManager(this.communicator);
 		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.communicator), this.mediaManager, this.domManager, this.socket);
 		this.uiRenderer = uiRenderer;
-		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
+		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.communicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 		this.logger = new WorkerLogger(this.communicator);
 		this.timeScheduler = new TimeScheduler();
 		this.pauseTime = 0;
@@ -90,6 +89,15 @@ class WorkerEngine {
 				this.lastUpdateTime = Date.now();
 			}
 		});
+
+		this.payload = {
+			action: "payload",
+			time: 0,
+		};
+		this.emptyPayload = {
+			action: "payload",
+			time: 0,
+		};
 
 		this.spriteCollector = [];
 		this.uiCollector = [];
@@ -140,7 +148,7 @@ class WorkerEngine {
 
 	loop(timeMillis) {
 		const { currentScene, sceneRefresher, spriteDataProcessor, spriteDefinitionProcessor, mediaManager, timeScheduler,
-			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, engineCommunicator, uiRenderer, glRenderer, windowStatus: { hidden },
+			uiProvider, spriteProvider, sceneRenderer, keyboard, mouse, uiRenderer, glRenderer, windowStatus: { hidden },
 			uiCollector, spriteCollector } = this;
 		if (!currentScene || (hidden && Date.now() - this.lastUpdateTime > 1000)) {
 			if (!this.pauseTime) {
@@ -202,7 +210,16 @@ class WorkerEngine {
 	}
 
 	postBackPayload(now) {
-		this.engineCommunicator.sendPayload(now);
+		const payload = this.communicator.payloadProducer.getPayload();
+		if (payload) {
+			this.payload.time = now;
+			this.payload.payload = payload;
+			self.postMessage(this.payload, [payload.dataView.buffer]);
+			this.communicator.clear();
+		} else {
+			this.emptyPayload.time = now;
+			self.postMessage(this.emptyPayload);
+		}
 	}
 
 	getListeners(type) {
