@@ -8,7 +8,7 @@
  */
 
 function configCommunicator(communicator, engine) {
-	const { sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = engine;
+	const { sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = engine || {};
 
 	communicator.register(
 		{
@@ -61,7 +61,7 @@ function configCommunicator(communicator, engine) {
 			apply: (...params) => sceneUI.setSize(...params),
 		}, {
 			id: Commands.UI_SET_CANVAS,
-			parameters: "string,string",
+			parameters: "string,object",
 			apply: (...params) => sceneUI.setCanvas(...params),
 		}, {
 			id: Commands.UI_REMOVE_ELEMENT,

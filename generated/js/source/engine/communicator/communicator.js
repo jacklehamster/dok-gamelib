@@ -50,6 +50,7 @@ class Communicator {
 						id: _id,
 						readBuffer: this.payload.getReadBufferMethod(parameters||""),
 						apply,
+						writeBuffer: this.payload.getWriteBufferMethod(parameters||""),
 					};
 				}
 			});
@@ -61,22 +62,32 @@ class Communicator {
 	}
 
 	apply() {
-		const { registry, byteCount, payload } = this;
+		const { payload } = this;
 		while (payload.hasData()) {
-			const command = payload.readCommand()
-			if (registry[command]) {
-				const { readBuffer, apply } = registry[command];
-				apply(...readBuffer());
-			} else {
-				console.error(`Unknown command ${command}.`);
-			}
+			this.applyCommand(payload.readCommand());
 		}
 		this.payload.clear();
 		this.onApplyListener.forEach(callback => callback());
 	}
 
-	sendCommand(command, ...params) {
+	applyCommand(command) {
+		const { registry } = this;
+		if (registry[command]) {
+			const { readBuffer, apply } = registry[command];
+			apply(...readBuffer());
+		} else {
+			console.error(`Unknown command ${command}.`);
+		}
+	}
 
+	sendCommand(command, ...params) {
+		const { registry } = this;
+		if (registry[command]) {
+			this.payload.writeCommand(command);
+			registry[command].writeBuffer(...params);
+		} else {
+			console.error(`Unknown command ${command}.`);			
+		}
 	}
 
 	retrievePayload(payload) {

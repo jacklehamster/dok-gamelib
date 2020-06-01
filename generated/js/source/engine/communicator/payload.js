@@ -26,6 +26,9 @@ class Payload {
 
 		this.setup();
 
+		this.encoder = new TextEncoder();
+		this.decoder = new TextDecoder();
+
 		this.readBufferMethods = {};
 		this.readMethods = {
 			boolean: () => this.readUnsignedByte() !== 0,
@@ -36,9 +39,9 @@ class Payload {
 			ushort: this.readUnsignedShort.bind(this),
 			int: this.readInt.bind(this),
 			uint: this.readUnsignedInt.bind(this),
-			string: this.readExtra.bind(this),
-			object: this.readExtra.bind(this),
-			array: this.readExtra.bind(this),
+			string: this.readString.bind(this),
+			object: this.readObject.bind(this),
+			array: this.readObject.bind(this),
 			dataView: this.readDataView.bind(this),
 		};
 
@@ -52,9 +55,9 @@ class Payload {
 			ushort: this.writeUnsignedShort.bind(this),
 			int: this.writeInt.bind(this),
 			uint: this.writeUnsignedInt.bind(this),
-			string: this.writeExtra.bind(this),
-			object: this.writeExtra.bind(this),
-			array: this.writeExtra.bind(this),
+			string: this.writeString.bind(this),
+			object: this.writeObject.bind(this),
+			array: this.writeObject.bind(this),
 			dataView: this.writeDataView.bind(this),
 		}
 
@@ -132,7 +135,7 @@ class Payload {
 	getReadBufferMethod(types) {
 		if (!this.readBufferMethods[types]) {
 			const readMethods = Payload.getTypes(types).map(type => {
-				return Array.isArray(type) ? this.readMethods.dataView : this.readMethods[type];
+				return Array.isArray(type) ? this.readMethods.dataView.bind(this) : this.readMethods[type];
 			});
 
 			this.readBufferMethods[types] = () => {
@@ -148,6 +151,28 @@ class Payload {
 			};
 		}
 		return this.readBufferMethods[types];
+	}
+
+	getWriteBufferMethod(types) {
+		if (!this.writeBufferMethods[types]) {
+			const writeMethods = Payload.getTypes(types).map(type => {
+				if (Array.isArray(type)) {
+					return this.writeMethods.dataView.bind(this);
+				}
+				return this.writeMethods[type];
+			});
+
+			this.writeBufferMethods[types] = (...params) => {
+				for (let i = 0; i < writeMethods.length; i++) {
+					const writeMethod = writeMethods[Math.min(writeMethods.length-1, i)];
+					if (!writeMethod) {
+						console.error(`${types} <= invalid types.`);
+					}
+					writeMethod(params[i]);
+				}
+			};
+		}
+		return this.writeBufferMethods[types];
 	}
 
 	ensure() {
@@ -250,6 +275,14 @@ class Payload {
 		return this.extra[this.extraIndex++];
 	}
 
+	readString() {
+		return this.decoder.decode(this.readDataView());
+	}
+
+	readObject() {
+		return this.readExtra();
+	}
+
 	//	WRITE FUNCTIONS
 
 	writeByte(value) {
@@ -287,18 +320,22 @@ class Payload {
 		this.byteCount += Float32Array.BYTES_PER_ELEMENT;
 	}
 
-	writeDataView(value) {
-		this.writeUnsignedInt(value.byteLength);
-		new Uint8Array(this.dataView.buffer, this.byteCount).set(new Uint8Array(value.buffer, value.byteOffset, value.byteLength));
-		this.byteCount += value.byteLength;
+	writeDataView(dataView) {
+		this.writeUnsignedInt(dataView.byteLength);
+		new Uint8Array(this.dataView.buffer).set(new Uint8Array(dataView.buffer, dataView.byteOffset, dataView.byteLength), this.byteCount);
+		this.byteCount += dataView.byteLength;
 	}
 
 	writeExtra(value) {
 		this.extra.push(value);
 	}
 
-	getByteCount() {
-		return this.byteCount;
+	writeString(value) {
+		this.writeDataView(this.encoder.encode(value||""));
+	}
+
+	writeObject(value) {
+		this.writeExtra(value);
 	}
 
 	retrievePayload(payload) {
