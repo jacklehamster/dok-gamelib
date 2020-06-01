@@ -8,8 +8,8 @@
  */
 
 class ISpriteRenderer {
-	constructor(textureManager, engineCommunicator, spriteProvider, spriteDataProcessor, {imagedata, videos}) {
-		this.engineCommunicator = engineCommunicator;
+	constructor(textureManager, communicator, spriteProvider, spriteDataProcessor, {imagedata, videos}) {
+		this.communicator = communicator;
 		this.spriteDataProcessor = spriteDataProcessor;
 		this.imagedata = imagedata;
 		this.spriteProvider = spriteProvider;
@@ -59,9 +59,9 @@ class ISpriteRenderer {
 				const sprite = tempSprites[i];
 				if (sprite.updateTimes.type === now) {
 					const { type } = sprite;
-					this.engineCommunicator.loadGLBufferByte(BufferType.SPRITE_TYPE,
+					this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.SPRITE_TYPE,
 						sprite.chunkIndex * bytesPerSprite,
-						type, type, type, type,
+						type, type, type, type
 					);
 				}
 			}
@@ -74,7 +74,7 @@ class ISpriteRenderer {
 				const sprite = tempSprites[i];
 				if (sprite.updateTimes.pos === now) {
 					const {	pos: [ offsetX, offsetY, offsetZ ] } = sprite;
-					this.engineCommunicator.loadGLBuffer(BufferType.OFFSET,
+					this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.OFFSET,
 						sprite.chunkIndex * bytesPerSprite,
 						offsetX, offsetY, offsetZ,
 						offsetX, offsetY, offsetZ,
@@ -94,7 +94,7 @@ class ISpriteRenderer {
 					const { effects: { tintColor, hue, brightness } } = sprite;
 					const color = tintColor & 0xFFFFFF;
 					const mixRatio = Math.max(0, (tintColor / 0xFFFFFF) / 255);
-					this.engineCommunicator.loadGLBuffer(BufferType.COLOR_EFFECT,
+					this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.COLOR_EFFECT,
 						sprite.chunkIndex * bytesPerSprite,
 						color, mixRatio, hue, brightness,
 						color, mixRatio, hue, brightness,
@@ -112,7 +112,7 @@ class ISpriteRenderer {
 				const sprite = tempSprites[i];
 				if (sprite.updateTimes.move === now || sprite.updateTimes.gravity === now) {
 					const {	motion: {mov: [ mx, my, mz ], time, gravity: [ gx, gy, gz ] } } = sprite;
-					this.engineCommunicator.loadGLBuffer(BufferType.MOVE,
+					this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.MOVE,
 						sprite.chunkIndex * bytesPerSprite,
 						mx, my, mz, time, gx, gy, gz,
 						mx, my, mz, time, gx, gy, gz,
@@ -130,7 +130,7 @@ class ISpriteRenderer {
 				const sprite = tempSprites[i];
 				if (sprite.updateTimes.grid === now) {
 					const { grid: [ cols, rows ] } = sprite.spriteData;
-					this.engineCommunicator.loadGLBufferShort(BufferType.GRID,
+					this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.GRID,
 						sprite.chunkIndex * bytesPerSprite,
 						cols, rows,
 						cols, rows,
@@ -148,14 +148,13 @@ class ISpriteRenderer {
 				const sprite = tempSprites[i];
 				if (sprite.updateTimes.frameRate === now || sprite.updateTimes.animationRange === now) {
 					const { animationRange: [ start, range ], spriteData: { frameRate } } = sprite;
-					this.engineCommunicator.loadGLBuffer(BufferType.ANIMATION,
+					this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.ANIMATION,
 						sprite.chunkIndex * bytesPerSprite,
 						now, start, range, frameRate,
 						now, start, range, frameRate,
 						now, start, range, frameRate,
 						now, start, range, frameRate,
 					);
-
 				}
 			}
 		}
@@ -167,7 +166,7 @@ class ISpriteRenderer {
 				const sprite = tempSprites[i];
 				if (sprite.updateTimes.blackholeCenter === now || sprite.updateTimes.blackholeInfo === now) {
 					const { effects: { blackhole: { strength, distance, center: [ gx, gy, gz ] } } } = sprite;
-					this.engineCommunicator.loadGLBuffer(BufferType.BLACKHOLE_CENTER,
+					this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.BLACKHOLE_CENTER,
 						sprite.chunkIndex * bytesPerSprite,
 						gx, gy, gz, strength, distance,
 						gx, gy, gz, strength, distance,
@@ -187,13 +186,13 @@ class ISpriteRenderer {
 					const { effects: { chromaKey: { range: [low, high], color }}} = sprite;
 					const a = ((color >> 24) % 256) / 255;
 					const rgb = color & 0xFFFFFF;
-					this.engineCommunicator.loadGLBuffer(BufferType.CHROMA_KEY,
+					this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.CHROMA_KEY,
 						sprite.chunkIndex * bytesPerSprite,
 						low, high, rgb, a,
 						low, high, rgb, a,
 						low, high, rgb, a,
 						low, high, rgb, a,
-					);						
+					);
 				}					
 			}
 		}
@@ -297,7 +296,7 @@ class ISpriteRenderer {
 
 		if (this.visibleChunks !== visibleChunks) {
 			this.visibleChunks = visibleChunks;
-			this.engineCommunicator.communicator.sendCommand(Commands.GL_SET_VISIBLE_CHUNKS, this.visibleChunks);
+			this.communicator.sendCommand(Commands.GL_SET_VISIBLE_CHUNKS, this.visibleChunks);
 		}
 	}
 
@@ -328,8 +327,9 @@ class ISpriteRenderer {
 		const cwidth = texWidth * circleRadiusFactor;
 		const cheight = texHeight * circleRadiusFactor;
 
-		this.engineCommunicator.loadGLBuffer(BufferType.TEXCOORD,
-			sprite.chunkIndex * VERTICES_PER_SPRITE * (TEXTURE_FLOAT_PER_VERTEX + TEXTURE_CENTER_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
+		const bytesPerSprite = VERTICES_PER_SPRITE * (TEXTURE_FLOAT_PER_VERTEX + TEXTURE_CENTER_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT;
+		this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.TEXCOORD,
+			sprite.chunkIndex * bytesPerSprite,
 			left,	up,		texWidth, texHeight, cx, cy, circleRadiusFactor, texIndex,
 			left,	down,	texWidth, texHeight, cx, cy, circleRadiusFactor, texIndex,
 			right,	down,	texWidth, texHeight, cx, cy, circleRadiusFactor, texIndex,
@@ -338,8 +338,9 @@ class ISpriteRenderer {
 	}
 
 	setInactive(sprite) {
-		this.engineCommunicator.loadGLBuffer(BufferType.VERTEX,
-			sprite.chunkIndex * VERTICES_PER_SPRITE * (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
+		const bytesPerSprite = VERTICES_PER_SPRITE * (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT;
+		this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.VERTEX,
+			sprite.chunkIndex * bytesPerSprite,
 			0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0,
@@ -380,8 +381,9 @@ class ISpriteRenderer {
  			vec3.add(newVec3, newVec3, center);
  			vertices[i] = newVec3;
  		}
-		this.engineCommunicator.loadGLBuffer(BufferType.VERTEX,
-			sprite.chunkIndex * VERTICES_PER_SPRITE * (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT,
+		const bytesPerSprite = VERTICES_PER_SPRITE * (FLOAT_PER_VERTEX + NORMAL_FLOAT_PER_VERTEX) * Float32Array.BYTES_PER_ELEMENT
+		this.communicator.sendCommand(Commands.GL_UPDATE_BUFFER + BufferType.VERTEX,
+			sprite.chunkIndex * bytesPerSprite,
 			... vertices[0], ... this.getNormal(vertices, curvature, 0),
 			... vertices[1], ... this.getNormal(vertices, curvature, 1),
 			... vertices[2], ... this.getNormal(vertices, curvature, 2),

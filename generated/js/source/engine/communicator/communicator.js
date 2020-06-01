@@ -19,7 +19,7 @@
 class Communicator {
 	constructor() {
 		this.registry = [];
-		this.payload = new Payload();
+		this.payloadProducer = new PayloadProducer();
 		this.onApplyListener = [];
 	}
 
@@ -42,32 +42,35 @@ class Communicator {
 	}
 
 	register(... actions) {
-		actions.forEach(({ id, parameters, apply}) => {
+		actions.forEach(({ id, parameters, apply, merge}) => {
 			const ids = Array.isArray(id) ? id : [id];
 			ids.forEach(_id => {
 				if (_id && apply) {
-					this.registry[_id] = {
+					const registryEntry = {
 						id: _id,
-						readBuffer: this.payload.getReadBufferMethod(parameters||""),
+						readBuffer: this.payloadProducer.getReadBufferMethod(parameters||""),
 						apply,
-						writeBuffer: this.payload.getWriteBufferMethod(parameters||""),
+						writeBuffer: this.payloadProducer.getWriteBufferMethod(parameters||"", merge),
 					};
+					this.registry[_id] = registryEntry;				
 				}
 			});
 		});
 	}
 
 	setup(dataView, byteCount, extra) {
-		this.payload.setup(dataView, byteCount, extra);
+		this.payloadProducer.setup(dataView, byteCount, extra);
 	}
 
 	apply() {
-		const { payload } = this;
-		while (payload.hasData()) {
-			this.applyCommand(payload.readCommand());
+		const { payloadProducer } = this;
+		while (payloadProducer.hasData()) {
+			this.applyCommand(payloadProducer.readCommand());
 		}
-		this.payload.clear();
-		this.onApplyListener.forEach(callback => callback());
+		payloadProducer.clear();
+		for (let i = 0; i < this.onApplyListener.length; i++) {
+			this.onApplyListener[i]();
+		}
 	}
 
 	applyCommand(command) {
@@ -83,14 +86,13 @@ class Communicator {
 	sendCommand(command, ...params) {
 		const { registry } = this;
 		if (registry[command]) {
-			this.payload.writeCommand(command);
-			registry[command].writeBuffer(...params);
+			registry[command].writeBuffer(command, params);
 		} else {
 			console.error(`Unknown command ${command}.`);			
 		}
 	}
 
-	retrievePayload(payload) {
-		return this.payload.retrievePayload(payload);
+	clear() {
+		this.payloadProducer.clear();
 	}
 }

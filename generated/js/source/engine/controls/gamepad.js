@@ -36,7 +36,7 @@ class Gamepad {
 		this.buttons = [];
 		const self = this;
 		const f = time => {
-			this.gamepads.forEach((active, index) => {
+			for (let index = 0; index < this.gamepads.length; index++) {
 				if (active) {
 					const gamepad = navigator.getGamepads()[index];
 					let changed = false;
@@ -57,7 +57,7 @@ class Gamepad {
 						console.log(self.axes, self.buttons);
 					}
 				}
-			});
+			}
 			requestAnimationFrame(f);
 		};
 		requestAnimationFrame(f);

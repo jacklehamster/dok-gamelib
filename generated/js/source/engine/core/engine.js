@@ -46,7 +46,7 @@ class Engine {
 
 		this.keyboard = new Keyboard(this.workerManager, document, {});
 		this.mouse = new Mouse(this.workerManager, canvas, document, {});
-		this.gamepad = new Gamepad(window);
+//		this.gamepad = new Gamepad(window);
 
 		this.paused = false;
 
@@ -188,11 +188,11 @@ class Engine {
 		this.workerManager.gotoScene(name);
 	}
 
-	refresh(payload) {
-		const {time, byteCount } = payload;
+	refresh(data) {
+		const { time, payload } = data;
 		const { communicator, sceneUI, glRenderer, onLoopListener } = this;
-		if (byteCount) {
-			const { dataView, extra } = payload;
+		if (payload && payload.byteCount) {
+			const { dataView, extra, byteCount } = payload;
 			communicator.setup(dataView, byteCount, extra);
 			communicator.apply();
 		}

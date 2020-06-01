@@ -15,12 +15,32 @@
  */
 const MAX_BUFFER_SIZE = 2000000 * Float32Array.BYTES_PER_ELEMENT;
 
-class Payload {
+//	type needs to be stored for object
+const PayloadTypes = {
+	Null: 0,
+	Boolean: 1,
+	Float: 2,
+	Byte: 3,
+	UnsignedByte: 4,
+	Short: 5,
+	UnsignedShort: 6,
+	Int: 7,
+	UnsignedInt: 8,
+	String: 9,
+	Object: 10,
+	Array: 11,
+	DataView: 12,
+	Undefined: 13,
+};
+
+class PayloadProducer {
 	constructor(options) {
 		if (!options) {
 			options = {};
 		}
 		this.arrayPool = new Pool(() => [], array => array.length = 0);
+		this.objectPool = new Pool(() => { return {}; }, obj => { for(let i in obj)delete obj[i]; });
+		this.payloadPool = new Pool(() => { return {}; });
 		this.dataViewPool = new Pool(() => new DataView(new ArrayBuffer(MAX_BUFFER_SIZE)));
 		this.maxSize = 0;
 
@@ -41,7 +61,7 @@ class Payload {
 			uint: this.readUnsignedInt.bind(this),
 			string: this.readString.bind(this),
 			object: this.readObject.bind(this),
-			array: this.readObject.bind(this),
+			array: this.readArray.bind(this),
 			dataView: this.readDataView.bind(this),
 		};
 
@@ -57,7 +77,7 @@ class Payload {
 			uint: this.writeUnsignedInt.bind(this),
 			string: this.writeString.bind(this),
 			object: this.writeObject.bind(this),
-			array: this.writeObject.bind(this),
+			array: this.writeArray.bind(this),
 			dataView: this.writeDataView.bind(this),
 		}
 
@@ -91,7 +111,7 @@ class Payload {
 		let subTypes = null;
 		types.split(",").forEach(t => {
 			if (t[0] === "[" && t[t.length-1] === "]") {	// subtype, like [byte]
-				const [type, mul] = Payload.typeWithMul(t.substring(1, t.length-1).trim());
+				const [type, mul] = PayloadProducer.typeWithMul(t.substring(1, t.length-1).trim());
 				const typeArray = [];
 				for (let i = 0; i < mul; i++) {
 					typeArray.push(type);
@@ -99,14 +119,14 @@ class Payload {
 				result.push(typeArray);
 				return;
 			} else if (t[0] === "[") {	//	subTypes start with format like [byte,....
-				const [type, mul] = Payload.typeWithMul(t.substring(1).trim());
+				const [type, mul] = PayloadProducer.typeWithMul(t.substring(1).trim());
 				subTypes = [];
 				for (let i = 0; i < mul; i++) {
 					subTypes.push(type);
 				}
 				return;
 			} else if (t[t.length-1] === "]") {	//	subTypes end with format like ...,byte]
-				const [type, mul] = Payload.typeWithMul(t.substring(0, t.length-1).trim());
+				const [type, mul] = PayloadProducer.typeWithMul(t.substring(0, t.length-1).trim());
 				for (let i = 0; i < mul; i++) {
 					subTypes.push(type);
 				}
@@ -115,7 +135,7 @@ class Payload {
 				return;
 			}
 
-			let [theType, mul] = Payload.typeWithMul(t);
+			let [theType, mul] = PayloadProducer.typeWithMul(t);
 
 			for (let i = 0; i < mul; i++) {
 				if (subTypes) {
@@ -128,71 +148,137 @@ class Payload {
 		return result;
 	}
 
+	static totalSize(typeArray) {
+		let size = 0;
+		for (let i = 0; i < typeArray.length; i++) {
+			switch(typeArray[i]) {
+				case "boolean":
+				case "ubyte":
+					size += Uint8Array.BYTES_PER_ELEMENT;
+					break;
+				case "byte":
+					size += Int8Array.BYTES_PER_ELEMENT;
+					break;
+				case "float":
+					size += Float32Array.BYTES_PER_ELEMENT;
+					break;
+				case "short":
+					size += Int16Array.BYTES_PER_ELEMENT;
+					break;
+				case "ushort":
+					size += Uint16Array.BYTES_PER_ELEMENT;
+					break;
+				case "int":
+					size += Int32Array.BYTES_PER_ELEMENT;
+					break;
+				case "uint":
+					size += Uint32Array.BYTES_PER_ELEMENT;
+					break;
+			}
+		}
+		return size;
+	}
+
+	//	Produce a writer prefixed with writing a size of the dataview
+	makeWriterPrefixedWithSize(typeArray, dataWriter) {
+		const dataViewSize = PayloadProducer.totalSize(typeArray);
+		return (value) => {
+			this.lastDataViewOffset = this.byteCount;
+			this.writeUnsignedInt(dataViewSize);
+			dataWriter(value);
+		};
+	}
+
 	//	given parameter, return a function designed for loading those params.
 	//	ex: getReadBufferMethod("int,float") => fun
 	//	This creates a function that can read an int and a float from the paylod.
 	//	const [ anInt, aFloat ] = fun()
-	getReadBufferMethod(types) {
-		if (!this.readBufferMethods[types]) {
-			const readMethods = Payload.getTypes(types).map(type => {
-				return Array.isArray(type) ? this.readMethods.dataView.bind(this) : this.readMethods[type];
+	getReadBufferMethod(parameters) {
+		if (!this.readBufferMethods[parameters]) {
+			const readers = [];
+			PayloadProducer.getTypes(parameters).forEach(type => {
+				if (Array.isArray(type)) {
+					readers.push(this.readMethods.dataView);
+				} else {
+					readers.push(this.readMethods[type]);
+				}
 			});
 
-			this.readBufferMethods[types] = () => {
+			this.readBufferMethods[parameters] = () => {
 				const result = this.arrayPool.get();
-				result.length = readMethods.length;
-				for (let i = 0; i < readMethods.length; i++) {
-					if (!readMethods[i]) {
-						console.error(`${types} <= invalid types.`);
+				result.length = readers.length;
+				for (let i = 0; i < readers.length; i++) {
+					if (!readers[i]) {
+						console.error(`${parameters} <= invalid parameters.`);
 					}
-					result[i] = readMethods[i]();
+					result[i] = readers[i]();
 				}
 				return result;
 			};
 		}
-		return this.readBufferMethods[types];
+		return this.readBufferMethods[parameters];
 	}
 
-	getWriteBufferMethod(types) {
-		if (!this.writeBufferMethods[types]) {
-			const writeMethods = Payload.getTypes(types).map(type => {
+	getWriteBufferMethod(parameters, merge) {
+		const tag = `${parameters}/${merge?"merge":""}`;
+		if (!this.writeBufferMethods[tag]) {
+			const writers = [];
+			let dataViewIndex = -1;
+			PayloadProducer.getTypes(parameters).forEach(type => {
 				if (Array.isArray(type)) {
-					return this.writeMethods.dataView.bind(this);
+					if (dataViewIndex < 0) {
+						dataViewIndex = writers.length;
+					}
+					type.forEach((t, index) => {
+						if (index === 0) {
+							writers.push(this.makeWriterPrefixedWithSize(type, this.writeMethods[t]));
+						} else {
+							writers.push(this.writeMethods[t]);
+						}
+					});
+				} else {
+					writers.push(this.writeMethods[type]);
 				}
-				return this.writeMethods[type];
 			});
 
-			this.writeBufferMethods[types] = (...params) => {
-				for (let i = 0; i < writeMethods.length; i++) {
-					const writeMethod = writeMethods[Math.min(writeMethods.length-1, i)];
-					if (!writeMethod) {
-						console.error(`${types} <= invalid types.`);
+			this.writeBufferMethods[tag] = (command, params) => {
+				if (merge) {
+					//	try to merge dataview
+					if (!this.showedLog) {
+						this.showedLog = true;
+						console.warn("TODO: merge dataview.");
 					}
-					writeMethod(params[i]);
+				}
+
+				this.writeCommand(command);
+				for (let i = 0; i < writers.length; i++) {
+					const writer = writers[Math.min(writers.length-1, i)];
+					if (!writer) {
+						console.error(`${tag} <= invalid parameters.`);
+					}
+					writer(params[i]);
 				}
 			};
 		}
-		return this.writeBufferMethods[types];
+		return this.writeBufferMethods[tag];
 	}
 
 	ensure() {
 		if (!this.dataView || !this.dataView.byteLength) {
 			this.dataView = this.dataViewPool.get();
 			this.byteCount = 0;
-			this.extra.length = 0;
 		}
 	}
 
 	setup(dataView, byteCount, extra) {
 		this.dataView = dataView || null;
 		this.byteCount = byteCount || 0;
-		this.extra = extra || [];
+		this.lastDataViewOffset = -1;
 		this.reset();
 	}
 
 	reset() {
 		this.offset = 0;
-		this.extraIndex = 0;
 	}
 
 	ready() {
@@ -218,6 +304,8 @@ class Payload {
 
 		this.byteCount = 0;
 		this.arrayPool.reset();
+		this.objectPool.reset();
+		this.payloadPool.reset();
 	}
 
 	//	READ FUNCTIONS
@@ -271,16 +359,60 @@ class Payload {
 		return value;
 	}
 
-	readExtra() {
-		return this.extra[this.extraIndex++];
-	}
-
 	readString() {
 		return this.decoder.decode(this.readDataView());
 	}
 
 	readObject() {
-		return this.readExtra();
+		const type = this.readUnsignedByte();
+		switch (type) {
+			case PayloadTypes.Null:
+				return null;
+			case PayloadTypes.Boolean:
+				return this.readByte() !== 0;
+			case PayloadTypes.Float:
+				return this.readFloat();
+			case PayloadTypes.Byte:
+				return this.readByte();
+			case PayloadTypes.UnsignedByte:
+				return this.readUnsignedByte();
+			case PayloadTypes.Short:
+				return this.readShort();
+			case PayloadTypes.UnsignedShort:
+				return this.readUnsignedShort();
+			case PayloadTypes.Int:
+				return this.readInt();
+			case PayloadTypes.UnsignedInt:
+				return this.readUnsignedInt();
+			case PayloadTypes.String:
+				return this.readString();
+			case PayloadTypes.Array:
+				return this.readArray();
+			case PayloadTypes.DataView:
+				return this.readDataView();
+			case PayloadTypes.Undefined:
+				return undefined;
+			case PayloadTypes.Object:
+				const countProps = this.readUnsignedShort();
+				const obj = this.objectPool.get(true);
+				for (let i = 0; i < countProps; i++) {
+					const prop = this.readString();
+					obj[prop] = this.readObject();
+				}
+				return obj;
+			default:
+				console.error(`Invalid object type ${type}`);
+		}
+		return null;
+	}
+
+	readArray() {
+		const array = this.arrayPool.get(true);
+		const size = this.readUnsignedInt();
+		for (let i = 0; i < size; i++) {
+			array.push(this.readObject());
+		}
+		return array;
 	}
 
 	//	WRITE FUNCTIONS
@@ -326,28 +458,86 @@ class Payload {
 		this.byteCount += dataView.byteLength;
 	}
 
-	writeExtra(value) {
-		this.extra.push(value);
-	}
-
 	writeString(value) {
 		this.writeDataView(this.encoder.encode(value||""));
 	}
 
 	writeObject(value) {
-		this.writeExtra(value);
+		if (value === null) {
+			this.writeUnsignedByte(PayloadTypes.Null);
+		} else if (typeof(value) === "number") {
+			if (value % 1 !== 0) {	//	float
+				this.writeUnsignedByte(PayloadTypes.Float);
+				this.writeFloat(value);
+			} else if (value >= 0) {	//	unsigned
+				if (value <= 0xFF) {
+					this.writeUnsignedByte(PayloadTypes.UnsignedByte);
+					this.writeUnsignedByte(value);
+				} else if (value <= 0xFFFF) {
+					this.writeUnsignedByte(PayloadTypes.UnsignedShort);
+					this.writeUnsignedShort(value);
+				} else {
+					this.writeUnsignedByte(PayloadTypes.UnsignedInt);
+					this.writeUnsignedInt(value);
+				}
+			} else {	//	signed
+				if (value >= -128) {
+					this.writeUnsignedByte(PayloadTypes.Byte);
+					this.writeByte(value);
+				} else if (value >= -32768) {
+					this.writeUnsignedByte(PayloadTypes.Short);
+					this.writeByte(value);
+				} else {
+					this.writeUnsignedByte(PayloadTypes.Int);
+					this.writeInt(value);
+				}
+			}
+		} else if (typeof(value) === "boolean") {
+			this.writeUnsignedByte(PayloadTypes.Boolean);
+			this.writeByte(value ? 1 : 0);
+		} else if (typeof(value) === "string") {
+			this.writeUnsignedByte(PayloadTypes.String);
+			this.writeString(value);
+		} else if (value instanceof DataView) {
+			this.writeUnsignedByte(PayloadTypes.DataView);
+			this.writeDataView(value);
+		} else if (Array.isArray(value)) {
+			this.writeUnsignedByte(PayloadTypes.Array);
+			this.writeArray(value)
+		} else if (typeof(value) === "object") {	//	write an object
+			this.writeUnsignedByte(PayloadTypes.Object);
+			this.writeUnsignedShort(Utils.count(value));
+			for (let i in value) {
+				this.writeString(i);
+				this.writeObject(value[i]);
+			}
+		} else if (typeof(value) === "undefined") {
+			this.writeUnsignedByte(PayloadTypes.Undefined);
+		} else {
+			console.error("Unrecognized type for " + value);
+		}
 	}
 
-	retrievePayload(payload) {
+	writeArray(value) {
+		this.writeUnsignedInt(value.length);
+		for (let i = 0; i < value.length; i++) {
+			this.writeObject(value[i]);
+		}
+	}
+
+	getPayload() {
+		if (!this.byteCount) {
+			return null;
+		}
+		const payload = this.payloadPool.get();
 		payload.dataView = this.dataView;
 		payload.byteCount = this.byteCount;
-		payload.extra = this.extra;
-		return this.payload;
+		return payload;
 	}
 
 	clear() {
 		this.dataView = null;
 		this.byteCount = 0;
-		this.extra.length = 0;		
+		this.lastDataViewOffset = -1;
 	}
 }
