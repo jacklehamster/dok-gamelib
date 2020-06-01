@@ -13,12 +13,12 @@
  */
 
 class WorkerLogger extends ILogger {
-	constructor(engineCommunicator) {
+	constructor(communicator) {
 		super();
-		this.engineCommunicator = engineCommunicator;
+		this.communicator = communicator;
 	}
 
 	log(...message) {
-		this.engineCommunicator.sendCommand(Commands.LOGGER_LOG_MESSAGE, null, [message]);
+		this.communicator.sendCommand(Commands.LOGGER_LOG_MESSAGE, message);
 	}
 }

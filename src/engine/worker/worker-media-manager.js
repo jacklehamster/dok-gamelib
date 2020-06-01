@@ -13,36 +13,30 @@
  */
 
 class WorkerMediaManager extends IMediaManager {
-	constructor(engineCommunicator, config) {
+	constructor(communicator, config) {
 		super(config);
-		this.engineCommunicator = engineCommunicator;
+		this.communicator = communicator;
 	}
 
 	playMusic(id, reset, url) {
-		this.engineCommunicator.sendCommandInt(Commands.MEDIA_PLAY_MUSIC);
-		this.engineCommunicator.communicator.payload.writeExtra(id);
-		this.engineCommunicator.communicator.payload.writeUnsignedByte(reset ? 1 : 0);
-		this.engineCommunicator.communicator.payload.writeExtra(url||null);
+		this.communicator.sendCommand(Commands.MEDIA_PLAY_MUSIC, id, reset, url);
 	}
 
 	playVideo(id, reset, url) {
 		super.playVideo(id, reset, url);
-		this.engineCommunicator.sendCommandInt(Commands.MEDIA_PLAY_VIDEO);
-		this.engineCommunicator.communicator.payload.writeExtra(id);
-		this.engineCommunicator.communicator.payload.writeUnsignedByte(reset ? 1 : 0);
-		this.engineCommunicator.communicator.payload.writeExtra(url||null);
+		this.communicator.sendCommand(Commands.MEDIA_PLAY_VIDEO, id, reset, url);
 	}
 
 	setMusicVolume(id, volume) {
-		this.engineCommunicator.sendCommand(Commands.MEDIA_SET_MUSIC_VOLUME, [volume], [id]);
+		this.communicator.sendCommand(Commands.MEDIA_SET_MUSIC_VOLUME, id, volume);
 	}
 
 	pauseVideo(id) {
 		super.pauseVideo(id);
-		this.engineCommunicator.sendCommand(Commands.MEDIA_PAUSE_VIDEO, null, [id]);
+		this.communicator.sendCommand(Commands.MEDIA_PAUSE_VIDEO, id);
 	}
 
 	pauseMusic(id) {
-		this.engineCommunicator.sendCommand(Commands.MEDIA_PAUSE_MUSIC, null, [id]);
+		this.communicator.sendCommand(Commands.MEDIA_PAUSE_MUSIC, id);
 	}
 }

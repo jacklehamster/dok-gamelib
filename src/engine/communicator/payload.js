@@ -132,7 +132,7 @@ class Payload {
 	getReadBufferMethod(types) {
 		if (!this.readBufferMethods[types]) {
 			const readMethods = Payload.getTypes(types).map(type => {
-				return Array.isArray(type) ? this.readMethods.dataView : this.readMethods[type];
+				return Array.isArray(type) ? this.readMethods.dataView.bind(this) : this.readMethods[type];
 			});
 
 			this.readBufferMethods[types] = () => {
@@ -148,6 +148,30 @@ class Payload {
 			};
 		}
 		return this.readBufferMethods[types];
+	}
+
+	getWriteBufferMethod(types) {
+		if (!this.writeBufferMethods[types]) {
+			const writeMethods = Payload.getTypes(types).map(type => {
+				if (Array.isArray(type)) {
+					return this.writeMethods.dataView.bind(this);
+				}
+				return this.writeMethods[type];
+			});
+
+			const infiniteParams = types[types.length-1] === "...";
+			this.writeBufferMethods[types] = (...params) => {
+				const maxParams = infiniteParams ? params.length : writeMethods.length;
+				for (let i = 0; i < maxParams; i++) {
+					const writeMethod = writeMethods[Math.min(writeMethods.length-1, i)];
+					if (!writeMethod) {
+						console.error(`${types} <= invalid types.`);
+					}
+					writeMethod(params[i]);
+				}
+			};
+		}
+		return this.writeBufferMethods[types];
 	}
 
 	ensure() {
@@ -287,18 +311,14 @@ class Payload {
 		this.byteCount += Float32Array.BYTES_PER_ELEMENT;
 	}
 
-	writeDataView(value) {
-		this.writeUnsignedInt(value.byteLength);
-		new Uint8Array(this.dataView.buffer, this.byteCount).set(new Uint8Array(value.buffer, value.byteOffset, value.byteLength));
-		this.byteCount += value.byteLength;
+	writeDataView(dataView) {
+		this.writeUnsignedInt(dataView.byteLength);
+		new Uint8Array(this.dataView.buffer, this.byteCount).set(new Uint8Array(dataView.buffer, dataView.byteOffset, dataView.byteLength));
+		this.byteCount += dataView.byteLength;
 	}
 
 	writeExtra(value) {
 		this.extra.push(value);
-	}
-
-	getByteCount() {
-		return this.byteCount;
 	}
 
 	retrievePayload(payload) {

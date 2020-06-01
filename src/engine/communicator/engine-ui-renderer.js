@@ -8,58 +8,39 @@
  */
 
 class EngineUIRenderer {
-	constructor(engineCommunicator) {
-		this.engineCommunicator = engineCommunicator;
+	constructor(communicator) {
+		this.communicator = communicator;
 	}
 
 	createElement(elementId, instanceIndex, type, hasOnClick) {
-		this.engineCommunicator.communicator.payload.writeCommand(Commands.UI_CREATE_ELEMENT);
-		this.engineCommunicator.communicator.payload.writeExtra(elementId);
-		this.engineCommunicator.communicator.payload.writeInt(instanceIndex);
-		this.engineCommunicator.communicator.payload.writeExtra(type);
-		this.engineCommunicator.communicator.payload.writeUnsignedByte(hasOnClick ? 1 : 0);
+		this.communicator.sendCommand(Commands.UI_CREATE_ELEMENT, elementId, instanceIndex, type, hasOnClick);
 	}
 
 	setParent(elementId, parent) {
-		this.engineCommunicator.communicator.payload.writeCommand(Commands.UI_SET_PARENT);
-		this.engineCommunicator.communicator.payload.writeExtra(elementId);
-		this.engineCommunicator.communicator.payload.writeExtra(parent);
+		this.communicator.sendCommand(Commands.UI_SET_PARENT, elementId, parent);
 	}
 
 	setClass(elementId, classList) {
-		this.engineCommunicator.communicator.payload.writeCommand(Commands.UI_SET_CLASS);
-		this.engineCommunicator.communicator.payload.writeExtra(elementId);
-		this.engineCommunicator.communicator.payload.writeExtra(classList);
+		this.communicator.sendCommand(Commands.UI_SET_CLASS, elementId, classList);
 	}
 
 	setStyle(elementId, s, value) {
-		this.engineCommunicator.communicator.payload.writeCommand(Commands.UI_SET_STYLE);
-		this.engineCommunicator.communicator.payload.writeExtra(elementId);
-		this.engineCommunicator.communicator.payload.writeExtra(s);
-		this.engineCommunicator.communicator.payload.writeExtra(value);
+		this.communicator.sendCommand(Commands.UI_SET_STYLE, elementId, s, value);
 	}
 
 	setText(elementId, text) {
-		this.engineCommunicator.communicator.payload.writeCommand(Commands.UI_SET_TEXT);
-		this.engineCommunicator.communicator.payload.writeExtra(elementId);
-		this.engineCommunicator.communicator.payload.writeExtra(text);
+		this.communicator.sendCommand(Commands.UI_SET_TEXT, elementId, text);
 	}
 
 	setSize(elementId, width, height) {
-		this.engineCommunicator.sendCommandInt(Commands.UI_SET_SIZE);
-		this.engineCommunicator.communicator.payload.writeExtra(elementId);
-		this.engineCommunicator.communicator.payload.writeUnsignedShort(width);
-		this.engineCommunicator.communicator.payload.writeUnsignedShort(height);
+		this.communicator.sendCommand(Commands.UI_SET_SIZE, elementId, width, height);
 	}
 
 	setCanvas(elementId, canvas) {
-		this.engineCommunicator.communicator.payload.writeCommand(Commands.UI_SET_CANVAS);
-		this.engineCommunicator.communicator.payload.writeExtra(elementId);
-		this.engineCommunicator.communicator.payload.writeExtra(canvas);
+		this.communicator.sendCommand(Commands.UI_SET_CANVAS, elementId, canvas);
 	}	
 
 	removeElement(elementId) {
-		this.engineCommunicator.communicator.payload.writeCommand(Commands.UI_REMOVE_ELEMENT);
-		this.engineCommunicator.communicator.payload.writeExtra(elementId);
+		this.communicator.sendCommand(Commands.UI_REMOVE_ELEMENT, elementId);
 	}
 }

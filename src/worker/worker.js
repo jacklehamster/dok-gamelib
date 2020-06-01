@@ -34,7 +34,7 @@ if (typeof(window) === 'undefined') {
 	const textureManager = new WorkerTextureManager();
 	const communicator = new Communicator();
 	const engineCommunicator = new EngineCommunicator(self, communicator);
-	const uiRenderer = new UIRenderer(new EngineUIRenderer(engineCommunicator));
+	const uiRenderer = new UIRenderer(new EngineUIRenderer(communicator));
 
 	self.addEventListener('message', function(event) {
 		const {data: { action }}  = event;
@@ -42,7 +42,7 @@ if (typeof(window) === 'undefined') {
 			case "init": {
 				const {data: { data, localStorageData, pathname }}  = event;
 				workerEngine = new WorkerEngine(SceneManager.instance,
-					{ pathname, data, localStorageData, textureManager, engineCommunicator, uiRenderer, windowStatus });
+					{ pathname, data, localStorageData, textureManager, engineCommunicator, communicator, uiRenderer, windowStatus });
 				break;
 			}
 			case "ping": {

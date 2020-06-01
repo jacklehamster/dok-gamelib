@@ -13,12 +13,12 @@
 */
 
 class WorkerDOMManager extends IDOMManager {
-	constructor(engineCommunicator) {
+	constructor(communicator) {
 		super();
-		this.engineCommunicator = engineCommunicator;
+		this.communicator = communicator;
 	}
 
 	setBackgroundColor(color) {
-		this.engineCommunicator.sendCommand(Commands.DOM_BG_COLOR, null, [color]);
+		this.communicator.sendCommand(Commands.DOM_BG_COLOR, color);
 	}
 }

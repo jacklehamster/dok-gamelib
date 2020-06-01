@@ -42,36 +42,6 @@ class EngineCommunicator {
 		}
 	}
 
-	sendCommandInt(command, ...params) {
-		this.communicator.payload.writeCommand(command);
-		for (let i = 0; i < params.length; i++) {
-			this.communicator.payload.writeInt(params[i]);
-		}
-	}
-
-	sendCommand(command, floatParams, extras) {
-		this.communicator.payload.writeCommand(command);
-		if (floatParams) {
-			for (let i = 0; i < floatParams.length; i++) {
-				this.communicator.payload.writeFloat(floatParams[i]);
-			}
-		}
-		if (extras) {
-			for (let i = 0; i < extras.length; i++) {
-				this.communicator.payload.writeExtra(extras[i]);
-			}
-		}
-	}
-
-	loadToBuffer(command, params) {
-		this.communicator.payload.writeCommand(command);
-		if (params) {
-			for (let i = 0; i < params.length; i++) {
-				this.communicator.payload.writeFloat(params[i]);
-			}
-		}
-	}
-
 	loadGLBufferByte(type, offset, ...params) {
 		// if (this.lastGLBuffer.type === type
 		// 	&& offset === this.lastGLBuffer.offset + this.lastGLBuffer.size

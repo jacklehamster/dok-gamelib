@@ -26,6 +26,8 @@ class WorkerEngine {
 		this.sceneManager = sceneManager;
 		this.socket = new Socket(pathname);
 		this.communicator = communicator;
+		configCommunicator(this.communicator);
+
 		this.engineCommunicator = engineCommunicator;
 		this.sceneRefresher = new SceneRefresher();
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
@@ -33,14 +35,14 @@ class WorkerEngine {
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());		
 		this.configProcessor = new ConfigProcessor(this.data);
-		this.mediaManager = new WorkerMediaManager(this.engineCommunicator, this.data.generated);
-		this.dataStore = new WorkerDataStore(this.engineCommunicator, localStorageData);
-		this.newgrounds = new WorkerNewgrounds(this.engineCommunicator);
-		this.domManager = new WorkerDOMManager(this.engineCommunicator);
-		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.engineCommunicator), this.mediaManager, this.domManager, this.socket);
+		this.mediaManager = new WorkerMediaManager(this.communicator, this.data.generated);
+		this.dataStore = new WorkerDataStore(this.communicator, localStorageData);
+		this.newgrounds = new WorkerNewgrounds(this.communicator);
+		this.domManager = new WorkerDOMManager(this.communicator);
+		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.communicator), this.mediaManager, this.domManager, this.socket);
 		this.uiRenderer = uiRenderer;
 		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
-		this.logger = new WorkerLogger(this.engineCommunicator);
+		this.logger = new WorkerLogger(this.communicator);
 		this.timeScheduler = new TimeScheduler();
 		this.pauseTime = 0;
 
@@ -133,7 +135,7 @@ class WorkerEngine {
 	}
 
 	notifySceneChange(name) {
-		this.engineCommunicator.sendCommand(Commands.ENG_NOTIFY_SCENE_CHANGE, null, [name]);
+		this.communicator.sendCommand(Commands.ENG_NOTIFY_SCENE_CHANGE, name);
 	}
 
 	loop(timeMillis) {

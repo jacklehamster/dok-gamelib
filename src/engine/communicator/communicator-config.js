@@ -8,7 +8,7 @@
  */
 
 function configCommunicator(communicator, engine) {
-	const { sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = engine;
+	const { sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = engine || {};
 
 	communicator.register(
 		{
