@@ -219,8 +219,8 @@ class PayloadProducer {
 		return this.readBufferMethods[parameters];
 	}
 
-	getWriteBufferMethod(parameters, merge) {
-		const tag = `${parameters}/${merge?"merge":""}`;
+	getWriteBufferMethod(parameters) {
+		const tag = parameters;
 		if (!this.writeBufferMethods[tag]) {
 			const writers = [];
 			let dataViewIndex = -1;
@@ -242,14 +242,6 @@ class PayloadProducer {
 			});
 
 			this.writeBufferMethods[tag] = (command, params) => {
-				if (merge) {
-					//	try to merge dataview
-					if (!this.showedLog) {
-						this.showedLog = true;
-						console.warn("TODO: merge dataview.");
-					}
-				}
-
 				this.writeCommand(command);
 				for (let i = 0; i < writers.length; i++) {
 					const writer = writers[Math.min(writers.length-1, i)];

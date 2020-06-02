@@ -42,7 +42,7 @@ class Communicator {
 	}
 
 	register(... actions) {
-		actions.forEach(({ id, parameters, apply, merge}) => {
+		actions.forEach(({ id, parameters, apply}) => {
 			const ids = Array.isArray(id) ? id : [id];
 			ids.forEach(_id => {
 				if (_id && apply) {
@@ -50,7 +50,7 @@ class Communicator {
 						id: _id,
 						readBuffer: this.payloadProducer.getReadBufferMethod(parameters||""),
 						apply,
-						writeBuffer: this.payloadProducer.getWriteBufferMethod(parameters||"", merge),
+						writeBuffer: this.payloadProducer.getWriteBufferMethod(parameters||""),
 					};
 					this.registry[_id] = registryEntry;				
 				}

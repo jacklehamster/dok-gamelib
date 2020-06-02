@@ -123,52 +123,42 @@ function configCommunicator(communicator, engine) {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.SPRITE_TYPE,
 			parameters: "uint,[byte*4]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.SPRITE_TYPE, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.VERTEX,
 			parameters: "uint,[float*24]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.VERTEX, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.OFFSET,
 			parameters: "uint,[float*12]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.OFFSET, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.MOVE,
 			parameters: "uint,[float*28]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.MOVE, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.TEXCOORD,
 			parameters: "uint,[float*32]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.TEXCOORD, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.ANIMATION,
 			parameters: "uint,[float*16]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.ANIMATION, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.GRID,
 			parameters: "uint,[ushort*8]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.GRID, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.COLOR_EFFECT,
 			parameters: "uint,[float*16]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.COLOR_EFFECT, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.BLACKHOLE_CENTER,
 			parameters: "uint,[float*20]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.BLACKHOLE_CENTER, offset, dataView),
-			merge: true,
 		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.CHROMA_KEY,
 			parameters: "uint,[float*16]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.CHROMA_KEY, offset, dataView),
-			merge: true,
 		}
 	);
 
