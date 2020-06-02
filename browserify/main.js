@@ -16,6 +16,7 @@ const isVarName = require('is-var-name');
 const { Pool } = require("dok-pool");
 const { TimeScheduler } = require("dok-timescheduler");
 const { Utils } = require("dok-utils");
+const { BufferTransport } = require("dok-buffer-transport");
 
 module.exports = {
 	Tools: {
@@ -28,5 +29,6 @@ module.exports = {
 		Pool,
 		TimeScheduler,
 		Utils,
+		BufferTransport,
 	},
 };

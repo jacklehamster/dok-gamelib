@@ -28,6 +28,7 @@
     "compress-images": "^1.7.8",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "dok-buffer-transport": "^1.0.0",
     "dok-pool": "^1.0.6",
     "dok-timescheduler": "^1.0.2",
     "dok-utils": "^1.0.1",

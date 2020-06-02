@@ -155,4 +155,5 @@ const { Tools, Dok: {
 	Pool,
 	TimeScheduler,
 	Utils,
+	BufferTransport,
 } } = dokLib;
