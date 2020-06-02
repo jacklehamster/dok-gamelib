@@ -334,7 +334,7 @@ class PayloadProducer {
 		}
 	}
 
-	setup(dataView, byteCount, extra) {
+	setup(dataView, byteCount) {
 		this.dataView = dataView || null;
 		this.byteCount = byteCount || 0;
 		this.lastDataViewOffset = -1;

@@ -192,8 +192,8 @@ class Engine {
 		const { time, payload } = data;
 		const { communicator, sceneUI, glRenderer, onLoopListener } = this;
 		if (payload && payload.byteCount) {
-			const { dataView, extra, byteCount } = payload;
-			communicator.setup(dataView, byteCount, extra);
+			const { dataView, byteCount } = payload;
+			communicator.setup(dataView, byteCount);
 			communicator.apply();
 		}
 		this.loopVideo();

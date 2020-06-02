@@ -64,8 +64,8 @@ class Communicator {
 		});
 	}
 
-	setup(dataView, byteCount, extra) {
-		this.payloadProducer.setup(dataView, byteCount, extra);
+	setup(dataView, byteCount) {
+		this.payloadProducer.setup(dataView, byteCount);
 	}
 
 	apply() {
