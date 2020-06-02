@@ -302,6 +302,7 @@ class PayloadProducer {
 			}
 		}
 
+		this.dataView = null;
 		this.byteCount = 0;
 		this.arrayPool.reset();
 		this.objectPool.reset();
@@ -407,7 +408,7 @@ class PayloadProducer {
 	}
 
 	readArray() {
-		const array = this.arrayPool.get(true);
+		const array = [];
 		const size = this.readUnsignedInt();
 		for (let i = 0; i < size; i++) {
 			array.push(this.readObject());
@@ -533,11 +534,5 @@ class PayloadProducer {
 		payload.dataView = this.dataView;
 		payload.byteCount = this.byteCount;
 		return payload;
-	}
-
-	clear() {
-		this.dataView = null;
-		this.byteCount = 0;
-		this.lastDataViewOffset = -1;
 	}
 }

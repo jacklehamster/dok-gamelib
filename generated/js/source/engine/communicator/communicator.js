@@ -67,7 +67,7 @@ class Communicator {
 		while (payloadProducer.hasData()) {
 			this.applyCommand(payloadProducer.readCommand());
 		}
-		payloadProducer.clear();
+		this.clear();
 		for (let i = 0; i < this.onApplyListener.length; i++) {
 			this.onApplyListener[i]();
 		}
@@ -94,5 +94,9 @@ class Communicator {
 
 	clear() {
 		this.payloadProducer.clear();
+	}
+
+	returnBuffer(dataView) {
+		this.payloadProducer.dataViewPool.recycle(dataView);		
 	}
 }
