@@ -7,10 +7,10 @@
 	Year: 2020
  */
 
-function configCommunicator(communicator, engine) {
+function configBufferTransport(bufferTransport, engine) {
 	const { sceneGL, sceneUI, domManager, logger, dataStore, mediaManager, newgrounds, glRenderer } = engine || {};
 
-	communicator.register(
+	bufferTransport.register(
 		{
 			id: Commands.SCENE_BACKGROUND,
 			parameters: "int",
@@ -162,7 +162,7 @@ function configCommunicator(communicator, engine) {
 		}
 	);
 
-	communicator.addEventListener("apply", () => {
+	bufferTransport.addEventListener("apply", () => {
 		sceneGL.resetPools();
 	});
 }

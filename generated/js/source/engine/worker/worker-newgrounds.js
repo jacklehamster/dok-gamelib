@@ -9,16 +9,16 @@
 
 
 class WorkerNewgrounds extends INewgroundsWrapper {
-    constructor(communicator) {
+    constructor(bufferTransport) {
         super();
-        this.communicator = communicator;
+        this.bufferTransport = bufferTransport;
     }
 
     unlockMedal(medal_name) {
-        this.communicator.sendCommand(Commands.NG_UNLOCK_MEDAL, medal_name);
+        this.bufferTransport.sendCommand(Commands.NG_UNLOCK_MEDAL, medal_name);
     }
 
     postScore(score) {
-        this.communicator.sendCommand(Commands.NG_UNLOCK_MEDAL, score);
+        this.bufferTransport.sendCommand(Commands.NG_UNLOCK_MEDAL, score);
     }
 }

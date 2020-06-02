@@ -30,23 +30,21 @@ class WorkerManager {
 	}
 
 	handleMessage(event) {
-		const {data : {action}} = event;
-		switch(action) {
+		const data = event.data;
+		switch(data.action) {
 			case "response": {
-				const {data : {message}} = event;
 				console.log(data.message);
 				break;
 			}
 			case "payload": {
-				const { data } = event;
 				this.engine.refresh(data);
-				if (data.payload && data.payload.dataView) {
-					this.returnBuffer(data.payload.dataView);
+				if (data.dataView) {
+					this.returnBuffer(data.dataView);
 				}
 				break;
 			}
 			case "beautifyCode": {
-				const {data: { callbackId, code }} = event;
+				const { callbackId, code } = data;
 				const callback = this.callbackIds[callbackId];
 				delete this.callbackIds[callbackId];
 				callback(code);

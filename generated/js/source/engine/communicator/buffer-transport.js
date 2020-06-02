@@ -8,7 +8,7 @@
  */
 
 /**
-	Communicator
+	BufferTransport
 
 	This class reads a payload passed from a web worker (composed of an arraybuffer with bytecount and an array)
 	and extract all that data to process it.
@@ -16,7 +16,7 @@
 	taking advantage of the fact that we can pass ArrayBuffer by reference. 
 */
 
-class Communicator {
+class BufferTransport {
 	constructor() {
 		this.registry = [];
 		this.payloadProducer = new PayloadProducer();
@@ -64,8 +64,8 @@ class Communicator {
 		});
 	}
 
-	setup(dataView, byteCount, extra) {
-		this.payloadProducer.setup(dataView, byteCount, extra);
+	setup(dataView, byteCount) {
+		this.payloadProducer.setup(dataView, byteCount);
 	}
 
 	apply() {

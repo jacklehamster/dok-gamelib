@@ -13,7 +13,7 @@
  */
 
 class WorkerEngine {
-	constructor(sceneManager, { pathname, data, localStorageData, mouse, keyboard, textureManager, communicator, uiRenderer, windowStatus}) {
+	constructor(sceneManager, { pathname, data, localStorageData, mouse, keyboard, textureManager, bufferTransport, uiRenderer, windowStatus}) {
 		this.count = 0;
 		this.lastRefresh = 0;
 		this.currentScene = null;
@@ -25,8 +25,8 @@ class WorkerEngine {
 		this.onSceneChangeListener = [];
 		this.sceneManager = sceneManager;
 		this.socket = new Socket(pathname);
-		this.communicator = communicator;
-		configCommunicator(this.communicator);
+		this.bufferTransport = bufferTransport;
+		configBufferTransport(this.bufferTransport);
 
 		this.sceneRefresher = new SceneRefresher();
 		this.spriteDefinitionProcessor = new SpriteDefinitionProcessor();
@@ -34,14 +34,14 @@ class WorkerEngine {
 		this.spriteProvider = new SpriteProvider(() => new SpriteInstance());
 		this.uiProvider = new SpriteProvider(() => new UISpriteInstance());		
 		this.configProcessor = new ConfigProcessor(this.data);
-		this.mediaManager = new WorkerMediaManager(this.communicator, this.data.generated);
-		this.dataStore = new WorkerDataStore(this.communicator, localStorageData);
-		this.newgrounds = new WorkerNewgrounds(this.communicator);
-		this.domManager = new WorkerDOMManager(this.communicator);
-		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.communicator), this.mediaManager, this.domManager, this.socket);
+		this.mediaManager = new WorkerMediaManager(this.bufferTransport, this.data.generated);
+		this.dataStore = new WorkerDataStore(this.bufferTransport, localStorageData);
+		this.newgrounds = new WorkerNewgrounds(this.bufferTransport);
+		this.domManager = new WorkerDOMManager(this.bufferTransport);
+		this.sceneRenderer = new SceneRenderer(new EngineSceneRenderer(this.bufferTransport), this.mediaManager, this.domManager, this.socket);
 		this.uiRenderer = uiRenderer;
-		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.communicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
-		this.logger = new WorkerLogger(this.communicator);
+		this.glRenderer = new WorkerSpriteRenderer(this.textureManager, this.bufferTransport, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
+		this.logger = new WorkerLogger(this.bufferTransport);
 		this.timeScheduler = new TimeScheduler();
 		this.pauseTime = 0;
 
@@ -143,7 +143,7 @@ class WorkerEngine {
 	}
 
 	notifySceneChange(name) {
-		this.communicator.sendCommand(Commands.ENG_NOTIFY_SCENE_CHANGE, name);
+		this.bufferTransport.sendCommand(Commands.ENG_NOTIFY_SCENE_CHANGE, name);
 	}
 
 	loop(timeMillis) {
@@ -210,12 +210,13 @@ class WorkerEngine {
 	}
 
 	postBackPayload(now) {
-		const payload = this.communicator.payloadProducer.getPayload();
-		if (payload) {
+		const { dataView, byteCount } = this.bufferTransport.payloadProducer.getPayload();
+		if (byteCount) {
 			this.payload.time = now;
-			this.payload.payload = payload;
-			self.postMessage(this.payload, [payload.dataView.buffer]);
-			this.communicator.clear();
+			this.payload.dataView = dataView;
+			this.payload.byteCount = byteCount;
+			self.postMessage(this.payload, [dataView.buffer]);
+			this.bufferTransport.clear();
 		} else {
 			this.emptyPayload.time = now;
 			self.postMessage(this.emptyPayload);

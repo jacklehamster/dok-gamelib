@@ -32,8 +32,8 @@ if (typeof(window) === 'undefined') {
 	const windowStatus = {};
 
 	const textureManager = new WorkerTextureManager();
-	const communicator = new Communicator();
-	const uiRenderer = new UIRenderer(new EngineUIRenderer(communicator));
+	const bufferTransport = new BufferTransport();
+	const uiRenderer = new UIRenderer(new EngineUIRenderer(bufferTransport));
 
 	self.addEventListener('message', function(event) {
 		const {data: { action }}  = event;
@@ -41,7 +41,7 @@ if (typeof(window) === 'undefined') {
 			case "init": {
 				const {data: { data, localStorageData, pathname }}  = event;
 				workerEngine = new WorkerEngine(SceneManager.instance,
-					{ pathname, data, localStorageData, textureManager, communicator, uiRenderer, windowStatus });
+					{ pathname, data, localStorageData, textureManager, bufferTransport, uiRenderer, windowStatus });
 				break;
 			}
 			case "ping": {
@@ -87,7 +87,7 @@ if (typeof(window) === 'undefined') {
 			}
 			case "returnBuffer": {
 				const {data: { dataView }} = event;
-				communicator.returnBuffer(dataView);
+				bufferTransport.returnBuffer(dataView);
 				break;
 			}
 			case "clickUI": {

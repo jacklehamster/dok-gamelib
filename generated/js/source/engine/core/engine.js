@@ -39,10 +39,10 @@ class Engine {
 		this.focusFixer = new FocusFixer(canvas);
 		this.logger = new Logger();
 
-		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.engineCommunicator, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
+		this.bufferTransport = new BufferTransport();
+		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.bufferTransport, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
-		this.communicator = new Communicator(this, this.sceneGL, this.sceneUI, this.domManager, this.logger, this.dataStore, this.mediaManager, this.newgrounds, this.glRenderer);
-		configCommunicator(this.communicator, this);
+		configBufferTransport(this.bufferTransport, this);
 
 		this.keyboard = new Keyboard(this.workerManager, document, {});
 		this.mouse = new Mouse(this.workerManager, canvas, document, {});
@@ -189,12 +189,12 @@ class Engine {
 	}
 
 	refresh(data) {
-		const { time, payload } = data;
-		const { communicator, sceneUI, glRenderer, onLoopListener } = this;
-		if (payload && payload.byteCount) {
-			const { dataView, extra, byteCount } = payload;
-			communicator.setup(dataView, byteCount, extra);
-			communicator.apply();
+		const { time } = data;
+		const { bufferTransport, sceneUI, glRenderer, onLoopListener } = this;
+		if (data.byteCount) {
+			const { dataView, byteCount } = data;
+			bufferTransport.setup(dataView, byteCount);
+			bufferTransport.apply();
 		}
 		this.loopVideo();
 		sceneUI.updateUI(time);

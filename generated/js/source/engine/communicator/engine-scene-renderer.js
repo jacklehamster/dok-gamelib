@@ -8,35 +8,35 @@
  */
 
 class EngineSceneRenderer {
-	constructor(communicator) {
-		this.communicator = communicator;
+	constructor(bufferTransport) {
+		this.bufferTransport = bufferTransport;
 	}
 
 	setBackground(color) {
-		this.communicator.sendCommand(Commands.SCENE_BACKGROUND, color);
+		this.bufferTransport.sendCommand(Commands.SCENE_BACKGROUND, color);
 	}
 
 	setViewAngle(viewAngle, near, far) {
-		this.communicator.sendCommand(Commands.SCENE_VIEWANGLE, viewAngle, near, far);
+		this.bufferTransport.sendCommand(Commands.SCENE_VIEWANGLE, viewAngle, near, far);
 	}
 
 	setViewPosition(x, y, z, tilt, turn, cameraDistance) {
-		this.communicator.sendCommand(Commands.SCENE_VIEW_POSITION, x, y, z, tilt, turn, cameraDistance);
+		this.bufferTransport.sendCommand(Commands.SCENE_VIEW_POSITION, x, y, z, tilt, turn, cameraDistance);
 	}
 
 	setCurvature(curvature) {
-		this.communicator.sendCommand(Commands.SCENE_CURVATURE, curvature);
+		this.bufferTransport.sendCommand(Commands.SCENE_CURVATURE, curvature);
 	}
 
 	setLight(x, y, z, ambient, diffusionStrength, specularStrength, shininess) {
-		this.communicator.sendCommand(Commands.SCENE_LIGHT, x, y, z, ambient, diffusionStrength, specularStrength, shininess);
+		this.bufferTransport.sendCommand(Commands.SCENE_LIGHT, x, y, z, ambient, diffusionStrength, specularStrength, shininess);
 	}
 
 	setViewport(width, height) {
-		this.communicator.sendCommand(Commands.VIEW_RESIZE, width, height);
+		this.bufferTransport.sendCommand(Commands.VIEW_RESIZE, width, height);
 	}
 
 	setDepthEffect(fading, closeSaturation, farSaturation) {
-		this.communicator.sendCommand(Commands.SCENE_DEPTHEFFECT, fading, closeSaturation, farSaturation);
+		this.bufferTransport.sendCommand(Commands.SCENE_DEPTHEFFECT, fading, closeSaturation, farSaturation);
 	}	
 }

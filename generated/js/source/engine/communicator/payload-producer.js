@@ -303,11 +303,6 @@ class PayloadProducer {
 				this.mergeBufferMethods[parameters] = writeMethod;
 			} else {
 				this.mergeBufferMethods[parameters] = (command, ...params) => {
-					if (!this.canMerge()) {
-						writeMethod(command, ...params);
-						return;
-					}
-
 					//	write starting from dataview
 					const previousByteCount = this.byteCount;
 					for (let i = 0; i < writers.length; i++) {
@@ -339,7 +334,7 @@ class PayloadProducer {
 		}
 	}
 
-	setup(dataView, byteCount, extra) {
+	setup(dataView, byteCount) {
 		this.dataView = dataView || null;
 		this.byteCount = byteCount || 0;
 		this.lastDataViewOffset = -1;
