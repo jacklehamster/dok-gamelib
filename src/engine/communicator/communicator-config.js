@@ -120,10 +120,6 @@ function configCommunicator(communicator, engine) {
 			parameters: "uint",
 			apply: count => glRenderer.setVisibleChunks(count),
 		}, {
-			id: Commands.GL_UPDATE_BUFFER,
-			parameters: "byte,uint,dataView",
-			apply: (bufferType, offset, dataView) => glRenderer.sendBufferToGL(bufferType, offset, dataView),
-		}, {
 			id: Commands.GL_UPDATE_BUFFER + BufferType.SPRITE_TYPE,
 			parameters: "uint,[byte*4]",
 			apply: (offset, dataView) => glRenderer.sendBufferToGL(BufferType.SPRITE_TYPE, offset, dataView),
