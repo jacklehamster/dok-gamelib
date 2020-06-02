@@ -43,6 +43,7 @@ class PayloadProducer {
 		this.payloadPool = new Pool(() => { return {}; });
 		this.dataViewPool = new Pool(() => new DataView(new ArrayBuffer(MAX_BUFFER_SIZE)));
 		this.maxSize = 0;
+		this.lastDataViewOffset = -1;
 
 		this.setup();
 
@@ -50,6 +51,10 @@ class PayloadProducer {
 		this.decoder = new TextDecoder();
 
 		this.readBufferMethods = {};
+		this.writeBufferMethods = {};
+		this.mergeBufferMethods = {};
+		this.dataViewBufferSizes = {};
+
 		this.readMethods = {
 			boolean: () => this.readUnsignedByte() !== 0,
 			float: this.readFloat.bind(this),
@@ -65,7 +70,6 @@ class PayloadProducer {
 			dataView: this.readDataView.bind(this),
 		};
 
-		this.writeBufferMethods = {};
 		this.writeMethods = {
 			boolean: value => this.writeUnsignedByte(value ? 1 : 0),
 			float: this.writeFloat.bind(this),
@@ -80,6 +84,7 @@ class PayloadProducer {
 			array: this.writeArray.bind(this),
 			dataView: this.writeDataView.bind(this),
 		}
+
 
 		this.payload = {
 			action: "payload",
@@ -98,6 +103,14 @@ class PayloadProducer {
 			this.ensure();
 			writeCommandMethod(command);
 		};
+	}
+
+	canMerge() {
+		if (this.lastDataViewOffset < 0) {
+			return false;
+		}
+		const size = this.getLastDataViewBufferSize();
+		return this.lastDataViewOffset + Uint32Array.BYTES_PER_ELEMENT + size === this.byteCount;
 	}
 
 	static typeWithMul(type) {
@@ -219,9 +232,8 @@ class PayloadProducer {
 		return this.readBufferMethods[parameters];
 	}
 
-	getWriteBufferMethod(parameters, merge) {
-		const tag = `${parameters}/${merge?"merge":""}`;
-		if (!this.writeBufferMethods[tag]) {
+	getWriteBufferMethod(parameters) {
+		if (!this.writeBufferMethods[parameters]) {
 			const writers = [];
 			let dataViewIndex = -1;
 			PayloadProducer.getTypes(parameters).forEach(type => {
@@ -241,26 +253,83 @@ class PayloadProducer {
 				}
 			});
 
-			this.writeBufferMethods[tag] = (command, params) => {
-				if (merge) {
-					//	try to merge dataview
-					if (!this.showedLog) {
-						this.showedLog = true;
-						console.warn("TODO: merge dataview.");
-					}
-				}
-
+			this.writeBufferMethods[parameters] = (command, ...params) => {
 				this.writeCommand(command);
 				for (let i = 0; i < writers.length; i++) {
 					const writer = writers[Math.min(writers.length-1, i)];
 					if (!writer) {
-						console.error(`${tag} <= invalid parameters.`);
+						console.error(`${parameters} <= invalid parameters.`);
 					}
 					writer(params[i]);
 				}
 			};
 		}
-		return this.writeBufferMethods[tag];
+		return this.writeBufferMethods[parameters];
+	}
+
+	getDataViewSize(parameters) {
+		if (typeof(this.dataViewBufferSizes[parameters]) === "undefined") {
+			let size = 0;
+			PayloadProducer.getTypes(parameters).forEach((type, index) => {
+				if (Array.isArray(type)) {
+					size = PayloadProducer.totalSize(type);
+				}
+			});
+			this.dataViewBufferSizes[parameters] = size;
+		}
+		return this.dataViewBufferSizes[parameters];
+	}
+
+	getMergeBufferMethod(parameters) {
+		if (!this.mergeBufferMethods[parameters]) {
+			let dataViewIndex = -1;
+			const writers = [];
+			PayloadProducer.getTypes(parameters).forEach((type, index) => {
+				if (Array.isArray(type)) {
+					if (dataViewIndex < 0) {
+						dataViewIndex = writers.length;
+					}
+					type.forEach((t, index) => {
+						writers.push(this.writeMethods[t]);
+					});
+				} else {
+					writers.push(this.writeMethods[type]);
+				}
+			});
+
+			const writeMethod = this.getWriteBufferMethod(parameters);
+
+			if (dataViewIndex < 0) {
+				this.mergeBufferMethods[parameters] = writeMethod;
+			} else {
+				this.mergeBufferMethods[parameters] = (command, ...params) => {
+					if (!this.canMerge()) {
+						writeMethod(command, ...params);
+						return;
+					}
+
+					//	write starting from dataview
+					const previousByteCount = this.byteCount;
+					for (let i = 0; i < writers.length; i++) {
+						const writer = writers[Math.min(writers.length-1, i)];
+						if (!writer) {
+							console.error(`${parameters} <= invalid parameters.`);
+						}
+						if (i >= dataViewIndex) {
+							writer(params[i]);
+						}
+					}
+					const byteDiff = this.byteCount - previousByteCount;
+					const previousDataViewSize = this.getLastDataViewBufferSize();
+					this.dataView.setUint32(this.lastDataViewOffset, previousDataViewSize + byteDiff, true);
+				};
+			}
+		}
+		return this.mergeBufferMethods[parameters];
+	}
+
+	getLastDataViewBufferSize() {
+		return this.lastDataViewOffset >= 0 ? this.dataView.getUint32(this.lastDataViewOffset, true) : 0;
 	}
 
 	ensure() {
@@ -304,6 +373,7 @@ class PayloadProducer {
 
 		this.dataView = null;
 		this.byteCount = 0;
+		this.lastDataViewOffset = -1;
 		this.arrayPool.reset();
 		this.objectPool.reset();
 		this.payloadPool.reset();

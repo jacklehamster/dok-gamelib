@@ -21,6 +21,10 @@ class Communicator {
 		this.registry = [];
 		this.payloadProducer = new PayloadProducer();
 		this.onApplyListener = [];
+		this.lastGLBuffer = {
+			command: null,
+			offset: 0,
+		};
 	}
 
 	getListeners(type) {
@@ -42,7 +46,7 @@ class Communicator {
 	}
 
 	register(... actions) {
-		actions.forEach(({ id, parameters, apply, merge}) => {
+		actions.forEach(({ id, parameters, apply}) => {
 			const ids = Array.isArray(id) ? id : [id];
 			ids.forEach(_id => {
 				if (_id && apply) {
@@ -50,7 +54,9 @@ class Communicator {
 						id: _id,
 						readBuffer: this.payloadProducer.getReadBufferMethod(parameters||""),
 						apply,
-						writeBuffer: this.payloadProducer.getWriteBufferMethod(parameters||"", merge),
+						writeBuffer: this.payloadProducer.getWriteBufferMethod(parameters||""),
+						mergeBuffer: this.payloadProducer.getMergeBufferMethod(parameters||""),
+						dataViewSize: this.payloadProducer.getDataViewSize(parameters||""),
 					};
 					this.registry[_id] = registryEntry;				
 				}
@@ -83,10 +89,24 @@ class Communicator {
 		}
 	}
 
+	sendGLBuffer(command, offset, ...params) {
+		const { registry } = this;
+		if (this.lastGLBuffer.command === command
+			&& this.lastGLBuffer.offset >= 0
+			&& this.lastGLBuffer.offset + this.payloadProducer.getLastDataViewBufferSize() === offset
+			&& this.payloadProducer.canMerge()) {
+			registry[command].mergeBuffer(command, offset, ...params);
+		} else {
+			registry[command].writeBuffer(command, offset, ...params);
+			this.lastGLBuffer.command = command;
+			this.lastGLBuffer.offset = offset;
+		}
+	}
+
 	sendCommand(command, ...params) {
 		const { registry } = this;
 		if (registry[command]) {
-			registry[command].writeBuffer(command, params);
+			registry[command].writeBuffer(command, ...params);
 		} else {
 			console.error(`Unknown command ${command}.`);			
 		}
@@ -94,6 +114,8 @@ class Communicator {
 
 	clear() {
 		this.payloadProducer.clear();
+		this.lastGLBuffer.command = null;
+		this.lastGLBuffer.offset = -1;
 	}
 
 	returnBuffer(dataView) {
