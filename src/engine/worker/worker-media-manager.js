@@ -13,30 +13,30 @@
  */
 
 class WorkerMediaManager extends IMediaManager {
-	constructor(communicator, config) {
+	constructor(bufferTransport, config) {
 		super(config);
-		this.communicator = communicator;
+		this.bufferTransport = bufferTransport;
 	}
 
 	playMusic(id, reset, url) {
-		this.communicator.sendCommand(Commands.MEDIA_PLAY_MUSIC, id, reset, url);
+		this.bufferTransport.sendCommand(Commands.MEDIA_PLAY_MUSIC, id, reset, url);
 	}
 
 	playVideo(id, reset, url) {
 		super.playVideo(id, reset, url);
-		this.communicator.sendCommand(Commands.MEDIA_PLAY_VIDEO, id, reset, url);
+		this.bufferTransport.sendCommand(Commands.MEDIA_PLAY_VIDEO, id, reset, url);
 	}
 
 	setMusicVolume(id, volume) {
-		this.communicator.sendCommand(Commands.MEDIA_SET_MUSIC_VOLUME, id, volume);
+		this.bufferTransport.sendCommand(Commands.MEDIA_SET_MUSIC_VOLUME, id, volume);
 	}
 
 	pauseVideo(id) {
 		super.pauseVideo(id);
-		this.communicator.sendCommand(Commands.MEDIA_PAUSE_VIDEO, id);
+		this.bufferTransport.sendCommand(Commands.MEDIA_PAUSE_VIDEO, id);
 	}
 
 	pauseMusic(id) {
-		this.communicator.sendCommand(Commands.MEDIA_PAUSE_MUSIC, id);
+		this.bufferTransport.sendCommand(Commands.MEDIA_PAUSE_MUSIC, id);
 	}
 }

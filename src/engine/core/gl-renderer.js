@@ -15,8 +15,8 @@ GLRenderer Engine
 */
 
 class GLRenderer extends ISpriteRenderer {
-	constructor(gl, textureManager, webgl, engineCommunicator, spriteProvider, spriteDataProcessor, configData) {
-		super(textureManager, engineCommunicator, spriteProvider, spriteDataProcessor, configData);
+	constructor(gl, textureManager, webgl, bufferTransport, spriteProvider, spriteDataProcessor, configData) {
+		super(textureManager, bufferTransport, spriteProvider, spriteDataProcessor, configData);
 
 		this.gl = gl;
 		const { vertexShader, fragmentShader } = webgl;

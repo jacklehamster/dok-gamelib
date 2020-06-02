@@ -38,8 +38,8 @@ class WorkerManager {
 			}
 			case "payload": {
 				this.engine.refresh(data);
-				if (data.payload && data.payload.dataView) {
-					this.returnBuffer(data.payload.dataView);
+				if (data.dataView) {
+					this.returnBuffer(data.dataView);
 				}
 				break;
 			}

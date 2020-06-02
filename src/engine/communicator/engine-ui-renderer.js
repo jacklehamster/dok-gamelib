@@ -8,39 +8,39 @@
  */
 
 class EngineUIRenderer {
-	constructor(communicator) {
-		this.communicator = communicator;
+	constructor(bufferTransport) {
+		this.bufferTransport = bufferTransport;
 	}
 
 	createElement(elementId, instanceIndex, type, hasOnClick) {
-		this.communicator.sendCommand(Commands.UI_CREATE_ELEMENT, elementId, instanceIndex, type, hasOnClick);
+		this.bufferTransport.sendCommand(Commands.UI_CREATE_ELEMENT, elementId, instanceIndex, type, hasOnClick);
 	}
 
 	setParent(elementId, parent) {
-		this.communicator.sendCommand(Commands.UI_SET_PARENT, elementId, parent);
+		this.bufferTransport.sendCommand(Commands.UI_SET_PARENT, elementId, parent);
 	}
 
 	setClass(elementId, classList) {
-		this.communicator.sendCommand(Commands.UI_SET_CLASS, elementId, classList);
+		this.bufferTransport.sendCommand(Commands.UI_SET_CLASS, elementId, classList);
 	}
 
 	setStyle(elementId, s, value) {
-		this.communicator.sendCommand(Commands.UI_SET_STYLE, elementId, s, value);
+		this.bufferTransport.sendCommand(Commands.UI_SET_STYLE, elementId, s, value);
 	}
 
 	setText(elementId, text) {
-		this.communicator.sendCommand(Commands.UI_SET_TEXT, elementId, text);
+		this.bufferTransport.sendCommand(Commands.UI_SET_TEXT, elementId, text);
 	}
 
 	setSize(elementId, width, height) {
-		this.communicator.sendCommand(Commands.UI_SET_SIZE, elementId, width, height);
+		this.bufferTransport.sendCommand(Commands.UI_SET_SIZE, elementId, width, height);
 	}
 
 	setCanvas(elementId, canvas) {
-		this.communicator.sendCommand(Commands.UI_SET_CANVAS, elementId, canvas);
+		this.bufferTransport.sendCommand(Commands.UI_SET_CANVAS, elementId, canvas);
 	}	
 
 	removeElement(elementId) {
-		this.communicator.sendCommand(Commands.UI_REMOVE_ELEMENT, elementId);
+		this.bufferTransport.sendCommand(Commands.UI_REMOVE_ELEMENT, elementId);
 	}
 }

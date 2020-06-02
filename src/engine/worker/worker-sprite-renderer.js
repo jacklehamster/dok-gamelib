@@ -8,7 +8,7 @@
  */
 
  class WorkerSpriteRenderer extends ISpriteRenderer {
-	constructor(textureManager, communicator, spriteProvider, spriteDataProcessor, {imagedata, videos}) {
-		super(textureManager, communicator, spriteProvider, spriteDataProcessor, {imagedata, videos});
+	constructor(textureManager, bufferTransport, spriteProvider, spriteDataProcessor, {imagedata, videos}) {
+		super(textureManager, bufferTransport, spriteProvider, spriteDataProcessor, {imagedata, videos});
  	}
  }
