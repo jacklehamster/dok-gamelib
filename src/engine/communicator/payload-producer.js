@@ -593,7 +593,7 @@ class PayloadProducer {
 
 	getPayload() {
 		if (!this.byteCount) {
-			return null;
+			return this.payloadPool.get(true);
 		}
 		const payload = this.payloadPool.get();
 		payload.dataView = this.dataView;

@@ -118,6 +118,10 @@ class BufferTransport {
 		this.lastGLBuffer.offset = -1;
 	}
 
+	getPayload() {
+		return this.payloadProducer.getPayload();
+	}
+
 	returnBuffer(dataView) {
 		this.payloadProducer.dataViewPool.recycle(dataView);		
 	}

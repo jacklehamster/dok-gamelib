@@ -210,8 +210,8 @@ class WorkerEngine {
 	}
 
 	postBackPayload(now) {
-		const { dataView, byteCount } = this.bufferTransport.payloadProducer.getPayload();
-		if (byteCount) {
+		const { dataView, byteCount } = this.bufferTransport.getPayload();
+		if (byteCount && dataView.byteLength) {
 			this.payload.time = now;
 			this.payload.dataView = dataView;
 			this.payload.byteCount = byteCount;
