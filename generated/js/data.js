@@ -1064,6 +1064,7 @@ function getData() {
         },
         "editor": true,
         "newgrounds": {"id": "50263:05FmQQ7M", "key": "nN2kZpn0Hk1nQCqSRsXILw=="},
+        "socket": {"backupServer": "https://dobuki.herokuapp.com"},
         "firstScene": "cubot"
       },
       "imagedata": {

@@ -39,7 +39,7 @@ const sources = {
 		"communicator/buffer-transport-config.js",
 		"communicator/engine-scene-renderer.js",
 		"communicator/engine-ui-renderer.js",
-		"socket/socket.js",
+		"socket/socket-client.js",
 		"controls/gamepad.js",
 		"controls/keyboard.js",
 		"controls/mouse.js",
