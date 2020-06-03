@@ -164,12 +164,6 @@ app.use(cors());
 
 const { io, server } = socket.serveSocket(app);
 
-if (io !== null && server !== null) {
-	app.get('/socket.info', (req, res) => {
-		res.send("ok");
-	});
-}
-
 app.use(express.static(`${__dirname}/${webDir}`, {
 	etag: true,
 	lastModified: true,

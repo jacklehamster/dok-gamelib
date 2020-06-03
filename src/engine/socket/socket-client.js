@@ -1,8 +1,21 @@
-class Socket {
-	constructor(pathname) {
-		this.backupServer = 'https://dobuki.herokuapp.com';
+/**
+	Dok-gamelib engine
+
+	Description: Game engine for producing web games easily using JavaScript and WebGL
+	Author: jacklehamster
+	Sourcode: https://github.com/jacklehamster/dok-gamelib
+	Year: 2020
+ */
+const SocketStatus = {
+	CONNECTING: 1,
+	CONNECTED: 2,
+};
+
+class SocketClient {
+	constructor(backupServer) {
 		this.onConnectListener = [];
 		this.onUpdateListener = [];
+		this.onReadyListener = [];
 		this.sockets = {};
 		this.connections = {};
 		this.room = null;
@@ -11,11 +24,24 @@ class Socket {
 		this.sharedData = {};
 		this.ids = [];
 		this.pool = new Pool(() => [], array => array.length = 0);
-		this.pathname = pathname;
+		this.backupServer = backupServer;
+		Utils.get(`/socket.info`)
+			.then(response => this.onLocalSocketConfirmed(response === "ok"))
+			.catch(() => this.onLocalSocketConfirmed(false));
+	}
 
-		Utils.get(`${this.pathname}socket.info`).then(response => {
-			this.importScript(response === "ok"? "/socket.io/socket.io.js" : `${this.backupServer}/socket.io/socket.io.js`);
-		});
+	onLocalSocketConfirmed(localSocketAvailable) {
+		this.localSocketAvailable = localSocketAvailable;
+		this.importScript(this.localSocketAvailable ? "/socket.io/socket.io.js" : `${this.backupServer}/socket.io/socket.io.js`);
+		this.onReadyListener.forEach(callback => callback());
+	}
+
+	whenReady(callback) {
+		if (this.localSocketAvailable) {
+			callback();
+		} else {
+			this.addEventListener("ready", callback);
+		}
 	}
 
 	getSharedData(index) {
@@ -55,8 +81,8 @@ class Socket {
 	}
 
 	update(newData) {
-		const updates = Socket.createUpdateBatch(newData, this.data, this.pool);
-		Socket.applyBatch(updates, this.data);
+		const updates = SocketClient.createUpdateBatch(newData, this.data, this.pool);
+		SocketClient.applyBatch(updates, this.data);
 		if (updates.length) {
 			this.connect("data", socket => {
 				socket.emit("update", this.room || null, updates);
@@ -93,6 +119,8 @@ class Socket {
 				return this.onConnectListener;
 			case "update":
 				return this.onUpdateListener;
+			case "ready":
+				return this.onReadyListener;
 		}
 	}
 
@@ -105,7 +133,7 @@ class Socket {
 				return false;
 			}
 			for (let i = 0; i < newData.length; i++) {
-				if (!Socket.dataEquals(newData[i], oldData[i])) {
+				if (!SocketClient.dataEquals(newData[i], oldData[i])) {
 					return false;
 				}
 			}
@@ -114,7 +142,7 @@ class Socket {
 				return false;
 			}
 			for (let i in newData) {
-				if (!Socket.dataEquals(newData[i], oldData[i])) {
+				if (!SocketClient.dataEquals(newData[i], oldData[i])) {
 					return false;
 				}
 			}
@@ -130,7 +158,7 @@ class Socket {
 			}
 		}
 		for (let i in newData) {
-			if (!Socket.dataEquals(newData[i], oldData[i])) {
+			if (!SocketClient.dataEquals(newData[i], oldData[i])) {
 				const pair = pool.get(true);
 				pair[0] = i;
 				pair[1] = newData[i];
@@ -147,7 +175,7 @@ class Socket {
     			delete data[field];
     		} else {
 				const [ field, value ] = pair;
-				data[field] = Socket.assignData(data[field], value);
+				data[field] = SocketClient.assignData(data[field], value);
     		}
     	}	
 	}
@@ -159,7 +187,7 @@ class Socket {
 			}
 			to.length = from.length;
 			for (let i = 0; i < from.length; i++) {
-				to[i] = Socket.assignData(to[i], from[i]);
+				to[i] = SocketClient.assignData(to[i], from[i]);
 			}
 		} else if (typeof(from) === "object" && from !== null) {
 			if (typeof(to) !== "object") {
@@ -171,7 +199,7 @@ class Socket {
 				}
 			}
 			for (let i in from) {
-				to[i] = Socket.assignData(to[i], from[i]);
+				to[i] = SocketClient.assignData(to[i], from[i]);
 			}
 		} else {
 			to = from;
@@ -186,23 +214,25 @@ class Socket {
 	}
 
 	connect(namespace, callback) {
-		if (this.connections[namespace] === Socket.CONNECTED) {
+		if (this.connections[namespace] === SocketStatus.CONNECTED) {
 			callback(this.sockets[namespace]);
-		} else if (this.connections[namespace] === Socket.CONNECTING) {
+		} else if (this.connections[namespace] === SocketStatus.CONNECTING) {
 			this.addEventListener("connect", callback);
 		} else {
-			this.connections[namespace] = Socket.CONNECTING;
+			this.connections[namespace] = SocketStatus.CONNECTING;
 			this.addEventListener("connect", callback);
 
-			Utils.get(`${this.pathname}socket.info`).then(response => {
+			this.whenReady(() => {
 				const socket = this.sockets[namespace] = this.localSocketAvailable ? io(`/${namespace||""}`) : io(`${this.backupServer}/${namespace||""}`);
 				this.onConnectListener.forEach(listener => listener(socket, namespace));
 				this.onConnectListener.length = 0;
-				this.connections[namespace] = Socket.CONNECTED;
+				this.connections[namespace] = SocketStatus.CONNECTED;
+
+			    socket.on('connected', () => console.log("Connected."));
 
 			    socket.on('update', (id, updates) => {
 			    	if (this.sharedData[id]) {
-				    	Socket.applyBatch(updates, this.sharedData[id]);
+				    	SocketClient.applyBatch(updates, this.sharedData[id]);
 				    	this.onDataUpdated(id);
 			    	}
 			    });
@@ -243,12 +273,7 @@ class Socket {
 				    	this.onDataUpdated(id);
 			    	}
 			    });
-
-			    socket.on('connected', () => console.log("Connected."));
 			});
 		}
 	}
 }
-
-Socket.CONNECTING = 1;
-Socket.CONNECTED = 2;

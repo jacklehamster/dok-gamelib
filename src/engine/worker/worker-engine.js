@@ -13,7 +13,7 @@
  */
 
 class WorkerEngine {
-	constructor(sceneManager, { pathname, data, localStorageData, mouse, keyboard, textureManager, bufferTransport, uiRenderer, windowStatus}) {
+	constructor(sceneManager, { data, localStorageData, mouse, keyboard, textureManager, bufferTransport, uiRenderer, windowStatus}) {
 		this.count = 0;
 		this.lastRefresh = 0;
 		this.currentScene = null;
@@ -24,7 +24,9 @@ class WorkerEngine {
 		this.textureManager = textureManager;
 		this.onSceneChangeListener = [];
 		this.sceneManager = sceneManager;
-		this.socket = new Socket(pathname);
+
+		this.socket = new SocketClient(data.generated.game.socket.backupServer);
+
 		this.bufferTransport = bufferTransport;
 		configBufferTransport(this.bufferTransport);
 
