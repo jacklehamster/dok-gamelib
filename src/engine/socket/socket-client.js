@@ -25,9 +25,20 @@ class SocketClient {
 		this.ids = [];
 		this.pool = new Pool(() => [], array => array.length = 0);
 		this.backupServer = backupServer;
+		this.registry = {};
 		Utils.get(`/socket.info`)
 			.then(response => this.onLocalSocketConfirmed(response === "ok"))
 			.catch(() => this.onLocalSocketConfirmed(false));
+	}
+
+	wrap(name, action) {
+		this.registry[name] = action;
+		return (...params) => {
+			action(...params);
+			this.connect("data", socket => {
+				socket.emit("action", this.room || null, name, params);
+			});
+		};
 	}
 
 	onLocalSocketConfirmed(localSocketAvailable) {
@@ -234,6 +245,12 @@ class SocketClient {
 			    	if (this.sharedData[id]) {
 				    	SocketClient.applyBatch(updates, this.sharedData[id]);
 				    	this.onDataUpdated(id);
+			    	}
+			    });
+
+			    socket.on('action', (id, name, params) => {
+			    	if (this.registry[name]) {
+			    		this.registry[name].apply(null, params);
 			    	}
 			    });
 
