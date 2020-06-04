@@ -15,7 +15,7 @@ const cors = require('cors');
 const assets = require('./lib/assets');
 const zip = require('./lib/zip');
 const template = require('./lib/template');
-const socket = require('./lib/socket');
+const { serveSocket } = require('dok-socket');
 const stringify = require("json-stringify-pretty-compact");
 const colors = require('colors');
 const minify = require('@node-minify/core');
@@ -162,7 +162,7 @@ app.all('/', function(req, res, next) {
 app.use(cors());
 
 
-const { io, server } = socket.serveSocket(app);
+const { io, server } = serveSocket(app);
 
 app.use(express.static(`${__dirname}/${webDir}`, {
 	etag: true,

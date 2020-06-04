@@ -156,4 +156,5 @@ const { Tools, Dok: {
 	TimeScheduler,
 	Utils,
 	BufferTransport,
+	SocketClient,
 } } = dokLib;

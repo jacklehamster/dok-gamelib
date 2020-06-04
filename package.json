@@ -30,6 +30,8 @@
     "crypto": "^1.0.1",
     "dok-buffer-transport": "^1.0.2",
     "dok-pool": "^1.0.46",
+    "dok-socket": "^1.0.7",
+    "dok-socket-client": "^1.0.4",
     "dok-timescheduler": "^1.0.2",
     "dok-utils": "^1.0.2",
     "electron": "^8.3.1",

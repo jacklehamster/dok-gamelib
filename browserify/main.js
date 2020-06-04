@@ -17,6 +17,7 @@ const { Pool } = require("dok-pool");
 const { TimeScheduler } = require("dok-timescheduler");
 const { Utils } = require("dok-utils");
 const { BufferTransport } = require("dok-buffer-transport");
+const { SocketClient } = require("dok-socket-client");
 
 module.exports = {
 	Tools: {
@@ -30,5 +31,6 @@ module.exports = {
 		TimeScheduler,
 		Utils,
 		BufferTransport,
+		SocketClient,
 	},
 };

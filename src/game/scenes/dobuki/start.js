@@ -440,7 +440,7 @@ SceneManager.add({Game: class extends Game {
 			src: "dok",
 			data: {
 				currentDok: ({game}, index) => {
-					return game.socket.getSharedData(index);
+					return game.socket.getSharedDataAt(index);
 				},
 			},
 			position: [
