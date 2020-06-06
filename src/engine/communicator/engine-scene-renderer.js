@@ -20,8 +20,8 @@ class EngineSceneRenderer {
 		this.bufferTransport.sendCommand(Commands.SCENE_VIEWANGLE, viewAngle, near, far);
 	}
 
-	setViewPosition(x, y, z, tilt, turn, cameraDistance) {
-		this.bufferTransport.sendCommand(Commands.SCENE_VIEW_POSITION, x, y, z, tilt, turn, cameraDistance);
+	setViewPosition(x, y, z, tilt, turn, lean, cameraDistance) {
+		this.bufferTransport.sendCommand(Commands.SCENE_VIEW_POSITION, x, y, z, tilt, turn, lean, cameraDistance);
 	}
 
 	setCurvature(curvature) {

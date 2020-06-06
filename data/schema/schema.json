@@ -53,6 +53,7 @@
 		"range": [1, 60],
 		"tilt": 0,
 		"turn": 0,
+		"lean": 0,
 		"curvature": 0,
 		"cameraDistance": 7,
 		"depthEffect": {
