@@ -1097,7 +1097,7 @@ function getData() {
             "index": 1
           },
           "artic": {
-            "scenes": ["penguin"],
+            "scenes": ["penguin", "slope"],
             "rect": [2336, 0, 256, 256],
             "index": 1
           },
@@ -1220,6 +1220,7 @@ function getData() {
       "sha": [
         "arm=61c193706dfa5326fb3abebaea0a7f64d616fae125571f906fa2e7dc69375e7c",
         "artic=bd39173160f9c80c55e2510a722334c3fe87916bf33c8f7490c8318143214486",
+        "artic=bd39173160f9c80c55e2510a722334c3fe87916bf33c8f7490c8318143214486",
         "bear=d7f681e462f3b54243107d2a1aae4e0900eea049237a4f7981a8d0b4b1987b26",
         "blue-ground=de22e65b162132ac90aae0b99067aa15893f0686ab9cc32885bdb469fac7f06a",
         "blue-ground=de22e65b162132ac90aae0b99067aa15893f0686ab9cc32885bdb469fac7f06a",
@@ -1322,6 +1323,7 @@ function getData() {
           "range": [1, 60],
           "tilt": 0,
           "turn": 0,
+          "lean": 0,
           "curvature": 0,
           "cameraDistance": 7,
           "depthEffect": {"fading": 0.3, "saturation": [1, 0.8]}

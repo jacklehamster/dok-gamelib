@@ -17,7 +17,7 @@ function configBufferTransport(bufferTransport, engine) {
 			apply: color => sceneGL.setBackground(color),
 		}, {
 			id: Commands.SCENE_VIEW_POSITION,
-			parameters: "float*6",
+			parameters: "float*7",
 			apply: (...params) => sceneGL.setViewPosition(...params),
 		}, {
 			id: Commands.SCENE_VIEWANGLE,
@@ -68,7 +68,7 @@ function configBufferTransport(bufferTransport, engine) {
 			parameters: "string",
 			apply: elementId => sceneUI.removeElement(elementId),
 		}, {
-			id: Commands.ENG_NOTIFY_SCENE_CHANGE,
+			id: Commands.NOTIFY_SCENE_CHANGE,
 			parameters: "string",
 			apply: name => engine.notifySceneChange(name),
 		}, {

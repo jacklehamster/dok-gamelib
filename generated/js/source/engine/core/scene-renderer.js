@@ -23,6 +23,7 @@ class SceneRenderer {
 			viewAngle: 0,
 			tilt: 0,
 			turn: 0,
+			lean: 0,
 			cameraDistance: 0,
 			range: [0, 0],
 			curvature: 0,
@@ -52,7 +53,7 @@ class SceneRenderer {
 	render(scene) {
 		const { renderer, background, domManager, mediaManager, socket } = this;
 		const { settings, view, light } = scene;
-		const { depthEffect, viewPort, curvature, range, viewAngle, pos, tilt, turn, cameraDistance } = view;
+		const { depthEffect, viewPort, curvature, range, viewAngle, pos, tilt, turn, lean, cameraDistance } = view;
 
 		const newBackground = settings.background.get();
 		if (newBackground !== background) {
@@ -119,14 +120,18 @@ class SceneRenderer {
 		const newViewPosZ = pos[2].get();
 		const newTilt = tilt.get();
 		const newTurn = turn.get();
+		const newLean = lean.get();
 		const newCameraDistance = cameraDistance.get();
 		if (!Utils.equal3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ)
-			|| newTilt !== this.view.tilt || newTurn !== this.view.turn || newCameraDistance !== this.view.cameraDistance) {
+			|| newTilt !== this.view.tilt || newTurn !== this.view.turn
+			|| newCameraDistance !== this.view.cameraDistance
+			|| newLean !== this.view.lean) {
 			Utils.set3(this.view.pos, newViewPosX, newViewPosY, newViewPosZ);
 			this.view.turn = newTurn;
 			this.view.tilt = newTilt;
+			this.view.lean = newLean;
 			this.view.cameraDistance = newCameraDistance;
-			renderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newTilt, newTurn, -newCameraDistance);
+			renderer.setViewPosition(newViewPosX, newViewPosY, newViewPosZ, newTilt, newTurn, newLean, -newCameraDistance);
 		}
 
 		let didChangeViewport = false;

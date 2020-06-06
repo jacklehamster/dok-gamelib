@@ -77,8 +77,9 @@ class Engine {
 	}
 
 	start() {
+		this.currentSceneName = this.data.generated.game;
 		this.onStartListener.forEach(listener => listener(this));
-		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
+		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.currentSceneName));
 //		console.log("start scene:", this.currentScene.name);
 	}
 
@@ -184,7 +185,6 @@ class Engine {
 	}
 
 	setCurrentScene(name) {
-		this.currentSceneName = name;
 		this.workerManager.gotoScene(name);
 	}
 
@@ -239,6 +239,7 @@ class Engine {
 	}
 
 	notifySceneChange(sceneName) {
+		this.currentSceneName = sceneName;
 		this.onSceneChangeListener.forEach(callback => callback(sceneName));
 	}
 }

@@ -21,7 +21,7 @@ class ISceneGL {
 		throw new Error("This method should be overwritten.");
 	}
 
-	setViewPosition(x, y, z, tilt, turn, cameraDistance) {
+	setViewPosition(x, y, z, tilt, turn, lean, cameraDistance) {
 		throw new Error("This method should be overwritten.");
 	}
 

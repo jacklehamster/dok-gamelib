@@ -145,7 +145,7 @@ class WorkerEngine {
 	}
 
 	notifySceneChange(name) {
-		this.bufferTransport.sendCommand(Commands.ENG_NOTIFY_SCENE_CHANGE, name);
+		this.bufferTransport.sendCommand(Commands.NOTIFY_SCENE_CHANGE, name);
 	}
 
 	loop(timeMillis) {
