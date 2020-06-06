@@ -12,6 +12,7 @@ class SourceCode {
 	constructor(engine) {
 		this.engine = engine;
 		this.videos = {};
+		this.sceneName = null;
 		if (engine.isEditor()) {
 			engine.addEventListener("start", engine => {
 				document.getElementById('editor').classList.remove("hidden");
@@ -20,7 +21,8 @@ class SourceCode {
 					document.getElementById('editor').style.display = "";
 				}, 1000);
 
-				engine.addEventListener("sceneChange", () => {
+				engine.addEventListener("sceneChange", sceneName => {
+					this.sceneName = sceneName;
 					this.refreshView();
 				});
 
@@ -122,14 +124,13 @@ class SourceCode {
 		if (this.selectedCoderTab() === "code-tab") {
 			switch (this.selectedEditorTab()) {
 				case "scene-code":
-					SourceCode.instance.render(this.engine.makeScene(this.engine.currentSceneName));
+					SourceCode.instance.render(this.engine.makeScene(this.sceneName));
 					break;
 				case "config":
 					SourceCode.instance.render(getData().generated.game);
 					break;
 				case "assets":
 					const { data: { generated: { imagedata, videos } }, spriteDataProcessor } = this.engine;
-					const sceneName = this.engine.currentSceneName;
 					const  assets = [], videoArray = [];
 					const spriteDatas = this.engine.currentScene.spriteData.map(definition => {
 						return definition.src.get();
@@ -137,13 +138,13 @@ class SourceCode {
 
 					for (let id in imagedata.sprites) {
 						const { scenes, font } = imagedata.sprites[id];
-						if (scenes.indexOf(sceneName) >= 0 || spriteDatas.indexOf(id) >= 0) {
+						if (scenes.indexOf(this.sceneName) >= 0 || spriteDatas.indexOf(id) >= 0) {
 							assets.push(id);
 						}
 					}
 
 					for (let id in videos) {
-						if  (videos[id].scenes.indexOf(sceneName) >= 0) {
+						if  (videos[id].scenes.indexOf(this.sceneName) >= 0) {
 							videoArray.push(id);
 						}
 					}
@@ -154,8 +155,8 @@ class SourceCode {
 
 		}
 
-		document.querySelector('#scene-code').innerText = `scenes/${this.engine.currentSceneName}/start.js`;
-		document.querySelector('#assets').innerText = `scenes/${this.engine.currentSceneName}/assets`;
+		document.querySelector('#scene-code').innerText = `scenes/${this.sceneName}/start.js`;
+		document.querySelector('#assets').innerText = `scenes/${this.sceneName}/assets`;
 	}
 
 	render(config) {

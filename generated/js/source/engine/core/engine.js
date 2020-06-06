@@ -43,12 +43,11 @@ class Engine {
 		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.bufferTransport, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
 		configBufferTransport(this.bufferTransport, this);
+		this.fpsTracker = new FPSTracker();
 
 		this.keyboard = new Keyboard(this.workerManager, document, {});
 		this.mouse = new Mouse(this.workerManager, canvas, document, {});
 //		this.gamepad = new Gamepad(window);
-
-		this.paused = false;
 
 		document.addEventListener("visibilitychange", () => {
 			if (document.hidden !== this.paused) {
@@ -70,17 +69,26 @@ class Engine {
 		});
 		window.addEventListener("beforeunload", () => this.workerManager.terminate());
 
-		this.currentSceneName = null;
-		this.loaded = false;
+		this.handleOnFirstLoad();
+
+		this.paused = false;
 
 		this.init();
 	}
 
 	start() {
-		this.currentSceneName = this.data.generated.game;
 		this.onStartListener.forEach(listener => listener(this));
-		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.currentSceneName));
+		this.setCurrentScene(this.sceneManager.getFirstSceneName(this.data.generated.game));
 //		console.log("start scene:", this.currentScene.name);
+	}
+
+	handleOnFirstLoad() {
+		const engine = this;
+		const onFirstLoad = () => {
+			engine.removeEventListener("loop", onFirstLoad);
+			engine.onLoadListener.forEach(callback => callback());
+		};
+		this.addEventListener("loop", onFirstLoad);
 	}
 
 	init() {
@@ -202,10 +210,6 @@ class Engine {
 		for (let i = 0; i < onLoopListener.length; i++) {
 			onLoopListener[i](time);
 		}
-		if (!this.loaded) {
-			this.onLoadListener.forEach(callback => callback());
-			this.loaded = true;			
-		}
 	}
 
 	getListeners(type) {
@@ -239,7 +243,6 @@ class Engine {
 	}
 
 	notifySceneChange(sceneName) {
-		this.currentSceneName = sceneName;
 		this.onSceneChangeListener.forEach(callback => callback(sceneName));
 	}
 }

@@ -78,7 +78,7 @@
 
 		<script>
 			const numScenes = "10";
-			const numSources = "68"
+			const numSources = "69"
 			const release = "true"
 			console.log({
 				numScenes,
@@ -156,6 +156,16 @@
 					document.querySelector(".panel").classList.remove("paused");					
 				}
 			});
+		</script>
+		<div id="fps" style="color: silver; background: black; display: none"></div>
+		<script>
+			if (engine.isEditor()) {
+				const fps = document.getElementById("fps");
+				fps.style.display = "";
+				engine.addEventListener("loop", () => {
+					fps.innerText = `${FPSTracker.fps.tick().toFixed(1)}fps`;
+				});
+			}
 		</script>
 		<script src="generated/js/editor/editor.min.js"></script>
 	</body>

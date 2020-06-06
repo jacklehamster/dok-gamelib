@@ -12,6 +12,7 @@ const sources = {
 		"lib/newgroundsio.min.js",
 		"lib/ng.js",
 		"common/constants.js",
+		"utils/fps.js",
 		"utils/log.js",
 		"sprites/base/base-sprite.js",
 		"sprites/image-sprite.js",
