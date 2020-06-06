@@ -148,6 +148,16 @@
 				}
 			});
 		</script>
+		<div id="fps" style="color: silver; background: black; display: none"></div>
+		<script>
+			if (engine.isEditor()) {
+				const fps = document.getElementById("fps");
+				fps.style.display = "";
+				engine.addEventListener("loop", () => {
+					fps.innerText = `${FPSTracker.fps.tick().toFixed(1)}fps`;
+				});
+			}
+		</script>
 {{#obj.release}}
 		<script src="generated/js/editor/editor.min.js"></script>
 {{/obj.release}}
