@@ -29,6 +29,7 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dok-buffer-transport": "^1.0.2",
+    "dok-fps": "^1.0.1",
     "dok-pool": "^1.0.46",
     "dok-socket": "^1.0.7",
     "dok-socket-client": "^1.0.4",

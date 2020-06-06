@@ -154,7 +154,7 @@
 				const fps = document.getElementById("fps");
 				fps.style.display = "";
 				engine.addEventListener("loop", () => {
-					fps.innerText = `${FPSTracker.fps.tick().toFixed(1)}fps`;
+					fps.innerText = `${FPSTracker.tick().toFixed(1)}fps`;
 				});
 			}
 		</script>

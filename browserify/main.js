@@ -18,6 +18,7 @@ const { TimeScheduler } = require("dok-timescheduler");
 const { Utils } = require("dok-utils");
 const { BufferTransport } = require("dok-buffer-transport");
 const { SocketClient } = require("dok-socket-client");
+const { FPSTracker } = require("dok-fps");
 
 module.exports = {
 	Tools: {
@@ -32,5 +33,6 @@ module.exports = {
 		Utils,
 		BufferTransport,
 		SocketClient,
+		FPSTracker,
 	},
 };
