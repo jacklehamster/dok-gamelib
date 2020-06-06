@@ -8,8 +8,8 @@
  */
 
 class FPSTracker {
-	constructor() {
-		this.accumulator = new Array(100).fill(0);
+	constructor(capacity) {
+		this.accumulator = new Array(capacity || 100).fill(0);
 		this.index = 0;
 	}
 
