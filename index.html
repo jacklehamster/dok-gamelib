@@ -77,8 +77,8 @@
 		<meta name="apple-mobile-web-app-title" content="Hello World">
 
 		<script>
-			const numScenes = "10";
-			const numSources = "69"
+			const numScenes = "11";
+			const numSources = "68"
 			const release = "true"
 			console.log({
 				numScenes,
@@ -105,6 +105,8 @@
 		<script src="generated/js/source/game/scenes/rogue-zombie/start.js"></script>
 		<script>SceneManager.loadingSceneName = "slope";</script>
 		<script src="generated/js/source/game/scenes/slope/start.js"></script>
+		<script>SceneManager.loadingSceneName = "smorf";</script>
+		<script src="generated/js/source/game/scenes/smorf/start.js"></script>
 		<script>SceneManager.loadingSceneName = "stup";</script>
 		<script src="generated/js/source/game/scenes/stup/start.js"></script>
 		<script>SceneManager.loadingSceneName = "tp-boy";</script>
@@ -163,7 +165,7 @@
 				const fps = document.getElementById("fps");
 				fps.style.display = "";
 				engine.addEventListener("loop", () => {
-					fps.innerText = `${FPSTracker.fps.tick().toFixed(1)}fps`;
+					fps.innerText = `${FPSTracker.tick().toFixed(1)}fps`;
 				});
 			}
 		</script>

@@ -157,4 +157,5 @@ const { Tools, Dok: {
 	Utils,
 	BufferTransport,
 	SocketClient,
+	FPSTracker,
 } } = dokLib;

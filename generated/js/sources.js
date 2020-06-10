@@ -12,7 +12,6 @@ const sources = {
 		"lib/newgroundsio.min.js",
 		"lib/ng.js",
 		"common/constants.js",
-		"utils/fps.js",
 		"utils/log.js",
 		"sprites/base/base-sprite.js",
 		"sprites/image-sprite.js",
@@ -84,6 +83,7 @@ const sources = {
 		"scenes/penguin/start.js",
 		"scenes/rogue-zombie/start.js",
 		"scenes/slope/start.js",
+		"scenes/smorf/start.js",
 		"scenes/stup/start.js",
 		"scenes/tp-boy/start.js",
 		"scenes/video-maze/start.js"

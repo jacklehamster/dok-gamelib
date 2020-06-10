@@ -43,7 +43,6 @@ class Engine {
 		this.glRenderer = new GLRenderer(this.gl, this.textureManager, this.data.webgl, this.bufferTransport, this.spriteProvider, this.spriteDataProcessor, this.data.generated);
 		this.sceneGL = new SceneGL(canvas, this.glRenderer.gl, this.glRenderer.shader);
 		configBufferTransport(this.bufferTransport, this);
-		this.fpsTracker = new FPSTracker();
 
 		this.keyboard = new Keyboard(this.workerManager, document, {});
 		this.mouse = new Mouse(this.workerManager, canvas, document, {});
