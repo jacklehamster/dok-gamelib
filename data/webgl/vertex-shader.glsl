@@ -89,7 +89,7 @@ void main(void) {
 	}
 
 	vec4 position = uProjectionMatrix * uViewMatrix * worldPos;
-	position.y -= (position.z * position.z + position.x * position.x) * uCurvature / 500.0;
+	position.y -= (position.z * position.z + position.x * position.x * .2) * uCurvature / 500.0;
 
 	float cols = aGrid[0];
 	float rows = aGrid[1];
@@ -121,7 +121,7 @@ void main(void) {
 	vChromaKeyHighColor = makeColorFromRGB(aChromaKey[1], 1.0).rgb;
 	vChromaKeyReplaceColor = makeColorFromRGB(aChromaKey[2], aChromaKey[3]);
 
-	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 10.0)) * .2);
+	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 40.0)) * .2);
 	gl_Position = position;
 	vFragPos = worldPos.xyz;
 }

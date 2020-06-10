@@ -227,13 +227,14 @@ class ISpriteRenderer {
 
 						const { rect: [ x, y, sheetWidth, sheetHeight ], isVideo } = spriteInfo;
 						const index = isVideo ? VIDEO_TEXTURE_INDEX : spriteInfo.index;
+						const spriteScale = spriteInfo.scale || 1;
 						if (spriteDataProcessorInfo) {
 							const { spriteSize: [ spriteWidth, spriteHeight ], grid: [ cols, rows ], padding, animations } = spriteDataProcessorInfo;
-							this.setTexture(sprite, index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, padding, circleRadius, now);
+							this.setTexture(sprite, index, x, y, (spriteWidth / spriteScale) || (sheetWidth / cols), (spriteHeight / spriteScale) || (sheetHeight / rows), scale, padding, circleRadius, now);
 						} else {
 							const [ cols, rows ] = grid;
 							const [ spriteWidth, spriteHeight ] = spriteSize;
-							this.setTexture(sprite, index, x, y, spriteWidth || (sheetWidth / cols), spriteHeight || (sheetHeight / rows), scale, padding, circleRadius, now);
+							this.setTexture(sprite, index, x, y, (spriteWidth / spriteScale) || (sheetWidth / cols), (spriteHeight / spriteScale) || (sheetHeight / rows), scale, padding, circleRadius, now);
 						}
 					}
 				}
