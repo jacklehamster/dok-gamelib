@@ -87,7 +87,7 @@ SceneManager.add({
 				ship.dx *= .9;
 				ship.dz *= .9;
 				ship.x += ship.dx;
-				ship.z += -1 + ship.dz * 2;
+				ship.z += -1.5 + ship.dz * 2;
 
 				cam.x += (ship.x - cam.x) / 5;
 				cam.z += ((ship.z - 8) - cam.z) / 5;
@@ -128,7 +128,7 @@ SceneManager.add({
 			circleRadius: 1,
 			pos: [
 				({game}, index) => game.missiles[index].x,
-				1.5,
+				1,
 				({game}, index) => game.missiles[index].z,
 			],
 			motion: {
@@ -144,7 +144,6 @@ SceneManager.add({
 					0,
 				]
 			},	
-			scale: [.5, .5],		
 			effects: {
 				tintColor: 0xFF99AA00,
 				brightness: 130,
