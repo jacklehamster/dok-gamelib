@@ -249,6 +249,7 @@ class ISpriteRenderer {
 				if (updateTimes.scale === now || updateTimes.type === now || updateTimes.hotspot === now || updateTimes.curvature === now
 					|| updateTimes.hidden === now || updateTimes.corners === now || updateTimes.rotation === now) {
 					const { scale, hotspot, hidden, corners, rotation, effects, type } = sprite;
+
 					if (hidden) {
 						this.setInactive(sprite);
 					} else {
@@ -348,6 +349,7 @@ class ISpriteRenderer {
 			0, 0, 0, 0, 0, 0,
 		);
 		sprite.inactive = true;
+		sprite.hidden = true;
 	}
 
 	getNormal(vertices, curvature, i) {

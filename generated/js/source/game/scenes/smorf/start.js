@@ -9,6 +9,10 @@ SceneManager.add({
 			[-4, 3, 0],
 		];
 		game.castleGround = {};
+		game.turn = {
+			value: 0,
+			goal: 0,
+		};
 		game.onCastle.run();
 	},
 	onCastle: ({game}) => {
@@ -25,11 +29,12 @@ SceneManager.add({
 		background: 0x99ffff,
 	},
 	view: {
-		cameraDistance: 15,
+		cameraDistance: 25,
 		tilt: .8,
+		turn: ({game}) => game.turn.value,
 		pos: [
 			({game}) => game.cam[0],
-			3,
+			-5,
 			({game}) => game.cam[2],
 		],
 		depthEffect: {
@@ -53,16 +58,33 @@ SceneManager.add({
 		},
 	},
 	refresh: ({game}) => {
-		const { keys: { actions: { mov } } } = game;
+		const { keys: { actions: { mov, turn } } } = game;
+
+		//	turn camera
+		const turnSpeed = .1;
+		const turnStep = Math.PI / 8;
+		if (turn) {
+			game.turn.value += turn * turnSpeed;
+			game.turn.goal = (Math.floor(game.turn.value / turnStep) + (turn > 0 ? 1 : 0)) * turnStep;
+		} else {
+			const turnDiff = game.turn.goal - game.turn.value;
+			if (Math.abs(turnDiff) >= 0.01) {
+				game.turn.value += turnDiff / 5;
+			} else {
+				game.turn.value = game.turn.goal = game.turn.goal % (Math.PI * 2);
+			}
+		}
+
 		const speed = .4;
 		if (mov.dist) {
 			if (mov.x) {
 				game.lastMov = mov.x;
 			}
-			game.select[0] += mov.x / mov.dist * speed;
-			game.select[2] += mov.y / mov.dist * speed;
+			const [ dx, dz ] = MotionUtils.getNormalDirection(game.turn.value, mov.x, mov.y);
+			game.select[0] += dx * speed;
+			game.select[2] += dz * speed;
 		}
-		MotionUtils.follow(game.cam, game.select[0], game.select[1], game.select[2] + 5, .1, 0);
+		MotionUtils.follow(game.cam, game.select[0], game.select[1], game.select[2], .1, 0);
 	},
 	spriteData: [
 		{
@@ -96,6 +118,11 @@ SceneManager.add({
 				[ "walk", "0-1" ],
 			],
 		},
+		{
+			src: "smorf-tree",
+			spriteSize: [288, 468],
+			padding: 1,
+		},
 	],	
 	sprites: [
 		{
@@ -110,9 +137,9 @@ SceneManager.add({
 				const yPos = game.view.pos[2].get();
 				for (let i = 0; i < game.castle.length; i++) {
 					const elem = game.castle[i];
-					if (elem[2] - yPos > 10) {
+					if (elem[2] - yPos > 25) {
 						elem[2] -= 50;
-					} else if (elem[2] - yPos < -40) {
+					} else if (elem[2] - yPos < -25) {
 						elem[2] += 50;
 					}
 				}
@@ -137,9 +164,9 @@ SceneManager.add({
 				for (let i = 0; i < game.smurfs.length; i++) {
 					const smurf = game.smurfs[i];
 					smurf.x+= .05;
-					if (smurf.z - yPos > 10) {
+					if (smurf.z - yPos > 25) {
 						smurf.z -= 50;
-					} else if (smurf.z - yPos < -40) {
+					} else if (smurf.z - yPos < -25) {
 						smurf.z += 50;
 					}
 				}
@@ -163,9 +190,9 @@ SceneManager.add({
 				const yPos = game.view.pos[2].get();
 				for (let i = 0; i < game.mushrooms.length; i++) {
 					const mushroom = game.mushrooms[i];
-					if (mushroom.z - yPos > 10) {
+					if (mushroom.z - yPos > 25) {
 						mushroom.z -= 50;
-					} else if (mushroom.z - yPos < -40) {
+					} else if (mushroom.z - yPos < -25) {
 						mushroom.z += 50;
 					}
 
@@ -237,14 +264,23 @@ SceneManager.add({
 			},
 		},
 		{
+			src: "smorf-tree",
+			scale: [10, 10],
+			pos: [
+				5,
+				3,
+				5,
+			],
+		},
+		{
 			init: ({definition}) => {
 				definition.cols = 60;
-				definition.rows = 50;
+				definition.rows = 60;
 				definition.tiles = [];
 				for (let y = 0; y < definition.rows; y++) {
 					for (let x = 0; x < definition.cols; x++) {
 						definition.tiles.push({
-							x: x - definition.cols / 2, y: y - definition.rows / 2,
+							x: (x - definition.cols / 2) * 2, y: (y - definition.rows / 2) * 2,
 							corners: [
 								Math.random()*.05,
 								Math.random()*.05,
@@ -258,18 +294,17 @@ SceneManager.add({
 			refresh: ({game, definition}) => {
 				const xPos = game.view.pos[0].get();
 				const yPos = game.view.pos[2].get();
-				const limit = definition.cols / 2;
 				for (let i = 0; i < definition.tiles.length; i++) {
 					const tile = definition.tiles[i];
-					if (tile.y - yPos > 10) {
-						tile.y -= 50;
-					} else if (tile.y - yPos < -40) {
-						tile.y += 50;
+					if (tile.y - yPos > definition.rows) {
+						tile.y -= definition.rows * 2;
+					} else if (tile.y - yPos < -definition.rows) {
+						tile.y += definition.rows * 2;
 					}
-					if (tile.x - xPos > limit) {
-						tile.x -= definition.cols;
-					} else if (tile.x - xPos < -limit) {
-						tile.x += definition.cols;
+					if (tile.x - xPos > definition.cols) {
+						tile.x -= definition.cols * 2;
+					} else if (tile.x - xPos < -definition.cols) {
+						tile.x += definition.cols * 2;
 					}
 				}
 			},
@@ -280,6 +315,7 @@ SceneManager.add({
 				tintColor: 0xFF009900,
 				brightness: ({game, definition}, index) => 20 + definition.farness.get(index) * 100,
 			},
+			scale: [2.2, 2.2],
 			corners: [
 				({definition}, index) => definition.tiles[index].corners[0],
 				({definition}, index) => definition.tiles[index].corners[1],

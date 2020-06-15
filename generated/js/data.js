@@ -1081,81 +1081,86 @@ function getData() {
             "rect": [0, 0, 1024, 1024],
             "index": 1
           },
+          "smorf-tree": {
+            "scenes": ["smorf"],
+            "rect": [1032, 0, 289, 469],
+            "index": 1
+          },
           "penguin": {
             "scenes": ["cubot", "penguin", "stup"],
-            "rect": [1032, 0, 256, 320],
+            "rect": [1329, 0, 256, 320],
             "index": 1
           },
           "fruits": {
             "scenes": ["keep-alive"],
-            "rect": [1296, 0, 512, 256],
+            "rect": [1593, 0, 512, 256],
             "index": 1
           },
           "slime": {
             "scenes": ["keep-alive"],
-            "rect": [1816, 0, 512, 256],
+            "rect": [2113, 0, 512, 256],
             "index": 1
           },
           "artic": {
             "scenes": ["penguin", "slope", "smorf"],
-            "rect": [2336, 0, 256, 256],
+            "rect": [2633, 0, 256, 256],
             "index": 1
           },
           "selector": {
             "scenes": ["keep-alive"],
-            "rect": [2600, 0, 192, 192],
+            "rect": [2897, 0, 192, 192],
             "index": 1
           },
           "zombie": {
             "scenes": ["rogue-zombie"],
-            "rect": [2800, 0, 128, 192],
+            "rect": [3097, 0, 128, 192],
             "index": 1
           },
           "blue-wall": {
             "scenes": ["penguin", "rogue-zombie", "video-maze"],
-            "rect": [2936, 0, 64, 128],
+            "rect": [3233, 0, 64, 128],
             "index": 1
           },
-          "arm": {"scenes": ["cubot"], "rect": [3008, 0, 64, 64], "index": 1},
+          "arm": {"scenes": ["cubot"], "rect": [3305, 0, 64, 64], "index": 1},
           "water-mix": {
             "scenes": ["keep-alive", "keep-alive-intro"],
-            "rect": [3080, 0, 64, 64],
+            "rect": [3377, 0, 64, 64],
             "index": 1
           },
           "water": {
             "scenes": ["penguin", "tp-boy"],
-            "rect": [3152, 0, 64, 64],
+            "rect": [3449, 0, 64, 64],
             "index": 1
           },
           "blue-ground": {
             "scenes": ["cubot", "keep-alive"],
-            "rect": [3224, 0, 32, 32],
+            "rect": [3521, 0, 32, 32],
             "index": 1
           },
           "dirt-ground": {
             "scenes": ["cubot", "keep-alive"],
-            "rect": [3264, 0, 32, 32],
+            "rect": [3561, 0, 32, 32],
             "index": 1
           },
-          "foot": {"scenes": ["cubot"], "rect": [3304, 0, 32, 32], "index": 1},
+          "foot": {"scenes": ["cubot"], "rect": [3601, 0, 32, 32], "index": 1},
           "roboface": {
             "scenes": ["cubot"],
-            "rect": [3344, 0, 32, 32],
+            "rect": [3641, 0, 32, 32],
             "index": 1
           },
           "grass-ground": {
             "scenes": ["keep-alive"],
-            "rect": [3384, 0, 32, 32],
+            "rect": [3681, 0, 32, 32],
             "index": 1
           },
           "sand-ground": {
             "scenes": ["keep-alive", "keep-alive-intro"],
-            "rect": [3424, 0, 32, 32],
+            "rect": [3721, 0, 32, 32],
             "index": 1
           },
           "color-blocks": {
             "scenes": ["rogue-zombie"],
-            "rect": [3464, 0, 2, 2],
+            "rect": [3761, 0, 2, 2],
             "index": 1
           },
           "smorf-pawer": {
@@ -1241,19 +1246,26 @@ function getData() {
             "rect": [3412, 0, 128, 64],
             "index": 2,
             "scale": 4
+          },
+          "ship": {
+            "scenes": ["slope"],
+            "rect": [3548, 0, 64, 64],
+            "index": 2,
+            "scale": 4
           }
         },
         "freeCells": [
-          {"rect": [3474, 0, 622, 10], "index": 1},
-          {"rect": [3464, 10, 632, 30], "index": 1},
-          {"rect": [3224, 40, 872, 32], "index": 1},
-          {"rect": [3008, 72, 1088, 64], "index": 1},
-          {"rect": [2936, 136, 1160, 64], "index": 1},
-          {"rect": [2600, 200, 1496, 64], "index": 1},
-          {"rect": [1296, 264, 2800, 64], "index": 1},
-          {"rect": [1032, 328, 3064, 3768], "index": 1},
+          {"rect": [3771, 0, 325, 10], "index": 1},
+          {"rect": [3761, 10, 335, 30], "index": 1},
+          {"rect": [3521, 40, 575, 32], "index": 1},
+          {"rect": [3305, 72, 791, 64], "index": 1},
+          {"rect": [3233, 136, 863, 64], "index": 1},
+          {"rect": [2897, 200, 1199, 64], "index": 1},
+          {"rect": [1593, 264, 2503, 64], "index": 1},
+          {"rect": [1329, 328, 2767, 149], "index": 1},
+          {"rect": [1032, 477, 3064, 3619], "index": 1},
           {"rect": [0, 1032, 1032, 3064], "index": 1},
-          {"rect": [3548, 0, 548, 72], "index": 2},
+          {"rect": [3620, 0, 476, 72], "index": 2},
           {"rect": [3276, 72, 820, 32], "index": 2},
           {"rect": [3204, 104, 892, 22], "index": 2},
           {"rect": [3014, 126, 1082, 10], "index": 2},
@@ -1298,8 +1310,10 @@ function getData() {
         "sand-ground=195dbf2503d4cf4733ac04e566644b08cf8dfb83ce93b2238d21405ec05625b3",
         "sand-ground=195dbf2503d4cf4733ac04e566644b08cf8dfb83ce93b2238d21405ec05625b3",
         "selector=81e92c790618a40bdb64bf376475e8b574cd4a9f2d44c758cbdcc2ac2907e375",
+        "ship@4x=bed1f7c5a5811a8c71fc315e95cd24235899ea65c0a24d891109f373803f42d7",
         "slime=b02799277c2f66318c5957dbb3f6419caafebecf4b05320cc7c5926b390d4f77",
         "smorf-pawer@2x=660580efb44263d8c73b7a2400536f96491fd0c49722a47836cc9adb844d75b9",
+        "smorf-tree=b54c1c07fa2127bdb1447a807ea0c5656890a42a4dc592158d31d02cc2b47d38",
         "smorf2@2x=aaa7a8d2c2e1ab14f57b957947da88fc84d1761d4f376aab298f6a66488d9573",
         "smorf@4x=c62d97b95005bffa0c4bbdc6cd4891b18609f4a7bdfdf6394c15ad259dfdbe00",
         "tp-boy@4x=33e8cfc18e19a439cae09e340ffb5fbdfc53db5790cc1d9d19c425fdd9ed49cf",
@@ -1488,7 +1502,7 @@ function getData() {
     },
     "webgl": {
       "fragmentShader": "/**\n\tDok-gamelib engine\n\n\tDescription: Game engine for producing web games easily using JavaScript and WebGL\n\tAuthor: jacklehamster\n\tSourcode: https://github.com/jacklehamster/dok-gamelib\n\tYear: 2020\n */\n\nprecision mediump float;\n\nconst int NUM_TEXTURES = 16;\n\nuniform sampler2D uTextures[NUM_TEXTURES];\nvarying vec4 vTextureData;\nvarying vec2 vTextureSize;\nvarying float zDist;\nvarying float light;\nvarying vec3 vNormal;\nvarying vec3 vFragPos;\nvarying float vTextureSlot;\nvarying float vBrightness;\nvarying vec4 vTintColor;\nvarying float vHue;\nvarying vec3 vChromaKeyLowColor;\nvarying vec3 vChromaKeyHighColor;\nvarying vec4 vChromaKeyReplaceColor;\n\nuniform vec4 uBackground;\nuniform vec3 uLightPos;\nuniform vec4 uLightIntensity;\nuniform vec3 uCamPosition;\nuniform vec4 uDepthEffect;\n\nvec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {\n\tint textureInt = int(textureSlot);\n\tfor (int i = 0; i < NUM_TEXTURES; ++i) {\n\t\tif (textureInt == i) {\n\t\t\treturn texture2D(textures[i], vTexturePoint);\n\t\t}\n\t}\n\treturn texture2D(textures[0], vTexturePoint);\n}\n\nvec3 rgb2hsv(vec3 c) {\n    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);\n    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));\n    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));\n\n    float d = q.x - min(q.w, q.y);\n    float e = 1.0e-10;\n    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);\n}\n\nvec3 hsv2rgb(vec3 c) {\n    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\n    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\n    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\n}\n\nvec4 alterHueSatLum(vec4 color, vec3 vHSV) {\n    vec3 fragRGB = color.rgb;\n    vec3 fragHSV = rgb2hsv(fragRGB).xyz;\n    fragHSV.x += vHSV.x;\n    fragHSV.yz *= vHSV.yz;\n    fragRGB = hsv2rgb(fragHSV);\n    return vec4(fragRGB, color.a);\n}\n\nbool isColorBetween(vec3 rgb, vec3 low, vec3 high) {\n\treturn low.r <= rgb.r && rgb.r <= high.r\n\t\t&& low.g <= rgb.g && rgb.g <= high.g\n\t\t&& low.b <= rgb.b && rgb.b <= high.b;\n}\n\nvoid main(void) {\n\tvec3 normal = normalize(vNormal);\n\tvec3 lightDir = normalize(uLightPos - vFragPos.xyz);\n\tvec3 viewDir = normalize(uCamPosition-vFragPos);\n\tfloat ambient = uLightIntensity[0] * vBrightness / 100.0;\n\tfloat diffusion = uLightIntensity[1];\n\tfloat specular = uLightIntensity[2];\n\tfloat shininess = uLightIntensity[3];\n\n\tvec3 reflectDir = reflect(-lightDir, normal);  \n\n\tfloat diffLight = diffusion * dot(normal, lightDir);\n\tfloat spec = specular * pow(max(dot(viewDir, reflectDir), 0.0), shininess);\n\n\tvec4 color;\n\n\t//\ttexture as circle\n\tvec2 texturePoint = vTextureData.xy;\n\tvec2 textureCenter = vTextureData.zw;\n\tif (vTextureSize[0] > 0.0 && vTextureSize[1] > 0.0) {\n\t\tvec2 uv = texturePoint;\n\t\tfloat dx = (uv.x - textureCenter.x) / vTextureSize[0];\n\t\tfloat dy = (uv.y - textureCenter.y) / vTextureSize[1];\n\t\tfloat textureDist = sqrt(dx * dx + dy * dy);\n\n\t\tcolor = getTextureColor(uTextures, vTextureSlot, uv);\t\t\n\t\tcolor.a *= (.992 - textureDist);\n\t} else {\n\t\tcolor = getTextureColor(uTextures, vTextureSlot, texturePoint);\t\t\n\t}\n\n\tif (isColorBetween(color.rgb, vChromaKeyLowColor, vChromaKeyHighColor)) {\n\t\tcolor = vChromaKeyReplaceColor;\n\t}\n\n\t//\tSDF handling, for text and reduced size sprite\n    color.a = smoothstep(.5 - .001, .5 + .001, color.a);\n\tif (color.a <= 0.001) {\n\t\tdiscard;\n\t}\n\n\tfloat depthFading = uDepthEffect[0];\n\tfloat closeSaturation = uDepthEffect[2];\n\tfloat farSaturation = uDepthEffect[3];\n\n\t//\ttint\n\tcolor = mix(color, vec4(vTintColor.rgb, color.a), vTintColor.a);\n\t//\tdesaturate / blend with background with distance\n\tfloat distance = zDist;\n\tfloat dValue = smoothstep(0.0, 1.5, distance) / 1.5;\n\tcolor = alterHueSatLum(color, vec3(1.0 + vHue, (1.0 - dValue) * closeSaturation + dValue * farSaturation, min(1.2, max(0.0, .8 + distance * .8))));\n\tcolor = mix(vec4(color.rgb * (ambient + diffLight + spec), color.a), uBackground, distance * depthFading);\n\n\tgl_FragColor = color;\n}\n",
-      "vertexShader": "/**\n\tDok-gamelib engine\n\n\tDescription: Game engine for producing web games easily using JavaScript and WebGL\n\tAuthor: jacklehamster\n\tSourcode: https://github.com/jacklehamster/dok-gamelib\n\tYear: 2020\n */\n\nprecision mediump float;\n\nattribute vec3 aVertexPosition;\t\t\t//\t[ x, y, z ]\nattribute vec3 aOffset;\t\t\t\t\t//\t[ x, y, z ]\nattribute vec3 aNormal;\t\t\t\t\t//\t[ x, y, z ]\nattribute vec4 aVertexMove;\t\t\t\t//\t[ x, y, z, time ]\nattribute vec3 aVertexGravity;\t\t\t//\t[ x, y, z ]\n\nattribute float aType;\t\t\t\t\t//\twall/floor=0, sprite=1, water=2, ...\n\nattribute vec4 aVertexTextureCoord;\t\t//\t[ x, y, spritewidth, spriteheight ]\nattribute vec4 aVertexTextureCenter;\t//\t[ x, y, circleRadiusFactor, textureSlot ]\nattribute vec4 aAnimationData; \t\t\t//\t[ time, start, total, frameRate ]\nattribute vec2 aGrid;\t\t\t\t\t//\t[ cols, rows ]\nattribute vec4 aColorEffect;\t\t\t//\t[ tint color, mix, hue change, brightness ]\n\nattribute vec3 aBlackholeCenter;\t\t//\t[ x, y, z ]\nattribute vec2 aBlackholeInfo;\t\t\t//\t[ strength, distance ]\n\nattribute vec4 aChromaKey;\t\t\t\t//\t[ low, high, color, colorAlpha ]\n\nuniform mat4 uProjectionMatrix;\nuniform mat4 uViewMatrix;\nuniform mat4 uCameraRotation;\nuniform float uCurvature;\nuniform float uNow;\nuniform vec3 uLightPos;  \n\nvarying vec4 vTextureData;\nvarying vec2 vTextureSize;\nvarying float zDist;\nvarying vec3 vNormal;\nvarying vec3 vFragPos;\nvarying float vTextureSlot;\nvarying float vBrightness;\nvarying vec4 vTintColor;\nvarying float vHue;\nvarying vec3 vChromaKeyLowColor;\nvarying vec3 vChromaKeyHighColor;\nvarying vec4 vChromaKeyReplaceColor;\n\nvec4 makeColorFromRGB(float rgb, float mixRatio) {\n\treturn vec4(\n\t\tmod(rgb / (256.0 * 256.0), 256.0) / 255.0,\n\t\tmod(rgb / 256.0, 256.0) / 255.0,\n\t\tmod(rgb, 256.0) / 255.0,\n\t\tmin(1.0, mixRatio));\n}\n\nvoid main(void) {\n\tfloat timeStart = aVertexMove.w;\n\tfloat time = uNow - timeStart;\n\tvec4 worldPos = vec4(aVertexPosition, 1.0);\n\tvNormal = aNormal;\n\n\tif (aType == 1.0) {\t//\tsprite face camera\n\t\tworldPos = uCameraRotation * worldPos;\n\t\tvNormal = (uCameraRotation * vec4(vNormal, 1.0)).xyz;\n\t}\n\n\tworldPos.xyz += aOffset + aVertexMove.xyz * time + aVertexGravity.xyz * time * time * 0.5;\n\n\tfloat strength = aBlackholeInfo[0];\n\tfloat distance = aBlackholeInfo[1];\n\tif (strength != 0.0) {\t//\tapply blackhole (generally used for producing spheres)\n\t\tvec3 newWorldPos = mix(worldPos.xyz, aBlackholeCenter, strength);\n\t\tif (distance != 0.0) {\n\t\t\tvec3 blackholeToPoint = newWorldPos - aBlackholeCenter;\n\t\t\tif (length(blackholeToPoint) < distance) {\n\t\t\t\tnewWorldPos = normalize(worldPos.xyz - aBlackholeCenter) * distance;\n\t\t\t}\n\t\t}\n\t\tvNormal = normalize(aBlackholeCenter - newWorldPos);\n\t\tworldPos.xyz = newWorldPos;\n\t}\n\n\n\tif (aType == 8.0) {\t//\twater wave\n\t\tworldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .3;\n\t}\n\n\tvec4 position = uProjectionMatrix * uViewMatrix * worldPos;\n\tposition.y -= (position.z * position.z + position.x * position.x * .2) * uCurvature / 500.0;\n\n\tfloat cols = aGrid[0];\n\tfloat rows = aGrid[1];\n\tfloat animTime = aAnimationData[0];\n\tfloat start = aAnimationData[1];\n\tfloat total = aAnimationData[2];\n\tfloat fps = aAnimationData[3];\n\tfloat index = mod(max(0.0, start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, abs(total)) * sign(total)), cols * rows);\n\tfloat texRow = floor(index / cols);\n\tfloat texCol = floor(mod(index + .4, cols));\n\tfloat textureXShift = texCol * aVertexTextureCoord[2];\n\tfloat textureYShift = texRow * aVertexTextureCoord[3];\n\tfloat circleRadiusFactor = aVertexTextureCenter.z;\n\tvTextureData.xy = aVertexTextureCoord.xy;\n\tvTextureData.x = mod(vTextureData.x, 2.0);\n\tvTextureData.y = mod(vTextureData.y, 2.0);\n\tvTextureData.zw = aVertexTextureCenter.xy;\n\tvTextureData.x += textureXShift;\n\tvTextureData.y += textureYShift;\n\tvTextureData.z += textureXShift;\n\tvTextureData.w += textureYShift;\n\tvTextureSize = aVertexTextureCoord.zw * circleRadiusFactor;\n\tvTextureSlot = aVertexTextureCenter.w;\t\n\tvTintColor = aColorEffect.y == 0.0 ? vec4(0.0) : makeColorFromRGB(aColorEffect.x, aColorEffect.y);\n\tvHue = aColorEffect.z;\n\tvBrightness = aColorEffect.w;\n\n\tvChromaKeyLowColor = makeColorFromRGB(aChromaKey[0], 1.0).rgb;\n\tvChromaKeyHighColor = makeColorFromRGB(aChromaKey[1], 1.0).rgb;\n\tvChromaKeyReplaceColor = makeColorFromRGB(aChromaKey[2], aChromaKey[3]);\n\n\tzDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 40.0)) * .2);\n\tgl_Position = position;\n\tvFragPos = worldPos.xyz;\n}"
+      "vertexShader": "/**\n\tDok-gamelib engine\n\n\tDescription: Game engine for producing web games easily using JavaScript and WebGL\n\tAuthor: jacklehamster\n\tSourcode: https://github.com/jacklehamster/dok-gamelib\n\tYear: 2020\n */\n\nprecision mediump float;\n\nattribute vec3 aVertexPosition;\t\t\t//\t[ x, y, z ]\nattribute vec3 aOffset;\t\t\t\t\t//\t[ x, y, z ]\nattribute vec3 aNormal;\t\t\t\t\t//\t[ x, y, z ]\nattribute vec4 aVertexMove;\t\t\t\t//\t[ x, y, z, time ]\nattribute vec3 aVertexGravity;\t\t\t//\t[ x, y, z ]\n\nattribute float aType;\t\t\t\t\t//\twall/floor=0, sprite=1, water=2, ...\n\nattribute vec4 aVertexTextureCoord;\t\t//\t[ x, y, spritewidth, spriteheight ]\nattribute vec4 aVertexTextureCenter;\t//\t[ x, y, circleRadiusFactor, textureSlot ]\nattribute vec4 aAnimationData; \t\t\t//\t[ time, start, total, frameRate ]\nattribute vec2 aGrid;\t\t\t\t\t//\t[ cols, rows ]\nattribute vec4 aColorEffect;\t\t\t//\t[ tint color, mix, hue change, brightness ]\n\nattribute vec3 aBlackholeCenter;\t\t//\t[ x, y, z ]\nattribute vec2 aBlackholeInfo;\t\t\t//\t[ strength, distance ]\n\nattribute vec4 aChromaKey;\t\t\t\t//\t[ low, high, color, colorAlpha ]\n\nuniform mat4 uProjectionMatrix;\nuniform mat4 uViewMatrix;\nuniform mat4 uCameraRotation;\nuniform float uCurvature;\nuniform float uNow;\nuniform vec3 uLightPos;  \n\nvarying vec4 vTextureData;\nvarying vec2 vTextureSize;\nvarying float zDist;\nvarying vec3 vNormal;\nvarying vec3 vFragPos;\nvarying float vTextureSlot;\nvarying float vBrightness;\nvarying vec4 vTintColor;\nvarying float vHue;\nvarying vec3 vChromaKeyLowColor;\nvarying vec3 vChromaKeyHighColor;\nvarying vec4 vChromaKeyReplaceColor;\n\nvec4 makeColorFromRGB(float rgb, float mixRatio) {\n\treturn vec4(\n\t\tmod(rgb / (256.0 * 256.0), 256.0) / 255.0,\n\t\tmod(rgb / 256.0, 256.0) / 255.0,\n\t\tmod(rgb, 256.0) / 255.0,\n\t\tmin(1.0, mixRatio));\n}\n\nvoid main(void) {\n\tfloat timeStart = aVertexMove.w;\n\tfloat time = uNow - timeStart;\n\tvec4 worldPos = vec4(aVertexPosition, 1.0);\n\tvNormal = aNormal;\n\n\tif (aType == 1.0) {\t//\tsprite face camera\n\t\tworldPos = uCameraRotation * worldPos;\n\t\tvNormal = (uCameraRotation * vec4(vNormal, 1.0)).xyz;\n\t}\n\n\tworldPos.xyz += aOffset + aVertexMove.xyz * time + aVertexGravity.xyz * time * time * 0.5;\n\n\tfloat strength = aBlackholeInfo[0];\n\tfloat distance = aBlackholeInfo[1];\n\tif (strength != 0.0) {\t//\tapply blackhole (generally used for producing spheres)\n\t\tvec3 newWorldPos = mix(worldPos.xyz, aBlackholeCenter, strength);\n\t\tif (distance != 0.0) {\n\t\t\tvec3 blackholeToPoint = newWorldPos - aBlackholeCenter;\n\t\t\tif (length(blackholeToPoint) < distance) {\n\t\t\t\tnewWorldPos = normalize(worldPos.xyz - aBlackholeCenter) * distance;\n\t\t\t}\n\t\t}\n\t\tvNormal = normalize(aBlackholeCenter - newWorldPos);\n\t\tworldPos.xyz = newWorldPos;\n\t}\n\n\n\tif (aType == 8.0) {\t//\twater wave\n\t\tworldPos.y += sin((uNow * 0.05 + worldPos.x * 20.0 + worldPos.z * 50.0) * .2) * .3;\n\t}\n\n\tvec4 position = uProjectionMatrix * uViewMatrix * worldPos;\n\tposition.y -= (position.z * position.z + position.x * position.x * .2) * uCurvature / 500.0;\n\n\tfloat cols = aGrid[0];\n\tfloat rows = aGrid[1];\n\tfloat animTime = aAnimationData[0];\n\tfloat start = aAnimationData[1];\n\tfloat total = aAnimationData[2];\n\tfloat fps = aAnimationData[3];\n\tfloat index = mod(max(0.0, start + mod(floor((uNow - animTime) * fps / 1000.0) + .4, abs(total)) * sign(total)), cols * rows);\n\tfloat texRow = floor(index / cols);\n\tfloat texCol = floor(mod(index + .4, cols));\n\tfloat textureXShift = texCol * aVertexTextureCoord[2];\n\tfloat textureYShift = texRow * aVertexTextureCoord[3];\n\tfloat circleRadiusFactor = aVertexTextureCenter.z;\n\tvTextureData.xy = aVertexTextureCoord.xy;\n\tvTextureData.x = mod(vTextureData.x, 2.0);\n\tvTextureData.y = mod(vTextureData.y, 2.0);\n\tvTextureData.zw = aVertexTextureCenter.xy;\n\tvTextureData.x += textureXShift;\n\tvTextureData.y += textureYShift;\n\tvTextureData.z += textureXShift;\n\tvTextureData.w += textureYShift;\n\tvTextureSize = aVertexTextureCoord.zw * circleRadiusFactor;\n\tvTextureSlot = aVertexTextureCenter.w;\t\n\tvTintColor = aColorEffect.y == 0.0 ? vec4(0.0) : makeColorFromRGB(aColorEffect.x, aColorEffect.y);\n\tvHue = aColorEffect.z;\n\tvBrightness = aColorEffect.w;\n\n\tvChromaKeyLowColor = makeColorFromRGB(aChromaKey[0], 1.0).rgb;\n\tvChromaKeyHighColor = makeColorFromRGB(aChromaKey[1], 1.0).rgb;\n\tvChromaKeyReplaceColor = makeColorFromRGB(aChromaKey[2], aChromaKey[3]);\n\n\tzDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 40.0)) * .15);\n\tgl_Position = position;\n\tvFragPos = worldPos.xyz;\n}"
     }
   };
 				
