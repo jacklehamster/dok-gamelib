@@ -439,9 +439,7 @@ SceneManager.add({Game: class extends Game {
 		SpriteUtils.makeSprite({
 			src: "dok",
 			data: {
-				currentDok: ({game}, index) => {
-					return game.socket.getSharedDataAt(index);
-				},
+				currentDok: ({game}, index) => game.socket.getSharedDataAt(index),
 			},
 			position: [
 				({definition: {data: {currentDok}}}, index) => currentDok.get(index).pos[0],
