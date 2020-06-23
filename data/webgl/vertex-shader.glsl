@@ -121,7 +121,7 @@ void main(void) {
 	vChromaKeyHighColor = makeColorFromRGB(aChromaKey[1], 1.0).rgb;
 	vChromaKeyReplaceColor = makeColorFromRGB(aChromaKey[2], aChromaKey[3]);
 
-	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 40.0)) * .15);
+	zDist = min(1.0, (abs(position.z / 12.0) + abs(position.z / 40.0)) * .14);
 	gl_Position = position;
 	vFragPos = worldPos.xyz;
 }
