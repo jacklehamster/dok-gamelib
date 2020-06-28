@@ -1075,207 +1075,243 @@ function getData() {
           {"url": "generated/spritesheets/sheet2.png", "sdf": true}
         ],
         "sprites": {
-          "dok": {"scenes": ["dobuki"], "rect": [0, 0, 4096, 4096], "index": 0},
+          "dok": {
+            "scenes": ["dobuki", "so-good"],
+            "rect": [0, 0, 4096, 4096],
+            "index": 0
+          },
           "bear": {
             "scenes": ["keep-alive"],
             "rect": [0, 0, 1024, 1024],
             "index": 1
           },
+          "eye-decor": {
+            "scenes": ["so-good"],
+            "rect": [1032, 0, 859, 858],
+            "index": 1
+          },
           "smorf-tree": {
             "scenes": ["slope", "smorf"],
-            "rect": [1032, 0, 289, 469],
+            "rect": [1899, 0, 289, 469],
             "index": 1
           },
           "penguin": {
             "scenes": ["cubot", "penguin", "stup"],
-            "rect": [1329, 0, 256, 320],
+            "rect": [2196, 0, 256, 320],
             "index": 1
           },
           "fruits": {
             "scenes": ["keep-alive"],
-            "rect": [1593, 0, 512, 256],
+            "rect": [2460, 0, 512, 256],
             "index": 1
           },
           "slime": {
             "scenes": ["keep-alive"],
-            "rect": [2113, 0, 512, 256],
+            "rect": [2980, 0, 512, 256],
             "index": 1
           },
           "artic": {
             "scenes": ["penguin", "slope", "smorf"],
-            "rect": [2633, 0, 256, 256],
+            "rect": [3500, 0, 256, 256],
             "index": 1
           },
           "selector": {
             "scenes": ["keep-alive"],
-            "rect": [2897, 0, 192, 192],
-            "index": 1
-          },
-          "zombie": {
-            "scenes": ["rogue-zombie"],
-            "rect": [3097, 0, 128, 192],
+            "rect": [3764, 0, 192, 192],
             "index": 1
           },
           "blue-wall": {
             "scenes": ["penguin", "rogue-zombie", "video-maze"],
-            "rect": [3233, 0, 64, 128],
-            "index": 1
-          },
-          "arm": {"scenes": ["cubot"], "rect": [3305, 0, 64, 64], "index": 1},
-          "water-mix": {
-            "scenes": ["keep-alive", "keep-alive-intro"],
-            "rect": [3377, 0, 64, 64],
-            "index": 1
-          },
-          "water": {
-            "scenes": ["penguin", "tp-boy"],
-            "rect": [3449, 0, 64, 64],
+            "rect": [3964, 0, 64, 128],
             "index": 1
           },
           "blue-ground": {
             "scenes": ["cubot", "keep-alive"],
-            "rect": [3521, 0, 32, 32],
-            "index": 1
-          },
-          "dirt-ground": {
-            "scenes": ["cubot", "keep-alive"],
-            "rect": [3561, 0, 32, 32],
-            "index": 1
-          },
-          "foot": {"scenes": ["cubot"], "rect": [3601, 0, 32, 32], "index": 1},
-          "roboface": {
-            "scenes": ["cubot"],
-            "rect": [3641, 0, 32, 32],
-            "index": 1
-          },
-          "grass-ground": {
-            "scenes": ["keep-alive"],
-            "rect": [3681, 0, 32, 32],
-            "index": 1
-          },
-          "sand-ground": {
-            "scenes": ["keep-alive", "keep-alive-intro"],
-            "rect": [3721, 0, 32, 32],
+            "rect": [4036, 0, 32, 32],
             "index": 1
           },
           "color-blocks": {
             "scenes": ["rogue-zombie"],
-            "rect": [3761, 0, 2, 2],
+            "rect": [4076, 0, 2, 2],
             "index": 1
+          },
+          "dirt-ground": {
+            "scenes": ["cubot", "keep-alive"],
+            "rect": [4036, 40, 32, 32],
+            "index": 1
+          },
+          "foot": {"scenes": ["cubot"], "rect": [4036, 80, 32, 32], "index": 1},
+          "roboface": {
+            "scenes": ["cubot"],
+            "rect": [3964, 136, 32, 32],
+            "index": 1
+          },
+          "grass-ground": {
+            "scenes": ["keep-alive"],
+            "rect": [4004, 136, 32, 32],
+            "index": 1
+          },
+          "sand-ground": {
+            "scenes": ["keep-alive", "keep-alive-intro"],
+            "rect": [4044, 136, 32, 32],
+            "index": 1
+          },
+          "arm": {"scenes": ["cubot"], "rect": [2196, 328, 64, 64], "index": 1},
+          "water-mix": {
+            "scenes": ["keep-alive", "keep-alive-intro"],
+            "rect": [2268, 328, 64, 64],
+            "index": 1
+          },
+          "water": {
+            "scenes": ["penguin", "tp-boy"],
+            "rect": [2340, 328, 64, 64],
+            "index": 1
+          },
+          "zombie": {
+            "scenes": ["rogue-zombie"],
+            "rect": [1899, 477, 128, 192],
+            "index": 1
+          },
+          "hand": {
+            "scenes": ["so-good"],
+            "rect": [0, 0, 1024, 512],
+            "index": 2,
+            "scale": 2
           },
           "smorf-pawer": {
             "scenes": ["smorf"],
-            "rect": [0, 0, 512, 512],
+            "rect": [1032, 0, 512, 512],
+            "index": 2,
+            "scale": 2
+          },
+          "body": {
+            "scenes": ["so-good"],
+            "rect": [1552, 0, 512, 512],
             "index": 2,
             "scale": 2
           },
           "tp-boy": {
             "scenes": ["tp-boy"],
-            "rect": [520, 0, 384, 512],
+            "rect": [2072, 0, 384, 512],
             "index": 2,
             "scale": 4
           },
           "tp": {
             "scenes": ["tp-boy"],
-            "rect": [912, 0, 384, 512],
+            "rect": [2464, 0, 384, 512],
             "index": 2,
             "scale": 4
           },
           "robot": {
             "scenes": ["cubot"],
-            "rect": [1304, 0, 450, 450],
+            "rect": [2856, 0, 450, 450],
             "index": 2,
             "scale": 4
           },
           "creep-font": {
             "scenes": [null],
-            "rect": [1762, 0, 320, 288],
+            "rect": [3314, 0, 320, 288],
             "index": 2,
             "font": true
           },
           "primary-font": {
             "scenes": [null],
-            "rect": [2090, 0, 320, 288],
+            "rect": [3642, 0, 320, 288],
             "index": 2,
             "font": true
           },
-          "home-floor": {
-            "scenes": ["dobuki"],
-            "rect": [2418, 0, 165, 175],
+          "grass-tile": {
+            "scenes": ["tp-boy"],
+            "rect": [3970, 0, 64, 96],
             "index": 2,
-            "scale": 2
+            "scale": 16
           },
-          "tree": {
-            "scenes": ["dobuki"],
-            "rect": [2591, 0, 143, 156],
+          "ship": {
+            "scenes": ["slope"],
+            "rect": [3970, 104, 64, 64],
             "index": 2,
-            "scale": 2
+            "scale": 4
           },
           "gun": {
             "scenes": ["rogue-zombie"],
-            "rect": [2742, 0, 128, 128],
+            "rect": [3314, 296, 128, 128],
             "index": 2,
             "scale": 8
           },
           "smorf2": {
             "scenes": ["smorf"],
-            "rect": [2878, 0, 128, 128],
+            "rect": [3450, 296, 128, 128],
             "index": 2,
             "scale": 2
           },
           "water.jpg": {
             "scenes": ["stup"],
-            "rect": [3014, 0, 182, 118],
+            "rect": [3586, 296, 182, 118],
             "index": 2,
             "scale": 4
           },
-          "grass-tile": {
-            "scenes": ["tp-boy"],
-            "rect": [3204, 0, 64, 96],
-            "index": 2,
-            "scale": 16
-          },
           "handy": {
             "scenes": ["smorf"],
-            "rect": [3276, 0, 128, 64],
+            "rect": [3776, 296, 128, 64],
             "index": 2,
             "scale": 4
           },
           "smorf": {
             "scenes": ["smorf"],
-            "rect": [3412, 0, 128, 64],
+            "rect": [3912, 296, 128, 64],
             "index": 2,
             "scale": 4
           },
-          "ship": {
-            "scenes": ["slope"],
-            "rect": [3548, 0, 64, 64],
+          "mouth": {
+            "scenes": ["so-good"],
+            "rect": [1032, 520, 141, 243],
             "index": 2,
-            "scale": 4
+            "scale": 2
+          },
+          "home-floor": {
+            "scenes": ["dobuki", "so-good"],
+            "rect": [1181, 520, 165, 175],
+            "index": 2,
+            "scale": 2
+          },
+          "tree": {
+            "scenes": ["dobuki", "so-good"],
+            "rect": [1354, 520, 143, 156],
+            "index": 2,
+            "scale": 2
           }
         },
         "freeCells": [
-          {"rect": [3771, 0, 325, 10], "index": 1},
-          {"rect": [3761, 10, 335, 30], "index": 1},
-          {"rect": [3521, 40, 575, 32], "index": 1},
-          {"rect": [3305, 72, 791, 64], "index": 1},
-          {"rect": [3233, 136, 863, 64], "index": 1},
-          {"rect": [2897, 200, 1199, 64], "index": 1},
-          {"rect": [1593, 264, 2503, 64], "index": 1},
-          {"rect": [1329, 328, 2767, 149], "index": 1},
-          {"rect": [1032, 477, 3064, 3619], "index": 1},
+          {"rect": [4086, 0, 10, 10], "index": 1},
+          {"rect": [4076, 10, 20, 30], "index": 1},
+          {"rect": [4076, 40, 20, 96], "index": 1},
+          {"rect": [4036, 120, 40, 16], "index": 1},
+          {"rect": [4084, 136, 12, 40], "index": 1},
+          {"rect": [4004, 176, 92, 24], "index": 1},
+          {"rect": [3964, 176, 40, 24], "index": 1},
+          {"rect": [3764, 200, 332, 64], "index": 1},
+          {"rect": [2460, 264, 1636, 64], "index": 1},
+          {"rect": [2412, 328, 1684, 72], "index": 1},
+          {"rect": [2268, 400, 1828, 77], "index": 1},
+          {"rect": [2196, 400, 72, 77], "index": 1},
+          {"rect": [2035, 477, 2061, 389], "index": 1},
+          {"rect": [1899, 677, 136, 189], "index": 1},
+          {"rect": [1032, 866, 3064, 3230], "index": 1},
           {"rect": [0, 1032, 1032, 3064], "index": 1},
-          {"rect": [3620, 0, 476, 72], "index": 2},
-          {"rect": [3276, 72, 820, 32], "index": 2},
-          {"rect": [3204, 104, 892, 22], "index": 2},
-          {"rect": [3014, 126, 1082, 10], "index": 2},
-          {"rect": [2742, 136, 1354, 28], "index": 2},
-          {"rect": [2591, 164, 1505, 19], "index": 2},
-          {"rect": [2418, 183, 1678, 113], "index": 2},
-          {"rect": [1762, 296, 2334, 162], "index": 2},
-          {"rect": [1304, 458, 2792, 62], "index": 2},
-          {"rect": [520, 520, 3576, 3576], "index": 2},
-          {"rect": [0, 520, 520, 3576], "index": 2}
+          {"rect": [4042, 0, 54, 104], "index": 2},
+          {"rect": [4042, 104, 54, 192], "index": 2},
+          {"rect": [3970, 176, 72, 120], "index": 2},
+          {"rect": [4048, 296, 48, 72], "index": 2},
+          {"rect": [3776, 368, 320, 54], "index": 2},
+          {"rect": [3586, 422, 510, 10], "index": 2},
+          {"rect": [3450, 432, 646, 26], "index": 2},
+          {"rect": [3314, 432, 136, 26], "index": 2},
+          {"rect": [2856, 458, 1240, 62], "index": 2},
+          {"rect": [1505, 520, 2591, 164], "index": 2},
+          {"rect": [1354, 684, 2742, 19], "index": 2},
+          {"rect": [1181, 703, 2915, 3393], "index": 2},
+          {"rect": [1032, 771, 149, 3325], "index": 2},
+          {"rect": [0, 520, 1032, 3576], "index": 2}
         ]
       },
       "sha": [
@@ -1289,18 +1325,24 @@ function getData() {
         "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
         "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
         "blue-wall=afe2a99e5a6f1f0d82fd25723ba02da78ae5d251a333b8bd6bc7cd4f1f88b257",
+        "body@2x=20f111432c2a99d1c92035a91a5de33a46f590c2add75311cbc6414e49b9acf9",
         "color-blocks=afee4762dd872c26c4efdc0c3e8d02c3e8ac72ae88864221f1efebc0ad8829a9",
         "creep-font=c3f2ed2e34492ce6ecc2f4adb3acbc7ba769d81eb13442b6aba27b0051a4b903",
         "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
         "dirt-ground=7c580a231e5a13bc828b7d91883d7c9e1369c6969b83824faf492d91c51341cc",
         "dok=07b4c71663276ac38ba1f4380d85d1c61355627cf0df485cdbf64387c0c4c310",
+        "dok=07b4c71663276ac38ba1f4380d85d1c61355627cf0df485cdbf64387c0c4c310",
+        "eye-decor=9f8369730d496937136909927ac27dcacb9441ba2191bda815c2a7d0b272b9f4",
         "foot=47a9f0253185026d820267f2bc9b26110b74e2132443d637a205c82a974951b3",
         "fruits=4a1341065fc6eca737babd36a4ed2ffd6eb8dd2e7cd070d53744d87353b29e1f",
         "grass-ground=7dbd71f6d728b7e8daddb5a06de61b1d707ae77f4a22322371dca4f5bbcf92e4",
         "grass-tile@16x=6259cdee156be7d89753e4573a6a7d06c4583d12fb683c22ebf30e7bf72330f9",
         "gun@8x=7d3022ea52208a926b49ef7adf2517fec0dc069fbe77676c98809bd0f1d1313d",
+        "hand@2x=47929c10b16922e71ea74a8992b0ace7c488086f7f1ea8e0a066311733c4f856",
         "handy@4x=7aa799c669fc63681eb09c6427f571571e6c56406efe43ce263f3bec5c279537",
         "home-floor@2x=670a8e1fad53b113865fec6e0fc6d146114678bebd8d1ae779cf7e453864e886",
+        "home-floor@2x=670a8e1fad53b113865fec6e0fc6d146114678bebd8d1ae779cf7e453864e886",
+        "mouth@2x=674e2e5647450f7b6c00b6db1cfeb69b5db6bff933d0dfb1404ea4bfc663db72",
         "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
         "penguin=52b79a2592e6cf347895df086cab93600364c395caf652f8db39458442d5b1b8",
@@ -1319,6 +1361,7 @@ function getData() {
         "smorf@4x=c62d97b95005bffa0c4bbdc6cd4891b18609f4a7bdfdf6394c15ad259dfdbe00",
         "tp-boy@4x=33e8cfc18e19a439cae09e340ffb5fbdfc53db5790cc1d9d19c425fdd9ed49cf",
         "tp@4x=58560e5173712d77920de86824d3a0ecf46238d909af4df15593c1479be6b906",
+        "tree@2x=e795b999ff8cad5c251a1e14fb9ca70f1b4397cf38833519205b4ae1c2987107",
         "tree@2x=e795b999ff8cad5c251a1e14fb9ca70f1b4397cf38833519205b4ae1c2987107",
         "water-mix=1f292a21ef149d5eb8b57997db57c0dda8962495569fe377549219ca223f1c3d",
         "water-mix=1f292a21ef149d5eb8b57997db57c0dda8962495569fe377549219ca223f1c3d",

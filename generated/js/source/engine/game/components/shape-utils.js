@@ -68,9 +68,10 @@ class ShapeUtils {
 	}
 
 	static cylinder(params) {
-		const { src, type, cols, rows, radius, center, scale, brightness, tintColor, hue, hidden, spherical, fixed } = params;
+		const { id, platformId, src, type, cols, rows, radius, center, scale, brightness, tintColor, hue, hidden, spherical, fixed } = params;
 		return {
 			toSourceCode: () => `ShapeUtils.cylinder(${EditorUtils.formatCode(params)})`,
+			platformId,
 			src,
 			type: type || SpriteType.Front,
 			cols,

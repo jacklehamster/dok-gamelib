@@ -84,6 +84,7 @@ const sources = {
 		"scenes/rogue-zombie/start.js",
 		"scenes/slope/start.js",
 		"scenes/smorf/start.js",
+		"scenes/so-good/start.js",
 		"scenes/stup/start.js",
 		"scenes/tp-boy/start.js",
 		"scenes/video-maze/start.js"
