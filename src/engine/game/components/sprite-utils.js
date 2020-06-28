@@ -16,6 +16,12 @@ class SpriteUtils {
 		return dir;
 	}
 
+	static getDistance(x1, z1, x2, z2) {
+		const dx = x1 - x2;
+		const dz = z1 - z2;
+		return Math.sqrt(dx*dx + dz*dz);
+	}
+
 
 	static overlap(x, z, definition, instanceIndex, multiplier) {
 		const mul = multiplier || 1;
@@ -42,7 +48,7 @@ class SpriteUtils {
 	}
 
 	static makeSprite(params) {
-		const { id, position, heightAboveGround, shadowColor, spriteTint, scale, spriteSize, src,
+		const { id, position, heightAboveGround, shadowColor, spriteTint, spriteHue, spriteBrightness, scale, spriteSize, src,
 			animation, init, refresh, refreshRate, hidden, spriteCount, fixed, data } = params;
 
 		const zoomValue = ({definition}) => {
@@ -77,6 +83,8 @@ class SpriteUtils {
 			hidden: ({definition}, index) => definition.spriteHidden.get(Math.floor(index / 2)),
 			type: (_, index) => index % 2 === 0 ? SpriteType.Sprite: SpriteType.Shadow,
 			effects: {
+				brigthness: spriteBrightness,
+				hue: spriteHue,
 				tintColor: ({definition}, index) => index % 2 === 0
 					? definition.spriteTint.get(Math.floor(index/2)) : (shadowColor || 0xFF000000),
 			},
