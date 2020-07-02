@@ -10,19 +10,15 @@
 
 class TextUtils {
 	static makeSpriteData(fontId) {
-		let font = null;
-
 		return {
 			toSource: (_,editor) => `TextUtils.makeSpriteData(${editor.formatCode(fontId)})`,
+			font: ({game, definition}) => game.getFont(definition.fontId.get()),
 			fontId : fontId || (({game}) => game.getFirstFontName()),
 			src: ({definition}) => definition.fontId.get(),
 			grid: [
-				() => Math.ceil(Math.sqrt(font.characters.length)),
-				({definition}) => Math.ceil(font.characters.length / definition.grid[0].get()),
+				({definition: {font, grid}}) => Math.ceil(Math.sqrt(font.get().characters.length)),
+				({definition: {font, grid}}) => Math.ceil(font.get().characters.length / grid[0].get()),
 			],
-			refresh: ({game, definition}) => {
-				font = game.getFont(definition.fontId.get());
-			},
 		};
 	}
 
