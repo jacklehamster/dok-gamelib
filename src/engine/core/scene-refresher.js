@@ -21,7 +21,7 @@ class SceneRefresher {
 
 	refresh(scene) {
 		const refreshRate = scene.refreshRate.get();
-		if (refreshRate && scene.now - scene.lastRefresh < 1000 / refreshRate) {
+		if (scene.now - scene.lastRefresh < 1000 / (refreshRate||60)) {
 			return;
 		}
 		scene.refresh.run();
