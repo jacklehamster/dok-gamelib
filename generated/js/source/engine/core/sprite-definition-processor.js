@@ -26,7 +26,7 @@ class SpriteDefinitionProcessor {
 			const definition = sprites[i];
 			if (definition.refreshing) {
 				const refreshRate = definition.refreshRate.get();
-				if (refreshRate && now - definition.lastRefresh < 1000 / refreshRate) {
+				if (now - definition.lastRefresh < 1000 / (refreshRate||60)) {
 					continue;
 				}
 				definition.refresh.run();

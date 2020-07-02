@@ -61,7 +61,7 @@ class SpriteDataProcessor {
 		for (let i = 0; i < spriteData.length; i++) {
 			const definition = spriteData[i];
 			const refreshRate = definition.refreshRate.get();
-			if (refreshRate && scene.now - definition.lastRefresh < 1000 / refreshRate) {
+			if (scene.now - definition.lastRefresh < 1000 / (refreshRate||60)) {
 				continue;
 			}
 			definition.refresh.run();

@@ -99,7 +99,7 @@ class UISpriteInstance extends BaseSpriteInstance {
 		}
 
 		if (this.type === "canvas") {
-			const canvasRefresh = canvas.refreshRate.get(instanceIndex);
+			const canvasRefresh = canvas.refreshRate.get(instanceIndex) || 60;
 			if (this.forceAll || this.canvas.refreshRate !== canvasRefresh) {
 				this.canvas.refreshRate = canvasRefresh;
 				updateTimes.canvas = now;
