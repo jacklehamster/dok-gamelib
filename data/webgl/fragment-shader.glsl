@@ -33,9 +33,9 @@ uniform vec3 uCamPosition;
 uniform vec4 uDepthEffect;
 
 vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {
-	int textureInt = int(textureSlot + .5);
+	float threshold = 0.00001;
 	for (int i = 0; i < NUM_TEXTURES; ++i) {
-		if (textureInt == i) {
+		if (abs(float(i) - textureSlot) < threshold) {
 			return texture2D(textures[i], vTexturePoint);
 		}
 	}

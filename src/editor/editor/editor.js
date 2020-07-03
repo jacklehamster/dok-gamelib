@@ -132,7 +132,7 @@ class SourceCode {
 				case "assets":
 					const { data: { generated: { imagedata, videos } }, spriteDataProcessor } = this.engine;
 					const  assets = [], videoArray = [];
-					const spriteDatas = this.engine.currentScene.spriteData.map(definition => {
+					const spriteDatas = !this.engine.currentScene ? [] : this.engine.currentScene.spriteData.map(definition => {
 						return definition.src.get();
 					});
 
