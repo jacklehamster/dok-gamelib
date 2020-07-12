@@ -147,17 +147,20 @@ class Engine {
 	}
 
 	checkSupport(gl) {
-		const settings = {
-			usedVertexAttributes: `${Object.keys(ShaderConfig.attributes).length} / ${gl.getParameter(gl.MAX_VERTEX_ATTRIBS)}`,
-			maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
-			maxTextureUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
-			maxVarying: gl.getParameter(gl.MAX_VARYING_VECTORS),
-			maxUniform: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
-			renderer: gl.getParameter(gl.RENDERER),
-			version: gl.getParameter(gl.VERSION),
-			renderBufferSize: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
-		};
-		console.info(settings);
+		Utils.get('/version').then(response => {
+			const settings = {
+				usedVertexAttributes: `${Object.keys(ShaderConfig.attributes).length} / ${gl.getParameter(gl.MAX_VERTEX_ATTRIBS)}`,
+				maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
+				maxTextureUnits: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS),
+				maxVarying: gl.getParameter(gl.MAX_VARYING_VECTORS),
+				maxUniform: gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
+				renderer: gl.getParameter(gl.RENDERER),
+				version: gl.getParameter(gl.VERSION),
+				renderBufferSize: gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
+				appVersion: response,
+			};
+			console.info(settings);
+		});
 	}
 
 	askWorker(callback) {
