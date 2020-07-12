@@ -6,6 +6,8 @@
 	Sourcode: https://github.com/jacklehamster/dok-gamelib
 	Year: 2020
  */
+ const package = require('./package.json');
+
 
 const webDir = "docs";
 
@@ -47,4 +49,5 @@ module.exports = {
 	releaseFolders,
 	sourceFolders,
 	editorFolders,
+	package,
 };

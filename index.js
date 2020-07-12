@@ -20,7 +20,7 @@ const stringify = require("json-stringify-pretty-compact");
 const colors = require('colors');
 const minify = require('@node-minify/core');
 const uglifyES = require('@node-minify/uglify-es');
-const { webDir, sourceFolders, editorFolders, releaseFolders } = require('./common');
+const { webDir, sourceFolders, editorFolders, releaseFolders, package } = require('./common');
 const {
 	getSpritesheets,
 	copyVideos,
@@ -154,6 +154,10 @@ app.get('/fonts', (req, res) => {
 	});
 });
 
+app.get('/version', (req, res) => {
+	res.end(`${package.name} ${package.version}`);
+});
+
 app.all('/', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -179,6 +183,6 @@ app.use(express.static(`${__dirname}/${webDir}`, {
 }));
 
 
-const httpServer = server.listen(port, () => console.log(`Listening on port ${port}!`.bgGreen));
+const httpServer = server.listen(port, () => console.log(`${package.name} ${package.version}\n`.green + `Listening on port ${port}!`.bgGreen));
 httpServer.timeout = 5 * 60 * 1000;
 

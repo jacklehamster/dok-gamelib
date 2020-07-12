@@ -17,7 +17,7 @@ const stringify = require("json-stringify-pretty-compact");
 const colors = require('colors');
 const minify = require('@node-minify/core');
 const uglifyES = require('@node-minify/uglify-es');
-const { webDir, sourceFolders, editorFolders, releaseFolders } = require('./common');
+const { webDir, sourceFolders, editorFolders, releaseFolders, package } = require('./common');
 const {
 	getSpritesheets,
 	copyVideos,
@@ -65,6 +65,13 @@ function build(webDir, dirname) {
 	.then(html => generateDataCode(path.join(webDir, 'generated/js/data.js'), dirname).then(() => html))
 	.then(html => {
 		return release ? fs.promises.writeFile(`${webDir}/index.html`, html).then(() => html) : Promise.resolve();
+	})
+	.then(() => {
+		const { name, version } = package;
+		fs.writeFile(`${webDir}/version`, `${name} ${version}`, function (err) {
+		  if (err) return console.log(err);
+		  Promise.resolve();
+		});
 	})
 	.then(() => zipGame(webDir, dirname))
 	.then(ziplocation => {
