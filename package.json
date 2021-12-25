@@ -1,11 +1,11 @@
 {
   "name": "dok-gamelib",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "description": "",
   "main": "index.js",
   "engines": {
     "node": "14.x"
-  },  
+  },
   "scripts": {
     "create-dir": "npx mkdirp generated/lib",
     "browserify": "npm run create-dir && browserify browserify/main.js --standalone dok-lib > generated/lib/json-compact.js",
